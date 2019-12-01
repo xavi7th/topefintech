@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Modals - Plyenz Responsive Admin Dashboard Template</title>
+
+    <!-- favicons -->
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+
+    <!-- =========================================================-->
+    <!-- All Styles -->
+    <!-- ========================================================= -->
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <!-- simple bar -->
+    <link rel="stylesheet" href="/css/simplebar.min.css">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/css/main.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="container">
+                    <!-- header left -->
+                    <div class="header-left">
+                        <div class="header-logo logo-type">
+                            <a href="index.html">Plyenz.</a>
+                        </div>
+                        <div class="header-searchbox d-none d-sm-block">
+                            <form>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Search ...">
+                                    <button><i class="fa fa-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div><!-- header left #end -->
+
+                    <!-- header right -->
+                    <div class="header-right">
+                        <!-- dropdown -->
+                        <div class="dropdown-message dropdown d-none d-sm-block">
+                            <a href="" data-toggle="dropdown" class="dropdown-toggle"><i class="far fa-envelope"></i></a>
+
+                            <div class="dropdown-menu dropdown-menu-right">
+                               <div class="dropdown-header">
+                                   <div class="dropdown-title">
+                                       <h5>Last Mails</h5>
+                                   </div>
+                                   <a href="">Show All</a>
+                               </div>
+                                <ul class="media-list">
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-success">
+                                                    <img src="/img/avatar1.jpg" class="img-responsive" alt="...">
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>2018 income-expense report</span>
+                                                    <small>CARL SUCKS</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-success">
+                                                    <img src="/img/avatar2.jpg" class="img-responsive" alt="...">
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>Order notification #1344763</span>
+                                                    <small>LISA DEEP</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-success">
+                                                    <img src="/img/avatar3.jpg" class="img-responsive" alt="...">
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>About the latest update</span>
+                                                    <small>KEVIN BELL</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-success">
+                                                    <img src="/img/avatar4.jpg" class="img-responsive" alt="...">
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>Security settings</span>
+                                                    <small>BETSA MINTHOW</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                </ul>
+                            </div>
+                        </div><!-- dropdown #end -->
+
+                        <!-- dropdown -->
+                        <div class="dropdown-notification dropdown">
+                            <a href="" data-toggle="dropdown" class="dropdown-toggle">
+                                <i class="far fa-bell"></i>
+                                <span class="notification-dot"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                               <div class="dropdown-header">
+                                   <div class="dropdown-title">
+                                       <h5>Notifications</h5>
+                                   </div>
+                                   <a href="">Show All</a>
+                               </div>
+                                <ul class="media-list">
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-success">
+                                                    <i class="fas fa-bell"></i>
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>Carl Jakson added a new product.</span>
+                                                    <small>A Day ago</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-danger">
+                                                    <i class="fas fa-times"></i>
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>Sales transaction canceled.</span>
+                                                    <small>A Day ago</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-info">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>Today we have 17 orders</span>
+                                                    <small>A Day ago</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                   <li class="dropdown-item">
+                                        <a href="#">
+                                            <div class="media-item">
+                                                <div class="media-circle bg-info">
+                                                    <i class="fas fa-plus"></i>
+                                                </div>
+                                                <div class="media-item-text">
+                                                    <span>20+ new products added.</span>
+                                                    <small>A Day ago</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                   </li>
+                                </ul>
+                            </div>
+                        </div><!-- dropdown #end -->
+
+                        <!-- dropdown  -->
+                        <div class="dropdown-logged-user dropdown">
+                            <a href="" data-toggle="dropdown" class="avatar dropdown-toggle"><img src="/img/avatar1.jpg" class="img-responsive" alt="..."></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <ul>
+                                    <li><a href="" class="dropdown-item"><i class="fas fa-envelope"></i> Inbox</a></li>
+                                    <li><a href="" class="dropdown-item"><i class="fas fa-user-circle"></i> My Profile</a></li>
+                                    <li><a href="" class="dropdown-item"><i class="fas fa-cog"></i> Profile Settings</a></li>
+                                    <li><a href="" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </div><!-- dropdown #end -->
+                    </div><!-- header right #end -->
+                </div>
+            </div>
+            <div class="header-menu">
+                <div class="container">
+                    <nav class="nav">
+                        <ul>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-th-large icon"></i><span>Dashboard</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="index.html">Dashboard 01</a></li>
+                                        <li><a href="dashboard-crypto.html">Crypto</a></li>
+                                        <li><a href="dashboard-3.html">Sales</a></li>
+                                        <li><a href="dashboard-4.html">Support</a></li>
+                                        <li><a href="dashboard-5.html">Fitness</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-desktop icon"></i><span>Menu Layout</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="layout-top-menu-dark.html">Top Menu Dark</a></li>
+                                        <li><a href="layout-top-menu-light.html">Top Menu Light</a></li>
+                                        <li><a href="layout-side-menu-dark.html">Side Menu Dark</a></li>
+                                        <li><a href="layout-side-menu-light.html">Side Menu Light</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item active">
+                                <a href="#" class="sub-item-toggle"><i class="fab fa-uikit icon"></i><span>UI Kit</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li class="active"><a href="ui-modals.html">Modals</a></li>
+                                        <li><a href="ui-alerts.html">Notifications</a></li>
+                                        <li><a href="ui-buttons.html">Buttons</a></li>
+                                        <li><a href="ui-progress.html">Progress</a></li>
+                                        <li><a href="ui-popover.html">Popover</a></li>
+                                        <li><a href="ui-badges.html">Badges</a></li>
+                                        <li><a href="ui-tabs.html">Tabs</a></li>
+                                    </ul>
+                                    <ul>
+                                        <li><a href="ui-typography.html">Typography</a></li>
+                                        <li><a href="ui-dropdowns.html">Dropdowns</a></li>
+                                        <li><a href="ui-carousel.html">Carousel</a></li>
+                                        <li><a href="ui-pagination.html">Pagination</a></li>
+                                        <li><a href="ui-spinners.html">Spinners</a></li>
+                                        <li><a href="ui-breadcrumbs.html">Breadcrumbs</a></li>
+                                        <li><a href="util-colors.html">Utilities</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-book-open icon"></i><span>Pages</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="chart-chartjs.html">Charts</a></li>
+                                        <li><a href="page-login.html">Login</a></li>
+                                        <li><a href="page-register.html">Register</a></li>
+                                        <li><a href="page-error-404.html">404 Error</a></li>
+                                        <li><a href="page-error-500.html">500 Error</a></li>
+                                    </ul>
+                                    <ul>
+                                        <li><a href="page-invoice.html">Invoice</a></li>
+                                        <li><a href="page-timeline.html">Timeline</a></li>
+                                        <li><a href="page-profile.html">Profile</a></li>
+                                        <li><a href="page-calendar.html">Calendar</a></li>
+                                        <li><a href="page-pricetable.html">Pricing Table</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-check-circle icon"></i><span>Forms</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="form-regular.html">Regular Form</a></li>
+                                        <li><a href="form-controls.html">Form Controls</a></li>
+                                        <li><a href="form-inputs.html">Form Inputs</a></li>
+                                        <li><a href="form-validation.html">Form Validation</a></li>
+                                        <li><a href="form-mask.html">Form Mask</a></li>
+                                        <li><a href="form-wizard.html">Form Wizard</a></li>
+                                        <li><a href="form-upload.html">File Uploads</a></li>
+                                        <li><a href="form-editor.html">Editor</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-table icon"></i><span>Tables</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="table-regular.html">Regular Tables</a></li>
+                                        <li><a href="table-datatable.html">Data Tables</a></li>
+                                        <li><a href="table-editable.html">Editable</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-rocket icon"></i><span>Apps</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="app-mailbox.html">MailBox Application</a></li>
+                                        <li><a href="app-todo.html">Todo Application</a></li>
+                                        <li><a href="app-chat.html">Chat Application</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sub-item">
+                                <a href="#" class="sub-item-toggle"><i class="fas fa-layer-group icon"></i><span>Widgets</span></a>
+                                <div class="sub-menu">
+                                    <ul>
+                                        <li><a href="widget-general.html">General</a></li>
+                                        <li><a href="widget-charts.html">Charts</a></li>
+                                        <li><a href="widget-forms.html">Forms</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header><!-- header #end -->
+
+        <!-- main content -->
+        <div class="plyenz-main">
+            <div class="container">
+                <div class="card-heading">
+                    <h4 class="card-heading-title">Modals</h4>
+                    <ul class="card-menu">
+                        <li class="active"><a href="ui-modals.html">Default</a></li>
+                        <li><a href="ui-sweetalert.html">Sweet Alert</a></li>
+                    </ul>
+                </div>
+                <div class="template-demo">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h4>BASIC MODAL</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p class="fw-300 fs-14 text-light">
+                                                Basic Modal Example
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-basic">Regular Modal</a>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="fw-300 fs-14 text-light">
+                                                <code>.modal-sm</code>
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-sm">Small Modal</a>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p class="fw-300 fs-14 text-light">
+                                                <code>.modal-lg</code>
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-lg">Large Modal</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-12">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h4>MODAL POSITIONS</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <p class="fw-300 fs-14 text-light">
+                                                <code>.modal-top</code>
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-top">Top</a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p class="fw-300 fs-14 text-light">
+                                                <code>.modal-bottom</code>
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-bottom">Bottom</a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p class="fw-300 fs-14 text-light">
+                                                <code>.modal-left</code>
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-left">Left</a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p class="fw-300 fs-14 text-light">
+                                                <code>.modal-right</code>
+                                            </p>
+                                            <a href="#" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#modal-right">Right</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h4>CUSTOM MODALS</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p class="fw-300 fs-14 text-light">
+                                        The following templates are specially designed and are very important for your visitors. Using these pop-ups, you can show an ad, notification, or message to the user without direct routing.  <br>Or you can request the data entry.
+                                    </p>
+                                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-custom-form">Modal width form</a>
+
+                                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-custom-text">Modal width text only</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h4>COLORED MODAL</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p class="fw-300 fs-14 text-light">Using the relevant attractive pop-up notification windows can attract the customer's attention.
+                                    </p>
+                                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-custom-danger">Danger background</a>
+
+                                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-custom-success">Success background</a>
+
+                                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-custom-warning">Warning background</a>
+
+                                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-custom-info">Info background</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- main content #end -->
+
+
+        <!-- modal -->
+        <div class="modal fade" id="modal-basic" tabindex="-1">
+           <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <h4 class="modal-title">Modal title</h4>
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                       <p>Your content comes here</p>
+                       <p class="text-light">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum neque autem hic eveniet facilis, voluptatem itaque impedit delectus dolorem, veritatis rem, temporibus vel esse facere voluptas eos ea illo fugiat.</p>
+                   </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade" id="modal-sm" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal title</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your content comes here</p>
+                    </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                   </div>
+                </div>
+            </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade" id="modal-lg" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal title</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your content comes here</p>
+                    </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                   </div>
+                </div>
+            </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal modal-top fade" id="modal-top" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal title</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your content comes here</p>
+                    </div>
+                    <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal modal-bottom fade" id="modal-bottom" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal title</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your content comes here</p>
+                    </div>
+                    <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal modal-left fade" id="modal-left" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal title</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your content comes here</p>
+                    </div>
+                    <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal modal-right fade" id="modal-right" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal title</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your content comes here</p>
+                    </div>
+                    <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-sm btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade modal-custom" id="modal-custom-form" tabindex="-1">
+           <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                        <h3 class="text-center text-primary"><strong>Personal Information</strong></h3>
+                        <div class="modal-custom-content pt-50">
+                            <p class="text-light text-center">Hi, we want some information that is required for security. <br>Please this fill in your personal information and increase <br> the security of your account.</p>
+                            <form class="mt-30">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Country</label>
+                                            <select class="form-control">
+                                                <option selected disabled>Turkey</option>
+                                                <option>England</option>
+                                                <option>France</option>
+                                                <option>Italy</option>
+                                                <option>...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary float-right">Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade modal-custom" id="modal-custom-text" tabindex="-1">
+           <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                        <h3 class="text-center text-primary"><strong>Presentation Window!</strong></h3>
+                        <div class="modal-custom-content pt-50">
+                            <p class="text-light text-center px-10"><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste ratione error, dicta quidem pariatur impedit quod, aperiam repudiandae quisquam odit odio corporis unde non. Error neque iste, minima exercitationem non.</span> <br><br><span>Quisquam maxime aliquid fugiat molestiae ipsa. At a voluptate sapiente velit, officiis aut similique porro...</span></p>
+                        </div>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade modal-custom-danger" id="modal-custom-danger" tabindex="-1">
+           <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <h4 class="modal-title">Modal title</h4>
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                       <p>Your content comes here</p>
+                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum neque autem hic eveniet facilis, voluptatem itaque impedit delectus dolorem, veritatis rem, temporibus vel esse facere voluptas eos ea illo fugiat.</p>
+                   </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Close</button>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade modal-custom-success" id="modal-custom-success" tabindex="-1">
+           <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <h4 class="modal-title">Modal title</h4>
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                       <p>Your content comes here</p>
+                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum neque autem hic eveniet facilis, voluptatem itaque impedit delectus dolorem, veritatis rem, temporibus vel esse facere voluptas eos ea illo fugiat.</p>
+                   </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Close</button>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade modal-custom-warning" id="modal-custom-warning" tabindex="-1">
+           <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <h4 class="modal-title">Modal title</h4>
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                       <p>Your content comes here</p>
+                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum neque autem hic eveniet facilis, voluptatem itaque impedit delectus dolorem, veritatis rem, temporibus vel esse facere voluptas eos ea illo fugiat.</p>
+                   </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Close</button>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- modal -->
+        <div class="modal fade modal-custom-info" id="modal-custom-info" tabindex="-1">
+           <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <h4 class="modal-title">Modal title</h4>
+                       <button type="button" class="close" data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                       <p>Your content comes here</p>
+                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum neque autem hic eveniet facilis, voluptatem itaque impedit delectus dolorem, veritatis rem, temporibus vel esse facere voluptas eos ea illo fugiat.</p>
+                   </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Close</button>
+                   </div>
+               </div>
+           </div>
+        </div><!-- modal #end -->
+
+        <!-- footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <p>2018 &copy; Copyright - All Rights Reserved. Theme By <a href="http://uicod.com">UICod</a></p>
+                    <nav>
+                        <a href="http://uicod.com/plyenz/docs">Documentation</a>
+                    </nav>
+                </div>
+            </div>
+        </footer><!-- footer #end -->
+    </div>
+
+    <!-- =========================================================-->
+    <!-- All Scripts -->
+    <!-- ========================================================= -->
+    <!-- jquery -->
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <!-- bootstrap -->
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- simplebar -->
+    <script src="/js/simplebar.min.js"></script>
+    <!-- main js -->
+    <script src="/js/main.js"></script>
+</body>
+</html>
