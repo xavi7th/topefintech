@@ -1,50 +1,44 @@
 <template>
-  <section class="section one-screen-page bg-primary-dark">
-    <div class="one-screen-page-inner">
-      <div class="page-header">
-        <div class="container">
-          <!-- Brand-->
-          <router-link data-nav class="brand" :to="{name:'site.root'}">
-            <img class="brand-logo-dark" src="/img/logo-round.png" alt width="200" height="45" />
-            <img class="brand-logo-light" src="/img/logo-round.png" alt width="200" height="45" />
-          </router-link>
-        </div>
-      </div>
-      <div class="page-content">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-md-9 col-lg-7 col-xl-6">
-              <div class="one-screen-page-box">
-                <div class="page-title">404</div>
-                <h1 class="page-subtitle">Page Not Found</h1>
-                <p
-                  class="heading-6 page-description"
-                >The requested page couldn't be found - this could be due to a spelling error in the URL or a removed page.</p>
-                <router-link
-                  class="button button-lg button-primary"
-                  :to="{name:'site.root'}"
-                  data-nav
-                >Back to home page</router-link>
-              </div>
+  <div class="full-page">
+    <!-- Page Banner -->
+    <section class="pagebanner">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="bannerTitle text-left">
+              <h2>404_Error</h2>
+              <p>
+                We are here to help you when you need your
+                <br />financial support, then we are help you.
+              </p>
             </div>
           </div>
         </div>
       </div>
-      <div class="page-footer">
-        <div class="container">
-          <!-- Rights-->
-          <p class="rights">
-            <span>&copy;&nbsp;</span>
-            <span class="copyright-year"></span>
-            <span>&nbsp;</span>
-            <span>All rights reserved</span>
-            <span>.&nbsp;</span>
-            <router-link :to="{name:'site.privacy'}">Privacy Policy</router-link>
-          </p>
+    </section>
+    <!-- Page Banner -->
+
+    <!-- Common Section -->
+    <section class="commonSection page_4040">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 offset-lg-3">
+            <div class="content_404 text-center">
+              <h1>404</h1>
+              <h4>Opps! This page is not found.</h4>
+              <p>
+                Simply import the sample files we ship with the theme
+                and the core structur for your site is already mind that
+                you don’t use the demo content.
+              </p>
+              <a class="common_btn" href="#">Back to home</a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+    <!-- Common Section -->
+  </div>
 </template>
 
 <script>

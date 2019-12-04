@@ -137,10 +137,14 @@
   .footer {
     padding-top: 150px;
 
+    ul {
+      padding: 0 !important;
+    }
+
     .about_widgets {
       margin-top: 0;
       img {
-        max-width: 50%;
+        max-width: 40%;
         position: absolute;
         top: -100px;
         left: 40px;
@@ -170,7 +174,7 @@
     .social {
       display: flex;
       justify-content: space-between;
-      width: 50%;
+      width: 40%;
     }
   }
 </style>

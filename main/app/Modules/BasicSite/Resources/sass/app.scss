@@ -11,6 +11,10 @@
 @import './vendor/theme';
 @import './vendor/responsive';
 
+.full-page {
+    background: url(/img/bg/1.png) no-repeat right top;
+}
+
 // html {
 //     scroll-behavior: smooth;
 // }

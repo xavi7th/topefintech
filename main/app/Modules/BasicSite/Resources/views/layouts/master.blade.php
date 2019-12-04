@@ -8,7 +8,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/png" href="/vendor/img/favicon.png">
-
+        @yield('customCSS')
         <style>
             .preloader {
                 background: #24b3ff;
@@ -215,6 +215,8 @@
         <script src="{{ mix('js/manifest.js') }}"></script>
         <script src="{{ mix('js/vendor.js') }}"></script>
         <script src="{{ mix('js/site-app.js') }}"></script>
+
+        @yield('customJS')
 
     </body>
 

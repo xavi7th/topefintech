@@ -32,12 +32,15 @@
       StoriesSummary,
       Testimonials
     },
+    data: () => ({
+      details: {}
+    }),
     mounted() {
       this.$emit("page-loaded");
     },
-    data: () => ({
-      details: {}
-    })
+    beforeDestroy() {
+      this.$unloadScript("/js/main.js");
+    }
   };
 </script>
 
