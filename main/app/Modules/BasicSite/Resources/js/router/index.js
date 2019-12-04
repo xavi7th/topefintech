@@ -1,18 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import {
-    siteRootUrl,
-    siteContactUs,
-    sitePrivacy,
-    siteTerms,
-}
-from '@basicsite-assets/js/config'
-
-// import App from '@basicsite-components/AppComponent'
 
 Vue.use( VueRouter )
 
-const APP_NAME = 'Amju Unique Micro Finance Bank'
+const APP_NAME = 'Smart Coop'
 
 /**
  * Asynchronously load view (Webpack Lazy loading compatible)
@@ -41,56 +32,60 @@ export function createRouter() {
                     y: 0,
                 }
             }
-
-
         },
         routes: [ {
-                path: siteRootUrl,
+                path: '/',
                 component: view( 'HomePage' ),
                 name: 'site.root',
                 meta: {
                     title: APP_NAME,
+                    menuName: 'Home',
                     navSkip: true
                 },
             },
             {
-                path: '/personal',
-                component: view( 'misc/EmptyComponent' ),
-                children: [ {
-                        path: '',
-                        /** Empty path resolves to /home */
-                        component: view( 'pb/PersonalBankingPage' ),
-                        name: 'site.pb',
-                        meta: {
-                            title: 'Personal Banking - ' + APP_NAME,
-                            breadcrumb: 'Personal Banking'
-                        },
-                    },
-                    {
-                        path: siteRootUrl,
-                        component: view( 'pb/AmjuEdusaveSavingsPage' ),
-                        name: 'site.pb.edusave',
-                        meta: {
-                            title: 'Amju Edusave Savings - ' + APP_NAME,
-                            breadcrumb: 'Amju Edusave Savings'
-                        },
-                    }
-                ]
+                path: '/blog',
+                component: view( 'OurBlogPage' ),
+                name: 'site.blog',
+                meta: {
+                    title: 'Our Blog - ' + APP_NAME,
+                    breadcrumb: 'Our Blog',
+                    menuName: 'Blog'
+                },
             },
-
             {
-                path: siteContactUs,
+                path: '/frequently-asked-questions',
+                component: view( 'FAQPage' ),
+                name: 'site.faq',
+                meta: {
+                    title: 'FAQ - ' + APP_NAME,
+                    breadcrumb: 'Frequently Asked Questions',
+                    menuName: 'FAQ'
+                },
+            },
+            {
+                path: '/careers',
+                component: view( 'CareersPage' ),
+                name: 'site.career',
+                meta: {
+                    title: 'Careers - ' + APP_NAME,
+                    breadcrumb: 'Work With Us',
+                    menuName: 'Careers'
+                },
+            },
+            {
+                path: '/contact-us',
                 component: view( 'ContactUsPage' ),
                 name: 'site.contact',
                 meta: {
-                    title: 'Contacts - ' + APP_NAME,
+                    title: 'Contact Us - ' + APP_NAME,
                     breadcrumb: 'Contact Us',
-                    navSkip: true
+                    menuName: 'Contact Us'
                 },
             },
 
             {
-                path: sitePrivacy,
+                path: '/privacy',
                 component: view( 'PrivacyPage' ),
                 name: 'site.privacy',
                 meta: {
@@ -100,16 +95,15 @@ export function createRouter() {
                 },
             },
             {
-                path: siteTerms,
+                path: '/terms-and-conditions',
                 component: view( 'TermsPage' ),
                 name: 'site.terms',
                 meta: {
                     title: 'Terms - ' + APP_NAME,
-                    breadcrumb: 'Terms',
+                    breadcrumb: 'Terms & Conditions',
                     navSkip: true
                 },
             },
-
             {
                 path: '/page-not-found',
                 component: view( '404Page' ),

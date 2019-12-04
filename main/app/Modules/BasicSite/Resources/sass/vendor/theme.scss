@@ -93,8 +93,6 @@ Version: 1.0
     text-align: center;
     padding: 21px 20px 16px;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
     visibility: hidden;
     opacity: 0;
     left: 35%;
@@ -105,8 +103,6 @@ Version: 1.0
     top: 30px;
     transform: translateX(-50%);
     z-index: 2;
-    -webkit-box-shadow: 0px 10px 15px 0 rgba(0, 0, 0, 0.29);
-    -moz-box-shadow: 0px 10px 15px 0 rgba(0, 0, 0, 0.29);
     box-shadow: 0px 10px 15px 0 rgba(0, 0, 0, 0.29);
 }
 
@@ -147,8 +143,6 @@ Version: 1.0
     line-height: 28px;
     color: #222;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .mainmenu ul ul.sub-menu>li.menu-item-has-children>a:hover:after {
@@ -163,8 +157,6 @@ Version: 1.0
     transform: translateX(20px);
     top: 10px;
     right: auto;
-    -webkit-box-shadow: 10px 0 15px 0 rgba(0, 0, 0, 0.29);
-    -moz-box-shadow: 10px 0 15px 0 rgba(0, 0, 0, 0.29);
     box-shadow: 10px 0 15px 0 rgba(0, 0, 0, 0.29);
 }
 
@@ -226,8 +218,6 @@ Version: 1.0
 .menu_white .navigator_btn a {
     width: 150px;
     color: #222222;
-    -webkit-box-shadow: 0px 0px 30px 1px rgba(0, 0, 0, 0.29);
-    -moz-box-shadow: 0px 0px 30px 1px rgba(0, 0, 0, 0.29);
     box-shadow: 0px 0px 30px 1px rgba(0, 0, 0, 0.29);
 }
 
@@ -246,8 +236,6 @@ Version: 1.0
     width: 100%;
     z-index: 999;
     border: none;
-    -webkit-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.29);
-    -moz-box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.29);
     box-shadow: 0px 0px 15px 0 rgba(0, 0, 0, 0.29);
 }
 
@@ -373,8 +361,6 @@ Version: 1.0
 }
 
 .header_bg_2 .common_btn {
-    -webkit-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     background: rgb(46, 55, 136);
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
@@ -433,56 +419,23 @@ Version: 1.0
 
 .singleHistory {
     width: 100%;
-    -webkit-perspective: 1000;
-    -moz-perspective: 1000;
-    -ms-perspective: 1000;
     perspective: 1000;
-    -ms-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleHistory .flipper {
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -ms-transition: 0.6s;
-    -moz-transition: 0.6s;
-    -moz-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: 0.6s;
     transform-style: preserve-3d;
     position: relative;
 }
 
 .singleHistory .flipper {
-    -webkit-transform-origin: 100% 213.5px;
-    -moz-transform-origin: 100% 213.5px;
-    -ms-transform-origin: 100% 213.5px;
     transform-origin: 100% 213.5px;
 }
 
 .singleHistory .front,
 .singleHistory .back {
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -webkit-transform: rotateY(0deg);
-    -moz-transition: 0.6s;
-    -moz-transform-style: preserve-3d;
-    -moz-transform: rotateY(0deg);
-    -o-transition: 0.6s;
-    -o-transform-style: preserve-3d;
-    -o-transform: rotateY(0deg);
-    -ms-transition: 0.6s;
-    -ms-transform-style: preserve-3d;
-    -ms-transform: rotateY(0deg);
     transition: 0.6s;
     transform-style: preserve-3d;
     transform: rotateY(0deg);
@@ -492,23 +445,15 @@ Version: 1.0
 }
 
 .singleHistory .front {
-    -webkit-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     background: #fff;
     z-index: 2;
     padding: 37px 30px 24px 35px;
     width: 100%;
-    -webkit-box-shadow: 0px 0px 22px 0px rgba(129, 128, 224, 0.17);
-    -moz-box-shadow: 0px 0px 22px 0px rgba(129, 128, 224, 0.17);
     box-shadow: 0px 0px 22px 0px rgba(129, 128, 224, 0.17);
 }
 
 .singleHistory .back {
     background: #24b3ff;
-    -webkit-transform: rotateY(-180deg);
-    -moz-transform: rotateY(-180deg);
-    -o-transform: rotateY(-180deg);
-    -ms-transform: rotateY(-180deg);
     transform: rotateY(-180deg);
     position: relative;
     padding: 40px 30px 26px 35px;
@@ -549,18 +494,11 @@ Version: 1.0
 
 .singleHistory:hover .front,
 .singleHistory.hover .front {
-    -webkit-transform: rotateY(180deg);
-    -moz-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
 
 .singleHistory:hover .back,
 .singleHistory.hover .back {
-    -webkit-transform: rotateY(0deg);
-    -moz-transform: rotateY(0deg);
-    -o-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     transform: rotateY(0deg);
 }
 
@@ -667,13 +605,11 @@ Version: 1.0
     font-size: 39px;
     color: #fff;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .customer_area .owl-controls .owl-nav .owl-prev:hover,
 .customer_area .owl-controls .owl-nav .owl-next:hover {
-    color: #d6a8ec;
+    color: #8fd6fc;
 }
 
 /*----------------------------------------------------
@@ -833,15 +769,11 @@ Version: 1.0
     padding: 0 35.5px;
     margin-top: 15px;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
-    -webkit-box-shadow: 0px 0px 22px 0px rgba(129, 128, 224, 0.17);
-    -moz-box-shadow: 0px 0px 22px 0px rgba(129, 128, 224, 0.17);
     box-shadow: 0px 0px 22px 0px rgba(129, 128, 224, 0.17);
 }
 
 .footer .subscribe_widgets input[type="submit"]:hover {
-    background: #d6a8ec;
+    background: #8fd6fc;
     color: #fff;
 }
 
@@ -889,7 +821,7 @@ Version: 1.0
     position: relative;
     height: 31px;
     width: 31px;
-    background: #d6a8ec;
+    background: #8fd6fc;
     border-radius: 50%;
     display: inline-block;
     color: #fff;
@@ -928,10 +860,6 @@ Version: 1.0
     margin-bottom: 40px;
     border-radius: 3px;
     transition: all ease 500ms;
-    -webkit-transition: all ease 500ms;
-    -moz-transition: all ease 500ms;
-    -webkit-box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
-    -moz-box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
     box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
 }
 
@@ -983,8 +911,6 @@ Version: 1.0
 .singleService:hover a {
     color: #fff;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleService a:hover {
@@ -1069,8 +995,6 @@ Version: 1.0
 .servicepage_2 a.common_btn {
     padding: 22px 30px;
     height: 58px;
-    -webkit-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
 }
 
@@ -1086,8 +1010,6 @@ Version: 1.0
     border: 1px solid #f2f2f2;
     border-radius: 3px;
     width: 100%;
-    -webkit-box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.12);
-    -moz-box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.12);
     box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.12);
 }
 
@@ -1105,8 +1027,6 @@ Version: 1.0
     background: #fff;
     margin-bottom: 50px;
     border-radius: 10px;
-    -webkit-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
-    -moz-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
     box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
 }
 
@@ -1114,8 +1034,6 @@ Version: 1.0
     width: 100%;
     height: auto;
     border-radius: 10px;
-    -webkit-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
-    -moz-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
     box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
 }
 
@@ -1184,10 +1102,6 @@ Version: 1.0
     border-radius: 3px;
     margin-bottom: 50px;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
-    -webkit-box-shadow: 0px 0px 44px 0px rgba(129, 128, 224, 0.12);
-    -moz-box-shadow: 0px 0px 44px 0px rgba(129, 128, 224, 0.12);
     box-shadow: 0px 0px 44px 0px rgba(129, 128, 224, 0.12);
 }
 
@@ -1370,8 +1284,6 @@ Version: 1.0
     width: 100%;
     height: auto;
     border-radius: 5px;
-    -webkit-box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.15);
-    -moz-box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.15);
     box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.15);
 }
 
@@ -1461,8 +1373,6 @@ Version: 1.0
     border: 1px solid #f5f5fb;
     border-radius: 3px;
     background: #fff;
-    -webkit-box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.11);
-    -moz-box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.11);
     box-shadow: 0px 0px 29px 0px rgba(129, 128, 224, 0.11);
 }
 
@@ -1529,8 +1439,6 @@ Version: 1.0
     top: 0;
     cursor: pointer;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .sidebar .widget_search button[type="submit"]:hover {
@@ -1760,8 +1668,6 @@ Version: 1.0
     font-size: 30px;
     color: #b8b8b8;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .related_post_slide .owl-controls .owl-nav .owl-prev:hover,
@@ -1869,8 +1775,6 @@ Version: 1.0
     margin-bottom: 20px;
     padding-left: 20px;
     appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
 }
 
 .caclculationFrom input[type="number"]::-moz-placeholder {
@@ -2028,8 +1932,6 @@ Version: 1.0
     border-radius: 5px;
     background: #fff;
     padding-left: 70px;
-    -webkit-box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
-    -moz-box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
     box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
 }
 
@@ -2087,7 +1989,7 @@ Version: 1.0
 
 .contactFrom input.reqError,
 .contactFrom .reqError {
-    border-color: #d6a8ec;
+    border-color: #8fd6fc;
     background: transparent;
 }
 
@@ -2121,8 +2023,6 @@ Version: 1.0
     border-radius: 5px;
     background: #fff;
     padding-left: 70px;
-    -webkit-box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
-    -moz-box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
     box-shadow: 0px 0px 54px 0px rgba(129, 128, 224, 0.13);
 }
 
@@ -2256,56 +2156,23 @@ Version: 1.0
 
 .singleService_2 {
     width: 100%;
-    -webkit-perspective: 1000;
-    -moz-perspective: 1000;
-    -ms-perspective: 1000;
     perspective: 1000;
-    -ms-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleService_2 .flipper {
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -ms-transition: 0.6s;
-    -moz-transition: 0.6s;
-    -moz-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: 0.6s;
     transform-style: preserve-3d;
     position: relative;
 }
 
 .singleService_2 .flipper {
-    -webkit-transform-origin: 100% 0;
-    -moz-transform-origin: 100% 0;
-    -ms-transform-origin: 100% 0;
     transform-origin: 100% 0;
 }
 
 .singleService_2 .front,
 .singleService_2 .back {
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -webkit-transform: rotateY(0deg);
-    -moz-transition: 0.6s;
-    -moz-transform-style: preserve-3d;
-    -moz-transform: rotateY(0deg);
-    -o-transition: 0.6s;
-    -o-transform-style: preserve-3d;
-    -o-transform: rotateY(0deg);
-    -ms-transition: 0.6s;
-    -ms-transform-style: preserve-3d;
-    -ms-transform: rotateY(0deg);
     transition: 0.6s;
     transform-style: preserve-3d;
     transform: rotateY(0deg);
@@ -2315,23 +2182,15 @@ Version: 1.0
 }
 
 .singleService_2 .front {
-    -webkit-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     background: #fff;
     z-index: 2;
     padding: 29px 25px 45px 30px;
     width: 100%;
-    -webkit-box-shadow: 0px 0px 45px 0px rgba(34, 34, 34, 0.10);
-    -moz-box-shadow: 0px 0px 45px 0px rgba(34, 34, 34, 0.10);
     box-shadow: 0px 0px 45px 0px rgba(34, 34, 34, 0.10);
 }
 
 .singleService_2 .back {
     background: #24b3ff;
-    -webkit-transform: rotateY(-180deg);
-    -moz-transform: rotateY(-180deg);
-    -o-transform: rotateY(-180deg);
-    -ms-transform: rotateY(-180deg);
     transform: rotateY(-180deg);
     position: relative;
     padding: 50px 25px 65px 30px;
@@ -2395,18 +2254,11 @@ Version: 1.0
 
 .singleService_2:hover .front,
 .singleService_2.hover .front {
-    -webkit-transform: rotateY(180deg);
-    -moz-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
 
 .singleService_2:hover .back,
 .singleService_2.hover .back {
-    -webkit-transform: rotateY(0deg);
-    -moz-transform: rotateY(0deg);
-    -o-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     transform: rotateY(0deg);
 }
 
@@ -2501,19 +2353,11 @@ Version: 1.0
 .singleLogo a img {
     max-width: 100%;
     height: auto;
-    -webkit-filter: grayscale(1);
-    -moz-filter: grayscale(1);
-    -ms-filter: grayscale(1);
     filter: grayscale(1);
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleLogo a img:hover {
-    -webkit-filter: grayscale(0);
-    -moz-filter: grayscale(0);
-    -ms-filter: grayscale(0);
     filter: grayscale(0);
 }
 
@@ -2604,16 +2448,9 @@ Version: 1.0
 }
 
 .singleProcess_2 {
-    -webkit-perspective: 1000;
-    -moz-perspective: 1000;
-    -ms-perspective: 1000;
     perspective: 1000;
-    -ms-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
+    transform: perspective(1000px);
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .mr_40 {
@@ -2629,43 +2466,18 @@ Version: 1.0
 }
 
 .singleProcess_2 .flipper {
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -ms-transition: 0.6s;
-    -moz-transition: 0.6s;
-    -moz-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: 0.6s;
     transform-style: preserve-3d;
     position: relative;
 }
 
 .singleProcess_2 .flipper {
-    -webkit-transform-origin: 100% 0;
-    -moz-transform-origin: 100% 0;
-    -ms-transform-origin: 100% 0;
     transform-origin: 100% 0;
 }
 
 .singleProcess_2 .front,
 .singleProcess_2 .back {
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -webkit-transform: rotateY(0deg);
-    -moz-transition: 0.6s;
-    -moz-transform-style: preserve-3d;
-    -moz-transform: rotateY(0deg);
-    -o-transition: 0.6s;
-    -o-transform-style: preserve-3d;
-    -o-transform: rotateY(0deg);
-    -ms-transition: 0.6s;
-    -ms-transform-style: preserve-3d;
-    -ms-transform: rotateY(0deg);
     transition: 0.6s;
     transform-style: preserve-3d;
     transform: rotateY(0deg);
@@ -2675,23 +2487,15 @@ Version: 1.0
 }
 
 .singleProcess_2 .front {
-    -webkit-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     background: #fff;
     z-index: 2;
     padding: 29px 30px 59px 45px;
     width: 100%;
-    -webkit-box-shadow: 0px 0px 45px 0px rgba(34, 34, 34, 0.10);
-    -moz-box-shadow: 0px 0px 45px 0px rgba(34, 34, 34, 0.10);
     box-shadow: 0px 0px 45px 0px rgba(34, 34, 34, 0.10);
 }
 
 .singleProcess_2 .back {
     background: #24b3ff;
-    -webkit-transform: rotateY(-180deg);
-    -moz-transform: rotateY(-180deg);
-    -o-transform: rotateY(-180deg);
-    -ms-transform: rotateY(-180deg);
     transform: rotateY(-180deg);
     position: relative;
     padding: 52px 30px 82px 45px;
@@ -2748,18 +2552,11 @@ Version: 1.0
 
 .singleProcess_2:hover .front,
 .singleProcess_2.hover .front {
-    -webkit-transform: rotateY(180deg);
-    -moz-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
 
 .singleProcess_2:hover .back,
 .singleProcess_2.hover .back {
-    -webkit-transform: rotateY(0deg);
-    -moz-transform: rotateY(0deg);
-    -o-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     transform: rotateY(0deg);
 }
 
@@ -2805,8 +2602,6 @@ Version: 1.0
     margin-right: 17px;
     display: inline-block;
     appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
 }
 
 .applyamountFrom input[type="number"]::-moz-placeholder {
@@ -2855,8 +2650,6 @@ Version: 1.0
 }
 
 .rev_slider_2 .common_btn {
-    -webkit-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     background: rgb(46, 55, 136);
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
@@ -2884,8 +2677,6 @@ Version: 1.0
     width: 335px;
     padding: 62px 38px 53px;
     border-radius: 15px;
-    -webkit-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
-    -moz-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
     box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
 }
 
@@ -2894,8 +2685,6 @@ Version: 1.0
     background: rgb(46, 55, 136);
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
     opacity: 1;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     line-height: 58px;
     display: inline-block;
     float: left;
@@ -2939,19 +2728,13 @@ Version: 1.0
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
     opacity: 1;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleService_4:hover i {
     background: #fff;
     background: #fff;
     opacity: 1;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleService_4:hover h1,
@@ -2960,8 +2743,6 @@ Version: 1.0
 .singleService_4:hover h5 {
     color: #fff;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .callToAction {
@@ -2985,8 +2766,6 @@ Version: 1.0
 }
 
 .callToAction .serviceArea a.common_btn {
-    -webkit-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     background: rgb(46, 55, 136);
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
@@ -3018,57 +2797,24 @@ Version: 1.0
 }
 
 .singleProcess_3 {
-    -webkit-perspective: 1000;
-    -moz-perspective: 1000;
-    -ms-perspective: 1000;
     perspective: 1000;
     width: 350px;
-    -ms-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .singleProcess_3 .flipper {
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -ms-transition: 0.6s;
-    -moz-transition: 0.6s;
-    -moz-transform: perspective(1000px);
-    -moz-transform-style: preserve-3d;
-    -ms-transform-style: preserve-3d;
     transition: 0.6s;
     transform-style: preserve-3d;
     position: relative;
 }
 
 .singleProcess_2 .flipper {
-    -webkit-transform-origin: 100% 0;
-    -moz-transform-origin: 100% 0;
-    -ms-transform-origin: 100% 0;
     transform-origin: 100% 0;
 }
 
 .singleProcess_3 .front,
 .singleProcess_3 .back {
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transition: 0.6s;
-    -webkit-transform-style: preserve-3d;
-    -webkit-transform: rotateY(0deg);
-    -moz-transition: 0.6s;
-    -moz-transform-style: preserve-3d;
-    -moz-transform: rotateY(0deg);
-    -o-transition: 0.6s;
-    -o-transform-style: preserve-3d;
-    -o-transform: rotateY(0deg);
-    -ms-transition: 0.6s;
-    -ms-transform-style: preserve-3d;
-    -ms-transform: rotateY(0deg);
     transition: 0.6s;
     transform-style: preserve-3d;
     transform: rotateY(0deg);
@@ -3079,18 +2825,12 @@ Version: 1.0
 }
 
 .singleProcess_3 .front {
-    -webkit-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     z-index: 2;
     text-align: center;
     padding: 115px 0 83px;
 }
 
 .singleProcess_3 .back {
-    -webkit-transform: rotateY(-180deg);
-    -moz-transform: rotateY(-180deg);
-    -o-transform: rotateY(-180deg);
-    -ms-transform: rotateY(-180deg);
     transform: rotateY(-180deg);
     position: relative;
     padding: 59px 30px 55px 40px;
@@ -3101,17 +2841,10 @@ Version: 1.0
 }
 
 .singleProcess_3:hover .front {
-    -webkit-transform: rotateY(180deg);
-    -moz-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
 
 .singleProcess_3:hover .back {
-    -webkit-transform: rotateY(0deg);
-    -moz-transform: rotateY(0deg);
-    -o-transform: rotateY(0deg);
-    -ms-transform: rotateY(0deg);
     transform: rotateY(0deg);
 }
 
@@ -3205,8 +2938,6 @@ Version: 1.0
 }
 
 .callToAction_2 .serviceArea a.common_btn {
-    -webkit-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     background: rgb(46, 55, 136);
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
@@ -3235,8 +2966,6 @@ Version: 1.0
 }
 
 .callToAction_3 a.common_btn {
-    -webkit-box-shadow: 0px 0px 34px 0 rgba(46, 55, 136, 0.49);
-    -moz-box-shadow: 0px 0px 34px 0 rgba(46, 55, 136, 0.49);
     box-shadow: 0px 0px 34px 0 rgba(46, 55, 136, 0.49);
     background: #fff;
     color: #383c5e;
@@ -3396,8 +3125,6 @@ Version: 1.0
 }
 
 .footer_2 .subscribe_widgets input[type="submit"] {
-    -webkit-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0 rgba(46, 55, 136, 0.30);
     background: rgb(46, 55, 136);
     background: linear-gradient(-38deg, rgba(129, 128, 224, 1) 0%, rgba(9, 9, 121, 1) 150%, rgba(46, 55, 136, 1) 100%);
@@ -3462,8 +3189,6 @@ Version: 1.0
     outline: none;
     cursor: pointer;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .team_slider .slick-next {
@@ -3494,8 +3219,6 @@ Version: 1.0
     line-height: 73px;
     margin: auto;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 .team_slider .slick-prev:after {
@@ -3669,8 +3392,6 @@ Version: 1.0
     height: 150px;
     border-radius: 50%;
     transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
 }
 
 /*----------------------------------------------------
@@ -3744,8 +3465,6 @@ Version: 1.0
 .portfolioPage a.common_btn {
     padding: 22px 30px;
     height: 58px;
-    -webkit-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
 }
 
@@ -3754,8 +3473,6 @@ Version: 1.0
     overflow: hidden;
     margin-bottom: 50px;
     border-radius: 20px;
-    -webkit-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
-    -moz-box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
     box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.10);
 }
 
@@ -3790,19 +3507,13 @@ Version: 1.0
     width: 100%;
     height: 100%;
     content: '';
-    -webkit-transition-timing-function: cubic-bezier(.07, .72, .24, 1);
     transition-timing-function: cubic-bezier(.07, .72, .24, 1);
-    -webkit-transition-duration: 1s;
     transition-duration: 1s;
     background: rgba(129, 128, 224, .90);
     border-radius: 15px;
     opacity: 0;
     visibility: hidden;
     transition: all ease 400ms;
-    -moz-transition: all ease 400ms;
-    -webkit-transition: all ease 400ms;
-    -ms-transition: all ease 400ms;
-    -o-transition: all ease 400ms;
 }
 
 .singleFolio:hover .foilo_overlay {
@@ -3838,9 +3549,6 @@ Version: 1.0
     position: relative;
     transition: all ease 1200ms;
     -moz-transition: all ease 1200ms;
-    -webkit-transition: all ease 1200ms;
-    -ms-transition: all ease 1200ms;
-    -o-transition: all ease 1200ms;
 }
 
 .singleFolio:hover .foilo_overlay h4 a {
@@ -3859,10 +3567,6 @@ Version: 1.0
     z-index: 5;
     position: relative;
     transition: all ease 1200ms;
-    -moz-transition: all ease 1200ms;
-    -webkit-transition: all ease 1200ms;
-    -ms-transition: all ease 1200ms;
-    -o-transition: all ease 1200ms;
 }
 
 .foilo_overlay a.common_btn {
@@ -3879,10 +3583,6 @@ Version: 1.0
     text-align: center;
     bottom: -30px;
     transition: all ease 1200ms;
-    -moz-transition: all ease 1200ms;
-    -webkit-transition: all ease 1200ms;
-    -ms-transition: all ease 1200ms;
-    -o-transition: all ease 1200ms;
 }
 
 .foilo_overlay a.common_btn::after {
@@ -4033,8 +3733,6 @@ Version: 1.0
 .content_404 a.common_btn {
     padding: 22px 50px;
     height: 58px;
-    -webkit-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
 }
 
@@ -4105,8 +3803,6 @@ Version: 1.0
 .faqPage .common_btn {
     padding: 23px 47.5px;
     height: 60px;
-    -webkit-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
-    -moz-box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
     box-shadow: 0px 0px 25px 0px rgba(46, 55, 136, 0.30);
 }
 
@@ -4125,10 +3821,6 @@ Version: 1.0
     z-index: 1000;
     background: #fff;
     box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
-    -webkit-transition: left 0.3s ease-in-out;
-    -moz-transition: left 0.3s ease-in-out;
-    -ms-transition: left 0.3s ease-in-out;
-    -o-transition: left 0.3s ease-in-out;
     transition: left 0.3s ease-in-out;
 }
 
