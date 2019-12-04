@@ -139,53 +139,15 @@
 </script>
 
 <style lang="scss">
-  .brand-logo-light {
-    height: 65px;
-    width: auto;
-  }
-
-  .rd-navbar-static {
-    .rd-navbar-dropdown {
-      top: 30px;
-      width: auto;
-
-      a {
-        white-space: nowrap !important;
+  .mainmenu.MenuInRight.text-right {
+    li {
+      @media (max-width: 1100px) {
+        font-size: 90%;
       }
-    }
-    .rd-nav-link {
-      font-size: 16px;
-    }
-
-    .rd-nav-item {
-      > .rd-navbar-submenu-toggle {
-        margin-left: 0;
+      @media (max-width: 768px) {
+        font-size: 0.6rem;
+        padding: 15px 10px;
       }
-    }
-
-    &.rd-navbar-transparent {
-      .rd-nav-item {
-        & + .rd-nav-item {
-          margin-left: 20px;
-          display: flex;
-          align-items: center;
-        }
-      }
-    }
-  }
-
-  .rd-navbar-nav {
-    display: flex;
-  }
-  .rd-navbar-panel {
-    min-width: 128px;
-  }
-
-  .rd-navbar--has-dropdown:last-of-type {
-    .rd-navbar-dropdown {
-      left: auto;
-      right: 0;
-      padding-right: 0;
     }
   }
 </style>
