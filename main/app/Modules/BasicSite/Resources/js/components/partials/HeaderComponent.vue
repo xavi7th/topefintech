@@ -1,112 +1,116 @@
 <template>
-  <header class="section page-header">
-    <!-- RD Navbar-->
-    <div class="rd-navbar-wrap rd-navbar-absolute">
-      <nav
-        class="rd-navbar rd-navbar-transparent"
-        data-layout="rd-navbar-fixed"
-        data-sm-layout="rd-navbar-fixed"
-        data-md-layout="rd-navbar-fixed"
-        data-md-device-layout="rd-navbar-fixed"
-        data-lg-layout="rd-navbar-static"
-        data-lg-device-layout="rd-navbar-fixed"
-        data-xl-layout="rd-navbar-static"
-        data-xl-device-layout="rd-navbar-static"
-        data-lg-stick-up-offset="20px"
-        data-xl-stick-up-offset="20px"
-        data-xxl-stick-up-offset="20px"
-        data-lg-stick-up="true"
-        data-xl-stick-up="true"
-        data-xxl-stick-up="true"
-      >
-        <div class="rd-navbar-main-outer">
-          <div class="rd-navbar-main">
-            <!-- RD Navbar Panel-->
-            <div class="rd-navbar-panel">
-              <!-- RD Navbar Toggle-->
-              <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap">
-                <span></span>
-              </button>
-              <!-- RD Navbar Brand-->
-              <div class="rd-navbar-brand">
-                <router-link class="brand" :to="{name:'site.root'}" data-nav>
-                  <img class="brand-logo-dark" src="/img/logo-256.png" alt width="151" height="56" />
-                  <img
-                    class="brand-logo-light"
-                    src="/img/logo-round-small.png"
-                    alt
-                    width="151"
-                    height="56"
-                  />
-                </router-link>
-              </div>
-            </div>
-            <div class="rd-navbar-main-element">
-              <div class="rd-navbar-nav-wrap">
-                <ul class="rd-navbar-nav">
-                  <li class="rd-nav-item">
-                    <a
-                      class="rd-nav-link"
-                      href="https://ibank.amjuuniquemfbng.com/rubikonibank/app.sn"
-                      target="_blank"
-                    >Internet banking</a>
+  <header class="header_1" id="header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-3 col-md-3">
+          <div class="logo">
+            <a href="index.html">
+              <img src="/img/logo.png" alt />
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-7 col-md-7">
+          <nav class="mainmenu MenuInRight text-right">
+            <a href="javascript:void(0);" class="mobilemenu d-md-none d-lg-none d-xl-none">
+              <span></span>
+              <span></span>
+              <span></span>
+            </a>
+            <ul>
+              <li class="menu-item-has-children">
+                <a href="#">home</a>
+                <ul class="sub-menu">
+                  <li>
+                    <a href="index.html">Home 01</a>
                   </li>
-                  <li v-for="(item, index) in routes" :key="index" class="rd-nav-item">
-                    <router-link
-                      :to="`#${item.meta.hash}`"
-                      v-if="item.meta.hash"
-                      class="rd-nav-link"
-                      data-nav
-                    >{{item.meta.breadcrumb}}</router-link>
-                    <router-link
-                      :to="item.path"
-                      v-else
-                      class="rd-nav-link"
-                      data-nav
-                    >{{item.meta.breadcrumb}}</router-link>
-                    <ul class="rd-menu rd-navbar-dropdown" v-if="item.children">
-                      <li
-                        v-for="childItem in item.children.filter(x => !x.meta.navSkip)"
-                        :key="childItem.name"
-                        class="rd-dropdown-item"
-                      >
-                        <router-link
-                          :to="`${childItem.meta.hash}`"
-                          v-if="childItem.meta.hash"
-                          class="nav-link"
-                          data-nav
-                        >{{childItem.meta.breadcrumb}}</router-link>
-                        <router-link
-                          :to="childItem.path"
-                          class="nav-link"
-                          v-else
-                          data-nav
-                        >{{childItem.meta.breadcrumb}}</router-link>
+                  <li>
+                    <a href="index2.html">Home 02</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-item-has-children">
+                <a href="#">Services</a>
+                <ul class="sub-menu">
+                  <li>
+                    <a href="services.html">Service 01</a>
+                  </li>
+                  <li>
+                    <a href="services2.html">Service 02</a>
+                  </li>
+                  <li>
+                    <a href="service_details.html">Service Details</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-item-has-children">
+                <a href="#">Pages</a>
+                <ul class="sub-menu">
+                  <li>
+                    <a href="about.html">About</a>
+                  </li>
+                  <li>
+                    <a href="404.html">404 Page</a>
+                  </li>
+                  <li>
+                    <a href="faq.html">Faq Page</a>
+                  </li>
+                  <li class="menu-item-has-children">
+                    <a href="#">Portfolio</a>
+                    <ul class="sub-menu">
+                      <li>
+                        <a href="portfolio.html">Portfolio</a>
+                      </li>
+                      <li>
+                        <a href="portfolio_detail.html">Portfolio Details</a>
                       </li>
                     </ul>
                   </li>
+                  <li class="menu-item-has-children">
+                    <a href="#">Testimonial</a>
+                    <ul class="sub-menu">
+                      <li>
+                        <a href="testimonial.html">Testimonial 01</a>
+                      </li>
+                      <li>
+                        <a href="testimonial2.html">Testimonial 02</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="team.html">Team Member</a>
+                  </li>
+                  <li>
+                    <a href="application_form.html">Application Form</a>
+                  </li>
+                  <li>
+                    <a href="loan_calculation.html">Loan Calculation</a>
+                  </li>
                 </ul>
-              </div>
-              <!-- <menu-search-bar></menu-search-bar> -->
-            </div>
+              </li>
+              <li class="menu-item-has-children">
+                <a href="#">Blog</a>
+                <ul class="sub-menu">
+                  <li>
+                    <a href="blog.html">Blog Page</a>
+                  </li>
+                  <li>
+                    <a href="single_blog.html">Blog Details</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="contact.html">Contact</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="col-lg-2 col-md-2 hidden-xs">
+          <div class="navigator_btn btn_bg text-right">
+            <a class="common_btn" href="#">Apply Now</a>
           </div>
         </div>
-      </nav>
-    </div>
-
-    <section class="section section-bredcrumbs" v-if="!isHome">
-      <div class="container context-dark breadcrumb-wrapper">
-        <transition name="slide-left" mode="out-in">
-          <h1 :key="breadcrumb">{{ breadcrumb }}</h1>
-        </transition>
-        <ul class="breadcrumbs-custom">
-          <li>
-            <router-link data-nav :to="{name:'site.root'}">Home</router-link>
-          </li>
-          <li class="active">{{ breadcrumb }}</li>
-        </ul>
       </div>
-    </section>
+    </div>
   </header>
 </template>
 

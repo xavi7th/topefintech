@@ -1,181 +1,82 @@
 <template>
-  <footer class="section footer-1">
-    <div class="container">
-      <div class="row row-40 wow fadeIn">
-        <div class="col-md-6 col-lg-3 text-center">
-          <img src="/img/logo-round.png" alt width="100" height="58" />
-          <div class="group-md group-middle social-items">
-            <a
-              data-nav
-              class="icon icon-md novi-icon mdi mdi-facebook"
-              target="_blank"
-              :href="CONSTANTS.facebook"
-            ></a>
-            <a
-              data-nav
-              class="icon icon-md novi-icon mdi mdi-twitter"
-              target="_blank"
-              :href="CONSTANTS.twitter"
-            ></a>
-            <a
-              data-nav
-              class="icon icon-md novi-icon mdi mdi-instagram"
-              target="_blank"
-              :href="CONSTANTS.instagram"
-            ></a>
-            <a
-              data-nav
-              class="icon icon-md novi-icon mdi mdi-facebook-messenger"
-              target="_blank"
-              :href="CONSTANTS.facebookMessenger"
-            ></a>
-            <a
-              data-nav
-              class="icon icon-md novi-icon mdi mdi-linkedin"
-              target="_blank"
-              :href="CONSTANTS.linkedin"
-            ></a>
-            <a
-              data-nav
-              class="icon icon-md novi-icon mdi mdi-snapchat"
-              target="_blank"
-              :href="CONSTANTS.snapchat"
-            ></a>
+  <div>
+    <!-- footer section -->
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-6">
+            <aside class="widget about_widgets">
+              <img src="/img/logo.png" alt />
+              <p>88 694 895 684</p>
+              <p>88 487 983 576</p>
+              <p>
+                <a
+                  href="/cdn-cgi/l/email-protection"
+                  class="__cf_email__"
+                  data-cfemail="54383b353a24382127143339353d387a373b39"
+                >[email&#160;protected]</a>
+              </p>
+            </aside>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <aside class="widget recent_posts">
+              <div class="singleLPost">
+                <h4>
+                  <a href="#">What should you need do to get personal loan ver easay.</a>
+                </h4>
+                <span>20 days ago</span>
+                <p>
+                  Many modern alternatives often eumen incorpo
+                  other content actually detracts from...
+                </p>
+              </div>
+              <div class="singleLPost">
+                <h4>
+                  <a href="#">What should you need do to get personal loan ver easay.</a>
+                </h4>
+                <span>20 days ago</span>
+                <p>
+                  Many modern alternatives often eumen incorpo
+                  other content actually detracts from...
+                </p>
+              </div>
+            </aside>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <aside class="widget subscribe_widgets">
+              <h3>Subscribe our newsletter.</h3>
+              <form action="#" method="post">
+                <input type="email" placeholder="Email address" name="email" />
+                <input type="text" placeholder="Phone no." name="phone" />
+                <input type="submit" value="Subscribe now" />
+              </form>
+            </aside>
           </div>
         </div>
-        <div class="col-md-6 col-lg-3">
-          <h5 class="title">Customer Services</h5>
-          <ul class="contact-box">
-            <li class="pl-3">
-              <div class="unit unit-horizontal unit-spacing-xxs">
-                <div class="unit-body">
-                  <ul class="list-links">
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Help Center</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Internet Banking Security</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Card Security</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Online Security</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Bank Verification Number (BVN)</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Whistle Blower</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Dispense Error</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.contact'}" tag="li">
-                      <a data-nav>Contact Us</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Locate a Branch</a>
-                    </router-link>
-                  </ul>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <h5 class="title">Quick Links</h5>
-          <ul class="contact-box">
-            <li class="pl-3">
-              <div class="unit unit-horizontal unit-spacing-xxs">
-                <div class="unit-body">
-                  <ul class="list-links">
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Scam Alert</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Replace Your Card</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>e-Channels Products</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.contact'}" tag="li">
-                      <a data-nav>Amju Mobile App</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.contact'}" tag="li">
-                      <a data-nav>Verve Cards</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Reactivate Dormant Account</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Request Cheque Book</a>
-                    </router-link>
-                    <router-link :to="{name: 'site.root'}" tag="li">
-                      <a data-nav>Letter of Credit Application Form</a>
-                    </router-link>
-                  </ul>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <h5 class="title">Get in Touch</h5>
-          <form
-            class="rd-form rd-mailform"
-            data-form-output="form-output-global"
-            data-form-type="contact"
-            method="post"
-            @submit.prevent="sendMessage"
-          >
-            <div class="form-wrap">
-              <input
-                class="form-input"
-                id="contact-name-footer"
-                type="text"
-                name="name"
-                v-model="details.name"
-                data-constraints="@Required"
-              />
-              <label class="form-label" for="contact-name-footer">Name</label>
-            </div>
-            <div class="form-wrap">
-              <input
-                class="form-input"
-                id="contact-email-footer"
-                type="email"
-                name="email"
-                v-model="details.email"
-                data-constraints="@Email @Required"
-              />
-              <label class="form-label" for="contact-email-footer">E-mail</label>
-            </div>
-            <div class="form-wrap">
-              <label class="form-label" for="contact-message-footer">Message</label>
-              <textarea
-                class="form-input"
-                id="contact-message-footer"
-                name="message"
-                v-model="details.msg"
-                data-constraints="@Required"
-              ></textarea>
-            </div>
-            <button class="button button-primary" type="submit">Send</button>
-          </form>
+      </div>
+    </footer>
+    <!-- footer section -->
+
+    <!-- Copyright section -->
+    <section class="copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p>
+              Copyright
+              <a href="#">Payloan</a>. All rights reserved
+            </p>
+          </div>
+          <div class="col-sm-6 text-right">
+            <a href="#" id="backTo">
+              <i class="flaticon-chevron"></i>
+            </a>
+          </div>
         </div>
       </div>
-
-      <p class="rights">
-        <span>&copy;&nbsp;</span>
-        <span class="copyright-year"></span>
-        <span>&nbsp;</span>
-        <span>All rights reserved</span>
-        <span>.&nbsp;</span>
-        <router-link data-nav :to="{name: 'site.privacy'}">Privacy Policy</router-link>
-      </p>
-    </div>
-  </footer>
+    </section>
+    <!-- Copyright section -->
+  </div>
 </template>
 
 <script>
