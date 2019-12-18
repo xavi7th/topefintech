@@ -3,7 +3,7 @@
     <div class="auth-box card-animation">
       <div class="auth-logo">
         <div class="header-logo logo-type no-margin">
-          <a href="/">24fxMining</a>
+          <a href="/">SampleSite</a>
         </div>
       </div>
       <div class="auth-desc">

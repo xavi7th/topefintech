@@ -6,7 +6,7 @@
         <!-- header left -->
         <div class="header-left">
           <div class="header-logo logo-type">
-            <router-link :to="{name:'dashboard.root'}">24fxMining</router-link>
+            <router-link :to="{name:'dashboard.root'}">SampleSite</router-link>
           </div>
         </div>
         <!-- header left #end -->

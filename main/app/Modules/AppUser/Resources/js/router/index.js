@@ -13,7 +13,7 @@ function view( name ) {
 
 Vue.use( Router )
 
-const APP_NAME = '24fxMining Dashboard'
+const APP_NAME = 'SampleSite Dashboard'
 
 export default new Router( {
     mode: 'history',
