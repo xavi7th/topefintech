@@ -2,7 +2,7 @@
   <footer>
     <div class="container">
       <div class="footer-content">
-        <p>2011 - {{ (new Date().getFullYear() )}} &copy; Copyright 24fxMining - All Rights Reserved.</p>
+        <p>2011 - {{ (new Date().getFullYear() )}} &copy; Copyright SampleSite - All Rights Reserved.</p>
         <nav></nav>
       </div>
     </div>

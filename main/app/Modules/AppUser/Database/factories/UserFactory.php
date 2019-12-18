@@ -24,7 +24,7 @@ $factory->define(AppUser::class, function (Faker $faker) {
 		'country' => $faker->country,
 		'phone' => $faker->phoneNumber,
 		'currency' => $faker->currencyCode,
-		'id_card' => '/storage/id_cards/' . $faker->file(public_path('img/team/'), public_path('storage/id_cards/'), false),
+		'id_card' => '/storage/id_cards/',
 		'remember_token' => Str::random(10),
 	];
 });
