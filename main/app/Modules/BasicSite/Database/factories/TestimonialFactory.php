@@ -22,7 +22,7 @@ $factory->define(Testimonial::class, function (Faker $faker) {
 		'name' => $faker->name,
 		'city' => $faker->city,
 		'country' => $faker->randomElement(['USA', 'UK', 'Brazil', 'Portugal', 'Argentina', 'Kenya', $faker->country]),
-		'img' => '/storage/testimonial_images/' . $faker->file(public_path('img/team/'), public_path('storage/testimonial_images/'), false),
+		'img' => '/storage/testimonial_images/',
 		'testimonial' => $faker->text(),
 	];
 });
