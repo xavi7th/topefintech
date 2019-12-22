@@ -1,5 +1,8 @@
 <?php
 
+use App\Modules\Admin\Models\Admin;
+use App\Modules\AppUser\Models\AppUser;
+
 return [
 
 	/*
@@ -71,7 +74,7 @@ return [
 	'providers' => [
 		'users' => [
 			'driver' => 'eloquent',
-			'model' => App\User::class,
+			'model' => AppUser::class,
 		],
 		'admins' => [
 			'driver' => 'eloquent',

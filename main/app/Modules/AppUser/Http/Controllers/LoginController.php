@@ -33,14 +33,14 @@ class LoginController extends Controller
 	// protected $redirectTo = route('appuser.dashboard');
 	protected function redirectTo()
 	{
-		if (request()->ajax()) {
-			if (Auth::appuser()->is_verified()) {
-				return response()->json(['status' => true], 202);
-			} else {
-				Auth::logout();
-				return response()->json(['message' => 'Unverified user'], 416);
-			}
-		}
+		// if (request()->ajax()) {
+		// 	if (Auth::appuser()->is_verified()) {
+		// 		return response()->json(['status' => true], 202);
+		// 	} else {
+		// 		Auth::logout();
+		// 		return response()->json(['message' => 'Unverified user'], 416);
+		// 	}
+		// }
 		return route(User::dashboardRoute());
 	}
 
@@ -88,28 +88,8 @@ class LoginController extends Controller
 	 */
 	protected function authenticated(Request $request, $user)
 	{
-		if (!User::isAppUser()) {
-			Auth::logout();
-			session()->invalidate();
-			return response()->json(['message' => 'Access Denied'], 403);
-		} elseif (!$user->is_active) {
-			Auth::logout();
-			if ($request->ajax()) {
-				return response()->json(['msg' => 'Your account has been suspended from trading activities. Kindly contact your account administrator for more information.'], 205);
-			}
-			return redirect()->route('login');
-		} else {
-			Log::critical($user->email . ' logged into his dashboard');
-			if ($request->ajax()) {
-				if (Auth::appuser()->is_verified()) {
-					return response()->json(['status' => true], 202);
-				} else {
-					Auth::logout();
-					return response()->json(['message' => 'Unverified user'], 416);
-				}
-			}
-			return redirect()->route(User::dashboardRoute());
-		}
+		Log::critical($user->email . ' logged into his dashboard');
+		return redirect()->route(User::dashboardRoute());
 	}
 
 	/**

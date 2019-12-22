@@ -103,7 +103,7 @@ return [
 			'connection' => 'default',
 			'collection' => 'err_logs',
 			'detailed' => true,
-			'max_rows' => env('MAX_DB_LOG_ROWS')
+			'max_rows' => env('MAX_DB_LOG_ROWS', 50)
 		]
 	],
 

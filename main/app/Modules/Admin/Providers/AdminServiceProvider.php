@@ -34,7 +34,7 @@ class AdminServiceProvider extends ServiceProvider
 
 		/**** Register the modules middlewares *****/
 		app()->make('router')->aliasMiddleware('admins', OnlyAdmins::class);
-		app()->make('router')->aliasMiddleware('verified', VerifiedAdmins::class);
+		app()->make('router')->aliasMiddleware('admin_verified', VerifiedAdmins::class);
 	}
 
 	/**

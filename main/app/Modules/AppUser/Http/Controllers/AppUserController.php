@@ -31,13 +31,13 @@ class AppUserController extends Controller
 		// ResetPasswordController::routes();
 		// ForgotPasswordController::routes();
 		// ConfirmPasswordController::routes();
-		// VerificationController::routes();
+		VerificationController::routes();
 
 		Route::get('/auth/verify', function () {
 			return ['LOGGED_IN' => Auth::check()];
 		})->prefix(AppUser::DASHBOARD_ROUTE_PREFIX . '/api');
 
-		Route::group(['middleware' => ['auth', 'appusers', 'verified_users'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+		Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
 			Route::group(['prefix' => 'api'], function () {
 
@@ -56,6 +56,8 @@ class AppUserController extends Controller
 			});
 
 			Route::get('/{subcat?}', function () {
+				// Auth::logout();
+				// dd(Auth::appuser());
 				return view('appuser::index');
 			})->name('appuser.dashboard')->where('subcat', '^((?!(api)).)*'); //Matches all routes except routes that start with the list provided.
 		});

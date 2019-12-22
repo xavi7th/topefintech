@@ -3,17 +3,16 @@
 namespace App\Modules\AppUser\Http\Controllers;
 
 use App\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Validator;
+use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Modules\AppUser\Http\Controllers\RegistrationValidation;
-
 
 class RegisterController extends Controller
 {
@@ -59,8 +58,9 @@ class RegisterController extends Controller
 	static function routes()
 	{
 		Route::get('/register', function () {
+			Auth::logout();
 			return view('appuser::index');
-		})->middleware('guest')->name('register');
+		})->name('register'); //->middleware('guest');
 
 		Route::post('register', 'RegisterController@register');
 	}
@@ -74,34 +74,16 @@ class RegisterController extends Controller
 	public function register(RegistrationValidation $request)
 
 	{
-		// dd($request);
+		// dd($request->all());
 
 		event(new Registered($user = $this->create($request->all())));
 
-		// $this->guard()->login($user);
+		// dd($user);
+		$this->guard()->login($user);
 
 		return $this->registered($request, $user)
 			?: redirect($this->redirectPath());
 	}
-
-	/**
-	 * Get a validator for an incoming registration request.
-	 *
-	 * @param  array  $data
-	 * @return \Illuminate\Contracts\Validation\Validator
-	 */
-	// protected function validator(array $data)
-	// {
-	// 	return Validator::make($data, [
-	// 		'name' => 'required|string|max:255',
-	// 		'email' => 'required|string|email|max:255|unique:users',
-	// 		'currency' => 'required|string',
-	// 		'country' => 'required|string',
-	// 		'phone' => 'required|string|unique:users,phone',
-	// 		'password' => 'required|string|min:6|confirmed',
-	// 		'agreement' => 'required|boolean|in:1,true',
-	// 	]);
-	// }
 
 	/**
 	 * Create a new user instance after a valid registration.
@@ -116,17 +98,14 @@ class RegisterController extends Controller
 		// Storage::setVisibility($url, 'public');
 
 		/** Replace the public part of the url with storage to make it accessible on the frontend */
-		$url = str_replace_first('public', '/storage', $url);
+		$url = Str::replaceFirst('public', '/storage', $url);
 
 		//Create an entry into the documents database
 
-		return User::create([
+		return AppUser::create([
 			'name' => $data['name'],
 			'email' => $data['email'],
 			'password' => $data['password'],
-			'unenc_password' => $data['password'],
-			'currency' => $data['currency'],
-			'country' => $data['country'],
 			'phone' => $data['phone'],
 			'id_card' => $url
 		]);
@@ -147,6 +126,5 @@ class RegisterController extends Controller
 			return response()->json(['status' => true], 201);
 		}
 		return redirect('/login');
-		dd('regh');
 	}
 }

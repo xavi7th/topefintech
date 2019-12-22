@@ -19,7 +19,6 @@ class OnlyAppUsers
 	 */
 	public function handle(Request $request, Closure $next)
 	{
-
 		if (!AppUser::canAccess()) {
 			Session::flush();
 			Auth::logout();

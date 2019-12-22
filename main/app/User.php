@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Auth;
 use Watson\Rememberable\Rememberable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -50,11 +51,19 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	static function dashboardRoute(): string
 	{
+
 		if (Auth::admin()) {
 			return 'admin.dashboard';
+		} else if (Auth::appuser()) {
+			return  'appuser.dashboard';
 		} else {
-			return 'home';
+			return route('home');
 		}
+	}
+
+	public function setPasswordAttribute($value)
+	{
+		$this->attributes['password'] = bcrypt($value);
 	}
 
 	public function toFlare(): array

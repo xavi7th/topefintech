@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Models;
 
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\WithdrawalRequest;
@@ -10,7 +11,7 @@ use App\Modules\AppUser\Models\WithdrawalRequest;
 class AppUser extends User
 {
 	protected $fillable = [
-		'name', 'email', 'password', 'unenc_password', 'currency', 'country', 'phone', 'id_card'
+		'name', 'email', 'password', 'phone', 'id_card'
 	];
 
 	protected $casts = [
@@ -22,7 +23,7 @@ class AppUser extends User
 
 	static function canAccess()
 	{
-		return parent::isAppUser();
+		return Auth::user() instanceof AppUser;
 	}
 
 	public function is_verified()
@@ -88,12 +89,12 @@ class AppUser extends User
 	 *
 	 * @return void
 	 */
-	protected static function boot()
-	{
-		parent::boot();
+	// protected static function boot()
+	// {
+	// 	parent::boot();
 
-		static::addGlobalScope('appUsersOnly', function (Builder $builder) {
-			$builder->where('role_id', parent::$app_user_id);
-		});
-	}
+	// 	static::addGlobalScope('appUsersOnly', function (Builder $builder) {
+	// 		$builder->where('role_id', parent::$app_user_id);
+	// 	});
+	// }
 }

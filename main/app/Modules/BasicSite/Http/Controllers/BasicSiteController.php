@@ -9,8 +9,8 @@ use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
+use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Support\Facades\Artisan;
-use App\Modules\BasicSite\Models\AppUser;
 use App\Modules\BasicSite\Models\Message;
 use App\Modules\AppUser\Models\TeamMember;
 use App\Modules\BasicSite\Models\Testimonial;
@@ -56,7 +56,7 @@ class BasicSiteController extends Controller
 
 			Route::get('/{subcat?}', function () {
 				return view('basicsite::index');
-			})->where('subcat', '^((?!(api|' . Admin::DASHBOARD_ROUTE_PREFIX . '|tinker|_debugbar|css|js|_ignition|ignition-vendor)).)*')->name('home'); //Matches all routes except routes that start with the list provided.
+			})->where('subcat', '^((?!(api|' . Admin::DASHBOARD_ROUTE_PREFIX . '|' . AppUser::DASHBOARD_ROUTE_PREFIX . '|tinker|_debugbar|css|js|_ignition|ignition-vendor)).)*')->name('home'); //Matches all routes except routes that start with the list provided.
 
 		});
 

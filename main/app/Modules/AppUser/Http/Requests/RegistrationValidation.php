@@ -2,10 +2,8 @@
 
 namespace App\Modules\AppUser\Http\Controllers;
 
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
-use \Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 
 class RegistrationValidation extends FormRequest
@@ -20,8 +18,8 @@ class RegistrationValidation extends FormRequest
 		return [
 			'name' => 'required|string|max:255',
 			'email' => 'required|string|email|max:255|unique:users,email',
-			'currency' => 'required|string|not_in:null',
-			'country' => 'required|string|not_in:null',
+			// 'currency' => 'required|string|not_in:null',
+			// 'country' => 'required|string|not_in:null',
 			'phone' => 'required|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|unique:users,phone',
 			'password' => 'required|string|min:6|confirmed',
 			'id_card' => 'required|file|mimes:jpeg,bmp,png,pdf',
@@ -61,6 +59,7 @@ class RegistrationValidation extends FormRequest
 			'id_card.required' => 'Upload a valid ID Card for verification purposes',
 			'id_card.mimes' => 'Your ID Card must be an image of a pdf file',
 			'agreement.required' => 'You must accept our terms and conditions to register',
+			'agreement.in' => 'You must accept our terms and conditions to register',
 		];
 	}
 
@@ -77,6 +76,7 @@ class RegistrationValidation extends FormRequest
 		 * * And handle there. That will help for reuse. Handling here for compactness purposes
 		 * ? Who knows they might ask for a different format for the enxt validation
 		 */
+
 		throw new AxiosValidationExceptionBuilder($validator);
 	}
 }

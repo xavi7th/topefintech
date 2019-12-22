@@ -2,10 +2,13 @@
 
 namespace App\Modules\AppUser\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\User;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
 class VerificationController extends Controller
@@ -24,11 +27,16 @@ class VerificationController extends Controller
 	use VerifiesEmails;
 
 	/**
-	 * Where to redirect users after verification.
+	 * Get the path the user should be redirected to.
 	 *
-	 * @var string
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return string
 	 */
-	protected $redirectTo = '/home';
+
+	protected function redirectTo()
+	{
+		return route(User::dashboardRoute());
+	}
 
 	/**
 	 * Create a new controller instance.
@@ -49,10 +57,23 @@ class VerificationController extends Controller
 	 */
 	static function routes()
 	{
-		Route::namespace('\App\Http\Controllers\Auth')->group(function () {
-			Route::get('email/verify', 'VerificationController@show')->name('verification.notice');
-			Route::get('email/verify/{id}/{hash}', 'VerificationController@verify')->name('verification.verify');
-			Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
-		});
+		// Route::namespace('\App\Http\Controllers\Auth')->group(function () {
+		Route::get('email/verify', 'VerificationController@show')->name('verification.notice');
+		Route::get('email/verify/{id}/{hash}', 'VerificationController@verify')->name('verification.verify');
+		Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
+		// });
+	}
+
+	/**
+	 * Show the email verification notice.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function show(Request $request)
+	{
+		return $request->user()->hasVerifiedEmail()
+			? redirect($this->redirectPath())
+			: abort(401, 'Access denied without email verification');
 	}
 }
