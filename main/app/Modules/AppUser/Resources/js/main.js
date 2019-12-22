@@ -30,34 +30,54 @@ let mediaHandler = () => {
     // } )
 }
 
-router.beforeEach( ( to, from, next ) => {
-    document.title = to.meta.title
-    /**
-     * Emit is loading event? Will App component catch it?
-     */
-
-
-    // store.commit( 'setLoading', true )
-    next()
-} )
-
-router.afterEach( ( to, from ) => {
-    /**
-     * Emit finished loading event?
-     */
-    // store.commit( 'setLoading', false )
-    /**
-     * Handle resize based on the browser size
-     */
-    mediaHandler()
-} )
-
-/* eslint-disable no-new */
-new Vue( {
-    el: '#app',
-    router,
-    template: '<App/>',
-    components: {
-        App
+axios.get( '/user/auth/verify' ).then( ( {
+    data: {
+        LOGGED_IN,
+        user
     }
+} ) => {
+
+    Object.defineProperty( Vue.prototype, '$user', {
+        value: user,
+        writable: false
+    } )
+
+    router.beforeEach( ( to, from, next ) => {
+        document.title = to.meta.title
+        if ( to.path.match( "login" ) || to.path.match( "register" ) ) {
+            next()
+        } else if ( LOGGED_IN ) {
+            next()
+        } else {
+            next( {
+                name: 'dashboard.login'
+            } )
+        }
+
+
+
+        // store.commit( 'setLoading', true )
+        next()
+    } )
+
+    router.afterEach( ( to, from ) => {
+        /**
+         * Emit finished loading event?
+         */
+        // store.commit( 'setLoading', false )
+        /**
+         * Handle resize based on the browser size
+         */
+        mediaHandler()
+    } )
+
+    /* eslint-disable no-new */
+    new Vue( {
+        el: '#app',
+        template: '<App/>',
+        components: {
+            App
+        },
+        router,
+    } )
 } )

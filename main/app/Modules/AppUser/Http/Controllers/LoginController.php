@@ -41,6 +41,10 @@ class LoginController extends Controller
 		// 		return response()->json(['message' => 'Unverified user'], 416);
 		// 	}
 		// }
+
+		if (request()->expectsJson()) {
+			return response()->json(['rsp' => true], 202);
+		}
 		return route(User::dashboardRoute());
 	}
 
@@ -72,7 +76,6 @@ class LoginController extends Controller
 	 */
 	protected function validateLogin(Request $request)
 	{
-		// dd($request->all());
 		$this->validate($request, [
 			$this->username() => 'required|string',
 			'password' => 'required|string',
@@ -88,7 +91,9 @@ class LoginController extends Controller
 	 */
 	protected function authenticated(Request $request, $user)
 	{
-		Log::critical($user->email . ' logged into his dashboard');
+		if ($request->expectsJson()) {
+			return response()->json(['rsp' => true], 202);
+		}
 		return redirect()->route(User::dashboardRoute());
 	}
 

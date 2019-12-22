@@ -87,39 +87,13 @@
               text: "Accessing your dashboard..."
             });
 
-            axios
-              .post(siteLogin, { ...this.details })
-              .then(rsp => {
-                if (undefined !== rsp && rsp.status == 202) {
-                  swal.close();
-                  sessionStorage.clear();
-                  this.$router.push({ name: "dashboard.root" });
-                } else if (undefined !== rsp && rsp.status == 205) {
-                  swal
-                    .fire({
-                      title: "Suspended Account",
-                      text: rsp.data.msg,
-                      type: "warning"
-                    })
-                    .then(() => {
-                      location.reload();
-                    });
-                  // this.$router.push({ name: "dashboard.login" });
-                }
-              })
-              .catch(err => {
-                if (err.response.status == 416) {
-                  swal
-                    .fire({
-                      title: "Unverified",
-                      text: `Your newly registered account has not been approved by our monitoring team. Kindly check back later.`,
-                      type: "info"
-                    })
-                    .then(() => {
-                      location.replace("/");
-                    });
-                }
-              });
+            axios.post(siteLogin, { ...this.details }).then(rsp => {
+              if (undefined !== rsp && rsp.status == 202) {
+                swal.close();
+                // sessionStorage.clear();
+                this.$router.push({ name: "dashboard.root" });
+              }
+            });
           }
         });
       }

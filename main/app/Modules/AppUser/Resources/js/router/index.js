@@ -79,7 +79,7 @@ export default new Router( {
         {
             path: '*',
             redirect: {
-                name: 'dashboard.login'
+                name: 'dashboard.root'
             }
         }
     ],

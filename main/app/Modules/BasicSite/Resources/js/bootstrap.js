@@ -88,7 +88,7 @@ window.axios.interceptors.response.use(
             } else if ( err.response.status == 403 ) {
                 swal.fire( {
                     title: 'Forbidden',
-                    text: err.response.message || 'Action is forbidden to user',
+                    text: err.response.data.message || 'Action is forbidden to user',
                     icon: 'error',
                 } )
             } else if ( err.response.status == 401 ) {

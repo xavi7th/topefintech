@@ -34,8 +34,12 @@ class AppUserController extends Controller
 		VerificationController::routes();
 
 		Route::get('/auth/verify', function () {
-			return ['LOGGED_IN' => Auth::check()];
-		})->prefix(AppUser::DASHBOARD_ROUTE_PREFIX . '/api');
+			if (Auth::check()) {
+				return ['LOGGED_IN' => true, 'user' => Auth::user()];
+			} else {
+				return ['LOGGED_IN' => false];
+			}
+		})->prefix(AppUser::DASHBOARD_ROUTE_PREFIX);
 
 		Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
