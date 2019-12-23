@@ -50,7 +50,7 @@ export default new Router( {
             },
         },
         {
-            path: 'admin.ui',
+            path: '',
             component: view( 'EmptyComponent' ),
             meta: {
                 iconClass: 'home',

@@ -28,7 +28,7 @@
   import DashboardHeader from "@dashboard-components/partials/DashboardHeader";
   import DashboardFooter from "@dashboard-components/partials/DashboardFooter";
   import DashboardNav from "@dashboard-components/partials/DashboardNav";
-  import { logout } from "@dashboard-assets/js/config/endpoints";
+  import { logout } from "@dashboard-assets/js/config";
   export default {
     name: "DashboardApp",
     components: {

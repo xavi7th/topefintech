@@ -76,8 +76,6 @@ export const mixins = {
                     this.$router.replace( {
                         name: 'dashboard.login'
                     } )
-                } else {
-                    this.getAccDetails()
                 }
             } )
         }
