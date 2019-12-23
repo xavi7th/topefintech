@@ -63,8 +63,8 @@
 </template>
 
 <script>
-  import { siteLogin } from "@dashboard-assets/js/config/endpoints";
-  import mixins from "@dashboard-assets/js/config/mixins";
+  import { siteLogin } from "@dashboard-assets/js/config";
+  import { mixins } from "@dashboard-assets/js/config";
   export default {
     data: () => ({
       details: {}

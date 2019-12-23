@@ -16,7 +16,7 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 use App\Modules\AppUser\Http\Controllers\ResetPasswordController;
 use App\Modules\AppUser\Http\Controllers\ForgotPasswordController;
 use App\Modules\AppUser\Http\Controllers\ConfirmPasswordController;
-
+use PhpParser\Node\Expr\Cast\Object_;
 
 class AppUserController extends Controller
 {
@@ -37,7 +37,7 @@ class AppUserController extends Controller
 			if (Auth::check()) {
 				return ['LOGGED_IN' => true, 'user' => Auth::user()];
 			} else {
-				return ['LOGGED_IN' => false];
+				return ['LOGGED_IN' => false, 'user' => []];
 			}
 		})->prefix(AppUser::DASHBOARD_ROUTE_PREFIX);
 

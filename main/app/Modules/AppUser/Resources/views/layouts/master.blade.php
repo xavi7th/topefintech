@@ -19,10 +19,10 @@
             @yield('contents')
         </div>
 
-        <script src="{{ mix('js/dashboard-app-vendor.js') }}"></script>
+        <script src="{{ mix('js/user-dashboard-app-vendor.js') }}"></script>
         <script src="{{ mix('js/manifest.js') }}"></script>
         <script src="{{ mix('js/vendor.js') }}"></script>
-        <script src="{{ mix('js/dashboard-app.js') }}"></script>
+        <script src="{{ mix('js/user-dashboard-app.js') }}"></script>
 
         @yield('customJS')
 

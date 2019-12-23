@@ -8,15 +8,18 @@
     </transition>
   </div>
 
-  <div class="wrapper" v-else>
+  <div class="wrapper layout-side-menu" v-else>
     <transition name="fade">
       <pre-loader v-if="isLoading"></pre-loader>
     </transition>
-    <dashboard-header @logout-user="logoutUser()"></dashboard-header>
-    <transition name="slide-out-in" mode="out-in" :duration="{ enter: 1300, leave: 200 }">
-      <router-view @page-loaded="pageLoaded" @is-leaving="isLoading = true"></router-view>
-    </transition>
-    <dashboard-footer></dashboard-footer>
+    <dashboard-nav></dashboard-nav>
+    <div class="wrapper-r">
+      <dashboard-header @logout-user="logoutUser()"></dashboard-header>
+      <transition name="slide-out-in" mode="out-in" :duration="{ enter: 1300, leave: 200 }">
+        <router-view @page-loaded="pageLoaded" @is-leaving="isLoading = true"></router-view>
+      </transition>
+      <dashboard-footer></dashboard-footer>
+    </div>
   </div>
 </template>
 
@@ -24,12 +27,14 @@
   import PreLoader from "@dashboard-components/PreLoader";
   import DashboardHeader from "@dashboard-components/partials/DashboardHeader";
   import DashboardFooter from "@dashboard-components/partials/DashboardFooter";
+  import DashboardNav from "@dashboard-components/partials/DashboardNav";
   import { logout } from "@dashboard-assets/js/config/endpoints";
   export default {
     name: "DashboardApp",
     components: {
       DashboardHeader,
       DashboardFooter,
+      DashboardNav,
       PreLoader
     },
     data: () => ({
@@ -47,14 +52,9 @@
         logout("Securing your account and logging you out.");
       },
       pageLoaded() {
-        // this.$loadScript("/js/particles-app.js").then(() => {
-        this.$loadScript("/js/dashboard-main.js").then(() => {
+        this.$loadScript("/js/user-dashboard-main.js").then(() => {
           this.isLoading = false;
         });
-        // .then(() => {
-        //   // $(".preloader").fadeOut(300);
-        // });
-        // });
       }
     }
   };

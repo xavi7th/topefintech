@@ -34,6 +34,8 @@ export default new Router( {
             name: 'dashboard.register',
             meta: {
                 title: 'Register | ' + APP_NAME,
+                menuName: 'Register',
+                skip: true
             },
         },
         {
@@ -42,6 +44,41 @@ export default new Router( {
             name: 'dashboard.login',
             meta: {
                 title: 'Login | ' + APP_NAME,
+                menuName: 'Login',
+                iconClass: 'fa fa-home',
+                skip: true
+            },
+        },
+        {
+            path: 'admin.ui',
+            component: view( 'EmptyComponent' ),
+            meta: {
+                iconClass: 'home',
+                menuName: 'Manage UI',
+                skip: true
+            },
+            children: [ {
+                path: '/manage-ui/testimonials',
+                component: view( 'ui/ManageTestimonials' ),
+                name: 'admin.ui.testimonials',
+                meta: {
+                    title: APP_NAME + ' | Manage Testimonials',
+                    iconClass: 'home',
+                    menuName: 'Manage Testimonials'
+                },
+            } ],
+
+        },
+        {
+            path: '/admins/:id/route-permissions',
+            component: view( 'dashboard/ManageAdmins' ),
+            name: 'admin.admins.permissions',
+            props: true,
+            meta: {
+                title: APP_NAME + ' | View Admin Permissions',
+                iconClass: 'home',
+                menuName: 'View Admin Permission',
+                skip: true
             },
         },
         {
@@ -50,22 +87,8 @@ export default new Router( {
             name: 'dashboard.root',
             meta: {
                 title: APP_NAME,
-            },
-        },
-        // {
-        // 	path: '/user/invest-funds',
-        // 	component: view( 'dashboard/InvestFunds' ),
-        // 	name: 'dashboard.invest',
-        // 	meta: {
-        // 		title: 'Invest Funds | ' + APP_NAME,
-        // 	},
-        // },
-        {
-            path: '/user/make-withdrawal',
-            component: view( 'dashboard/MakeWithdrawal' ),
-            name: 'dashboard.withdraw',
-            meta: {
-                title: 'Withdraw Funds | ' + APP_NAME,
+                menuName: 'Dashboard',
+                iconClass: 'fas fa-th-large',
             },
         },
         {
@@ -74,6 +97,8 @@ export default new Router( {
             name: 'dashboard.profile',
             meta: {
                 title: 'My Profile | ' + APP_NAME,
+                menuName: 'Profile',
+                skip: true
             },
         },
         {

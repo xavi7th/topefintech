@@ -7,6 +7,9 @@ import App from './AppComponent'
 import router from './router'
 import LoadScript from 'vue-plugin-load-script'
 import Vue2Filters from 'vue2-filters'
+import {
+    verifyAuth
+} from "@dashboard-assets/js/config";
 
 Vue.use( VeeValidate )
 Vue.use( Vue2Filters )
@@ -30,7 +33,7 @@ let mediaHandler = () => {
     // } )
 }
 
-axios.get( '/user/auth/verify' ).then( ( {
+axios.get( verifyAuth ).then( ( {
     data: {
         LOGGED_IN,
         user

@@ -31,16 +31,20 @@ mix.scripts( [
     __dirname + '/Resources/js/vendor/chartjs.min.js',
     __dirname + '/Resources/js/vendor/raphael.min.js',
     __dirname + '/Resources/js/vendor/owl.carousel.min.js'
-], 'public_html/js/dashboard-app-vendor.js' );
+], 'public_html/js/user-dashboard-app-vendor.js' );
 
 mix.scripts( [
     __dirname + '/Resources/js/vendor/main.js'
-], 'public_html/js/dashboard-main.js' );
+], 'public_html/js/user-dashboard-main.js' );
+
+mix.scripts( [
+    __dirname + '/Resources/js/vendor/layout-side.js'
+], 'public_html/js/user-dashboard-nav.js' );
 
 mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
 mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
 
-mix.js( __dirname + '/Resources/js/main.js', 'js/dashboard-app.js' )
+mix.js( __dirname + '/Resources/js/main.js', 'js/user-dashboard-app.js' )
 
 if ( mix.inProduction() ) {
     mix.version();
