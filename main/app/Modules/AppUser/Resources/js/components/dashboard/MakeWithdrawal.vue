@@ -449,11 +449,8 @@
 </template>
 
 <script>
-  import mixins from "@dashboard-assets/js/config/mixins";
-  import {
-    withdrawFunds,
-    withdrawalRequests
-  } from "@dashboard-assets/js/config/endpoints";
+  import { mixins } from "@dashboard-assets/js/config";
+  // import { withdrawFunds, withdrawalRequests } from "@dashboard-assets/js/config";
   export default {
     name: "MakeWithdrawal",
     mixins: [mixins],

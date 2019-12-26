@@ -149,8 +149,8 @@
 </template>
 
 <script>
-  import { siteRegister } from "@dashboard-assets/js/config/endpoints";
-  import mixins from "@dashboard-assets/js/config/mixins";
+  import { siteRegister } from "@dashboard-assets/js/config";
+  import { mixins } from "@dashboard-assets/js/config";
   // import countriesList from "@basicsite-assets/js/CountriesList";
   // import { basicCurrencies } from "@basicsite-assets/js/CurrenciesList";
   export default {

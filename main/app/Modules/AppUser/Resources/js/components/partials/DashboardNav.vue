@@ -2,7 +2,7 @@
   <aside class="side-menu">
     <div class="side-menu-head">
       <div class="header-logo logo-type no-margin">
-        <a href="index.html">Plyenz.</a>
+        <a href="index.html">SmartScoop</a>
       </div>
     </div>
     <nav data-simplebar>

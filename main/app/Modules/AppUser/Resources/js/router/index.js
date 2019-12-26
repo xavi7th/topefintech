@@ -50,23 +50,96 @@ export default new Router( {
             },
         },
         {
-            path: '',
+            path: '/user/dashboard',
+            component: view( 'dashboard/UserDashboard' ),
+            name: 'dashboard.root',
+            meta: {
+                title: APP_NAME,
+                menuName: 'Dashboard',
+                iconClass: 'fas fa-th-large',
+            },
+        },
+        {
+            path: '/savings',
             component: view( 'EmptyComponent' ),
             meta: {
-                iconClass: 'home',
-                menuName: 'Manage UI',
-                skip: true
+                iconClass: 'fa fa-piggy-bank',
+                menuName: 'Savings',
             },
             children: [ {
-                path: '/manage-ui/testimonials',
-                component: view( 'ui/ManageTestimonials' ),
-                name: 'admin.ui.testimonials',
-                meta: {
-                    title: APP_NAME + ' | Manage Testimonials',
-                    iconClass: 'home',
-                    menuName: 'Manage Testimonials'
+                    path: '/savings/add',
+                    component: view( 'savings/AddSavings' ),
+                    name: 'savings.add',
+                    meta: {
+                        title: APP_NAME + ' | Add Savings',
+                        menuName: 'Add to Savings'
+                    },
                 },
-            } ],
+                {
+                    path: '/savings/autosave-settings',
+                    component: view( 'savings/AutosaveSettings' ),
+                    name: 'savings.autosave-settings',
+                    meta: {
+                        title: APP_NAME + ' | Autosave Settings',
+                        menuName: 'Autosave Settings'
+                    },
+                },
+                {
+                    path: '/savings/savings-distribution',
+                    component: view( 'savings/SavingsDistribution' ),
+                    name: 'savings.savings-distribution',
+                    meta: {
+                        title: APP_NAME + ' | Savings Distribution',
+                        menuName: 'Savings Distribution'
+                    },
+                },
+                {
+                    path: '/savings/savings-log',
+                    component: view( 'savings/SavingsLog' ),
+                    name: 'savings.savings-log',
+                    meta: {
+                        title: APP_NAME + ' | Savings Log',
+                        menuName: 'Savings Log'
+                    },
+                },
+            ],
+
+        },
+        {
+            path: '/smart-loans',
+            component: view( 'EmptyComponent' ),
+            meta: {
+                iconClass: 'fa fa-hand-holding-usd',
+                menuName: 'Smart Loans',
+            },
+            children: [ {
+                    path: '/loans/eligibility',
+                    component: view( 'loans/CheckEligibility' ),
+                    name: 'loans.add',
+                    meta: {
+                        title: APP_NAME + ' | Check Loan Eligibility',
+                        menuName: 'Check Eligibility'
+                    },
+                },
+                {
+                    path: '/loans/request-for-surety',
+                    component: view( 'loans/SuretyRequest' ),
+                    name: 'loans.surety',
+                    meta: {
+                        title: APP_NAME + ' | Requests for Surety',
+                        menuName: 'Requests for Surety'
+                    },
+                },
+                {
+                    path: '/loans/log',
+                    component: view( 'loans/LoansLog' ),
+                    name: 'loans.log',
+                    meta: {
+                        title: APP_NAME + ' | Loans Log',
+                        menuName: 'Loans Log'
+                    },
+                },
+            ],
 
         },
         {
@@ -81,16 +154,7 @@ export default new Router( {
                 skip: true
             },
         },
-        {
-            path: '/user/dashboard',
-            component: view( 'dashboard/UserDashboard' ),
-            name: 'dashboard.root',
-            meta: {
-                title: APP_NAME,
-                menuName: 'Dashboard',
-                iconClass: 'fas fa-th-large',
-            },
-        },
+
         {
             path: '/user/profile',
             component: view( 'dashboard/UserProfile' ),

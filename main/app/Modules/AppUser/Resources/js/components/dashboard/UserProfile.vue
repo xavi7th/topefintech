@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import mixins from "@dashboard-assets/js/config/mixins";
+  import { mixins } from "@dashboard-assets/js/config";
   export default {
     name: "UserProfile",
     mixins: [mixins],

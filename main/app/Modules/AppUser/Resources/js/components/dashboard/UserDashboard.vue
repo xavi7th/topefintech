@@ -1,504 +1,88 @@
 <template>
-  <!-- main content -->
-  <div class="plyenz-main">
+  <div class="plyenz-main pb-0">
     <div class="container">
       <div class="card-heading">
-        <h4 class="card-heading-title">Overview</h4>
+        <h4 class="card-heading-title">Good Morning {{ $user.first_name }}</h4>
+        <span>Last login: today</span>
       </div>
       <div class="row">
-        <!-- card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card card-hover card-animation">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-title">
+              <h4>How much do you want to save?</h4>
+            </div>
             <div class="card-body">
-              <div class="widget1">
-                <div class="widget1-icon bg-pale-info">
-                  <i class="fa fa-users text-info"></i>
-                </div>
-                <span class="widget1-value">17.5K+</span>
-                <span class="widget1-label">Total Followers</span>
-                <div class="status-down">
-                  17.15 %
-                  <i class="fa fa-angle-down"></i>
-                </div>
-              </div>
+              <button type="button" class="btn btn-shadow btn-info btn-w-sm">100</button>
+              <button type="button" class="btn btn-shadow btn-secondary btn-w-sm">200</button>
+              <button type="button" class="btn btn-shadow btn-success btn-w-sm">500</button>
+              <button type="button" class="btn btn-shadow btn-danger btn-w-sm">Other</button>
             </div>
           </div>
         </div>
-        <!-- card #end -->
-
-        <!-- card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card card-hover card-animation">
-            <div class="card-body">
-              <div class="widget1">
-                <div class="widget1-icon bg-pale-success">
-                  <i class="fas fa-money-bill text-success"></i>
-                </div>
-                <span class="widget1-value">$22.736</span>
-                <span class="widget1-label">Weekly Balance</span>
-                <div class="status-up">
-                  20.15 %
-                  <i class="fa fa-angle-up"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- card #end -->
-
-        <!-- card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card card-hover card-animation">
-            <div class="card-body">
-              <div class="widget1">
-                <div class="widget1-icon bg-pale-purple">
-                  <i class="fa fa-shopping-cart text-purple"></i>
-                </div>
-                <span class="widget1-value">816</span>
-                <span class="widget1-label">Today's Order</span>
-                <div class="status-down">
-                  1.35 %
-                  <i class="fa fa-angle-down"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- card #end -->
-
-        <!-- card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card card-hover card-animation">
-            <div class="card-body">
-              <div class="widget1">
-                <div class="widget1-icon bg-pale-info">
-                  <i class="fa fa-users text-info"></i>
-                </div>
-                <span class="widget1-value">31.27 %</span>
-                <span class="widget1-label">Total Balance</span>
-                <div class="status-up">
-                  3.00 %
-                  <i class="fa fa-angle-up"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- card #end -->
       </div>
-
+      <div class="card-heading">
+        <h4 class="card-heading-title">Savings Summary</h4>
+      </div>
       <div class="row">
-        <div class="col-lg-9 col-md-12">
+        <div class="col-lg-4 col-md-6">
           <div class="card">
-            <div class="card-title">
-              <h4>VISITORS</h4>
-              <ul class="nav nav-fill nav-sm">
-                <li class="nav-item">
-                  <a href class="nav-link active">Day</a>
-                </li>
-                <li class="nav-item">
-                  <a href class="nav-link">Week</a>
-                </li>
-                <li class="nav-item">
-                  <a href class="nav-link">Month</a>
-                </li>
-              </ul>
-            </div>
-            <div class="card-body pb-0">
-              <div class="card-value-text text-lg">
-                <span class="label">Avg Sessions</span>
-                <div class="value">17.247</div>
-              </div>
-              <div class="card-row p-0">
-                <canvas id="chart-area" height="80"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-12">
-          <div class="card card-hover">
-            <div class="card-title">
-              <h4>ONLINE</h4>
-            </div>
             <div class="card-body">
-              <div class="card-value-text text-lg mb-30">
-                <span class="label">Online Visitor</span>
-                <div class="value">127</div>
-              </div>
-              <div>
-                <span>Windows (55%)</span>
-                <div class="progress progress-sm mb-20">
-                  <div
-                    class="progress-bar bg-purple"
-                    role="progressbar"
-                    style="width: 55%"
-                    aria-valuenow="55"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
+              <div class="widget6">
+                <div class="widget6-icon bg-dark">
+                  <i class="far fa-user text-white"></i>
                 </div>
-              </div>
-              <div>
-                <span>Mac OSX (20%)</span>
-                <div class="progress progress-sm mb-20">
-                  <div
-                    class="progress-bar bg-success"
-                    role="progressbar"
-                    style="width: 20%"
-                    aria-valuenow="20"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <span>Linux (15%)</span>
-                <div class="progress progress-sm mb-20">
-                  <div
-                    class="progress-bar bg-info"
-                    role="progressbar"
-                    style="width: 15%"
-                    aria-valuenow="15"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <span>Other (10%)</span>
-                <div class="progress progress-sm mb-20">
-                  <div
-                    class="progress-bar bg-warning"
-                    role="progressbar"
-                    style="width: 10%"
-                    aria-valuenow="10"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
+                <div>
+                  <div class="widget6-value">Piggy Bank</div>
+                  <div class="widget6-label">Balance: 20000</div>
+                  <div class="badge badge-pill badge-primary">Open Piggybank</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="widget3">
-        <div class="row no-gap bordered">
-          <div class="col-lg-3 col-md-6">
-            <!-- card -->
-            <div class="card">
-              <div class="card-body">
-                <div class="widget3-item">
-                  <div class="widget3-icon">
-                    <i class="fas fa-chart-pie"></i>
-                  </div>
-                  <div class>
-                    <span class="widget3-value">
-                      <strong>32475 MB</strong>
-                    </span>
-                    <span class="widget3-label">Today`s Bandwidth</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- card #end -->
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <!-- card -->
-            <div class="card">
-              <div class="card-body">
-                <div class="widget3-item">
-                  <div class="widget3-icon">
-                    <i class="fas fa-coins"></i>
-                  </div>
-                  <div class>
-                    <span class="widget3-value">
-                      <strong>$4767</strong>
-                    </span>
-                    <span class="widget3-label">Today's Earnings</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- card #end -->
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <!-- card -->
-            <div class="card">
-              <div class="card-body">
-                <div class="widget3-item">
-                  <div class="widget3-icon">
-                    <i class="fas fa-users"></i>
-                  </div>
-                  <div class>
-                    <span class="widget3-value">
-                      <strong>3154</strong>
-                    </span>
-                    <span class="widget3-label">Today's Customers</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- card #end -->
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <!-- card -->
-            <div class="card">
-              <div class="card-body">
-                <div class="widget3-item">
-                  <div class="widget3-icon">
-                    <i class="fas fa-box"></i>
-                  </div>
-                  <div class>
-                    <span class="widget3-value">
-                      <strong>7468</strong>
-                    </span>
-                    <span class="widget3-label">Products on Sale</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- card #end -->
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-3 col-md-12">
-          <div class="card card-hover">
-            <div class="card-title">
-              <h4>DEVICES</h4>
-            </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card rounded bg-primary">
             <div class="card-body">
-              <div class="widget2">
-                <div class="chart-wrapper">
-                  <canvas id="chart-donut"></canvas>
+              <div class="widget6">
+                <div class="widget6-icon bg-white">
+                  <i class="far fa-user text-primary"></i>
                 </div>
-                <div class="widget2-list">
-                  <div class="widget2-item">
-                    <div>
-                      <span class="badge badge-primary badge-dot badge-md"></span>
-                      <span>Android</span>
-                    </div>
-                    <span class="value">1277</span>
-                  </div>
-                  <div class="widget2-item">
-                    <div>
-                      <span class="badge badge-info badge-dot badge-md"></span>
-                      <span>IOS</span>
-                    </div>
-                    <span class="value">916</span>
-                  </div>
-                  <div class="widget2-item">
-                    <div>
-                      <span class="badge badge-danger badge-dot badge-md"></span>
-                      <span>Windows</span>
-                    </div>
-                    <span class="value">869</span>
-                  </div>
-                  <div class="widget2-item">
-                    <div>
-                      <span class="badge badge-warning badge-dot badge-md"></span>
-                      <span>Other</span>
-                    </div>
-                    <span class="value">175</span>
-                  </div>
+                <div class="text-white">
+                  <div class="widget6-value">Savings</div>
+                  <div class="widget6-label">Total: 20000</div>
+                  <div class="badge badge-pill badge-primary">Open Piggybank</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-9 col-md-12">
-          <div class="card">
-            <div class="card-title">
-              <h4>LASTEST SELLINGS</h4>
-            </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card rounded bg-info">
             <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Product</th>
-                      <th>Price</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Chris Martin</td>
-                      <td>Apple iPhone X</td>
-                      <td>$2100</td>
-                      <td>
-                        <span class="badge badge-success">Completed</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Chris Martin</td>
-                      <td>Apple iPhone X</td>
-                      <td>$2100</td>
-                      <td>
-                        <span class="badge badge-warning">Pending</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Chris Martin</td>
-                      <td>Apple iPhone X</td>
-                      <td>$2100</td>
-                      <td>
-                        <span class="badge badge-danger">Problem</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Chris Martin</td>
-                      <td>Apple iPhone X</td>
-                      <td>$2100</td>
-                      <td>
-                        <span class="badge badge-info">Completed</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Chris Martin</td>
-                      <td>Apple iPhone X</td>
-                      <td>$2100</td>
-                      <td>
-                        <span class="badge badge-success">Completed</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="widget6">
+                <div class="widget6-icon bg-white">
+                  <i class="fas fa-download text-info"></i>
+                </div>
+                <div class="text-white">
+                  <div class="widget6-value">Interest</div>
+                  <div class="widget6-label">Today: 200</div>
+                  <div class="widget6-label">Total: 20000</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-title">
-              <h4>PEOPLES</h4>
-            </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card rounded bg-danger">
             <div class="card-body">
-              <div class="card-row">
-                <div class="widget5">
-                  <div class="widget5-item">
-                    <div class="avatar avatar-lg mr-20">
-                      <img src="/img/avatar1.jpg" class="img-responsive" alt="..." />
-                    </div>
-                    <div class="widget5-text">
-                      <div class="widget5-label">Micheal Deep</div>
-                      <span>Back-end Developer</span>
-                    </div>
-                    <a href class="btn btn-primary btn-round btn-icon">
-                      <i class="fa fa-plus"></i>
-                    </a>
-                  </div>
-                  <div class="widget5-item">
-                    <div class="avatar avatar-lg mr-20">
-                      <img src="/img/avatar2.jpg" class="img-responsive" alt="..." />
-                    </div>
-                    <div class="widget5-text">
-                      <div class="widget5-label">Karl Dole</div>
-                      <span>UX Engineer</span>
-                    </div>
-                    <a href class="btn btn-primary btn-round btn-icon">
-                      <i class="fa fa-plus"></i>
-                    </a>
-                  </div>
-                  <div class="widget5-item">
-                    <div class="avatar avatar-lg mr-20">
-                      <img src="/img/avatar3.jpg" class="img-responsive" alt="..." />
-                    </div>
-                    <div class="widget5-text">
-                      <div class="widget5-label">Dogukan</div>
-                      <span>UI Engineer</span>
-                    </div>
-                    <a href class="btn btn-primary btn-round btn-icon">
-                      <i class="fa fa-plus"></i>
-                    </a>
-                  </div>
-                  <div class="widget5-item">
-                    <div class="avatar avatar-lg mr-20">
-                      <img src="/img/avatar4.jpg" class="img-responsive" alt="..." />
-                    </div>
-                    <div class="widget5-text">
-                      <div class="widget5-label">Daniel Artson</div>
-                      <span>UI Developer</span>
-                    </div>
-                    <a href class="btn btn-primary btn-round btn-icon">
-                      <i class="fa fa-plus"></i>
-                    </a>
-                  </div>
+              <div class="widget6">
+                <div class="widget6-icon bg-white">
+                  <i class="fas fa-shopping-bag text-danger"></i>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="card card-hover">
-            <div class="card-body text-center">
-              <span class="fs-16">
-                <strong>Time On Site</strong>
-              </span>
-              <div class="status-up">
-                77.15 %
-                <i class="fa fa-angle-up"></i>
-              </div>
-            </div>
-            <div class="h-85">
-              <canvas id="chart-line1"></canvas>
-            </div>
-          </div>
-          <div class="card card-hover">
-            <div class="card-body text-center">
-              <span class="fs-16">
-                <strong>Page Views</strong>
-              </span>
-              <div class="status-down">
-                14.15 %
-                <i class="fa fa-angle-down"></i>
-              </div>
-            </div>
-            <div class="h-85">
-              <canvas id="chart-line2"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="card">
-            <div class="card-title">
-              <h4>ACTIVITY</h4>
-            </div>
-            <div class="card-body">
-              <div class="widget4">
-                <div class="widget4-item">
-                  <span class="badge badge-success badge-dot badge-lg widget4-status"></span>
-                  <span class="widget4-value">JUL 20</span>
-                  <p class="widget4-label">New updates "Prepared"</p>
-                </div>
-                <div class="widget4-item">
-                  <span class="badge badge-info badge-dot badge-lg widget4-status"></span>
-                  <span class="widget4-value">JUL 19</span>
-                  <p class="widget4-label">
-                    2018 Reports "
-                    <a href>Here</a>"
-                  </p>
-                </div>
-                <div class="widget4-item">
-                  <span class="badge badge-primary badge-dot badge-lg widget4-status"></span>
-                  <span class="widget4-value">JUL 17</span>
-                  <p class="widget4-label">New Event Created</p>
-                </div>
-                <div class="widget4-item">
-                  <span class="badge badge-warning badge-dot badge-lg widget4-status"></span>
-                  <span class="widget4-value">JUL 12</span>
-                  <p class="widget4-label">Product stock is low "KLJ0017"</p>
-                </div>
-                <div class="widget4-item">
-                  <span class="badge badge-warning badge-dot badge-lg widget4-status"></span>
-                  <span class="widget4-value">JUL 12</span>
-                  <p class="widget4-label">Product stock is low "KLJ0017"</p>
+                <div class="text-white">
+                  <div class="widget6-value">Withdrawals</div>
+                  <div class="widget6-label">Total: 20000</div>
+                  <div class="badge badge-pill badge-primary">View History</div>
                 </div>
               </div>
             </div>
@@ -506,8 +90,179 @@
         </div>
       </div>
     </div>
+    <div class="container bg-pale-info py-50">
+      <div class="card-heading">
+        <h4 class="card-heading-title">Loans Summary</h4>
+      </div>
+      <div class="widget3">
+        <div class="row no-gap bordered">
+          <div class="col-lg-4 col-md-6">
+            <div class="card mb-0">
+              <div class="card-body">
+                <div class="widget3-item">
+                  <div class="widget3-icon">
+                    <i class="fas fa-chart-pie"></i>
+                  </div>
+                  <div class>
+                    <span class="widget3-value">
+                      <strong>2000</strong>
+                    </span>
+                    <span class="widget3-label">Total Loans (2)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="card mb-0">
+              <div class="card-body">
+                <div class="widget3-item">
+                  <div class="widget3-icon">
+                    <i class="fas fa-coins"></i>
+                  </div>
+                  <div class>
+                    <span class="widget3-value">
+                      <strong>40000</strong>
+                    </span>
+                    <span class="widget3-label">Outstanding Loans</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="card mb-0">
+              <div class="card-body">
+                <div class="widget3-item">
+                  <div class="widget3-icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <div class>
+                    <span class="widget3-value">
+                      <strong>5000</strong>
+                    </span>
+                    <span class="widget3-label">Pending Loans</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container bg-gray-100 py-50">
+      <div class="card-heading">
+        <h4 class="card-heading-title">Ongoing Savings</h4>
+      </div>
+      <div class="widget-savings">
+        <div class="row no-gap bordered">
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="flex j-c-between a-i-center">
+                  <div>
+                    <div class="fs-16 fw-600">Smart Lock</div>
+                    <div class="text-light">40 days left</div>
+                    <div class="status-up">
+                      <span class="text-light">Today's Interest</span>
+                      #50.00
+                      <i class="fa fa-angle-up"></i>
+                    </div>
+                    <div class="status-up">
+                      <span class="text-light">Accrued Interest</span>
+                      #5000.00
+                      <i class="fa fa-angle-up"></i>
+                    </div>
+                  </div>
+                  <div class="fs-30 fw-600 text-primary">60000</div>
+                </div>
+                <div class="progress progress-xs mt-20">
+                  <div
+                    class="progress-bar bg-primary"
+                    role="progressbar"
+                    style="width: 70%;"
+                    aria-valuenow="70"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+                <div data-v-40470ab0 class="badge badge-pill badge-success mt-20">Add more funds</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="flex j-c-between a-i-center">
+                  <div>
+                    <div class="fs-16 fw-600">NYSC POP Savings</div>
+                    <div class="text-light">60 Days Left</div>
+                    <div class="status-up">
+                      <span class="text-light">Today's Interest</span>
+                      #50.00
+                      <i class="fa fa-angle-up"></i>
+                    </div>
+                    <div class="status-up">
+                      <span class="text-light">Accrued Interest</span>
+                      #5000.00
+                      <i class="fa fa-angle-up"></i>
+                    </div>
+                  </div>
+                  <div class="fs-30 fw-600 text-info">50000</div>
+                </div>
+                <div class="progress progress-xs mt-20">
+                  <div
+                    class="progress-bar bg-info"
+                    role="progressbar"
+                    style="width: 45%;"
+                    aria-valuenow="45"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+                <div data-v-40470ab0 class="badge badge-pill badge-success mt-20">Add more funds</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="flex j-c-between a-i-center">
+                  <div>
+                    <div class="fs-16 fw-600">After School Savings</div>
+                    <div class="text-light">364 days left</div>
+                    <div class="status-up">
+                      <span class="text-light">Today's Interest</span>
+                      #50.00
+                      <i class="fa fa-angle-up"></i>
+                    </div>
+                    <div class="status-up">
+                      <span class="text-light">Accrued Interest</span>
+                      #5000.00
+                      <i class="fa fa-angle-up"></i>
+                    </div>
+                  </div>
+                  <div class="fs-30 fw-600 text-danger">50000</div>
+                </div>
+                <div class="progress progress-xs mt-20">
+                  <div
+                    class="progress-bar bg-danger"
+                    role="progressbar"
+                    style="width: 20%;"
+                    aria-valuenow="20"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+                <div data-v-40470ab0 class="badge badge-pill badge-success mt-20">Add more funds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <!-- main content #end -->
 </template>
 
 <script>
@@ -529,4 +284,9 @@
 </script>
 
 <style lang="scss" scoped>
+  .card {
+    &.rounded {
+      border-radius: 5px;
+    }
+  }
 </style>
