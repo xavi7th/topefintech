@@ -15,17 +15,8 @@
 
               <a :href="`mailto:${CONSTANTS.email}`">{{ CONSTANTS.email }}</a>
 
-              <h5>Working Hours:</h5>
-              <p>Monday - Friday: 08:00 AM - 08:00 PM CAT</p>
-              <h5>Find us at:</h5>
-              <p
-                class="text-black"
-              >Janet Akintola Street, Akins Bus Stop, off Addor road, Ajah, Lagos State, Nigeria</p>
-            </aside>
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <aside class="widget links">
-              <h4>Quick Links</h4>
+              <h5>Recources</h5>
+
               <ul>
                 <li>
                   <router-link :to="{name:'site.terms'}">Terms &amp; Conditions</router-link>
@@ -47,13 +38,22 @@
               </ul>
             </aside>
           </div>
+          <div class="col-lg-3 col-md-6">
+            <aside class="widget links">
+              <h4>We are available:</h4>
+              <p>
+                Monday - Friday:
+                <br />08:00 AM - 08:00 PM CAT
+              </p>
+            </aside>
+          </div>
           <div class="col-lg-4 col-md-6">
             <aside class="widget subscribe_widgets">
-              <h4>Subscribe our newsletter.</h4>
-              <form action="#" method="post">
-                <input type="email" placeholder="Email address" name="email" />
-                <input type="submit" value="Subscribe now" />
-              </form>
+              <h4>Find us at:</h4>
+              <p
+                class="text-black"
+              >Janet Akintola Street, Akins Bus Stop, off Addor road, Ajah, Lagos State, Nigeria</p>
+
               <h5 class="mt-5">Our Community</h5>
               <ul class="social">
                 <li>
@@ -82,12 +82,7 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-10">
-            <p>
-              Smart Cooperative also known as SmartCoop; is a FinTech subsidiary of
-              <a
-                href="#"
-              >Tcom Wireless.</a> RC - 2340415
-            </p>
+            <p>Smart Co-operative Society Limited, also known as SmartCoop, is a FinTech FinTech based Co-operative Society with Registration Number: 41023</p>
           </div>
           <div class="col-sm-2 text-right">
             <p>

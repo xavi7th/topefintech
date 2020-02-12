@@ -6,14 +6,15 @@
           <div class="welcome_area">
             <div class="welcome_text">
               <h1>
-                The right
-                <span>decision</span>
-                <br />at the right time.
+                The Sure
+                <span>Way</span>
               </h1>
-              <p>We are here to help you when you need your financial support, then we are help you.</p>
-            </div>
-            <div class="welcome_button">
-              <a href="#" class="common_btn">Contact Us</a>
+              <h3>To Save &amp; Provide loans to SMEs</h3>
+              <h4>Remember the Traditional Cooperative Societies?</h4>
+              <p>
+                We are changing the Narrative using FinTech. Now you can do all of it online. No need to leave the comfort of your homes.
+                We are bringing the Cooperative to your doorstep. All you need is your smart phone.
+              </p>
             </div>
           </div>
         </div>
@@ -28,6 +29,6 @@
 </template>
 <style lang="scss" scoped>
   .header_bg_1 {
-    padding: 200px 0;
+    padding: 200px 0 100px;
   }
 </style>

@@ -13,7 +13,7 @@ function view( name ) {
 
 Vue.use( Router )
 
-const APP_NAME = 'SampleSite Dashboard'
+const APP_NAME = 'SmartCoop Dashboard'
 
 export default new Router( {
     mode: 'history',
@@ -60,14 +60,14 @@ export default new Router( {
             },
         },
         {
-            path: '/savings',
-            component: view( 'EmptyComponent' ),
+            path: '/user/savings',
+            component: view( 'misc/EmptyComponent' ),
             meta: {
                 iconClass: 'fa fa-piggy-bank',
                 menuName: 'Savings',
             },
             children: [ {
-                    path: '/savings/add',
+                    path: '/user/savings/add',
                     component: view( 'savings/AddSavings' ),
                     name: 'savings.add',
                     meta: {
@@ -76,7 +76,7 @@ export default new Router( {
                     },
                 },
                 {
-                    path: '/savings/autosave-settings',
+                    path: '/user/savings/autosave-settings',
                     component: view( 'savings/AutosaveSettings' ),
                     name: 'savings.autosave-settings',
                     meta: {
@@ -85,16 +85,40 @@ export default new Router( {
                     },
                 },
                 {
-                    path: '/savings/savings-distribution',
+                    path: '/user/savings/:amount/savings-distribution',
                     component: view( 'savings/SavingsDistribution' ),
                     name: 'savings.savings-distribution',
+                    props: true,
                     meta: {
                         title: APP_NAME + ' | Savings Distribution',
-                        menuName: 'Savings Distribution'
+                        menuName: 'Savings Distribution',
+                        skip: true
                     },
                 },
                 {
-                    path: '/savings/savings-log',
+                    path: '/user/savings/:amount/payment-options',
+                    component: view( 'savings/PaymentOptions' ),
+                    name: 'savings.payment-options',
+                    props: true,
+                    meta: {
+                        title: APP_NAME + ' | Payment Options',
+                        menuName: 'Payment Options',
+                        skip: true
+                    },
+                },
+                {
+                    path: '/user/savings/:amount/payment-success',
+                    component: view( 'savings/PaymentSuccess' ),
+                    name: 'savings.payment-success',
+                    props: true,
+                    meta: {
+                        title: APP_NAME + ' | Payment Success',
+                        menuName: 'Payment Success',
+                        skip: true
+                    },
+                },
+                {
+                    path: '/user/savings/savings-log',
                     component: view( 'savings/SavingsLog' ),
                     name: 'savings.savings-log',
                     meta: {
@@ -106,14 +130,14 @@ export default new Router( {
 
         },
         {
-            path: '/smart-loans',
-            component: view( 'EmptyComponent' ),
+            path: '/user/smart-loans',
+            component: view( 'misc/EmptyComponent' ),
             meta: {
                 iconClass: 'fa fa-hand-holding-usd',
                 menuName: 'Smart Loans',
             },
             children: [ {
-                    path: '/loans/eligibility',
+                    path: '/user/loans/eligibility',
                     component: view( 'loans/CheckEligibility' ),
                     name: 'loans.add',
                     meta: {
@@ -122,7 +146,7 @@ export default new Router( {
                     },
                 },
                 {
-                    path: '/loans/request-for-surety',
+                    path: '/user/loans/request-for-surety',
                     component: view( 'loans/SuretyRequest' ),
                     name: 'loans.surety',
                     meta: {
@@ -131,7 +155,7 @@ export default new Router( {
                     },
                 },
                 {
-                    path: '/loans/log',
+                    path: '/user/loans/log',
                     component: view( 'loans/LoansLog' ),
                     name: 'loans.log',
                     meta: {
@@ -141,18 +165,6 @@ export default new Router( {
                 },
             ],
 
-        },
-        {
-            path: '/admins/:id/route-permissions',
-            component: view( 'dashboard/ManageAdmins' ),
-            name: 'admin.admins.permissions',
-            props: true,
-            meta: {
-                title: APP_NAME + ' | View Admin Permissions',
-                iconClass: 'home',
-                menuName: 'View Admin Permission',
-                skip: true
-            },
         },
 
         {

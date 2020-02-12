@@ -4,7 +4,7 @@
     <div class="auth-box card-animation">
       <div class="auth-logo">
         <div class="header-logo logo-type no-margin">
-          <a href="/">SampleSite</a>
+          <a href="/">SmartCoop</a>
         </div>
       </div>
       <div class="auth-desc">

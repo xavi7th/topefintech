@@ -2,11 +2,11 @@
   <div>
     <Hero />
     <Highlights />
-    <InterestCalculator />
+    <!-- <InterestCalculator /> -->
     <LatestNews />
-    <RegistrationSteps />
-    <SaverOfTheMonth />
-    <StoriesSummary />
+    <!-- <RegistrationSteps /> -->
+    <!-- <SaverOfTheMonth /> -->
+    <!-- <StoriesSummary /> -->
     <Testimonials />
   </div>
 </template>

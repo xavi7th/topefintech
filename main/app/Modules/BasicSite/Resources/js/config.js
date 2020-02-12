@@ -13,7 +13,7 @@ export const CONSTANTS = {
     facebookMessenger: 'smartcoop-facebook-messenger',
     linkedin: 'smartcoop-linkedin',
     snapchat: 'smartcoop-snapchat',
-    phone1: '+2348176233714',
+    phone1: '+234 809 807 5887',
     email: 'hello@smartcoophq.com'
 }
 /**

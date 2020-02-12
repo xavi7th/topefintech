@@ -12,7 +12,10 @@
               <h4>How much do you want to save?</h4>
             </div>
             <div class="card-body">
-              <button type="button" class="btn btn-shadow btn-info btn-w-sm">100</button>
+              <router-link
+                :to="{name:'savings.savings-distribution', params:{amount:100}}"
+                class="btn btn-shadow btn-info btn-w-sm"
+              >100</router-link>
               <button type="button" class="btn btn-shadow btn-secondary btn-w-sm">200</button>
               <button type="button" class="btn btn-shadow btn-success btn-w-sm">500</button>
               <button type="button" class="btn btn-shadow btn-danger btn-w-sm">Other</button>
