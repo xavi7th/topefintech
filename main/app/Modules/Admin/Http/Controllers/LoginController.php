@@ -49,7 +49,7 @@ class LoginController extends Controller
 	static function routes()
 	{
 		Route::get('login', 'LoginController@showLoginForm')->name('admin.login');
-		Route::post('login', 'LoginController@login')->middleware('throttle:5,1')->middleware('verified');
+		Route::post('login', 'LoginController@login')->middleware('throttle:5,1'); //->middleware('verified');
 		Route::post('first-time', 'LoginController@resetPassword')->middleware('throttle:5,1');
 		Route::post('logout', 'LoginController@logout')->name('admin.logout');
 	}
@@ -113,7 +113,7 @@ class LoginController extends Controller
 	 */
 	protected function authenticated(Request $request, $user)
 	{
-		if (User::isAdmin()) {
+		if (Admin::isAdmin()) {
 			if (Auth::admin()->is_verified()) {
 				return response()->json(['status' => true], 202);
 			} else {
