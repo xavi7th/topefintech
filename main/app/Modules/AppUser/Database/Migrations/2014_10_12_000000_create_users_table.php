@@ -20,13 +20,14 @@ class CreateUsersTable extends Migration
 			$table->string('email')->unique();
 			$table->timestamp('email_verified_at')->nullable();
 			$table->string('password');
-			$table->string('phone');
+			$table->string('phone')->nullable();
 			$table->string('country')->default('Nigeria');
 			$table->string('currency')->default('NGN');
 			$table->string('id_card')->nullable();
 			$table->timestamp('verified_at')->nullable();
 			$table->boolean('can_withdraw')->default(false);
 			$table->boolean('is_active')->default(true);
+
 			$table->rememberToken();
 			$table->timestamps();
 			$table->softDeletes();
