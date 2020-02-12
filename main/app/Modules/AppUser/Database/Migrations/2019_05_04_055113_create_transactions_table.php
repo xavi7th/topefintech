@@ -15,11 +15,10 @@ class CreateTransactionsTable extends Migration
 	{
 		Schema::create('transactions', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('user_id');
-			$table->enum('trans_type', ['deposit', 'profit', 'withdrawal']);
+			$table->bigInteger('savings_id')->unsigned();
+			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade');
+			$table->enum('trans_type', ['deposit', 'withdrawal']);
 			$table->double('amount');
-			$table->double('target_amount')->default(0);
-			$table->timestamp('trans_date');
 
 			$table->timestamps();
 			$table->softDeletes();
