@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Models;
 
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use App\Modules\Admin\Models\ApiRoute;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -30,7 +31,7 @@ class Admin extends User
 	 *
 	 * @return void
 	 */
-	protected static function isAdmin()
+	protected static function isAdmin(): bool
 	{
 		return Auth::admin() ? true : false;
 	}
