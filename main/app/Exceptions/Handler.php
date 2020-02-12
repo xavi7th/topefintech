@@ -65,38 +65,38 @@ class Handler extends ExceptionHandler
 					'title' => 'Expired Token',
 					'type' => 'danger',
 				]);
-		} else if ($exception instanceof QueryException) {
-			session()->put('alert', ['title' => 'Database error in handler', 'type' => 'error', 'toast' => true, 'position' => 'top', 'timer' => 5000]);
-			// _dd(str_before(str_after($exception->getMessage(), 1062), 'for key'));
-			Log::channel('database')->error('Query Exception Occurred', ['$e_obj' => $exception]);
+		}
+		// else if ($exception instanceof QueryException) {
+		// 	Log::channel('database')->error('Query Exception Occurred', ['$e_obj' => $exception]);
 
-			if ($exception->getCode() == 23000) {
-				if ($request->ajax() || $request->expectsJson()) {
-					return response()->json(str_before(str_after($exception->getMessage(), 1062), 'for key'), 500);
-					exit('Query Exception');
-				}
-				return redirect()
-					->back()
-					->withInput($request->except('password'))
-					->withErrors([
-						'message' => str_before(str_after($exception->getMessage(), 1062), 'for key'),
-						'title' => 'Duplicate Entry',
-						'type' => 'warning',
-					]);
-			} else {
-				if ($request->ajax() || $request->expectsJson()) {
-					return response()->json(['Error' => 'Query Exception'], 500);
-				}
-				return redirect()
-					->back()
-					->withInput($request->except('password'))
-					->withErrors([
-						'message' => 'The requested resource returned an unexpected reply. Try again later.',
-						'title' => 'Connection Error',
-						'type' => 'warning',
-					]);
-			}
-		} else if ($exception instanceof NotFoundHttpException) {
+		// 	if ($exception->getCode() == 23000) {
+		// 		if ($request->ajax() || $request->expectsJson()) {
+		// 			return response()->json(str_before(str_after($exception->getMessage(), 1062), 'for key'), 500);
+		// 			exit('Query Exception');
+		// 		}
+		// 		return redirect()
+		// 			->back()
+		// 			->withInput($request->except('password'))
+		// 			->withErrors([
+		// 				'message' => str_before(str_after($exception->getMessage(), 1062), 'for key'),
+		// 				'title' => 'Duplicate Entry',
+		// 				'type' => 'warning',
+		// 			]);
+		// 	} else {
+		// 		if ($request->ajax() || $request->expectsJson()) {
+		// 			return response()->json(['Error' => 'Query Exception'], 500);
+		// 		}
+		// 		return redirect()
+		// 			->back()
+		// 			->withInput($request->except('password'))
+		// 			->withErrors([
+		// 				'message' => 'The requested resource returned an unexpected reply. Try again later.',
+		// 				'title' => 'Connection Error',
+		// 				'type' => 'warning',
+		// 			]);
+		// 	}
+		// }
+		else if ($exception instanceof NotFoundHttpException) {
 			Log::channel('database')->info('Route not found', ['$e_obj' => $request->getRequestUri()]);
 			if ($request->ajax() || $request->expectsJson()) {
 				return response()->json('Url Not found', 404);
