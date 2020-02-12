@@ -17,6 +17,39 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | Core Savings Interest Rate
+    |--------------------------------------------------------------------------
+    |
+    |The interest rate that will be applied to all core savings.
+    |
+    */
+
+	'core_savings_interest_rate' => env('CORE_SAVINGS_INTEREST_RATE', 0.5),
+
+	/*
+    |--------------------------------------------------------------------------
+    | GOS Interest Rate
+    |--------------------------------------------------------------------------
+    |
+    |The interest rate that will be applied to all goal oriented savings.
+    |
+    */
+
+	'gos_savings_interest_rate' => env('GOS_SAVINGS_INTEREST_RATE', 0.5),
+
+	/*
+    |--------------------------------------------------------------------------
+    | LOCKED Savings Interest Rate
+    |--------------------------------------------------------------------------
+    |
+    |The interest rate that will be applied to all locked savings.
+    |
+    */
+
+	'locked_savings_interest_rate' => env('LOCKED_SAVINGS_INTEREST_RATE', 0.5),
+
+	/*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
