@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Registered;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use App\Modules\AppUser\Http\Controllers\RegistrationValidation;
+use App\Modules\AppUser\Http\Requests\RegistrationValidation;
+use App\Modules\AppUser\Notifications\CoreSavingsInitialised;
 
 class RegisterController extends Controller
 {
@@ -74,7 +75,6 @@ class RegisterController extends Controller
 	public function register(RegistrationValidation $request)
 
 	{
-		// dd($request->all());
 
 		event(new Registered($user = $this->create($request->all())));
 
@@ -94,20 +94,23 @@ class RegisterController extends Controller
 	protected function create(array $data)
 	{
 
-		$url = request()->file('id_card')->store('public/id_cards');
+		// $url = request()->file('id_card')->store('public/id_cards');
 		// Storage::setVisibility($url, 'public');
 
 		/** Replace the public part of the url with storage to make it accessible on the frontend */
-		$url = Str::replaceFirst('public', '/storage', $url);
+		// $url = Str::replaceFirst('public', '/storage', $url);
 
 		//Create an entry into the documents database
+
+		/**
+		 * @todo Create a referral record if any
+		 * ! If there is a referral ID create a referral entry for the agent
+		 */
 
 		return AppUser::create([
 			'name' => $data['name'],
 			'email' => $data['email'],
 			'password' => $data['password'],
-			'phone' => $data['phone'],
-			'id_card' => $url
 		]);
 	}
 
@@ -122,6 +125,24 @@ class RegisterController extends Controller
 	{
 		//
 		Log::critical($user->email . ' registered an account on the site.');
+		/**
+		 * Create an empty Savings profile for him with 100% savings distribution
+		 */
+		$user->savings_list()->create([
+			'savings_distribution' => 100,
+		]);
+
+		/**
+		 * Notify the user that a core savings account prifile was initialised for him. He can start saving right away
+		 */
+
+		$user->notify(new CoreSavingsInitialised($user));
+
+		/**
+		 * TODO Notify the referrer if any
+		 * @todo Notify the referrer if any
+		 */
+
 		if ($request->ajax()) {
 			return response()->json(['status' => true], 201);
 		}

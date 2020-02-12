@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\AppUser\Http\Controllers;
+namespace App\Modules\AppUser\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
@@ -18,12 +18,13 @@ class RegistrationValidation extends FormRequest
 		return [
 			'name' => 'required|string|max:255',
 			'email' => 'required|string|email|max:255|unique:users,email',
+			'password' => 'required|string|min:4|max:50|confirmed',
+			'agreement' => 'required|in:1,true,"true"',
+			'referral_id' => 'nullable|exists:agents,ref_code'
 			// 'currency' => 'required|string|not_in:null',
 			// 'country' => 'required|string|not_in:null',
-			'phone' => 'required|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|unique:users,phone',
-			'password' => 'required|string|min:6|confirmed',
-			'id_card' => 'required|file|mimes:jpeg,bmp,png,pdf',
-			'agreement' => 'required|in:1,true,"true"',
+			// 'phone' => 'required|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|unique:users,phone',
+			// 'id_card' => 'required|file|mimes:jpeg,bmp,png,pdf',
 		];
 	}
 
@@ -47,17 +48,9 @@ class RegistrationValidation extends FormRequest
 	public function messages()
 	{
 		return [
-			// 'primary_contact_name.required' => 'The name of the primary contact is required',
-			// 'primary_contact_name.alpha_dash' => 'The name of the primary contact can only contain alphabets, numbers underscores and dashes',
-			// 'primary_contact_number.required' => 'The phone number of the primary contact is required',
-			// 'primary_contact_email.required' => 'The email provided for the primary contact is invalid',
-			// 'accommodation_name.required' => 'The name of the accommodation is required',
-			// 'price.required' => 'The price of the accommodation is required',
-			// 'space_type_id.exists' => 'Selected space type is invalid',
-			'country.not_in' => 'You must select a country',
 			'phone.numeric' => 'Invalid phone number',
-			'id_card.required' => 'Upload a valid ID Card for verification purposes',
-			'id_card.mimes' => 'Your ID Card must be an image of a pdf file',
+			// 'id_card.required' => 'Upload a valid ID Card for verification purposes',
+			// 'id_card.mimes' => 'Your ID Card must be an image of a pdf file',
 			'agreement.required' => 'You must accept our terms and conditions to register',
 			'agreement.in' => 'You must accept our terms and conditions to register',
 		];
