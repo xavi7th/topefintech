@@ -26,44 +26,54 @@ class AppUserController extends Controller
 	 */
 	public static function routes()
 	{
-		LoginController::routes();
-		RegisterController::routes();
-		// ResetPasswordController::routes();
-		// ForgotPasswordController::routes();
-		// ConfirmPasswordController::routes();
-		VerificationController::routes();
+		Route::group(['middleware' => 'api', 'namespace' => 'App\Modules\AppUser\Http\Controllers', 'prefix' => 'postman'], function () {
+			LoginController::routes();
+		});
+		Route::group(['middleware' => 'web', 'namespace' => 'App\Modules\AppUser\Http\Controllers'], function () {
+			LoginController::routes();
+			RegisterController::routes();
+			// ResetPasswordController::routes();
+			// ForgotPasswordController::routes();
+			// ConfirmPasswordController::routes();
+			VerificationController::routes();
 
-		Route::get('/auth/verify', function () {
-			if (Auth::check()) {
-				return ['LOGGED_IN' => true, 'user' => Auth::user()];
-			} else {
-				return ['LOGGED_IN' => false, 'user' => []];
-			}
-		})->prefix(AppUser::DASHBOARD_ROUTE_PREFIX);
+			Route::get('/auth/verify', function () {
+				if (Auth::check()) {
+					return ['LOGGED_IN' => true, 'user' => Auth::user()];
+				} else {
+					return ['LOGGED_IN' => false, 'user' => []];
+				}
+			})->prefix(AppUser::DASHBOARD_ROUTE_PREFIX);
 
-		Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+			Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
-			Route::group(['prefix' => 'api'], function () {
+				Route::group(['prefix' => 'api'], function () {
 
-				Route::get('/profile', function () {
-					return (new AppuserTransformer)->transformForAppUser(Auth::appuser());
+					Route::get('/profile', function () {
+						return (new AppuserTransformer)->transformForAppUser(Auth::appuser());
+					});
+
+					Route::put('/profile/edit', function (EditUserProfileValidation $request) {
+						// return request()->all();
+						Auth::appuser()->update([
+							'email' => request('email') ?? Auth::appuser()->email,
+							'password' => request('password') ?? Auth::appuser()->unenc_password,
+							'name' => request('name') ?? Auth::appuser()->name,
+						]);
+						return response()->json(['updated' => true], 205);
+					});
+
+					Route::get('/savings-list', function () {
+						return auth()->user()->savings_list;
+					});
 				});
-				Route::put('/profile/edit', function (EditUserProfileValidation $request) {
-					// return request()->all();
-					Auth::appuser()->update([
-						'email' => request('email') ?? Auth::appuser()->email,
-						'password' => request('password') ?? Auth::appuser()->unenc_password,
-						'name' => request('name') ?? Auth::appuser()->name,
-					]);
-					return response()->json(['updated' => true], 205);
-				});
+
+				Route::get('/{subcat?}', function () {
+					// Auth::logout();
+					// dd(Auth::appuser());
+					return view('appuser::index');
+				})->name('appuser.dashboard')->where('subcat', '^((?!(api)).)*'); //Matches all routes except routes that start with the list provided.
 			});
-
-			Route::get('/{subcat?}', function () {
-				// Auth::logout();
-				// dd(Auth::appuser());
-				return view('appuser::index');
-			})->name('appuser.dashboard')->where('subcat', '^((?!(api)).)*'); //Matches all routes except routes that start with the list provided.
 		});
 	}
 }

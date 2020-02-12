@@ -93,8 +93,9 @@ class LoginController extends Controller
 	{
 		/** Set the user session to be longer than default */
 		// dump(config('session.lifetime'));
-		config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
 		// dd(config('session.lifetime'));
+
+		config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
 
 		if ($request->expectsJson()) {
 			return response()->json(['rsp' => true], 202);

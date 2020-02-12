@@ -55,6 +55,9 @@ class BasicSiteController extends Controller
 			});
 
 			Route::get('/{subcat?}', function () {
+				if (request()->expectsJson()) {
+					return 'home page route';
+				}
 				return view('basicsite::index');
 			})->where('subcat', '^((?!(api|' . Admin::DASHBOARD_ROUTE_PREFIX . '|' . AppUser::DASHBOARD_ROUTE_PREFIX . '|tinker|_debugbar|css|js|_ignition|ignition-vendor)).)*')->name('home'); //Matches all routes except routes that start with the list provided.
 
