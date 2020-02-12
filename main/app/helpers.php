@@ -49,12 +49,12 @@ if (!function_exists('unique_random')) {
 	{
 		$unique = false;
 
-          // Store tested results in array to not test them again
+		// Store tested results in array to not test them again
 		$tested = [];
 
 		do {
 
-            // Generate random string of characters
+			// Generate random string of characters
 
 			if ($chars == null) {
 				$random = rand(100001, 999999999999);
@@ -62,28 +62,28 @@ if (!function_exists('unique_random')) {
 				$random = str_random($chars);
 			}
 
-            // Check if it's already testing
-            // If so, don't query the database again
+			// Check if it's already testing
+			// If so, don't query the database again
 			if (in_array($random, $tested)) {
 				continue;
 			}
 
-            // Check if it is unique in the database
+			// Check if it is unique in the database
 			$count = DB::table($table)->where($col, '=', $random)->count();
 
-            // Store the random character in the tested array
-            // To keep track which ones are already tested
+			// Store the random character in the tested array
+			// To keep track which ones are already tested
 			$tested[] = $random;
 
-            // String appears to be unique
+			// String appears to be unique
 			if ($count == 0) {
-              // Set unique to true to break the loop
+				// Set unique to true to break the loop
 				$unique = true;
 			}
 
-            // If unique is still false at this point
-            // it will just repeat all the steps until
-            // it has generated a random string of characters
+			// If unique is still false at this point
+			// it will just repeat all the steps until
+			// it has generated a random string of characters
 
 		} while (!$unique);
 
@@ -179,7 +179,7 @@ function sendmail($data)
 {
 	$encoding = "utf-8";
 
-  // Preferences for Subject field
+	// Preferences for Subject field
 	$subject_preferences = array(
 		"input-charset" => $encoding,
 		"output-charset" => $encoding,
@@ -187,7 +187,7 @@ function sendmail($data)
 		"line-break-chars" => "\r\n"
 	);
 
-  // Mail header
+	// Mail header
 	$header = "Content-type: text/html; charset=" . $encoding . " \r\n";
 	$header .= "From: " . $from_name . " <" . $from_mail . "> \r\n";
 	$header .= "MIME-Version: 1.0 \r\n";
@@ -195,7 +195,7 @@ function sendmail($data)
 	$header .= "Date: " . date("r (T)") . " \r\n";
 	$header .= iconv_mime_encode("Subject", $mail_subject, $subject_preferences);
 
-  // Send mail
+	// Send mail
 	mail($mail_to, $mail_subject, $mail_message, $header);
 }
 
@@ -232,5 +232,40 @@ if (!function_exists('slug_to_string')) {
 	function slug_to_string($data)
 	{
 		str_replace('-', ' ', $data);
+	}
+}
+
+
+if (!function_exists('to_naira')) {
+	/**
+	 * convert a number to naira with the naira symbol
+	 *
+	 * @param float $amount The amount to convert
+	 * @return string
+	 * @throws Exception when the amount supplied is not a number
+	 **/
+
+	function to_naira($amount): string
+	{
+		if (!is_numeric($amount)) {
+			throw new Exception("can only convert numbers to naira", 500);
+		}
+		return '₦' . number_format($amount, 2);
+	}
+}
+
+if (!function_exists('generate_422_error')) {
+	/**
+	 * Generate a 422 error in a format that axios and sweetalert 2 can display it
+	 *
+	 * @param  array  $errors An array of errors to display
+	 * @return Response
+	 */
+	function generate_422_error(array $errors)
+	{
+		return response()->json([
+			'error' => 'form validation error',
+			'message' => $errors
+		], 422);
 	}
 }
