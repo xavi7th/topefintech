@@ -258,10 +258,10 @@ if (!function_exists('generate_422_error')) {
 	/**
 	 * Generate a 422 error in a format that axios and sweetalert 2 can display it
 	 *
-	 * @param  array  $errors An array of errors to display
+	 * @param  mixed  $errors An array of errors to display
 	 * @return Response
 	 */
-	function generate_422_error(array $errors)
+	function generate_422_error($errors)
 	{
 		return response()->json([
 			'error' => 'form validation error',
