@@ -157,6 +157,22 @@ class AppUser extends User
 		DB::commit();
 	}
 
+	public function update_savings_distribution(Savings $savings, float $percentage)
+	{
+		$total_percentage = $this->savings_list()->where('id', '<>', $savings->id)->sum('savings_distribution') + $percentage;
+		if ($total_percentage < 100) {
+			$savings->savings_distribution = $percentage;
+			$savings->save();
+			return response()->json(['rsp' => 'savings distribution less than 100%'], 202);
+		} else if ($total_percentage > 100) {
+			return generate_422_error('Total percentage above 100%. Reduce one other one first');
+		} else if ($total_percentage == 100) {
+			$savings->savings_distribution = $percentage;
+			$savings->save();
+			return response()->json(['rsp' => true], 201);
+		}
+	}
+
 	/**
 	 * The booting method of the model
 	 *

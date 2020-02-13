@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 
-class CreateSavingsValidation extends FormRequest
+class CreateLockedFundValidation extends FormRequest
 {
 	/**
 	 * Get the validation rules that apply to the request.
@@ -16,9 +16,7 @@ class CreateSavingsValidation extends FormRequest
 	public function rules()
 	{
 		return [
-			'gos_type_id' => 'nullable|exists:gos_types,id',
-			'maturity_date' => 'nullable|date',
-			'amount' => 'required|numeric',
+			'duration' => 'required|numeric|min:6',
 		];
 	}
 
@@ -41,7 +39,9 @@ class CreateSavingsValidation extends FormRequest
 	 */
 	public function messages()
 	{
-		return [];
+		return [
+			'duration.min' => 'Locked funds duration must be a minimum of 6 months'
+		];
 	}
 
 
