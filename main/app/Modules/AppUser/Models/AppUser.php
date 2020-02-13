@@ -35,7 +35,7 @@ class AppUser extends User
 
 	public function transactions()
 	{
-		return $this->hasMany(Transaction::class, 'user_id');
+		return $this->hasManyThrough(Transaction::class, Savings::class);
 	}
 
 	public function savings_list()
@@ -130,28 +130,41 @@ class AppUser extends User
 
 	public function distribute_savings(float $amount): void
 	{
+		/**
+		 * ! Find a way to dind out from paystack whether paytment really was made
+		 */
 		DB::beginTransaction();
 		/**
 		 * Fund Core Savings based on distribution
 		 */
 		$core_savings = $this->core_savings;
-		$core_savings->current_balance += ($amount * ($core_savings->savings_distribution / 100));
+		$core_savings->current_balance += $core_savings_amount = ($amount * ($core_savings->savings_distribution / 100));
 		$core_savings->save();
+
+		$core_savings->create_deposit_transaction($core_savings_amount);
 		/**
 		 * Fund each gos saving based on distribution
 		 */
 		$gos_savings = $this->gos_savings;
-		foreach ($gos_savings as $savings) {
-			$savings->current_balance += ($amount * ($savings->savings_distribution / 100));
-			$savings->save();
+		if (!$gos_savings->isEmpty()) {
+			foreach ($gos_savings->all() as $savings) {
+				$savings->current_balance += $savings_amount = ($amount * ($savings->savings_distribution / 100));
+				$savings->save();
+
+				$savings->create_deposit_transaction($savings_amount);
+			}
 		}
 		/**
 		 * Fund each locked savings based on distribution
 		 */
-		$locked_funds = $this->locked_funds;
-		foreach ($locked_funds as $savings) {
-			$savings->current_balance += ($amount * ($savings->savings_distribution / 100));
-			$savings->save();
+		$locked_funds = $this->locked_savings;
+		if (!$locked_funds->isEmpty()) {
+			foreach ($locked_funds->all() as $savings) {
+				$savings->current_balance += $savings_amount = ($amount * ($savings->savings_distribution / 100));
+				$savings->save();
+
+				$savings->create_deposit_transaction($savings_amount);
+			}
 		}
 
 		DB::commit();

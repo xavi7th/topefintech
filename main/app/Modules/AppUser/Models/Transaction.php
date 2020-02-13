@@ -3,20 +3,21 @@
 namespace App\Modules\AppUser\Models;
 
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
-	// use SoftDeletes;
+	use SoftDeletes;
 
 	protected $fillable = [
-		'amount', 'trans_type', 'target_amount', 'trans_date',
+		'amount', 'trans_type', 'savings_id',
 	];
 	protected $dates = ['trans_date'];
 
-	public function user()
+	public function savings()
 	{
-		return $this->belongsTo(AppUser::class, 'user_id');
+		return $this->belongsTo(Savings::class);
 	}
 }

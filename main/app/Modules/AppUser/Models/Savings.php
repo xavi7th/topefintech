@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\GOSType;
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
 use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
@@ -16,7 +17,7 @@ class Savings extends Model
 	protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
 	protected $table = 'savings';
 
-	public function user()
+	public function app_user()
 	{
 		return $this->belongsTo(AppUser::class);
 	}
@@ -24,6 +25,21 @@ class Savings extends Model
 	public function gos_type()
 	{
 		return $this->belongsTo(GOSType::class);
+	}
+
+	public function transactions()
+	{
+		return $this->hasMany(Transaction::class);
+	}
+
+
+	public function create_deposit_transaction(float $amount)
+	{
+		$this->transactions()->create([
+			'trans_type' => 'deposit',
+			'amount' => $amount,
+			'savings_id' => $this->id
+		]);
 	}
 
 	static function appUserRoutes()
