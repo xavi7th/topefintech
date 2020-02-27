@@ -58,8 +58,8 @@ class FundSavingsValidation extends FormRequest
 			 * Check if by some trickery the user has manipulated his savings distribution above 100%
 			 */
 			$total_percentage = $this->user()->savings_list()->sum('savings_distribution');
-			if ($total_percentage > 100) {
-				$validator->errors()->add('Savings distribution', 'Your savings distribution is above 100%. Correct it before continuing');
+			if ($total_percentage != 100) {
+				$validator->errors()->add('Savings distribution', 'Your savings distribution is not 100%. Correct it before continuing');
 				return;
 			}
 		});

@@ -10,7 +10,7 @@ $factory->define(Admin::class, function (Faker $faker) {
 	return [
 		'full_name' => 'Grant Aghedo',
 		'email' => 'grant@amju.com',
-		'password' => bcrypt('pass'),
+		'password' => 'pass',
 		'phone' => '08034444444444',
 		'bvn' => '2567890-98765432',
 		'user_passport' => '/storage/',
