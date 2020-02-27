@@ -46,37 +46,20 @@ class AppuserTransformer
 
 	public function transformForAppUser(AppUser $user)
 	{
-		$curr = (function () use ($user) {
-			switch ($user->currency) {
-				case 'USD':
-					return '$';
-					break;
-				case 'GBP':
-					return '£';
-					break;
-				case 'EUR':
-					return '€';
-					break;
 
-				default:
-					return $user->currency;
-					break;
-			}
-		})();
 		return [
 			'id' => (int)$user->id,
 			'name' => (string)$user->name,
 			'email' => (string)$user->email,
 			'country' => (string)$user->country,
-			'currency' => (string)$curr,
 			'phone' => (string)$user->phone,
 			'id_card' => (string)$user->id_card,
 			// 'is_verified' => (bool)$user->is_verified(),
-			'total_deposit' => (double)$user->total_deposit_amount(),
-			'total_withdrawal' => (double)$user->total_withdrawal_amount(),
-			'total_profit' => (double)$user->total_profit_amount(),
-			'target_profit' => (double)$user->expected_withdrawal_amount(),
-			'total_withdrawable' => (double)number_format($user->total_withdrawalable_amount(), 2, '.', '')
+			// 'total_deposit' => (double)$user->total_deposit_amount(),
+			// 'total_withdrawal' => (double)$user->total_withdrawal_amount(),
+			// 'total_profit' => (double)$user->total_profit_amount(),
+			// 'target_profit' => (double)$user->expected_withdrawal_amount(),
+			// 'total_withdrawable' => (double)number_format($user->total_withdrawalable_amount(), 2, '.', '')
 		];
 	}
 
