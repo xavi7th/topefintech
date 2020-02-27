@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Models;
 
 use App\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\AppUser\Models\Savings;
@@ -108,10 +109,30 @@ class AppUser extends User
 
 	public function fund_core_savings(float $amount): void
 	{
+		DB::beginTransaction();
 		$core_savings = $this->core_savings;
 		$core_savings->current_balance += $amount;
-		$core_savings->funded_at  = $core_savings->funded_at ? null : now();
+		$core_savings->funded_at  = $core_savings->funded_at ?? now();
 		$core_savings->save();
+
+		$core_savings->create_deposit_transaction($amount);
+
+		DB::commit();
+	}
+
+	public function fund_locked_savings(Savings $locked_savings, float $amount): void
+	{
+		if ($locked_savings->type !== 'locked') {
+			throw new Exception("You can only add locked funds to a locked savings", 422);
+		}
+		DB::beginTransaction();
+		$locked_savings->current_balance += $amount;
+		$locked_savings->funded_at  = $locked_savings->funded_at ?? now();
+		$locked_savings->save();
+
+		$locked_savings->create_deposit_transaction($amount);
+
+		DB::commit();
 	}
 
 	public function distribute_savings(float $amount): void

@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\GOSType;
@@ -69,6 +70,8 @@ class Savings extends Model
 
 			Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile');
 
+			Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
+
 			Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
 
 			Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio');
@@ -133,6 +136,29 @@ class Savings extends Model
 		}
 
 		return response()->json(['rsp' => auth()->user()->savings_list], 201);
+	}
+
+	public function lockMoreFunds(Request $request)
+	{
+		if (!$request->savings_id) {
+			return generate_422_error('Invalid savings selected');
+		}
+		if (!$request->amount) {
+			return generate_422_error('You need to specify the amount to lock');
+		}
+		$savings = Savings::find($request->savings_id);
+
+		if (is_null($savings)) {
+			return generate_422_error('Invalid savings selected');
+		}
+		try {
+			auth()->user()->fund_locked_savings($savings, $request->amount);
+			return response()->json(['rsp' => 'Created'], 201);
+		} catch (\Throwable $th) {
+			if ($th->getCode() == 422) {
+				return generate_422_error($th->getMessage());
+			}
+		};
 	}
 
 	public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
