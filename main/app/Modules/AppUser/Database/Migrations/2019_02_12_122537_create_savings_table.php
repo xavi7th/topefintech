@@ -22,6 +22,7 @@ class CreateSavingsTable extends Migration
 			$table->foreign('gos_type_id')->references('id')->on('gos_types')->onDelete('set null');
 			$table->timestamp('maturity_date')->nullable();
 			$table->double('current_balance')->default(0);
+			$table->timestamp('funded_at')->nullable();
 			$table->double('savings_distribution')->default(0);
 
 

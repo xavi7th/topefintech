@@ -33,11 +33,6 @@ class AppUser extends User
 		return $this->verified_at !== null;
 	}
 
-	public function transactions()
-	{
-		return $this->hasManyThrough(Transaction::class, Savings::class);
-	}
-
 	public function savings_list()
 	{
 		return $this->hasMany(Savings::class);
@@ -78,9 +73,14 @@ class AppUser extends User
 		return $this->hasMany(WithdrawalRequest::class);
 	}
 
-	public function total_deposit_amount()
+	public function total_withdrawal_amount()
 	{
-		return $this->transactions()->where('trans_type', 'deposit')->sum('amount');
+		return $this->transactions()->where('trans_type', 'withdrawal')->sum('amount');
+	}
+
+	public function withdrawal_transactions()
+	{
+		return $this->transactions()->where('trans_type', 'withdrawal');
 	}
 
 	public function deposit_transactions()
@@ -88,29 +88,14 @@ class AppUser extends User
 		return $this->transactions()->where('trans_type', 'deposit');
 	}
 
-	public function expected_withdrawal_amount()
+	public function interestable_deposit_transactions()
 	{
-		return $this->transactions()->where('trans_type', 'deposit')->sum('target_amount');
+		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
 	}
 
-	public function total_withdrawal_amount()
+	public function transactions()
 	{
-		return $this->transactions()->where('trans_type', 'withdrawal')->sum('amount');
-	}
-
-	public function total_withdrawalable_amount()
-	{
-		return $this->can_withdraw ? $this->expected_withdrawal_amount() : 0;
-	}
-
-	public function total_profit_amount()
-	{
-		return $this->transactions()->where('trans_type', 'profit')->sum('amount');
-	}
-
-	public function profit_transactions()
-	{
-		return $this->transactions()->where('trans_type', 'profit');
+		return $this->hasManyThrough(Transaction::class, Savings::class);
 	}
 
 	public function total_balance()
@@ -125,6 +110,7 @@ class AppUser extends User
 	{
 		$core_savings = $this->core_savings;
 		$core_savings->current_balance += $amount;
+		$core_savings->funded_at  = $core_savings->funded_at ? null : now();
 		$core_savings->save();
 	}
 
@@ -139,6 +125,7 @@ class AppUser extends User
 		 */
 		$core_savings = $this->core_savings;
 		$core_savings->current_balance += $core_savings_amount = ($amount * ($core_savings->savings_distribution / 100));
+		$core_savings->funded_at  = $core_savings->funded_at ?? now();
 		$core_savings->save();
 
 		$core_savings->create_deposit_transaction($core_savings_amount);
@@ -149,6 +136,7 @@ class AppUser extends User
 		if (!$gos_savings->isEmpty()) {
 			foreach ($gos_savings->all() as $savings) {
 				$savings->current_balance += $savings_amount = ($amount * ($savings->savings_distribution / 100));
+				$savings->funded_at  = $savings->funded_at ?? now();
 				$savings->save();
 
 				$savings->create_deposit_transaction($savings_amount);
@@ -161,6 +149,7 @@ class AppUser extends User
 		if (!$locked_funds->isEmpty()) {
 			foreach ($locked_funds->all() as $savings) {
 				$savings->current_balance += $savings_amount = ($amount * ($savings->savings_distribution / 100));
+				$savings->funded_at  = $savings->funded_at ?? now();
 				$savings->save();
 
 				$savings->create_deposit_transaction($savings_amount);

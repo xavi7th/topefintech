@@ -50,6 +50,17 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | LOCKED Savings Interest Rate
+    |--------------------------------------------------------------------------
+    |
+    |The interest rate that will be applied to all locked savings.
+    |
+    */
+
+	'days_before_interest_starts_counting' => env('DAYS_BEFORE_INTEREST', 2),
+
+	/*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

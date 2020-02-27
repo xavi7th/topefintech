@@ -7,6 +7,7 @@ use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\GOSType;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\AppUser\Models\Transaction;
+use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
 use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
@@ -32,6 +33,20 @@ class Savings extends Model
 		return $this->hasMany(Transaction::class);
 	}
 
+	public function deposit_transactions()
+	{
+		return $this->transactions()->where('trans_type', 'deposit');
+	}
+
+	public function interestable_deposit_transactions()
+	{
+		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
+	}
+
+	public function savings_interets()
+	{
+		return $this->hasMany(SavingsInterest::class);
+	}
 
 	public function create_deposit_transaction(float $amount)
 	{
