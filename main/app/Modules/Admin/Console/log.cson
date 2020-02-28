@@ -1,1 +1,171 @@
+Completed successfullyarray:10 [
+  "id" => 1
+  "app_user_id" => 3
+  "amount" => 5000.0
+  "period" => "quarterly"
+  "date" => 15
+  "weekday" => "Friday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 09:38:59"
+  "updated_at" => "2020-02-28 09:38:59"
+]
+array:10 [
+  "id" => 18
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "weekly"
+  "date" => 15
+  "weekday" => "Friday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 09:45:30"
+  "updated_at" => "2020-02-28 09:45:30"
+]
+"Invalid savings ditribution settings"
+"Auto save failure"
+array:10 [
+  "id" => 19
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Thursday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 09:45:40"
+  "updated_at" => "2020-02-28 09:45:40"
+]
+array:10 [
+  "id" => 20
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "monthly"
+  "date" => 15
+  "weekday" => "Saturday"
+  "time" => "15:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 09:48:27"
+  "updated_at" => "2020-02-28 09:48:27"
+]
+array:10 [
+  "id" => 21
+  "app_user_id" => 3
+  "amount" => 20000.0
+  "period" => "monthly"
+  "date" => 15
+  "weekday" => "Saturday"
+  "time" => "15:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 09:48:33"
+  "updated_at" => "2020-02-28 09:48:33"
+]
+array:10 [
+  "id" => 22
+  "app_user_id" => 3
+  "amount" => 20000.0
+  "period" => "monthly"
+  "date" => 15
+  "weekday" => "Thursday"
+  "time" => "15:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 09:48:35"
+  "updated_at" => "2020-02-28 09:48:35"
+]
+array:10 [
+  "id" => 23
+  "app_user_id" => 3
+  "amount" => 20000.0
+  "period" => "monthly"
+  "date" => 15
+  "weekday" => "Saturday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 15:40:08"
+  "updated_at" => "2020-02-28 15:40:08"
+]
+array:10 [
+  "id" => 24
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Monday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 15:40:16"
+  "updated_at" => "2020-02-28 15:40:16"
+]
+array:10 [
+  "id" => 25
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Sunday"
+  "time" => "14:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 15:40:21"
+  "updated_at" => "2020-02-28 15:40:21"
+]
+array:10 [
+  "id" => 26
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Sunday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 15:40:29"
+  "updated_at" => "2020-02-28 15:40:29"
+]
+array:10 [
+  "id" => 27
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Saturday"
+  "time" => "15:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 15:40:29"
+  "updated_at" => "2020-02-28 15:40:29"
+]
+array:10 [
+  "id" => 28
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Friday"
+  "time" => "15:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 15:40:31"
+  "updated_at" => "2020-02-28 15:40:31"
+]
+array:10 [
+  "id" => 29
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Sunday"
+  "time" => "15:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-02-28 15:40:33"
+  "updated_at" => "2020-02-28 15:40:33"
+]
+array:10 [
+  "id" => 30
+  "app_user_id" => 3
+  "amount" => 2000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Thursday"
+  "time" => "15:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-02-28 15:40:35"
+  "updated_at" => "2020-02-28 15:40:35"
+]
 Completed successfully

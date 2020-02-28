@@ -42,6 +42,22 @@ class Kernel extends ConsoleKernel
 				// The task failed...
 				// save a notification for the admin
 			});
+
+		$schedule->command('savings:auto-deduct-savings')
+			->everyMinute()
+			->withoutOverlapping()
+			->appendOutputTo(Module::getModulePath('Admin/Console') . '/log.cson')
+			// ->emailOutputTo('xavi7th@gmail.com')
+			->runInBackground() //causes emails not to deliver
+			->onSuccess(function () {
+				// The task succeeded...
+				// save a notification for the admin
+			})
+			->onFailure(function () {
+				// The task failed...
+				// save a notification for the admin
+			});
+
 		$schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
 	}
 
