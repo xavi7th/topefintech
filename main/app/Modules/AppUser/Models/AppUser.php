@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\AppUser\Models\Savings;
+use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\WithdrawalRequest;
@@ -32,6 +33,11 @@ class AppUser extends User
 	public function is_verified()
 	{
 		return $this->verified_at !== null;
+	}
+
+	public function debit_cards()
+	{
+		return $this->hasMany(DebitCard::class);
 	}
 
 	public function savings_list()

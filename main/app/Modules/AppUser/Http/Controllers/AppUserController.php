@@ -16,6 +16,7 @@ use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
 use App\Modules\AppUser\Http\Controllers\VerificationController;
 use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 use App\Modules\AppUser\Models\Savings;
+use App\Modules\AppUser\Models\DebitCard;
 
 class AppUserController extends Controller
 {
@@ -69,6 +70,8 @@ class AppUserController extends Controller
 					Savings::appUserRoutes();
 
 					GOSType::appUserRoutes();
+
+					DebitCard::appUserRoutes();
 				});
 
 				Route::get('/{subcat?}', function () {

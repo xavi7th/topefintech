@@ -11,6 +11,7 @@
         "php": "^7.2",
         "danielme85/laravel-log-to-db": "^2.0",
         "fideloper/proxy": "^4.0",
+        "laravel-validation-rules/credit-card": "^1.2",
         "laravel/framework": "^6.6",
         "laravel/tinker": "^1.0",
         "nwidart/laravel-modules": "^6.2",
