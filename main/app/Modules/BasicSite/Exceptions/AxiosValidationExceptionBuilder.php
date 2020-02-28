@@ -25,7 +25,8 @@ class AxiosValidationExceptionBuilder extends Exception
 	{
 		return response()->json([
 			"error" => "form validation error",
-			"message" => implode('<br>', $this->validator->errors()->all())
+			// "message" => implode('<br>', $this->validator->errors()->all())
+			"message" => $this->validator->errors()->all()
 		], $this->code);
 	}
 }

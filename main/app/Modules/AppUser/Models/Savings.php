@@ -13,6 +13,7 @@ use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
 use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
 use App\Modules\AppUser\Http\Requests\UpdateSavingsDistributionValidation;
+use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 
 class Savings extends Model
 {
@@ -68,6 +69,8 @@ class Savings extends Model
 
 			Route::get('/savings/get-distribution-details', 'Savings@getDistributionDetails');
 
+			Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings');
+
 			Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile');
 
 			Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
@@ -115,6 +118,32 @@ class Savings extends Model
 			} else {
 				return $savings_distribution;
 			}
+		}
+
+		return response()->json(['rsp' => auth()->user()->savings_list], 201);
+	}
+
+	public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)
+	{
+		// dd($request->all());
+		return auth()->user()->auto_save_settings()->create($request->all());
+		// amount
+		// period
+		// date
+		// weekday
+		// time
+		// try_other_cards
+		/**
+		 * If user has core but no gos or locked update the core
+		 * If user has gos or locked use distribution to spread it
+		 *
+		 * ! UPDATE CORE Update savings and create a transactions record
+		 * !
+		 */
+		if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
+			auth()->user()->fund_core_savings($request->amount);
+		} else {
+			auth()->user()->distribute_savings($request->amount);
 		}
 
 		return response()->json(['rsp' => auth()->user()->savings_list], 201);

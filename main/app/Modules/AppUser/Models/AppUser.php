@@ -10,6 +10,7 @@ use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\Transaction;
+use App\Modules\AppUser\Models\AutoSaveSetting;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 
 class AppUser extends User
@@ -33,6 +34,11 @@ class AppUser extends User
 	public function is_verified()
 	{
 		return $this->verified_at !== null;
+	}
+
+	public function auto_save_settings()
+	{
+		return $this->hasMany(AutoSaveSetting::class);
 	}
 
 	public function debit_cards()
