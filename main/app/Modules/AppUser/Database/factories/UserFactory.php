@@ -23,6 +23,7 @@ $factory->define(AppUser::class, function (Faker $faker) {
 		'password' => 'pass',
 		'country' => $faker->country,
 		'phone' => $faker->phoneNumber,
+		'currency' => $faker->currencyCode,
 		'id_card' => '/storage/id_cards/',
 		'remember_token' => Str::random(10),
 	];
