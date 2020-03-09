@@ -17,8 +17,9 @@ class CreateApiRoutePermissionsTable extends Migration
 			$table->bigIncrements('id');
 			$table->bigInteger('user_id')->unsigned();
 			$table->foreign('user_id')->references('id')->on('users');
+			$table->string('user_type');
 			$table->bigInteger('api_route_id')->unsigned();
-			$table->foreign('api_route_id')->references('id')->on('api_routes');
+			// $table->foreign('api_route_id')->references('id')->on('api_routes');
 
 			$table->timestamps();
 		});
