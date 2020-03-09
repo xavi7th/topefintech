@@ -24,20 +24,25 @@ mix.webpackConfig( {
 } )
 
 mix.scripts( [
-    __dirname + '/Resources/js/vendor/jquery-3.2.1.min.js',
-    __dirname + '/Resources/js/vendor/popper.min.js',
-    __dirname + '/Resources/js/vendor/bootstrap.min.js',
-    __dirname + '/Resources/js/vendor/simplebar.min.js',
-    __dirname + '/Resources/js/vendor/jquery.dataTables.min.js',
-    __dirname + '/Resources/js/vendor/dataTables.responsive.min.js',
-    // __dirname + '/Resources/js/vendor/morris.min.js',
-    // __dirname + '/Resources/js/vendor/chartjs.min.js',
-    // __dirname + '/Resources/js/vendor/raphael.min.js',
-    // __dirname + '/Resources/js/vendor/owl.carousel.min.js'
+    __dirname + '/Resources/vendor/jquery/dist/jquery.min.js',
+    __dirname + '/Resources/vendor/popper.js/dist/umd/popper.min.js',
+    __dirname + '/Resources/vendor/bootstrap/dist/js/bootstrap.min.js',
+    __dirname + '/Resources/vendor/feather-icons/dist/feather.min.js',
+    __dirname + '/Resources/vendor/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
+    __dirname + '/Resources/vendor/yaybar.js',
+    __dirname + '/Resources/vendor/object-fit-images/dist/ofi.min.js',
+    __dirname + '/Resources/vendor/fancybox/dist/jquery.fancybox.min.js',
+    __dirname + '/Resources/vendor/emojione/lib/js/emojione.min.js',
+    __dirname + '/Resources/vendor/emojionearea/dist/emojionearea.min.js',
+    __dirname + '/Resources/vendor/moment/min/moment.min.js',
+    __dirname + '/Resources/vendor/swiper/js/swiper.min.js',
+    __dirname + '/Resources/vendor/chart.js/dist/Chart.min.js',
+    __dirname + '/Resources/vendor/chartist/dist/chartist.min.js',
 ], 'public_html/js/admin-app-vendor.js' );
 
 mix.scripts( [
-    __dirname + '/Resources/js/vendor/main.js'
+    __dirname + '/Resources/vendor/rootui.js',
+    __dirname + '/Resources/vendor/rootui-init.js',
 ], 'public_html/js/admin-main.js' );
 
 mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );

@@ -1,45 +1,83 @@
 <template>
-  <div class="wrapper" v-if="isAuth">
+  <div class="rui-main" v-if="isAuth">
+    <transition name="fade" :duration="{ enter: 1300, leave: 200 }">
+      <page-loader v-if="isLoading"></page-loader>
+    </transition>
+
     <transition name="nav-transition" mode="out-in">
       <router-view @page-loaded="pageLoaded" />
     </transition>
   </div>
   <div class="wrapper" v-else>
-    <admin-nav></admin-nav>
-    <admin-header v-on:logout-user="logoutUser()" v-if="!is404" :isHome="isHome"></admin-header>
+    <user-nav></user-nav>
+    <div class="rui-yaybar-bg"></div>
+    <user-header v-on:logout-user="logoutUser()" v-if="!is404" :isHome="isHome"></user-header>
+    <mobile-nav></mobile-nav>
+    <div class="rui-navbar-bg"></div>
 
     <transition name="fade" :duration="{ enter: 1300, leave: 200 }">
-      <pre-loader v-if="isLoading"></pre-loader>
+      <page-loader v-if="isLoading"></page-loader>
     </transition>
     <transition name="nav-transition" mode="out-in" :duration="{ leave: 600, enter: 600 }">
       <router-view @page-loaded="pageLoaded" @is-loading="toggleLoadState" />
     </transition>
 
-    <admin-footer v-if="!is404"></admin-footer>
+    <user-footer v-if="!is404"></user-footer>
+
+    <modal-component></modal-component>
+
+    <popup-search-modal></popup-search-modal>
+
+    <popup-messenger-modal></popup-messenger-modal>
+
+    <popup-toast></popup-toast>
   </div>
 </template>
 
 <script>
-  import PreLoader from "@admin-components/misc/PageLoader";
-  import AdminNav from "@admin-components/partials/NavComponent";
-  import AdminHeader from "@admin-components/partials/HeaderComponent";
-  import AdminFooter from "@admin-components/partials/FooterComponent";
+  import PageLoader from "@admin-components/misc/PageLoader";
+  import UserNav from "@admin-components/partials/NavComponent";
+  import MobileNav from "@admin-components/partials/MobileNavComponent";
+  import UserHeader from "@admin-components/partials/HeaderComponent";
+  import UserFooter from "@admin-components/partials/FooterComponent";
+  import ModalComponent from "@admin-components/utilities/ModalComponent";
+  import PopupSearchModal from "@admin-components/utilities/PopupSearchModalComponent";
+  import PopupMessengerModal from "@admin-components/utilities/PopupMessengerModalComponent";
+  import PopupToast from "@admin-components/utilities/PopupToastComponent";
 
   export default {
-    name: "AdminApp",
+    name: "AdminDashboardApp",
     data: () => ({
-      freshLoad: true,
       isLoading: true
     }),
     components: {
-      AdminHeader,
-      AdminFooter,
-      AdminNav,
-      PreLoader
+      PageLoader,
+      UserHeader,
+      UserFooter,
+      UserNav,
+      MobileNav,
+      ModalComponent,
+      PopupSearchModal,
+      PopupMessengerModal,
+      PopupToast
+    },
+    created() {
+      let docBody = document.querySelector("body");
+      docBody.setAttribute("data-spy", "scroll");
+      docBody.setAttribute("data-target", ".rui-page-sidebar");
+      docBody.setAttribute("data-offset", "140");
+      docBody.setAttribute(
+        "class",
+        "rui-navbar-autohide rui-section-lines rui-navbar-show"
+      );
     },
     computed: {
       isAuth() {
-        return this.$route.name === null || this.$route.path.match("login");
+        return (
+          this.$route.name === null ||
+          this.$route.path.match("login") ||
+          this.$route.path.match("register")
+        );
       },
       is404() {
         return this.$route.name
@@ -69,22 +107,10 @@
         this.isLoading = true;
       },
       pageLoaded() {
-        // if (!this.isAuth) {
-        //   this.$loadScript("/js/dashboard-main.js").then(() => {
-        //     if (this.freshLoad) {
-        //       this.freshLoad = false;
-        //       $(".rd-dropdown-item").click(function() {
-        //         $(".rd-nav-item").addClass(
-        //           "rd-navbar--has-dropdown rd-navbar-submenu"
-        //         );
-        //       });
-        //     }
-        //     // $(".preloader").fadeOut(300);
-        //   });
-        // } else {
-        $(".preloader").fadeOut(300);
-        this.isLoading = false;
-        // }
+        this.$loadScript("/js/admin-main.js").then(() => {
+          $(".preloader").fadeOut(600);
+          this.isLoading = false;
+        });
       }
     }
   };

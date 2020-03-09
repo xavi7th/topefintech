@@ -19,6 +19,8 @@ Vue.use( VeeValidate, {
 Vue.use( LoadScript )
 
 routeGenerator().then( router => {
+    console.log( router );
+
 
 
     let mediaHandler = () => {

@@ -1,173 +1,387 @@
 <template>
-  <header>
-    <div class="header-left">
-      <!-- navigation-toggle  -->
-      <a href class="header-btn side-nav-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
+  <nav class="rui-navbar rui-navbar-top rui-navbar-sticky">
+    <div class="rui-navbar-brand">
+      <a href="dashboard.html" class="rui-navbar-logo">
+        <img
+          src="/img/logo.svg"
+          data-src-night="/img/logo-white.svg"
+          data-src-day="/img/logo.svg"
+          alt
+          width="45"
+        />
       </a>
-
-      <!-- window full screen -->
-      <a href id="fullScreen" class="header-btn hide-md">
-        <i class="fa fa-expand"></i>
-      </a>
-
-      <!-- search -->
-      <div class="form-group search-field flex a-i-center hide-xs">
-        <div class="header-divider"></div>
-        <label for="header-search">
-          <i class="fa fa-search"></i>
-        </label>
-        <input type="text" class="form-control" id="header-search" placeholder="Search here..." />
+      <button class="yay-toggle rui-yaybar-toggle" type="button">
+        <span></span>
+      </button>
+    </div>
+    <div class="container-fluid">
+      <div class="rui-navbar-content">
+        <ul class="nav">
+          <li class="dropdown dropdown-hover dropdown-keep-open dropdown-triangle">
+            <a
+              href="#actions"
+              class="dropdown-item"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span data-feather="layers" class="rui-icon rui-icon-stroke-1_5"></span>
+              <span>Actions</span>
+              <span class="rui-dropdown-circle"></span>
+            </a>
+            <ul class="nav dropdown-menu">
+              <li>
+                <a href="#create-post" class="nav-link">
+                  <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Create Post</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="#create-page" class="nav-link">
+                  <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Create Page</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="#manage-users" class="nav-link">
+                  <span data-feather="users" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Manage Users</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li class="dropdown dropdown-hover dropdown-keep-open dropdown-triangle">
+                <a
+                  href="#manage-sites"
+                  class="dropdown-item"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span data-feather="sidebar" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Manage Sites</span>
+                  <span class="rui-dropdown-circle"></span>
+                </a>
+                <ul class="nav dropdown-menu">
+                  <li>
+                    <a href="#my-site-1" class="nav-link">My Site 1</a>
+                  </li>
+                  <li>
+                    <a href="#my-site-2" class="nav-link">My Site 2</a>
+                  </li>
+                  <li>
+                    <a href="#my-site-3" class="nav-link">My Site 3</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav rui-navbar-right">
+          <li class="nav-item">
+            <a
+              class="d-flex"
+              data-fancybox
+              data-touch="false"
+              data-close-existing="true"
+              data-src="#search"
+              data-auto-focus="true"
+              href="javascript:;"
+            >
+              <span class="btn btn-custom-round">
+                <span data-feather="search" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+            </a>
+          </li>
+          <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
+            <a
+              class="dropdown-item"
+              href="#"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-offset="0,12"
+            >
+              <span class="btn btn-custom-round">
+                <span data-feather="flag" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+            </a>
+            <ul class="nav dropdown-menu rui-navbar-dropdown-language">
+              <li>
+                <a href="#" class="rui-navbar-language active">
+                  <span class="rui-navbar-language-img">
+                    <img src="/img/united-states-of-america.svg" alt />
+                  </span>USA
+                </a>
+              </li>
+              <li>
+                <a href="#" class="rui-navbar-language">
+                  <span class="rui-navbar-language-img">
+                    <img src="/img/china.svg" alt />
+                  </span>China
+                </a>
+              </li>
+              <li>
+                <a href="#" class="rui-navbar-language">
+                  <span class="rui-navbar-language-img">
+                    <img src="/img/germany.svg" alt />
+                  </span>Germany
+                </a>
+              </li>
+              <li>
+                <a href="#" class="rui-navbar-language">
+                  <span class="rui-navbar-language-img">
+                    <img src="/img/japan.svg" alt />
+                  </span>Japan
+                </a>
+              </li>
+              <li>
+                <a href="#" class="rui-navbar-language">
+                  <span class="rui-navbar-language-img">
+                    <img src="/img/spain.svg" alt />
+                  </span>Spain
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
+            <a
+              class="dropdown-item"
+              href="#"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-offset="0,12"
+            >
+              <span class="btn btn-custom-round">
+                <span data-feather="bell" class="rui-icon rui-icon-stroke-1_5 mr-0"></span>
+                <span class="badge badge-circle badge-brand">3</span>
+              </span>
+            </a>
+            <ul class="nav dropdown-menu rui-navbar-dropdown-notice">
+              <li class="rui-navbar-dropdown-title mb-10">
+                <div class="d-flex align-items-center">
+                  <h2 class="h4 mb-0 mr-auto">Notifications</h2>
+                  <a class="btn btn-custom-round" href="profile.html">
+                    <span data-feather="link-2" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="media media-success media-filled mnl-30 mnr-30">
+                  <a href="profile.html" class="media-link">
+                    <span class="media-img">
+                      <img src="/img/avatar-5.png" alt />
+                    </span>
+                    <span class="media-body">
+                      <span class="media-title">Amber Smith</span>
+                      <small class="media-subtitle">Bring abundantly creature great...</small>
+                    </span>
+                  </a>
+                  <a href="#" class="media-icon">
+                    <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="media media-filled mnl-30 mnr-30">
+                  <a href="profile.html" class="media-link">
+                    <span class="media-img">C</span>
+                    <span class="media-body">
+                      <span class="media-title">Change Design</span>
+                      <small class="media-subtitle">Design</small>
+                    </span>
+                  </a>
+                  <a href="#" class="media-icon">
+                    <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="media media-filled mnl-30 mnr-30">
+                  <a href="profile.html" class="media-link">
+                    <span class="media-img bg-transparent">
+                      <img src="/img/icon-zip.svg" class="icon-file" alt />
+                    </span>
+                    <span class="media-body">
+                      <span class="media-title">Added banner archive</span>
+                      <small class="media-subtitle">Commerce</small>
+                    </span>
+                  </a>
+                  <a href="#" class="media-icon">
+                    <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a
+              class="d-flex"
+              data-fancybox
+              data-keyboard="false"
+              data-auto-focus="false"
+              data-touch="false"
+              data-close-existing="true"
+              data-src="#messenger"
+              href="javascript:;"
+            >
+              <span class="btn btn-custom-round">
+                <span data-feather="message-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+            </a>
+          </li>
+          <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
+            <a
+              class="dropdown-item rui-navbar-avatar mnr-6"
+              href="#"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img src="/img/avatar-1.png" alt />
+            </a>
+            <ul class="nav dropdown-menu">
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Create new Post</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="users" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Manage Users</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Check Updates</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Exit</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
+            <a
+              class="dropdown-item mnr-5"
+              href="#"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-offset="0,12"
+            >
+              <span class="btn btn-custom-round">
+                <span data-feather="more-vertical" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+            </a>
+            <ul class="nav dropdown-menu">
+              <li>
+                <div class="custom-control custom-switch dropdown-item-switch">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input rui-nightmode-toggle"
+                    id="toggleNightMode"
+                  />
+                  <label class="dropdown-item custom-control-label" for="toggleNightMode">
+                    <span data-feather="moon" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Night Mode</span>
+                    <span class="rui-dropdown-circle"></span>
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div class="custom-control custom-switch dropdown-item-switch">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input rui-spotlightmode-toggle"
+                    id="toggleSpotlightMode"
+                  />
+                  <label class="dropdown-item custom-control-label" for="toggleSpotlightMode">
+                    <span data-feather="square" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Spotlight Mode</span>
+                    <span class="rui-dropdown-circle"></span>
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div class="custom-control custom-switch dropdown-item-switch">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input rui-sectionLines-toggle"
+                    id="toggleSectionLines"
+                  />
+                  <label class="dropdown-item custom-control-label" for="toggleSectionLines">
+                    <span data-feather="layout" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>
+                      Show section
+                      lines
+                    </span>
+                    <span class="rui-dropdown-circle"></span>
+                  </label>
+                </div>
+              </li>
+              <li class="dropdown-menu-label">Sidebar</li>
+              <li>
+                <div class="custom-control custom-switch dropdown-item-switch">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input rui-darkSidebar-toggle"
+                    id="toggleDarkSidebar"
+                  />
+                  <label class="dropdown-item custom-control-label" for="toggleDarkSidebar">
+                    <span data-feather="sidebar" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Dark</span>
+                    <span class="rui-dropdown-circle"></span>
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div class="custom-control custom-switch dropdown-item-switch">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input rui-staticSidebar-toggle"
+                    id="toggleStaticSidebar"
+                  />
+                  <label class="dropdown-item custom-control-label" for="toggleStaticSidebar">
+                    <span data-feather="sidebar" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Static</span>
+                    <span class="rui-dropdown-circle"></span>
+                  </label>
+                </div>
+              </li>
+              <li class="dropdown-menu-label">Navbar</li>
+              <li>
+                <div class="custom-control custom-switch dropdown-item-switch">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input rui-darkNavbar-toggle"
+                    id="toggleDarkNavbar"
+                  />
+                  <label class="dropdown-item custom-control-label" for="toggleDarkNavbar">
+                    <span data-feather="menu" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Dark</span>
+                    <span class="rui-dropdown-circle"></span>
+                  </label>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
-
-    <div class="header-right">
-      <!-- dropdown language -->
-      <div class="dropdown hide-md dropdown-xs">
-        <a href class="header-btn alert-active" data-toggle="dropdown">
-          <i class="far fa-flag"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right text-center">
-          <a href class="dropdown-item">TR</a>
-          <a href class="dropdown-item active">EN</a>
-          <a href class="dropdown-item">RU</a>
-        </div>
-      </div>
-      <!-- dropdown language //. -->
-
-      <!-- dropdown notification -->
-      <div class="dropdown media-dropdown">
-        <a href class="header-btn alert-active" data-toggle="dropdown">
-          <i class="far fa-bell">
-            <span class="alert-dot">
-              <span class="badge badge-dot badge-sm badge-primary"></span>
-            </span>
-          </i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <div class="media-wrapper">
-            <div class="media-item">
-              <div class="item-thumbnail bg-success">
-                <i class="far fa-user"></i>
-              </div>
-              <div class="item-content">
-                <p>
-                  <strong>New user registration</strong>
-                  <small class="float-right">5 hours ago</small>
-                </p>
-              </div>
-            </div>
-            <div class="media-item">
-              <div class="item-thumbnail bg-danger">
-                <i class="fa fa-dollar-sign"></i>
-              </div>
-              <div class="item-content">
-                <p>
-                  <strong>$392 today sales earning.</strong>
-                  <small class="float-right">1 day ago</small>
-                </p>
-              </div>
-            </div>
-            <div class="media-item">
-              <div class="item-thumbnail bg-warning">
-                <i class="fa fa-dollar-sign"></i>
-              </div>
-              <div class="item-content">
-                <p>
-                  <strong>Last Site Update</strong>
-                  <small class="float-right">2 day ago</small>
-                </p>
-              </div>
-            </div>
-            <a href class="media-all-view">All View</a>
-          </div>
-        </div>
-      </div>
-      <!-- dropdown notification //. -->
-
-      <!-- dropdown message -->
-      <div class="dropdown media-dropdown hide-md">
-        <a href class="header-btn" data-toggle="dropdown">
-          <i class="far fa-envelope"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <div class="media-wrapper">
-            <div class="media-item">
-              <div class="item-thumbnail media-avatar-status">
-                <span class="badge badge-dot badge-success"></span>
-                <img src="/img/user-1.png" class="img-responsive" alt="..." />
-              </div>
-              <div class="item-content">
-                <p>
-                  <a href="app-inbox.html">
-                    <strong>Application Error</strong>
-                  </a>
-                  <small class="float-right">12 hours ago</small>
-                </p>
-                <p class="small">There is an error in the sales application...</p>
-              </div>
-            </div>
-            <div class="media-item">
-              <div class="item-thumbnail media-avatar-status">
-                <span class="badge badge-dot badge-danger"></span>
-                <img src="/img/user-2.png" class="img-responsive" alt="..." />
-              </div>
-              <div class="item-content">
-                <p>
-                  <a href="app-inbox.html">
-                    <strong>New Product</strong>
-                  </a>
-                  <small class="float-right">12 hours ago</small>
-                </p>
-                <p class="small">New product detail and pictures</p>
-              </div>
-            </div>
-            <div class="media-item">
-              <div class="item-thumbnail media-avatar-status">
-                <span class="badge badge-dot badge-danger"></span>
-                <img src="/img/user-3.png" class="img-responsive" alt="..." />
-              </div>
-              <div class="item-content">
-                <p>
-                  <a href="app-inbox.html">
-                    <strong>Weekly Sales Report</strong>
-                  </a>
-                  <small class="float-right">1 day ago</small>
-                </p>
-                <p class="small">The weekly report can be found in the...</p>
-              </div>
-            </div>
-            <a href="app-inbox.html" class="media-all-view">All View</a>
-          </div>
-        </div>
-      </div>
-      <!-- dropdown message //. -->
-
-      <!-- dropdown user-->
-      <div class="dropdown logged-user">
-        <a href="#" class="header-btn" data-toggle="dropdown">
-          <img src="/img/user-4.png" alt="..." />
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <a href="page-profile.html" class="dropdown-item">
-            <i class="fa fa-user mr-10"></i> Profile
-          </a>
-          <a href="app-inbox.html" class="dropdown-item">
-            <i class="far fa-envelope mr-10"></i> Inbox
-          </a>
-          <a href="user-profile.html" class="dropdown-item">
-            <i class="fa fa-cog mr-10"></i> Settings
-          </a>
-          <a href="#" @click.prevent="$emit('logout-user')" class="dropdown-item">
-            <i class="fas fa-sign-out-alt mr-10"></i> Log Out
-          </a>
-        </div>
-      </div>
-      <!-- dropdown user //. -->
-    </div>
-  </header>
+  </nav>
 </template>
 
 <script>

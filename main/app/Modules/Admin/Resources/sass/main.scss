@@ -1,63 +1,74 @@
-@import './vendor/bootstrap.min';
-@import './vendor/font-awesome.min';
-@import './vendor/simplebar.min';
-@import './vendor/jquery.dataTables.min';
-@import './vendor/main';
+@import '../vendor/bootstrap-custom';
+@import '../vendor/overlayscrollbars/css/OverlayScrollbars';
+@import '../vendor/yaybar';
+@import '../vendor/fancybox/dist/jquery.fancybox';
+@import '../vendor/emojionearea/dist/emojionearea';
+@import '../vendor/swiper/css/swiper.min';
+@import '../vendor/chartist/dist/chartist';
+@import '../vendor/jqvmap/dist/jqvmap';
+@import '../vendor/rootui';
+
+
+#night-mode {
+    @import '../vendor/rootui-night';
+}
+
+// rootui-night.css" media="(night)"
 
 @for $i from 1 through 5 {
-	$enter-delay: 400ms;
+    $enter-delay: 400ms;
 
-	.page-enter-active {
-		overflow: hidden;
-		transition: transform $enter-delay cubic-bezier(0.4, 0.1, 0.7, 0.95);
+    .page-enter-active {
+        overflow: hidden;
+        transition: transform $enter-delay cubic-bezier(0.4, 0.1, 0.7, 0.95);
 
-		.enter-#{$i} {
-			transition: 300ms cubic-bezier(0.1, 0.7, 0.6, 0.9);
-			transition-property: opacity, transform;
-			transition-delay: #{120ms * $i + $enter-delay};
-		}
-	}
+        .enter-#{$i} {
+            transition: 300ms cubic-bezier(0.1, 0.7, 0.6, 0.9);
+            transition-property: opacity, transform;
+            transition-delay: #{120ms * $i + $enter-delay};
+        }
+    }
 
-	.page-enter {
-		transform: translateX(100%);
+    .page-enter {
+        transform: translateX(100%);
 
-		.enter-#{$i} {
-			opacity: 0;
-			transform: translateX(50px);
-		}
-	}
+        .enter-#{$i} {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+    }
 }
 
 .fade-enter-active,
 .fade-leave-active {
-	transition: opacity 0.5s;
+    transition: opacity 0.5s;
 }
 
 .fade-enter,
 .fade-leave-to
 
 /* .fade-leave-active below version 2.1.8 */
-	{
-	opacity: 0;
+    {
+    opacity: 0;
 }
 
 .nav-transition-enter-active {
-	transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
 
 .nav-transition-leave-active {
-	transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+    transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .nav-transition-enter,
 .nav-transition-leave-to
 
 /* .nav-transition-leave-active below version 2.1.8 */
-	{
-	transform: translateY(-10px);
-	opacity: 0;
+    {
+    transform: translateY(-10px);
+    opacity: 0;
 }
 
 .pointer {
-	cursor: pointer !important;
+    cursor: pointer !important;
 }

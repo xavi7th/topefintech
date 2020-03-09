@@ -1,88 +1,112 @@
 <template>
-  <div class="auth-split">
-    <div class="auth-left">
-      <div class="auth-box-wrapper">
-        <div class="auth-logo">
-          <div class="logo">
-            <div class="logo-type logo-type-colored">
-              <img src="/img/logo-round-small.png" alt="Amju Unique Logo" class="loader-img" />
-              <a href="/">
-                <span>
-                  amju
-                  <span>unique</span>
-                </span>
-              </a>
-            </div>
+  <div class="rui-sign align-items-center justify-content-center">
+    <div class="bg-image">
+      <div class="bg-grey-1"></div>
+    </div>
+    <div class="form rui-sign-form rui-sign-form-cloud">
+      <div class="row vertical-gap sm-gap justify-content-center">
+        <div class="col-12">
+          <h1 class="display-4 mb-10 text-center">Sign In</h1>
+        </div>
+        <div class="col-12">
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            :class="{'has-error': errors.has('email')}"
+            placeholder="Email"
+            v-model="details.email"
+            v-validate="'required|email'"
+            name="email"
+          />
+          <div class="invalid-feedback">{{ errors.first('email') }}.</div>
+        </div>
+        <div class="col-12">
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            :class="{'has-error': errors.has('password')}"
+            placeholder="Password"
+            v-model="details.password"
+            v-validate="'required'"
+            name="password"
+          />
+          <div class="invalid-feedback">{{ errors.first('password') }}.</div>
+        </div>
+        <div class="col-sm-6">
+          <div class="custom-control custom-checkbox d-flex justify-content-start">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="rememberMe"
+              v-model="details.remember"
+            />
+            <label class="custom-control-label fs-13" for="rememberMe">Remember me</label>
           </div>
         </div>
-        <div class="fs-18 fw-600 text-center mb-30 text-title">Log In</div>
-        <form @submit.prevent="loginAdmin">
-          <div class="form-group mb-20" :class="{'has-error': errors.has('email')}">
-            <label for="form-mail">
-              <strong>E-Mail</strong>
-            </label>
-            <input
-              type="text"
-              class="form-control form-control-pill"
-              id="form-mail"
-              v-model="details.email"
-              v-validate="'required|email'"
-              name="email"
-            />
-            <span>{{ errors.first('email') }}</span>
+        <div class="col-sm-6">
+          <div class="d-flex justify-content-end">
+            <a href="#" class="fs-13">Forgot password?</a>
           </div>
-          <div class="form-group mb-20" :class="{'has-error': errors.has('password')}">
-            <label for="form-pass">
-              <strong>Password</strong>
-            </label>
-            <input
-              type="password"
-              class="form-control form-control-pill"
-              id="form-pass"
-              v-model="details.password"
-              v-validate="'required'"
-              name="password"
-            />
-            <span>{{ errors.first('password') }}</span>
-          </div>
-
-          <div class="form-group flex j-c-center mt-30">
-            <button class="btn btn-primary btn-shadow btn-round">Log In</button>
-          </div>
-        </form>
+        </div>
+        <div class="col-12">
+          <button @click="loginUser" class="btn btn-brand btn-block text-center">
+            Sign
+            in
+          </button>
+        </div>
+        <div class="col-12">
+          <div class="rui-sign-or mt-2 mb-5">or</div>
+        </div>
+        <div class="col-12">
+          <ul class="rui-social-links">
+            <li>
+              <a href="dashboard.html" class="rui-social-github">
+                <span class="fab fa-github"></span> Github
+              </a>
+            </li>
+            <li>
+              <a href="dashboard.html" class="rui-social-facebook">
+                <span class="fab fa-facebook-f"></span> Facebook
+              </a>
+            </li>
+            <li>
+              <a href="dashboard.html" class="rui-social-google">
+                <span class="fab fa-google"></span> Google
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    <div class="auth-right" style="background-image:url('/img/amju-building.jpg')">
-      <div class="auth-content">
-        <div class="auth-right__caption">
-          <h1>Admin Panel</h1>
-          <p>
-            Unauthorized attempts to access information or change information on these pages are strictly prohibited and
-            are punishable under the Computer Fraud and Abuse Act of 2010 and the Private Information Infrastructure Protection Act.
-          </p>
-        </div>
-      </div>
+    <div class="mt-20 text-grey-5">
+      Don't you have an account?
+      <router-link to="/register" class="text-2">
+        Sign
+        Up
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    name: "AdminAuth",
     mounted() {
       this.$emit("page-loaded");
+      sessionStorage.removeItem("token");
     },
     data: () => ({
       details: {}
     }),
     methods: {
-      loginAdmin() {
+      loginUser() {
         this.$validator.validateAll().then(result => {
           if (!result) {
             Toast.fire({
               title: "Invalid data! Try again",
-              position: "center",
-              type: "error"
+              position: "top",
+              icon: "error"
             });
           } else {
             BlockToast.fire({
@@ -90,18 +114,18 @@
             });
 
             axios
-              .post("/admin-panel/login", { ...this.details })
-              .then(rsp => {
-                if (undefined !== rsp && rsp.status == 202) {
-                  swal.close();
-                  sessionStorage.clear();
+              .post("/api/v1/auth/login", { ...this.details })
+              .then(({ status, data: { access_token } }) => {
+                if (undefined !== status && status == 202) {
+                  // swal.close();
+                  sessionStorage.setItem("token", access_token);
                   location.reload();
-                } else if (undefined !== rsp && rsp.status == 205) {
+                } else if (undefined !== status && status == 205) {
                   swal
                     .fire({
                       title: "Suspended Account",
                       text: rsp.data.msg,
-                      type: "warning"
+                      icon: "warning"
                     })
                     .then(() => {
                       location.reload();
@@ -109,12 +133,12 @@
                 }
               })
               .catch(err => {
-                if (err.response.status == 416) {
+                if (undefined !== err.response && err.response.status == 416) {
                   swal
                     .fire({
                       title: "Unverified",
                       text: `This seems to be your first login. You need to supply a password`,
-                      type: "info"
+                      icon: "info"
                     })
                     .then(() => {
                       swal
@@ -153,7 +177,7 @@
                               .fire({
                                 title: `Success`,
                                 text: "Password set successfully!",
-                                type: "success"
+                                icon: "success"
                               })
                               .then(() => {
                                 location.reload();
@@ -171,59 +195,25 @@
 </script>
 
 <style lang="scss" scoped>
-  .auth-right {
-    background-size: cover;
+  .has-error {
+    background-color: #fef9fa;
+    border-color: #fac6cc;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23ef5164'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3E%3Ccircle cx='6' cy='8.2' r='.6' fill='%23ef5164' stroke='none'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 
-    .auth-right__caption {
-      font-size: larger;
-    }
-  }
-  .logo .logo-type-colored a span {
-    text-transform: capitalize;
-    color: #1b97eb;
-
-    & > span {
-      color: #f90a48;
-    }
-  }
-
-  .auth-split .auth-left button {
-    font-weight: bold;
-  }
-
-  .btn-primary.btn-shadow {
-    box-shadow: 0 3px 10px rgba(27, 151, 235, 0.5);
-  }
-
-  .btn-primary {
-    background-color: #1b97eb;
-    border-color: #1b97eb;
-  }
-
-  .form-group {
-    position: relative;
-
-    span {
+    & + .invalid-feedback {
+      display: block;
       position: absolute;
-      bottom: 7px;
-      right: 20px;
-      color: #d33;
-      opacity: 0;
-      transition: ease-in 300ms opacity;
-      pointer-events: none;
+      bottom: 9px;
+      right: 15%;
+      width: auto;
     }
 
-    &.has-error {
-      .form-control {
-        border-color: #f90a48;
-        box-shadow: 0 0 10px rgba(249, 10, 72, 0.2);
-      }
-
-      > span {
-        opacity: 1;
-      }
+    &:focus + .invalid-feedback {
+      display: none;
     }
   }
 </style>
