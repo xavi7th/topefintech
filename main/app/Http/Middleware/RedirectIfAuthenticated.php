@@ -19,6 +19,9 @@ class RedirectIfAuthenticated
 	public function handle($request, Closure $next, $guard = null)
 	{
 		if (Auth::guard($guard)->check()) {
+			if ($request->expectsJson()) {
+				return response()->json(['rsp' => 'Already logged in'], 208);
+			}
 			return redirect()->route(User::dashboardRoute());
 		}
 
