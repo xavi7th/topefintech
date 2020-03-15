@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
+use App\Modules\AppUser\Models\AppUser;
 
 class MakeLoanRequestValidation extends FormRequest
 {
@@ -17,8 +18,11 @@ class MakeLoanRequestValidation extends FormRequest
 	public function rules()
 	{
 		return [
-			'email' => 'nullable|exists:users,email',
 			'amount' => 'required|numeric',
+			'first_surety' => 'required|email|exists:users,email',
+			'second_surety' => 'required|email|exists:users,email',
+			'repayment_installation_duration' => 'required|in:weekly,monthly',
+			'expiration_date' => 'required|date'
 		];
 	}
 
@@ -54,7 +58,17 @@ class MakeLoanRequestValidation extends FormRequest
 	 */
 	public function withValidator($validator)
 	{
-		$validator->after(function ($validator) { });
+		$validator->after(function ($validator) {
+			$first_surety = AppUser::where('email', $this->first_surety)->first();
+			if (!$first_surety->is_eligible_for_loan_surety($this->amount)) {
+				$validator->errors()->add('Ineligible surety', $this->first_surety . ' is not an eligible surety for your loan request.');
+			}
+
+			$second_surety = AppUser::where('email', $this->second_surety)->first();
+			if (!$second_surety->is_eligible_for_loan_surety($this->amount)) {
+				$validator->errors()->add('Ineligible surety', $this->second_surety . ' is not an eligible surety for your loan request.');
+			}
+		});
 	}
 
 

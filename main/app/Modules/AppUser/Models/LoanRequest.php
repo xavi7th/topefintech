@@ -2,15 +2,38 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\AppUser\Models\LoanSurety;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Http\Requests\CheckSuretyValidation;
 use App\Modules\AppUser\Http\Requests\MakeLoanRequestValidation;
 
 class LoanRequest extends Model
 {
-	protected $fillable = [];
+	use SoftDeletes;
+
+	protected $fillable = [
+		'amount', 'expires_at', 'interest_rate', 'repayment_installation_duration', 'auto_debit',
+	];
+
+	protected $casts = [
+		'expires_at' => 'timestamp'
+	];
+
+	public function app_user()
+	{
+		return $this->belongsTo(AppUser::class);
+	}
+
+	public function loan_sureties()
+	{
+		return $this->hasMany(LoanSurety::class);
+	}
 
 	static function appUserRoutes()
 	{
@@ -73,6 +96,36 @@ class LoanRequest extends Model
 
 	public function makeLoanRequest(MakeLoanRequestValidation $request)
 	{
-		dd($request->all());
+		DB::beginTransaction();
+
+		/**
+		 * ! Create a loan request
+		 */
+		$loan_request = auth()->user()->loan_requests()->create([
+			'amount' => $request->amount,
+			'expires_at' => now()->addMonths(3),
+			'interest_rate' => config('app.smart_loan_interest_rate'),
+			'repayment_installation_duration' => $request->repayment_installation_duration,
+			'auto_debit' => filter_var($request->auto_debit, FILTER_VALIDATE_BOOLEAN)
+
+		]);
+		/**
+		 * ! Create a surety request
+		 */
+
+		auth()->user()->loan_surety_requests()->create(
+			[
+				'surety_id' => AppUser::where('email', $request->first_surety)->first()->id,
+				'loan_request_id' => $loan_request->id,
+			]
+		);
+		auth()->user()->loan_surety_requests()->create(
+			[
+				'surety_id' => AppUser::where('email', $request->second_surety)->first()->id,
+				'loan_request_id' => $loan_request->id,
+			]
+		);
+
+		DB::commit();
 	}
 }
