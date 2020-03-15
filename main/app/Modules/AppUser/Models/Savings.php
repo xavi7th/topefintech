@@ -14,9 +14,12 @@ use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
 use App\Modules\AppUser\Http\Requests\UpdateSavingsDistributionValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Savings extends Model
 {
+	use SoftDeletes;
+
 	protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
 	protected $table = 'savings';
 

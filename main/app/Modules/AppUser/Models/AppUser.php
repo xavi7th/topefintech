@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\AppUser\Models\LoanSurety;
+use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\AutoSaveSetting;
 use App\Modules\AppUser\Models\SavingsInterest;
@@ -36,6 +38,21 @@ class AppUser extends User
 	public function is_verified()
 	{
 		return $this->verified_at !== null;
+	}
+
+	public function loan_requests()
+	{
+		return $this->hasMany(LoanRequest::class);
+	}
+
+	public function loan_surety_requests()
+	{
+		return $this->hasMany(LoanSurety::class, 'lender_id');
+	}
+
+	public function surety_request()
+	{
+		return $this->hasOne(LoanSurety::class, 'surety_id');
 	}
 
 	public function auto_save_settings()
@@ -261,6 +278,14 @@ class AppUser extends User
 		 */
 		elseif ($amount > ($this->total_balance() * 2)) {
 			return false;
+		} elseif (!$this->is_bvn_verified) {
+			return false;
+		} elseif (!$this->default_debit_card()->exists()) {
+			return false;
+		} elseif ($this->has_pending_loan()) {
+			return false;
+		} elseif ($this->is_loan_surety()) {
+			return false;
 		} else {
 			return true;
 		}
@@ -279,13 +304,22 @@ class AppUser extends User
 		/**
 		 * ? If the user has not made a contribution return false
 		 */
-		elseif (!($this->deposit_transactions()->whereMonth('transactions.created_at', now()->month)->exists() && $this->deposit_transactions()->whereMonth('transactions.created_at', now()->subMonth()->month)->exists())) {
+		elseif (!($this->deposit_transactions()->whereMonth('transactions.created_at', now()->month)->exists()
+			&& $this->deposit_transactions()->whereMonth('transactions.created_at', now()->subMonth()->month)->exists())) {
 			return false;
 		}
-		// /**
-		//  * If the loan amount is more than 2 times the user's balance return false
-		//  */
+		/**
+		 * If the loan amount is more than 2 times the user's balance return false
+		 */
 		elseif ($amount > $this->total_balance()) {
+			return false;
+		} elseif (!$this->is_bvn_verified) {
+			return false;
+		} elseif (!$this->default_debit_card()->exists()) {
+			return false;
+		} elseif ($this->has_pending_loan()) {
+			return false;
+		} elseif ($this->is_loan_surety()) {
 			return false;
 		}
 		/**
@@ -298,12 +332,12 @@ class AppUser extends User
 
 	public function has_pending_loan(): bool
 	{
-		return (bool)mt_rand(0, 1);;
+		return $this->loan_requests()->where('is_paid', false)->exists();
 	}
 
 	public function is_loan_surety(): bool
 	{
-		return (bool)mt_rand(0, 1);;
+		return  $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
 	}
 
 	/**
