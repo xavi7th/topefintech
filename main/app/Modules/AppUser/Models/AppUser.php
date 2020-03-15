@@ -11,6 +11,7 @@ use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\AutoSaveSetting;
+use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 
 class AppUser extends User
@@ -21,7 +22,8 @@ class AppUser extends User
 
 	protected $casts = [
 		'can_withdraw' => 'boolean',
-		'is_active' => 'boolean'
+		'is_active' => 'boolean',
+		'is_bvn_verified' => 'boolean',
 	];
 	protected $table = "users";
 	const DASHBOARD_ROUTE_PREFIX = "user";
@@ -48,7 +50,7 @@ class AppUser extends User
 
 	public function other_debit_cards()
 	{
-		return $this->hasMany(DebitCard::class)->where('is_default', false);
+		return $this->debit_cards()->where('is_default', false);
 	}
 
 	public function default_debit_card()
@@ -124,14 +126,6 @@ class AppUser extends User
 	public function transactions()
 	{
 		return $this->hasManyThrough(Transaction::class, Savings::class);
-	}
-
-	public function total_balance()
-	{
-		if ($this->total_profit_amount() <= 0) {
-			return 0;
-		}
-		return $this->total_profit_amount() + $this->total_deposit_amount();
 	}
 
 	public function deduct_debit_card(DebitCard $debit_card_to_deduct, float $amount): bool
@@ -235,6 +229,81 @@ class AppUser extends User
 			$savings->save();
 			return response()->json(['rsp' => true], 201);
 		}
+	}
+
+	public function savings_interests()
+	{
+		return $this->hasManyThrough(SavingsInterest::class, Savings::class);
+	}
+
+	public function total_balance(): float
+	{
+		return $this->deposit_transactions()->sum('amount') + $this->savings_interests()->sum('amount');
+	}
+
+	public function is_eligible_for_loan(float $amount): bool
+	{
+		/**
+		 * ? If the user is not up to one month old return false
+		 */
+
+		if (now()->subMonth()->lte($this->created_at)) {
+			return false;
+		}
+		/**
+		 * ? If the user has not made a contribution return false
+		 */
+		elseif ($this->deposit_transactions()->sum('amount') <= 0) {
+			return false;
+		}
+		/**
+		 * If the loan amount is more than 2 times the user's balance return false
+		 */
+		elseif ($amount > ($this->total_balance() * 2)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public function is_eligible_for_loan_surety(float $amount): bool
+	{
+		// dd($this->deposit_transactions()->whereMonth('transactions.created_at', now()->month)->get()->toArray());
+		/**
+		 * ? If the user is not up to two months old return false
+		 */
+
+		if (now()->subMonths(2)->lte($this->created_at)) {
+			return false;
+		}
+		/**
+		 * ? If the user has not made a contribution return false
+		 */
+		elseif (!($this->deposit_transactions()->whereMonth('transactions.created_at', now()->month)->exists() && $this->deposit_transactions()->whereMonth('transactions.created_at', now()->subMonth()->month)->exists())) {
+			return false;
+		}
+		// /**
+		//  * If the loan amount is more than 2 times the user's balance return false
+		//  */
+		elseif ($amount > $this->total_balance()) {
+			return false;
+		}
+		/**
+		 * Else he is eligible. Return true
+		 */
+		else {
+			return true;
+		}
+	}
+
+	public function has_pending_loan(): bool
+	{
+		return (bool)mt_rand(0, 1);;
+	}
+
+	public function is_loan_surety(): bool
+	{
+		return (bool)mt_rand(0, 1);;
 	}
 
 	/**

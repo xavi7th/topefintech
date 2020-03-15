@@ -6,27 +6,29 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateLoanSuretiesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('loan_sureties', function (Blueprint $table) {
-            $table->bigIncrements('id');
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('loan_sureties', function (Blueprint $table) {
+			$table->bigIncrements('id');
+			$table->unsignedBigInteger('requester_id');
+			$table->unsignedBigInteger('shortee_id');
 
-            $table->timestamps();
-        });
-    }
+			$table->timestamps();
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('loan_sureties');
-    }
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::dropIfExists('loan_sureties');
+	}
 }
