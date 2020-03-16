@@ -15,6 +15,7 @@ class CreateLoanRequestsTable extends Migration
 	{
 		Schema::create('loan_requests', function (Blueprint $table) {
 			$table->bigIncrements('id');
+			$table->string('loan_ref')->unique();
 			$table->unsignedBigInteger('app_user_id');
 			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->double('amount');
@@ -22,6 +23,8 @@ class CreateLoanRequestsTable extends Migration
 			$table->double('interest_rate');
 			$table->string('repayment_installation_duration');
 			$table->boolean('auto_debit')->default(false);
+			$table->boolean('is_approved')->default(false);
+			$table->boolean('is_disbursed')->default(false);
 			$table->boolean('is_paid')->default(false);
 
 			$table->timestamps();

@@ -18,6 +18,7 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\DebitCard;
 use App\Modules\AppUser\Models\LoanRequest;
+use App\Modules\AppUser\Models\LoanSurety;
 
 class AppUserController extends Controller
 {
@@ -75,6 +76,8 @@ class AppUserController extends Controller
 					DebitCard::appUserRoutes();
 
 					LoanRequest::appUserRoutes();
+
+					LoanSurety::appUserRoutes();
 				});
 
 				Route::get('/{subcat?}', function () {
