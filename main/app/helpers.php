@@ -39,13 +39,15 @@ if (!function_exists('unique_random')) {
 	 * Generate a unique random string of characters
 	 * uses str_random() helper for generating the random string
 	 *
-	 * @param     $table - name of the table
-	 * @param     $col - name of the column that needs to be tested
+	 * @param string $table - name of the table
+	 * @param string $col - name of the column that needs to be tested
+	 * @param string $prefix Any prefix you want to add to generated string
 	 * @param int $chars - length of the random string
+	 * @param bool $numeric Whether or not the generated characters should be numeric
 	 *
 	 * @return string
 	 */
-	function unique_random($table, $col, $chars = null)
+	function unique_random($table, $col, $prefix = null, $chars = null, $numeric = false)
 	{
 		$unique = false;
 
@@ -57,9 +59,17 @@ if (!function_exists('unique_random')) {
 			// Generate random string of characters
 
 			if ($chars == null) {
-				$random = rand(100001, 999999999999);
+				if ($numeric) {
+					$random = $prefix . rand(100001, 999999999);
+				} else {
+					$random = $prefix . Str::uuid();
+				}
 			} else {
-				$random = str_random($chars);
+				if ($numeric) {
+					$random = $prefix . rand(substr(100000001, 1, ($chars)), substr(9999999999, -($chars)));
+				} else {
+					$random = $prefix . Str::random($chars);
+				}
 			}
 
 			// Check if it's already testing
