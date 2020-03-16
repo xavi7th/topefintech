@@ -45,13 +45,12 @@ class LoanSurety extends Model
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('/surety-requests/requests', 'LoanSurety@getReceivedSuretyRequests');
-			Route::get('/surety-requests/status', 'LoanSurety@getSentSuretyRequestsStatus');
 		});
 	}
 
 	public function getReceivedSuretyRequests()
 	{
 		// dd(LoanRequest::find(6)->stakes_for_default());
-		return response()->json(['request_details' => auth()->user()->surety_request->load(['lender', 'loan_request'])], 200);
+		return response()->json(['request_details' => auth()->user()->surety_request->load(['loan_request'])], 200);
 	}
 }
