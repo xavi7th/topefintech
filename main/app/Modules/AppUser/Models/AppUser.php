@@ -14,6 +14,7 @@ use App\Modules\AppUser\Models\LoanSurety;
 use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\AutoSaveSetting;
+use App\Modules\AppUser\Models\LoanTransaction;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
@@ -46,6 +47,11 @@ class AppUser extends User
 	public function loan_requests()
 	{
 		return $this->hasMany(LoanRequest::class);
+	}
+
+	public function loan_transactions()
+	{
+		return $this->hasManyThrough(LoanTransaction::class, LoanRequest::class);
 	}
 
 	public function loan_surety_requests()

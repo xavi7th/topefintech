@@ -10,6 +10,7 @@ use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\AppUser\Models\LoanSurety;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Modules\AppUser\Models\LoanTransaction;
 use App\Modules\AppUser\Http\Requests\CheckSuretyValidation;
 use App\Modules\AppUser\Http\Requests\MakeLoanRequestValidation;
 
@@ -34,6 +35,11 @@ class LoanRequest extends Model
 	public function app_user()
 	{
 		return $this->belongsTo(AppUser::class);
+	}
+
+	public function loan_transactions()
+	{
+		return $this->hasMany(LoanTransaction::class);
 	}
 
 	public function loan_sureties()
@@ -136,6 +142,7 @@ class LoanRequest extends Model
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('/loan-requests', 'LoanRequest@adminGetLoanRequests');
 			Route::put('/loan-request/{loan_request}/approve', 'LoanRequest@approveLoanRequest');
+			Route::put('/loan-request/{loan_request}/mark-disbursed', 'LoanRequest@markLoanAsDisbursed');
 		});
 	}
 
@@ -252,5 +259,30 @@ class LoanRequest extends Model
 		} else {
 			return generate_422_error('Both sureties have not yet approved the request');
 		}
+	}
+
+	public function markLoanAsDisbursed(self $loan_request)
+	{
+
+		if (!$loan_request->is_approved) {
+			return generate_422_error('Mark loan as approved first');
+		}
+
+
+		if ($loan_request->is_disbursed) {
+			return generate_422_error('Loan already disbursed');
+		}
+		DB::beginTransaction();
+		//create a transaction for the loan for amount minus interest
+		$loan_request->loan_transactions()->create([
+			'amount' => $loan_request->amount - ($loan_request->amount * (config('app.smart_loan_interest_rate') / 100)),
+			'trans_type' => 'loan'
+		]);
+
+		$loan_request->is_disbursed = true;
+		$loan_request->save();
+		DB::commit();
+
+		return response()->json(['rsp' => true], 403);
 	}
 }
