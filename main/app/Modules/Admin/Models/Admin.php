@@ -4,8 +4,10 @@ namespace App\Modules\Admin\Models;
 
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Modules\Admin\Models\ApiRoute;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\Admin\Transformers\AdminUserTransformer;
 
 class Admin extends User
 {
@@ -41,17 +43,69 @@ class Admin extends User
 		return $this->belongsToMany(ApiRoute::class, 'api_route_permissions', 'user_id')->withTimestamps();
 	}
 
-	// /**
-	//  * The booting method of the model
-	//  *
-	//  * @return void
-	//  */
-	// protected static function boot()
-	// {
-	// 	parent::boot();
+	static function adminRoutes()
+	{
+		Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
 
-	// 	static::addGlobalScope('adminsOnly', function (Builder $builder) {
-	// 		$builder->where('role_id', parent::$admin_id);
-	// 	});
-	// }
+			Route::get('/savings', 'Admin@getListOfUserSavings');
+
+			Route::get('admins', 'Admin@getAdmins');
+
+			Route::post('admin/create', 'Admin@createAdmin');
+
+			Route::get('admin/{admin}/permissions', 'Admin@getAdminPermissions');
+
+			Route::put('admin/{admin}/permissions', 'Admin@editAdminPermissions');
+		});
+	}
+
+	public function getAdmins()
+	{
+		return (new AdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForAdminViewAdmins');
+	}
+
+	public function createAdmin()
+	{
+
+		try {
+			DB::beginTransaction();
+			$admin = Admin::create(Arr::collapse([
+				request()->all(),
+				[
+					'password' => bcrypt('amju@admin'),
+					'role_id' => Admin::getAdminId()
+				]
+			]));
+			//Give him access to dashboard
+			// TODO set thin when admin fills his details and resets his password
+			// $admin->permitted_api_routes()->attach(1);
+			DB::commit();
+			return response()->json(['rsp' => $admin], 201);
+		} catch (\Throwable $e) {
+			if (app()->environment() == 'local') {
+				return response()->json(['error' => $e->getMessage()], 500);
+			}
+			return response()->json(['rsp' => 'error occurred'], 500);
+		}
+	}
+
+	public function getAdminPermissions(Admin $admin)
+	{
+		$permitted_routes = $admin->permitted_api_routes()->get(['api_routes.id'])->map(function ($item, $key) {
+			return $item->id;
+		});
+
+		$all_routes = ApiRoute::get(['id', 'description'])->map(function ($item, $key) {
+			return ['id' => $item->id, 'description' => $item->description];
+		});
+
+		return ['permitted_routes' => $permitted_routes, 'all_routes' => $all_routes];
+		return (new AdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForAdminViewAdmins');
+	}
+
+	public function editAdminPermissions(Admin $admin)
+	{
+		$admin->permitted_api_routes()->sync(request('permitted_routes'));
+		return response()->json(['rsp' => true], 204);
+	}
 }
