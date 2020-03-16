@@ -22,8 +22,10 @@ class LoanRequest extends Model
 	];
 
 	protected $casts = [
-		'expires_at' => 'timestamp'
+		'expires_at' => 'datetime'
 	];
+
+	protected $appends = ['is_defaulted', 'stakes_for_default', 'grace_period_expiry', 'installments', 'total_refunded'];
 
 	public function app_user()
 	{
@@ -33,6 +35,68 @@ class LoanRequest extends Model
 	public function loan_sureties()
 	{
 		return $this->hasMany(LoanSurety::class);
+	}
+
+	public function getStakesForDefaultAttribute()
+	{
+		$lender_stake = $this->app_user->total_balance();
+		if ($lender_stake > $this->amount) {
+			return [
+				'lender_stake' => $this->amount,
+				'first_surety_stake' => 0,
+				'second_surety_stake' => 0,
+			];
+		} else {
+			$loan_balance = $this->amount - $lender_stake;
+			$first_surety_stake = $second_surety_stake = $loan_balance / 2;
+			return [
+				'lender_stake' => $lender_stake,
+				'first_surety_stake' => $first_surety_stake,
+				'second_surety_stake' => $second_surety_stake,
+			];
+		}
+	}
+
+	public function getGracePeriodExpiryAttribute()
+	{
+		return $this->expires_at->addDays(config('app.smart_loan_grace_period'));
+	}
+
+	public function getIsDefaultedAttribute(): bool
+	{
+		return now()->gte($this->grace_period_expiry);
+	}
+
+	public function getInstallmentsAttribute(): array
+	{
+		if ($this->repayment_installation_duration == 'weekly') {
+			$duration_in_weeks = $this->expires_at->diffInWeeks($this->created_at);
+			$installmental_amount = ceil($this->amount / $duration_in_weeks);
+			return [
+				'amount' => (float)$installmental_amount,
+				'description' => to_naira($installmental_amount) . '/week',
+				'duration' => $duration_in_weeks . ' weeks'
+			];
+		} elseif ($this->repayment_installation_duration == 'monthly') {
+			$duration_in_months = $this->expires_at->diffInMonths($this->created_at);
+			$installmental_amount = ceil($this->amount / $duration_in_months);
+			return [
+				'amount' => (float)$installmental_amount,
+				'description' => to_naira($installmental_amount) . '/month',
+				'duration' => $duration_in_months . ' months'
+			];
+		} else {
+			return [
+				'amount' => 'Invalid repayment installation duration selected',
+				'description' => 'Invalid repayment installation duration selected',
+				'duration' => 'Invalid repayment installation duration selected'
+			];
+		}
+	}
+
+	public function getTotalRefundedAttribute()
+	{
+		return 'Not calculated';
 	}
 
 	static function appUserRoutes()

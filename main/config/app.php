@@ -64,11 +64,34 @@ return [
     | Smart Loan Interest Rate
     |--------------------------------------------------------------------------
     |
-    |The interest rate that will be applied to all locked savings.
+    |The interest rate that will be applied to all smart loans.
     |
     */
 
 	'smart_loan_interest_rate' => env('SMART_LOAN_INTEREST_RATE', 10),
+
+	/*
+    |--------------------------------------------------------------------------
+    | Smart Loan Duration
+    |--------------------------------------------------------------------------
+    |
+		|	This is the duration in months which the lender has to pay back the loan.
+		|	This is minus the grace period.
+    |
+    */
+
+	'smart_loan_duration' => env('SMART_LOAN_DURATION', 3),
+
+	/*
+    |--------------------------------------------------------------------------
+    | Smart Loan Grace Period
+    |--------------------------------------------------------------------------
+    |
+    |The grace period in DAYS of default before a loan is automatically wiped
+    |
+    */
+
+	'smart_loan_grace_period' => env('SMART_LOAN_GRACE_PERIOD', 30),
 
 	/*
     |--------------------------------------------------------------------------

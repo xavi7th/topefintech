@@ -2,15 +2,16 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\AppUser\Models\LoanRequest;
 
 class LoanSurety extends Model
 {
 	protected $fillable = [
 		'surety_id', 'loan_request_id',
 	];
-
 
 	public function lender()
 	{
@@ -38,5 +39,19 @@ class LoanSurety extends Model
 	public function is_surety_pending(): bool
 	{
 		return is_null($this->is_surety_accepted);
+	}
+
+	static function appUserRoutes()
+	{
+		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+			Route::get('/surety-requests/requests', 'LoanSurety@getReceivedSuretyRequests');
+			Route::get('/surety-requests/status', 'LoanSurety@getSentSuretyRequestsStatus');
+		});
+	}
+
+	public function getReceivedSuretyRequests()
+	{
+		// dd(LoanRequest::find(6)->stakes_for_default());
+		return response()->json(['request_details' => auth()->user()->surety_request->load(['lender', 'loan_request'])], 200);
 	}
 }
