@@ -21,11 +21,15 @@ class LoanRequest extends Model
 		'amount', 'expires_at', 'interest_rate', 'repayment_installation_duration', 'auto_debit', 'loan_ref'
 	];
 
-	protected $casts = [
-		'expires_at' => 'datetime'
+	protected $dates = [
+		'expires_at'
 	];
 
-	protected $appends = ['is_defaulted', 'stakes_for_default', 'grace_period_expiry', 'installments', 'total_refunded'];
+	protected $casts = [
+		'auto_debit' => 'boolean'
+	];
+
+	protected $appends = ['is_defaulted', 'stakes_for_default', 'grace_period_expiry', 'installments', 'total_refunded', 'auto_refund_settings'];
 
 	public function app_user()
 	{
@@ -99,6 +103,17 @@ class LoanRequest extends Model
 		return 'Not calculated';
 	}
 
+	public function getAutoRefundSettingsAttribute()
+	{
+		if ($this->auto_debit) {
+			if ($this->repayment_installation_duration == 'weekly') {
+				return config('app.smart_loan_weekly_auto_debit_day') . ' of every week';
+			} elseif ($this->repayment_installation_duration == 'monthly') {
+				return str_ordinal(config('app.smart_loan_monthly_auto_debit_day')) . ' of every month';
+			}
+		}
+	}
+
 	static function appUserRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
@@ -107,6 +122,7 @@ class LoanRequest extends Model
 			Route::get('/loan-requests/check-eligibility', 'LoanRequest@checkLoanEligibility');
 			Route::get('/loan-requests/check-surety-eligibility', 'LoanRequest@checkSuretyEligibility');
 			Route::post('/loan-requests/create', 'LoanRequest@makeLoanRequest');
+			Route::get('/loan-requests', 'LoanRequest@getLoanRequests');
 		});
 	}
 
@@ -114,6 +130,11 @@ class LoanRequest extends Model
 	public function getInterestRate()
 	{
 		return response()->json(['interest_rate' => (float)config('app.smart_loan_interest_rate')], 200);
+	}
+
+	public function getLoanRequests()
+	{
+		return auth()->user()->loan_requests->load(['loan_sureties.surety']);
 	}
 
 	public function checkLoanEligibility(Request $request)

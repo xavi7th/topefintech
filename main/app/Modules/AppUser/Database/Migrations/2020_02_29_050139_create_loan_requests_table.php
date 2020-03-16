@@ -19,7 +19,7 @@ class CreateLoanRequestsTable extends Migration
 			$table->unsignedBigInteger('app_user_id');
 			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->double('amount');
-			$table->timestamp('expires_at');
+			$table->datetime('expires_at');
 			$table->double('interest_rate');
 			$table->string('repayment_installation_duration');
 			$table->boolean('auto_debit')->default(false);

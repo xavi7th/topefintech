@@ -95,6 +95,18 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | Smart Loan Auto Debit Day
+    |--------------------------------------------------------------------------
+    |
+    |	The day of the week when we process loan auto debit repayments
+    |
+    */
+
+	'smart_loan_weekly_auto_debit_day' => env('SMART_LOAN_WEEKLY_AUTO_DEBIT_DAY', 'friday'),
+	'smart_loan_monthly_auto_debit_day' => env('SMART_LOAN_MONTHLY_AUTO_DEBIT_DAY', 23),
+
+	/*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
