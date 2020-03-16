@@ -18,7 +18,7 @@ class CreateLoanTransactionsTable extends Migration
 			$table->unsignedBigInteger('loan_request_id');
 			$table->foreign('loan_request_id')->references('id')->on('loan_requests')->onDelete('cascade');
 			$table->double('amount');
-			$table->string('trans_type');
+			$table->enum('trans_type', ['loan', 'repayment']);
 
 			$table->timestamps();
 			$table->softDeletes();
