@@ -18,7 +18,7 @@ class LoanRequest extends Model
 	use SoftDeletes;
 
 	protected $fillable = [
-		'amount', 'expires_at', 'interest_rate', 'repayment_installation_duration', 'auto_debit',
+		'amount', 'expires_at', 'interest_rate', 'repayment_installation_duration', 'auto_debit', 'loan_ref'
 	];
 
 	protected $casts = [
@@ -39,7 +39,7 @@ class LoanRequest extends Model
 
 	public function getStakesForDefaultAttribute()
 	{
-		$lender_stake = $this->app_user->total_balance();
+		$lender_stake = optional($this->app_user)->total_balance();
 		if ($lender_stake > $this->amount) {
 			return [
 				'lender_stake' => $this->amount,
@@ -59,7 +59,7 @@ class LoanRequest extends Model
 
 	public function getGracePeriodExpiryAttribute()
 	{
-		return $this->expires_at->addDays(config('app.smart_loan_grace_period'));
+		return optional($this->expires_at)->addDays(config('app.smart_loan_grace_period'));
 	}
 
 	public function getIsDefaultedAttribute(): bool
@@ -109,6 +109,7 @@ class LoanRequest extends Model
 			Route::post('/loan-requests/create', 'LoanRequest@makeLoanRequest');
 		});
 	}
+
 
 	public function getInterestRate()
 	{
@@ -170,8 +171,8 @@ class LoanRequest extends Model
 			'expires_at' => now()->addMonths(3),
 			'interest_rate' => config('app.smart_loan_interest_rate'),
 			'repayment_installation_duration' => $request->repayment_installation_duration,
-			'auto_debit' => filter_var($request->auto_debit, FILTER_VALIDATE_BOOLEAN)
-
+			'auto_debit' => filter_var($request->auto_debit, FILTER_VALIDATE_BOOLEAN),
+			'loan_ref' => unique_random('loan_requests', 'loan_ref', null, 12)
 		]);
 		/**
 		 * ! Create a surety request
