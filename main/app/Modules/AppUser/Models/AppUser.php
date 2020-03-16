@@ -6,6 +6,7 @@ use App\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,8 @@ use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\AutoSaveSetting;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
+use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 
 class AppUser extends User
 {
@@ -338,6 +341,55 @@ class AppUser extends User
 	public function is_loan_surety(): bool
 	{
 		return  !is_null($this->surety_request) && $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
+	}
+
+
+	static function adminRoutes()
+	{
+		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+			Route::get('users', 'AppUser@getListOfUsers');
+
+			Route::delete('user/{user}/delete', 'AppUser@deleteUser');
+
+			Route::get('user/{user}/transactions', 'AppUser@getUserTransactions');
+		});
+	}
+
+
+	public function getListOfUsers()
+	{
+		return (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');
+	}
+
+	public function deleteUser(AppUser $user)
+	{
+		$user->transactions()->delete();
+		return response()->json(['rsp' => $user->delete()], 204);
+	}
+
+	public function getUserTransactions(AppUser $user)
+	{
+		$transactions = $user->transactions()->when(
+			request('sort'),
+			function ($query) {
+				$sort_params = explode('|', request('sort'));
+				$sort_param = $sort_params[0]; // == 'is_verified' ? 'verified_at' : $sort_params[0];
+				$sort_type = $sort_params[1];
+
+				return $query->orderBy($sort_param, $sort_type);
+			},
+			function ($query) {
+				return $query->latest('trans_date');
+			}
+		)
+			->when(request('filter'), function ($query) {
+				$filter = request('filter');
+				return $query->where(function ($query) use ($filter) {
+					$query->where('amount', 'LIKE',  "%$filter%")->orWhere('trans_type', 'LIKE', "%$filter%");
+				});
+			})->paginate(request('per_page'));
+
+		return (new AdminTransactionTransformer)->collectionTransformer($transactions, 'transformForAdminViewTransactions');
 	}
 
 	/**

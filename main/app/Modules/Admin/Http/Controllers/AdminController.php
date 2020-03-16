@@ -21,6 +21,7 @@ use App\Modules\Transformers\AdminTestimonialTransformer;
 use App\Modules\Admin\Transformers\AdminActivityTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Models\GOSType;
+use App\Modules\AppUser\Models\LoanRequest;
 
 class AdminController extends Controller
 {
@@ -56,107 +57,13 @@ class AdminController extends Controller
 						}
 					});
 
-					Route::get('admins', function () {
-						return (new AdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForAdminViewAdmins');
-					});
+					Admin::adminRoutes();
 
-					Route::post('admin/create', function () {
-						// return request()->all();
-						try {
-							DB::beginTransaction();
-							$admin = Admin::create(Arr::collapse([
-								request()->all(),
-								[
-									'password' => bcrypt('amju@admin'),
-									'role_id' => Admin::getAdminId()
-								]
-							]));
-							//Give him access to dashboard
-							// TODO set thin when admin fills his details and resets his password
-							// $admin->permitted_api_routes()->attach(1);
-							DB::commit();
-							return response()->json(['rsp' => $admin], 201);
-						} catch (\Throwable $e) {
-							if (app()->environment() == 'local') {
-								return response()->json(['error' => $e->getMessage()], 500);
-							}
-							return response()->json(['rsp' => 'error occurred'], 500);
-						}
-					});
+					AppUser::adminRoutes();
 
-					Route::get('admin/{admin}/permissions', function (Admin $admin) {
-						$permitted_routes = $admin->permitted_api_routes()->get(['api_routes.id'])->map(function ($item, $key) {
-							return $item->id;
-						});
+					GOSType::adminRoutes();
 
-						$all_routes = ApiRoute::get(['id', 'description'])->map(function ($item, $key) {
-							return ['id' => $item->id, 'description' => $item->description];
-						});
-
-						return ['permitted_routes' => $permitted_routes, 'all_routes' => $all_routes];
-						return (new AdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForAdminViewAdmins');
-					});
-
-					Route::put('admin/{admin}/permissions', function (Admin $admin) {
-						$admin->permitted_api_routes()->sync(request('permitted_routes'));
-						return response()->json(['rsp' => true], 204);
-					});
-
-					Route::get('users', function () {
-						return (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');
-					});
-
-					Route::put('user/verify', function () {
-						// return request()->all();
-						$user = AppUser::find(request('id'));
-
-						$user->verified_at = $user->is_verified() ? null : now();
-						$user->save();
-
-						return ['rsp' => true];
-					});
-
-
-					Route::delete('user/{user}/delete', function (AppUser $user) {
-						$user->transactions()->delete();
-
-						return response()->json(['rsp' => $user->delete()], 204);
-					});
-
-
-					Route::get('user/{user}/transactions', function (AppUser $user) {
-
-						// return request()->all();
-						$transactions = $user->transactions()->when(
-							request('sort'),
-							function ($query) {
-								$sort_params = explode('|', request('sort'));
-								$sort_param = $sort_params[0]; // == 'is_verified' ? 'verified_at' : $sort_params[0];
-								$sort_type = $sort_params[1];
-
-								return $query->orderBy($sort_param, $sort_type);
-							},
-							function ($query) {
-								return $query->latest('trans_date');
-							}
-						)
-							->when(request('filter'), function ($query) {
-								$filter = request('filter');
-								return $query->where(function ($query) use ($filter) {
-									$query->where('amount', 'LIKE',  "%$filter%")->orWhere('trans_type', 'LIKE', "%$filter%");
-								});
-							})->paginate(request('per_page'));
-
-						return (new AdminTransactionTransformer)->collectionTransformer($transactions, 'transformForAdminViewTransactions');
-					});
-
-					Route::get('user/{user}/transactions/summary', function (AppUser $user) {
-						return [
-							'total_deposits' => $user->total_deposit_amount(),
-							'total_withdrawals' => $user->total_withdrawal_amount(),
-							'total_profits' => $user->total_profit_amount(),
-						];
-					});
+					LoanRequest::adminRoutes();
 
 					Route::get('transactions/withdrawals/summary', function () {
 						// $transactions = Transaction::where('trans_type', 'withdrawal')->limit(6)->latest('trans_date')->whereDate('trans_date', '>', now()->subWeek())->get();
@@ -248,18 +155,6 @@ class AdminController extends Controller
 						return response()->json(['rsp' => WithdrawalRequest::destroy($request_id)], 204);
 					});
 
-					Route::get('activities/summary', function () {
-						$logs = ErrLog::where('level_name', 'critical')->latest()->limit(6)->whereDate('created_at', '>', now()->subWeek())->get();
-						return (new AdminActivityTransformer)->collectionTransformer($logs, 'transformForAdminViewLatestActivitiesSummary');
-					});
-
-					Route::delete('activity/{id}/delete', function ($id) {
-						// return $id;
-						return response()->json(['rsp' => ErrLog::find($id)->update([
-							'level_name' => 'SEEN'
-						])], 204);
-					});
-
 					Route::get('dashboard/statistics', function () {
 						return [
 							'total_users' => AppUser::count(),
@@ -267,33 +162,6 @@ class AdminController extends Controller
 							'total_withdrawals' => Transaction::where('trans_type', 'withdrawal')->count(),
 							'total_messages' => Message::count(),
 						];
-					});
-
-					Route::post('gos-type/create', function () {
-
-						if (!request('name')) {
-							return generate_422_error(['name' => 'name is requitred']);
-						}
-						// $url = request()->file('user_img')->store('public/testimonial_images');
-						// $url = str_replace_first('public', '/storage', $url);
-
-						try {
-							$gos_type = GOSType::create([
-								'name' => request('name'),
-							]);
-							return response()->json(['rsp' => $gos_type], 201);
-						} catch (\Throwable $e) {
-							Log::error($e);
-							return response()->json(['rsp' => $e->getMessage()], 500);
-						}
-					});
-
-					Route::get('gos-types', function () {
-						return GOSType::all();
-					});
-
-					Route::delete('gos-type/{gos_type_id}/delete', function ($gos_type_id) {
-						return response()->json(['rsp' => GOSType::destroy($gos_type_id)], 204);
 					});
 				});
 

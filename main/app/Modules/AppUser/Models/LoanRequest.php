@@ -41,6 +41,11 @@ class LoanRequest extends Model
 		return $this->hasMany(LoanSurety::class);
 	}
 
+	public function is_surety_approved(): bool
+	{
+		return $this->loan_sureties()->where('is_surety_accepted', true)->count() === 2;
+	}
+
 	public function getStakesForDefaultAttribute()
 	{
 		$lender_stake = optional($this->app_user)->total_balance();
@@ -123,6 +128,14 @@ class LoanRequest extends Model
 			Route::get('/loan-requests/check-surety-eligibility', 'LoanRequest@checkSuretyEligibility');
 			Route::post('/loan-requests/create', 'LoanRequest@makeLoanRequest');
 			Route::get('/loan-requests', 'LoanRequest@getLoanRequests');
+		});
+	}
+
+	static function adminRoutes()
+	{
+		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+			Route::get('/loan-requests', 'LoanRequest@adminGetLoanRequests');
+			Route::put('/loan-request/{loan_request}/approve', 'LoanRequest@approveLoanRequest');
 		});
 	}
 
@@ -213,5 +226,31 @@ class LoanRequest extends Model
 		);
 
 		DB::commit();
+	}
+
+	/**
+	 * ! Admin Routes
+	 */
+
+	public function adminGetLoanRequests()
+	{
+		return LoanRequest::with('loan_sureties.surety')->get();
+	}
+
+	public function approveLoanRequest(self $loan_request)
+	{
+		if ($loan_request->is_approved) {
+			return generate_422_error('Already approved');
+		}
+		if ($loan_request->is_surety_approved()) {
+			$loan_request->is_approved = true;
+			$loan_request->approved_at = now();
+			$loan_request->approved_by = auth()->id();
+			$loan_request->save();
+
+			return response()->json(['rsp' => true], 204);
+		} else {
+			return generate_422_error('Both sureties have not yet approved the request');
+		}
 	}
 }
