@@ -33,7 +33,6 @@ class MakeLoanRequestValidation extends FormRequest
 	 */
 	public function authorize()
 	{
-		// return true;
 		return auth()->user()->is_eligible_for_loan($this->amount);
 	}
 
@@ -59,6 +58,7 @@ class MakeLoanRequestValidation extends FormRequest
 	public function withValidator($validator)
 	{
 		$validator->after(function ($validator) {
+
 			$first_surety = AppUser::where('email', $this->first_surety)->first();
 			if (!$first_surety->is_eligible_for_loan_surety($this->amount)) {
 				$validator->errors()->add('Ineligible surety', $this->first_surety . ' is not an eligible surety for your loan request.');

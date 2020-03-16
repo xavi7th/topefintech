@@ -52,7 +52,7 @@ class AppUser extends User
 
 	public function surety_request()
 	{
-		return $this->hasOne(LoanSurety::class, 'surety_id');
+		return $this->hasOne(LoanSurety::class, 'surety_id')->where('is_surety_accepted', null);
 	}
 
 	public function auto_save_settings()
@@ -337,7 +337,7 @@ class AppUser extends User
 
 	public function is_loan_surety(): bool
 	{
-		return  $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
+		return  !is_null($this->surety_request) && $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
 	}
 
 	/**
