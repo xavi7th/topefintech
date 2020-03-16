@@ -146,6 +146,7 @@ class LoanRequest extends Model
 			Route::get('/loan-requests/check-surety-eligibility', 'LoanRequest@checkSuretyEligibility');
 			Route::post('/loan-requests/create', 'LoanRequest@makeLoanRequest');
 			Route::get('/loan-requests', 'LoanRequest@getLoanRequests');
+			Route::get('/loan-requests/{loan_request}/transactions', 'LoanRequest@getLoanRequestTransactions');
 		});
 	}
 
@@ -170,11 +171,10 @@ class LoanRequest extends Model
 		return response()->json(auth()->user()->loan_requests->load(['loan_sureties.surety']), 200);
 	}
 
-	public function adminGetLoanRequestTransactions(LoanRequest $loan_request)
+	public function getLoanRequestTransactions(LoanRequest $loan_request)
 	{
 		return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
 	}
-
 	public function checkLoanEligibility(Request $request)
 	{
 		if (!$request->amount) {
@@ -302,5 +302,10 @@ class LoanRequest extends Model
 		DB::commit();
 
 		return response()->json(['rsp' => true], 403);
+	}
+
+	public function adminGetLoanRequestTransactions(LoanRequest $loan_request)
+	{
+		return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
 	}
 }
