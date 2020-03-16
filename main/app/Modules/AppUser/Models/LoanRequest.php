@@ -12,6 +12,7 @@ use App\Modules\AppUser\Models\LoanSurety;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\LoanTransaction;
 use App\Modules\AppUser\Http\Requests\CheckSuretyValidation;
+use App\Modules\AppUser\Http\Requests\LoanRepaymentValidation;
 use App\Modules\AppUser\Http\Requests\MakeLoanRequestValidation;
 
 class LoanRequest extends Model
@@ -57,25 +58,26 @@ class LoanRequest extends Model
 		return $this->loan_transactions()->where('trans_type', 'repayment')->sum('amount');
 	}
 
-	public function loan_statistics(): array
+	public function loan_statistics(): object
 	{
-		return [
-			'total_paid' => $this->total_repayment_amount()
+		return (object)[
+			'total_paid' => $total_paid = $this->total_repayment_amount(),
+			'balance_left' => $this->amount - $total_paid
 		];
 	}
 
 	public function getStakesForDefaultAttribute()
 	{
-		$lender_stake = optional($this->app_user)->total_balance();
+		$lender_stake = ceil(optional($this->app_user)->total_balance());
 		if ($lender_stake > $this->amount) {
 			return [
-				'lender_stake' => $this->amount,
+				'lender_stake' => ceil($this->amount - $this->total_refunded),
 				'first_surety_stake' => 0,
 				'second_surety_stake' => 0,
 			];
 		} else {
-			$loan_balance = $this->amount - $lender_stake;
-			$first_surety_stake = $second_surety_stake = $loan_balance / 2;
+			$loan_balance = ceil(($this->amount - $this->total_refunded) - $lender_stake);
+			$first_surety_stake = $second_surety_stake = ceil($loan_balance / 2);
 			return [
 				'lender_stake' => $lender_stake,
 				'first_surety_stake' => $first_surety_stake,
@@ -123,7 +125,7 @@ class LoanRequest extends Model
 
 	public function getTotalRefundedAttribute()
 	{
-		return 'Not calculated';
+		return $this->total_repayment_amount();
 	}
 
 	public function getAutoRefundSettingsAttribute()
@@ -147,6 +149,7 @@ class LoanRequest extends Model
 			Route::post('/loan-requests/create', 'LoanRequest@makeLoanRequest');
 			Route::get('/loan-requests', 'LoanRequest@getLoanRequests');
 			Route::get('/loan-requests/{loan_request}/transactions', 'LoanRequest@getLoanRequestTransactions');
+			Route::post('/loan-requests/{loan_request}/make-repayment', 'LoanRequest@repayLoan');
 		});
 	}
 
@@ -251,6 +254,16 @@ class LoanRequest extends Model
 		);
 
 		DB::commit();
+	}
+
+	public function repayLoan(LoanRepaymentValidation $request, LoanRequest $loan_request)
+	{
+		$loan_request->loan_transactions()->create([
+			'amount' => $request->amount,
+			'trans_type' => 'repayment'
+		]);
+
+		return response()->json(['rsp' => true], 201);
 	}
 
 	/**
