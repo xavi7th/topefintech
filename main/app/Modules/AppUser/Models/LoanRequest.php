@@ -52,6 +52,18 @@ class LoanRequest extends Model
 		return $this->loan_sureties()->where('is_surety_accepted', true)->count() === 2;
 	}
 
+	public function total_repayment_amount(): float
+	{
+		return $this->loan_transactions()->where('trans_type', 'repayment')->sum('amount');
+	}
+
+	public function loan_statistics(): array
+	{
+		return [
+			'total_paid' => $this->total_repayment_amount()
+		];
+	}
+
 	public function getStakesForDefaultAttribute()
 	{
 		$lender_stake = optional($this->app_user)->total_balance();
@@ -141,6 +153,7 @@ class LoanRequest extends Model
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('/loan-requests', 'LoanRequest@adminGetLoanRequests');
+			Route::get('/loan-requests/{loan_request}/transactions', 'LoanRequest@adminGetLoanRequestTransactions');
 			Route::put('/loan-request/{loan_request}/approve', 'LoanRequest@approveLoanRequest');
 			Route::put('/loan-request/{loan_request}/mark-disbursed', 'LoanRequest@markLoanAsDisbursed');
 		});
@@ -154,7 +167,12 @@ class LoanRequest extends Model
 
 	public function getLoanRequests()
 	{
-		return auth()->user()->loan_requests->load(['loan_sureties.surety']);
+		return response()->json(auth()->user()->loan_requests->load(['loan_sureties.surety']), 200);
+	}
+
+	public function adminGetLoanRequestTransactions(LoanRequest $loan_request)
+	{
+		return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
 	}
 
 	public function checkLoanEligibility(Request $request)
