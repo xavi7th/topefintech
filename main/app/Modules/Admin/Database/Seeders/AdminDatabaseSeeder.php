@@ -20,5 +20,7 @@ class AdminDatabaseSeeder extends Seeder
 		$this->call(AdminsTableSeeder::class);
 		$this->call(GosTypesTableSeeder::class);
         $this->call(SavingsTableSeeder::class);
+        $this->call(TransactionsTableSeeder::class);
+        $this->call(SavingsInterestsTableSeeder::class);
     }
 }

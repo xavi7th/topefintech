@@ -116,7 +116,7 @@ class AppUser extends User
 
 	public function total_withdrawable_amount(): float
 	{
-		return optional($this->core_savings_interests())->sum('amount') + optional($this->core_savings)->current_balance;
+		return optional($this->core_savings_interests()->where('is_cleared', true))->sum('amount') + optional($this->core_savings)->current_balance;
 	}
 
 	public function gos_savings()
