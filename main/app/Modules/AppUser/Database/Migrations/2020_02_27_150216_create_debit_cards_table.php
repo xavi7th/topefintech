@@ -26,6 +26,7 @@ class CreateDebitCardsTable extends Migration
 			$table->boolean('is_default')->default(false);
 
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
