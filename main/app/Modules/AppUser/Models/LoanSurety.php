@@ -4,12 +4,13 @@ namespace App\Modules\AppUser\Models;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\AppUser\Models\LoanRequest;
-use App\Modules\AppUser\Http\Requests\SwapSuretyValidation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Modules\AppUser\Http\Requests\SwapSuretyValidation;
 
 class LoanSurety extends Model
 {
@@ -66,18 +67,21 @@ class LoanSurety extends Model
 		if (!$request->accepted) {
 			return generate_422_error('You make make a choice');
 		}
-		$surety_request = auth()->user()->surety_request;
-		$surety_request->is_surety_accepted = filter_var($request->accepted, FILTER_VALIDATE_BOOLEAN);
-		$surety_request->save();
-
-		return response()->json(['rsp' => true], 204);
+		$surety_request = Auth::apiuser()->surety_request;
+		if ($surety_request) {
+			$surety_request->is_surety_accepted = filter_var($request->accepted, FILTER_VALIDATE_BOOLEAN);
+			$surety_request->save();
+			return response()->json(['rsp' => true], 204);
+		} else {
+			return generate_422_error('You have no surety request');
+		}
 	}
 
 	public function swapSuretyRequest(SwapSuretyValidation $request)
 	{
 
 		DB::beginTransaction();
-		$surety_request = LoanSurety::find($request->surety_request_id);
+		$surety_request = self::find($request->surety_request_id);
 
 		/**
 		 * ? Create a new surety request with this new guy

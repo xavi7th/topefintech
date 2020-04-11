@@ -6,6 +6,7 @@ namespace App\Modules\AppUser\Models;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class GOSType extends Model
 {
@@ -37,12 +38,17 @@ class GOSType extends Model
 	}
 
 
-	public function adminCreateGOSType()
+	public function adminCreateGOSType(Request $request)
 	{
 
-		if (!request('name')) {
+		if (!$request->name) {
 			return generate_422_error(['name' => 'name is requitred']);
 		}
+
+		if (self::where('name', $request->name)->exists()) {
+			return generate_422_error('This GOS exists already');
+		}
+
 		// $url = request()->file('user_img')->store('public/testimonial_images');
 		// $url = str_replace_first('public', '/storage', $url);
 
@@ -69,8 +75,16 @@ class GOSType extends Model
 
 
 
-	public function userCreateGOSType()
+	public function userCreateGOSType(Request $request)
 	{
+		if (!$request->name) {
+			return generate_422_error(['name' => 'name is requitred']);
+		}
+
+		if (self::where('name', $request->name)->exists()) {
+			return generate_422_error('This GOS exists already');
+		}
+
 		try {
 			return response()->json(['gos_type' => GOSType::create(request()->all())], 201);
 		} catch (\Throwable $th) {

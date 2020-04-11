@@ -3,10 +3,10 @@
 namespace App\Modules\AppUser\Transformers;
 
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\AppUser\Models\Transaction;
+use App\Modules\AppUser\Models\WithdrawalRequest;
 
-class AppuserTransformer
+class AppUserTransformer
 {
 	public function collectionTransformer($collection, $transformerMethod)
 	{
@@ -37,21 +37,63 @@ class AppuserTransformer
 		}
 	}
 
-	public function transform(AppUser $user)
+	public function basic(AppUser $user)
 	{
 		return [
-			'name' => $user->name,
+			'email' => (string)$user->email,
+			'name' => (string)$user->name,
+		];
+	}
+	public function detailed(AppUser $user)
+	{
+		return [
+			'first_name' => (string)$user->first_name,
+			'last_name' => (string)$user->last_name,
+			'email' => (string)$user->email,
+			'phone' => (string)$user->phone,
+			'address' => (string)$user->address,
+			'city' => (string)$user->city,
+			'school' => (string)$user->school,
+			'department' => (string)$user->department,
+			'level' => (string)$user->level,
+			'mat_no' => (string)$user->mat_no,
+			'bvn' => (string)$user->bvn == 'Not provided' ? null : $user->bvn,
+			'app_user_category' => (string)$user->app_user_category->category_name,
+			'assigned_credit_limit' => (float)$user->assigned_credit_limit,
+			'assigned_merchant_limit' => (float)$user->merchant_limit,
+			'due_for_credit' => (boolean)$user->due_for_credit(),
+			'due_for_merchant_credit' => (boolean)$user->due_for_merchant_credit(),
+			'num_of_days_active' => (int)$user->activeDays(),
+			'is_otp_verified' => (boolean)$user->is_otp_verified()
+
 		];
 	}
 
 	public function transformForAppUser(AppUser $user)
 	{
+		$curr = (function () use ($user) {
+			switch ($user->currency) {
+				case 'USD':
+					return '$';
+					break;
+				case 'GBP':
+					return '£';
+					break;
+				case 'EUR':
+					return '€';
+					break;
 
+				default:
+					return $user->currency;
+					break;
+			}
+		})();
 		return [
 			'id' => (int)$user->id,
 			'name' => (string)$user->name,
 			'email' => (string)$user->email,
 			'country' => (string)$user->country,
+			'currency' => (string)$curr,
 			'phone' => (string)$user->phone,
 			'id_card' => (string)$user->id_card,
 			// 'is_verified' => (bool)$user->is_verified(),
