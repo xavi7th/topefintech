@@ -48,7 +48,7 @@ class Savings extends Model
 		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
 	}
 
-	public function savings_interets()
+	public function savings_interests()
 	{
 		return $this->hasMany(SavingsInterest::class);
 	}

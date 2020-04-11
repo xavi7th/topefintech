@@ -1,6 +1,5 @@
 <?php
 
-use App\User;
 use Faker\Generator as Faker;
 use App\Modules\AppUser\Models\AppUser;
 
@@ -17,7 +16,7 @@ use App\Modules\AppUser\Models\AppUser;
 
 $factory->define(AppUser::class, function (Faker $faker) {
 	return [
-		'name' => $faker->name,
+		'full_name' => $faker->name,
 		'email' => $faker->unique()->safeEmail,
 		'email_verified_at' => now(),
 		'password' => 'pass',

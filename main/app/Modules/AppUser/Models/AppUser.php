@@ -6,9 +6,11 @@ use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
+use Illuminate\Support\Facades\Storage;
 use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\LoanSurety;
@@ -107,6 +109,16 @@ class AppUser extends User
 		return $this->hasOne(Savings::class)->where('type', 'core');
 	}
 
+	public function core_savings_interests()
+	{
+		return $this->core_savings->savings_interests();
+	}
+
+	public function total_withdrawable_amount(): float
+	{
+		return $this->core_savings_interests()->sum('amount') + $this->core_savings->current_balance;
+	}
+
 	public function gos_savings()
 	{
 		return $this->hasMany(Savings::class)->where('type', 'gos');
@@ -117,17 +129,17 @@ class AppUser extends User
 		return $this->hasMany(Savings::class)->where('type', 'locked');
 	}
 
-	public function has_core_savings()
+	public function has_core_savings(): bool
 	{
 		return $this->core_savings()->exists();
 	}
 
-	public function has_gos_savings()
+	public function has_gos_savings(): bool
 	{
 		return $this->gos_savings()->exists();
 	}
 
-	public function has_locked_savings()
+	public function has_locked_savings(): bool
 	{
 		return $this->locked_savings()->exists();
 	}
@@ -142,9 +154,9 @@ class AppUser extends User
 		return $this->hasMany(WithdrawalRequest::class);
 	}
 
-	public function total_withdrawal_amount()
+	public function transactions()
 	{
-		return $this->transactions()->where('trans_type', 'withdrawal')->sum('amount');
+		return $this->hasManyThrough(Transaction::class, Savings::class);
 	}
 
 	public function withdrawal_transactions()
@@ -152,19 +164,24 @@ class AppUser extends User
 		return $this->transactions()->where('trans_type', 'withdrawal');
 	}
 
+	public function total_withdrawal_amount()
+	{
+		return $this->withdrawal_transactions()->sum('amount');
+	}
+
 	public function deposit_transactions()
 	{
 		return $this->transactions()->where('trans_type', 'deposit');
 	}
 
+	public function total_deposit_amount(): float
+	{
+		return $this->deposit_transactions()->sum('amount');
+	}
+
 	public function interestable_deposit_transactions()
 	{
 		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
-	}
-
-	public function transactions()
-	{
-		return $this->hasManyThrough(Transaction::class, Savings::class);
 	}
 
 	public function deduct_debit_card(DebitCard $debit_card_to_deduct, float $amount): bool
@@ -275,9 +292,14 @@ class AppUser extends User
 		return $this->hasManyThrough(SavingsInterest::class, Savings::class);
 	}
 
+	public function total_interests_amount(): float
+	{
+		return $this->savings_interests()->sum('amount');
+	}
+
 	public function total_balance(): float
 	{
-		return $this->deposit_transactions()->sum('amount') + $this->savings_interests()->sum('amount');
+		return $this->total_deposit_amount() + $this->total_interests_amount();
 	}
 
 	public function is_eligible_for_loan(float $amount): bool
@@ -362,6 +384,18 @@ class AppUser extends User
 		return  !is_null($this->surety_request) && $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
 	}
 
+	public function activeDays(): int
+	{
+		return now()->diffInDays($this->created_at);
+	}
+
+	static function store_id_card(Request $request)
+	{
+		Storage::makeDirectory('public/id_cards/' . now()->toDateString());
+		$id_url = Storage::url($request->file('id_card')->store('public/id_cards/' . now()->toDateString()));
+
+		return $id_url;
+	}
 
 	static function adminRoutes()
 	{
@@ -385,22 +419,43 @@ class AppUser extends User
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('/profile', 'AppUser@getUserProfile');
-			Route::put('/profile/edit', 'AppUser@editUserProfile');
+			Route::post('/profile/edit', 'AppUser@editUserProfile');
 		});
 	}
 
 	public function getUserProfile(Request $request)
 	{
-		return (new AppuserTransformer)->transformForAppUser($request->user());
+		return (new AppuserTransformer)->detailed($request->user());
 	}
 
 	public function editUserProfile(EditUserProfileValidation $request)
 	{
-		return $request->all();
+		try {
+			/**
+			 * If updating bvn, set is_bvn_verified to false
+			 */
+			if ($request->bvn) {
+				$request->user()->is_bvn_verified = false;
+			}
+
+			if ($request->id_card) {
+				$request->user()->id_card = $request->user()->store_id_card($request);
+			}
+
+			foreach (collect($request->validated())->except('id_card') as $key => $value) {
+				$request->user()->$key = $value;
+			}
+			$request->user()->save();
+
+			return response()->json([], 204);
+		} catch (\Throwable $th) {
+			ErrLog::notifyAdmin(auth()->user(), $th, 'Account details NOT updated');
+			return response()->json(['err' => 'Account details NOT updated'], 500);
+		}
+
 		Auth::apiuser()->update($request->validated());
 		return response()->json(['updated' => true], 205);
 	}
-
 
 	public function getListOfUsers()
 	{

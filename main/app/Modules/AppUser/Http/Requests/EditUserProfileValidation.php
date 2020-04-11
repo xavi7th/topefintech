@@ -18,9 +18,18 @@ class EditUserProfileValidation extends FormRequest
 	public function rules()
 	{
 		return [
-			'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::appuser()->id)],
-			'name' => 'filled|string',
-			'password' => 'nullable|min:6|regex:/^([0-9a-zA-Z-\.\@]+)$/'
+			// 'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::apiuser()->id)],
+			'full_name' => 'filled|string',
+			'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/',
+			// 'phone' => ['filled', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', Rule::unique('users')->ignore(Auth::apiuser()->phone)],
+			'address' => 'filled|string',
+			'city' => 'filled|string',
+			'country' => 'filled|string',
+			'acc_num' => ['filled', 'numeric', Rule::unique('users')->ignore(Auth::apiuser()->acc_num)],
+			'acc_bank' => 'filled|string',
+			'acc_type' => 'filled|string',
+			'bvn' => ['filled', 'numeric', Rule::unique('users')->ignore(Auth::apiuser()->bvn)],
+			'id_card' => 'bail|filled|file|mimes:jpeg,bmp,png',
 		];
 	}
 
@@ -34,30 +43,6 @@ class EditUserProfileValidation extends FormRequest
 		return true;
 	}
 
-
-
-	/**
-	 * Configure the error messages for the defined validation rules.
-	 *
-	 * @return array
-	 */
-	// public function messages()
-	// {
-	// 	return [
-	// 		'primary_contact_name.required' => 'The name of the primary contact is required',
-	// 		'primary_contact_name.alpha_dash' => 'The name of the primary contact can only contain alphabets, numbers underscores and dashes',
-	// 		'primary_contact_number.required' => 'The phone number of the primary contact is required',
-	// 		'primary_contact_email.required' => 'The email provided for the primary contact is invalid',
-	// 		'accommodation_name.required' => 'The name of the accommodation is required',
-	// 		'price.required' => 'The price of the accommodation is required',
-	// 		'price.numeric' => 'Invalid price',
-	// 		'school_id.exists' => 'Sorry we do not have an ambassador program in that school yet',
-	// 		'school_id.required' => 'You must tell us the school where this accommodation is',
-	// 		'space_type_id.required' => 'Space type is required',
-	// 		'space_type_id.exists' => 'Selected space type is invalid',
-	// 		'number_of_spaces_available.required' => 'Number of spaces available required',
-	// 	];
-	// }
 
 	/**
 	 * Overwrite the validator response so we can customise it per the structure requested from the fronend

@@ -44,21 +44,21 @@ class ProcessInterests extends Command
 			if ($value->type == 'core') {
 				$interest = $value->interestable_deposit_transactions()->sum('amount') * (config('app.core_savings_interest_rate') / 100);
 				if ($interest > 0) {
-					$value->savings_interets()->create([
+					$value->savings_interests()->create([
 						'amount' => $interest
 					]);
 				}
 			} else if ($value->type == 'gos') {
 				$interest =  $value->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
 				if ($interest > 0) {
-					$value->savings_interets()->create([
+					$value->savings_interests()->create([
 						'amount' => $interest
 					]);
 				}
 			} else if ($value->type == 'locked') {
 				$interest = $value->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
 				if ($interest > 0) {
-					$value->savings_interets()->create([
+					$value->savings_interests()->create([
 						'amount' => $interest
 					]);
 				}
