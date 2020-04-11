@@ -5,13 +5,16 @@ namespace App\Modules\AppUser\Http\Controllers;
 use App\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Registered;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Http\Requests\RegistrationValidation;
 use App\Modules\AppUser\Notifications\CoreSavingsInitialised;
 
@@ -29,6 +32,8 @@ class RegisterController extends Controller
     */
 
 	use RegistersUsers;
+
+	private $apiToken;
 
 	/**
 	 * Where to redirect users after registration.
@@ -56,13 +61,14 @@ class RegisterController extends Controller
 	 *
 	 * @return void
 	 */
-	static function routes()
+	static function webRoutes()
 	{
-		Route::get('/register', function () {
-			Auth::logout();
-			return view('appuser::index');
-		})->name('register'); //->middleware('guest');
-
+		Route::group(['middleware' => 'guest'], function () {
+			Route::view('register', 'appuser::index')->name('register');
+		});
+	}
+	static function apiRoutes()
+	{
 		Route::post('register', 'RegisterController@register');
 	}
 
@@ -75,11 +81,13 @@ class RegisterController extends Controller
 	public function register(RegistrationValidation $request)
 
 	{
-
-		event(new Registered($user = $this->create($request->all())));
+		DB::beginTransaction();
+		event(new Registered($user = $this->create($request->validated())));
 
 		// dd($user);
 		$this->guard()->login($user);
+
+		$this->apiToken = $this->apiGuard()->login($user);
 
 		return $this->registered($request, $user)
 			?: redirect($this->redirectPath());
@@ -91,7 +99,7 @@ class RegisterController extends Controller
 	 * @param  array  $data
 	 * @return \App\User
 	 */
-	protected function create(array $data)
+	protected function create(array $data): AppUser
 	{
 
 		// $url = request()->file('id_card')->store('public/id_cards');
@@ -124,7 +132,8 @@ class RegisterController extends Controller
 	protected function registered(Request $request, $user)
 	{
 		//
-		Log::critical($user->email . ' registered an account on the site.');
+		ActivityLog::notifyAdmins($user->email   . ' registered an account on the site.');
+
 		/**
 		 * Create an empty Savings profile for him with 100% savings distribution
 		 */
@@ -143,9 +152,31 @@ class RegisterController extends Controller
 		 * @todo Notify the referrer if any
 		 */
 
-		if ($request->ajax()) {
-			return response()->json(['status' => true], 201);
-		}
-		return redirect('/login');
+		DB::commit();
+		return $this->respondWithToken();
+	}
+
+
+	/**
+	 * Get the token array structure.
+	 *
+	 * @param  string $token
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	protected function respondWithToken()
+	{
+		return response()->json([
+			'access_token' => $this->apiToken,
+			'token_type' => 'bearer',
+			'expires_in' => $this->apiGuard()->factory()->getTTL() * 60,
+			'user' => (new AppUserTransformer)->basic($user = auth()->user()),
+		], 201);
+	}
+
+
+	protected function apiGuard()
+	{
+		return Auth::guard('api_user');
 	}
 }

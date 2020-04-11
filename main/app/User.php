@@ -4,12 +4,13 @@ namespace App;
 
 use Illuminate\Support\Facades\Auth;
 use Watson\Rememberable\Rememberable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
+use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable //implements MustVerifyEmail
+class User extends Authenticatable implements JWTSubject //implements MustVerifyEmail
 {
 	use Notifiable, SoftDeletes, Rememberable;
 
@@ -43,6 +44,12 @@ class User extends Authenticatable //implements MustVerifyEmail
 		'email_verified_at' => 'datetime',
 	];
 
+	public function activities()
+	{
+		return $this->morphMany(ActivityLog::class, 'user')->latest();
+	}
+
+
 
 	/**
 	 * Returns the dashboard route of the authenticated user
@@ -72,5 +79,25 @@ class User extends Authenticatable //implements MustVerifyEmail
 		return [
 			'id' => $this->id
 		];
+	}
+
+	/**
+	 * Get the identifier that will be stored in the subject claim of the JWT.
+	 *
+	 * @return mixed
+	 */
+	public function getJWTIdentifier()
+	{
+		return $this->getKey();
+	}
+
+	/**
+	 * Return a key value array, containing any custom claims to be added to the JWT.
+	 *
+	 * @return array
+	 */
+	public function getJWTCustomClaims()
+	{
+		return [];
 	}
 }

@@ -4,6 +4,7 @@ namespace App\Modules\AppUser\Models;
 
 use App\User;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +19,9 @@ use App\Modules\AppUser\Models\LoanTransaction;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\AppUser\Transformers\AppuserTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
+use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 
 class AppUser extends User
 {
@@ -39,9 +42,14 @@ class AppUser extends User
 		return Auth::user() instanceof AppUser;
 	}
 
-	public function is_verified()
+	public function is_verified(): bool
 	{
 		return $this->verified_at !== null;
+	}
+
+	public function is_email_verified(): bool
+	{
+		return $this->email_verified_at !== null;
 	}
 
 	public function loan_requests()
@@ -361,6 +369,33 @@ class AppUser extends User
 		});
 	}
 
+	static function routes()
+	{
+		Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => self::DASHBOARD_ROUTE_PREFIX], function () {
+			Route::get('/auth/verify', 'AppUser@verifyAuth');
+		});
+	}
+
+	static function apiRoutes()
+	{
+		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+			Route::get('/profile', 'AppUser@getUserProfile');
+			Route::put('/profile/edit', 'AppUser@editUserProfile');
+		});
+	}
+
+	public function getUserProfile(Request $request)
+	{
+		return (new AppuserTransformer)->transformForAppUser($request->user());
+	}
+
+	public function editUserProfile(EditUserProfileValidation $request)
+	{
+		return $request->all();
+		Auth::apiuser()->update($request->validated());
+		return response()->json(['updated' => true], 205);
+	}
+
 
 	public function getListOfUsers()
 	{
@@ -396,6 +431,15 @@ class AppUser extends User
 			})->paginate(request('per_page'));
 
 		return (new AdminTransactionTransformer)->collectionTransformer($transactions, 'transformForAdminViewTransactions');
+	}
+
+	public function verifyAuth()
+	{
+		if (Auth::check()) {
+			return ['LOGGED_IN' => true, 'user' => Auth::user()];
+		} else {
+			return ['LOGGED_IN' => false, 'user' => []];
+		}
 	}
 
 	/**

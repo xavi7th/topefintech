@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use App\Modules\AppUser\Http\Middleware\OnlyAppUsers;
 use App\Modules\AppUser\Http\Middleware\OnlyVerifiedUsers;
+use Tymon\JWTAuth\JWTGuard;
 
 class AppUserServiceProvider extends ServiceProvider
 {
@@ -44,9 +45,12 @@ class AppUserServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		//
 		SessionGuard::macro('appuser', function () {
 			return AppUser::find(Auth::id());
+		});
+
+		JWTGuard::macro('apiuser', function () {
+			return AppUser::find(Auth::guard('api_user')->id());
 		});
 	}
 

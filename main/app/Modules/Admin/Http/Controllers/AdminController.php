@@ -25,6 +25,16 @@ use App\Modules\AppUser\Models\LoanRequest;
 
 class AdminController extends Controller
 {
+	public static function apiRoutes()
+	{
+		Route::group(['middleware' => ['api', 'throttle:20,1'], 'prefix' =>  Admin::DASHBOARD_ROUTE_PREFIX . '/api/',  'namespace' => '\App\Modules\Admin\Http\Controllers'], function () {
+
+			LoginController::routes();
+
+			ErrLog::apiRoutes();
+		});
+	}
+
 	/**
 	 * The admin routes
 	 * @return Response
