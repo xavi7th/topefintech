@@ -44,32 +44,8 @@ class AppUserTransformer
 			'name' => (string)$user->name,
 		];
 	}
+
 	public function detailed(AppUser $user)
-	{
-		return [
-			'first_name' => (string)$user->first_name,
-			'last_name' => (string)$user->last_name,
-			'email' => (string)$user->email,
-			'phone' => (string)$user->phone,
-			'address' => (string)$user->address,
-			'city' => (string)$user->city,
-			'school' => (string)$user->school,
-			'department' => (string)$user->department,
-			'level' => (string)$user->level,
-			'mat_no' => (string)$user->mat_no,
-			'bvn' => (string)$user->bvn == 'Not provided' ? null : $user->bvn,
-			'app_user_category' => (string)$user->app_user_category->category_name,
-			'assigned_credit_limit' => (float)$user->assigned_credit_limit,
-			'assigned_merchant_limit' => (float)$user->merchant_limit,
-			'due_for_credit' => (boolean)$user->due_for_credit(),
-			'due_for_merchant_credit' => (boolean)$user->due_for_merchant_credit(),
-			'num_of_days_active' => (int)$user->activeDays(),
-			'is_otp_verified' => (boolean)$user->is_otp_verified()
-
-		];
-	}
-
-	public function transformForAppUser(AppUser $user)
 	{
 		$curr = (function () use ($user) {
 			switch ($user->currency) {
@@ -90,18 +66,26 @@ class AppUserTransformer
 		})();
 		return [
 			'id' => (int)$user->id,
-			'name' => (string)$user->name,
+			'full_name' => (string)$user->name,
 			'email' => (string)$user->email,
+			'address' => (string)$user->address,
+			'city' => (string)$user->city,
 			'country' => (string)$user->country,
-			'currency' => (string)$curr,
+			'bank' => (string)$user->acc_bank,
+			'account_number' => (string)$user->acc_num,
+			'is_bvn_verified' => (bool)$user->is_bvn_verified,
 			'phone' => (string)$user->phone,
 			'id_card' => (string)$user->id_card,
-			// 'is_verified' => (bool)$user->is_verified(),
-			// 'total_deposit' => (double)$user->total_deposit_amount(),
-			// 'total_withdrawal' => (double)$user->total_withdrawal_amount(),
-			// 'total_profit' => (double)$user->total_profit_amount(),
-			// 'target_profit' => (double)$user->expected_withdrawal_amount(),
-			// 'total_withdrawable' => (double)number_format($user->total_withdrawalable_amount(), 2, '.', '')
+			'is_email_verified' => (boolean)$user->is_email_verified(),
+			'total_deposit' => (double)$user->total_deposit_amount(),
+			'total_accrued_interest' => (double)$user->total_interests_amount(),
+			'total_withdrawal' => (double)$user->total_withdrawal_amount(),
+			'total_balance' => (double)$user->total_balance(),
+			'total_withdrawable' => (double)$user->total_withdrawable_amount(),
+			'has_pending_loan' => (bool)$user->has_pending_loan(),
+			'is_loan_surety' => (boolean)$user->is_loan_surety(),
+			'num_of_days_active' => (int)$user->activeDays(),
+			// 'app_user_category' => (string)$user->app_user_category->category_name,
 		];
 	}
 

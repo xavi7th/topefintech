@@ -16,12 +16,17 @@ class CreateUsersTable extends Migration
 	{
 		Schema::create('users', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->string('name');
+			$table->string('full_name');
 			$table->string('email')->unique();
 			$table->timestamp('email_verified_at')->nullable();
 			$table->string('password');
 			$table->string('phone')->nullable();
+			$table->string('address')->nullable();
+			$table->string('city')->nullable();
 			$table->string('country')->default('Nigeria');
+			$table->string('acc_num')->nullable();
+			$table->string('acc_bank')->nullable();
+			$table->string('acc_type')->nullable();
 			$table->string('bvn')->nullable();
 			$table->boolean('is_bvn_verified')->default(false);
 			$table->string('id_card')->nullable();

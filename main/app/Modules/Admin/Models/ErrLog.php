@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Models;
 
+use Error;
 use App\User;
 use Throwable;
 use TypeError;
@@ -18,10 +19,7 @@ class ErrLog extends Model
 
 	static function notifyAdmin(User $user, Throwable $exception, string $message = null)
 	{
-		if ($exception instanceof TypeError) {
-			Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'exception' => $exception->getMessage()]);
-		}
-		Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'exception' => $exception]);
+		Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
 	}
 
 	static function notifyAdminAndFail(User $user, Throwable $exception, string $message = null)
