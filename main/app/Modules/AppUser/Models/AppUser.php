@@ -77,6 +77,11 @@ class AppUser extends User
 		return $this->hasMany(AutoSaveSetting::class);
 	}
 
+	public function has_auto_save(): bool
+	{
+		return $this->auto_save_settings()->exists();
+	}
+
 	public function debit_cards()
 	{
 		return $this->hasMany(DebitCard::class);
