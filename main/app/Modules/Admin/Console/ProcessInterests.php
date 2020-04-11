@@ -40,10 +40,11 @@ class ProcessInterests extends Command
 	 */
 	public function handle()
 	{
-		foreach (Savings::all() as $value) {
+		foreach (Savings::with('app_user')->get() as $value) {
 			if ($value->type == 'core') {
 				$interest = $value->interestable_deposit_transactions()->sum('amount') * (config('app.core_savings_interest_rate') / 100);
 				if ($interest > 0) {
+					dump($value->app_user->full_name . ' ' . $value->type . ' savings intrested with ' . $interest . " \n");
 					$value->savings_interests()->create([
 						'amount' => $interest
 					]);
@@ -51,6 +52,7 @@ class ProcessInterests extends Command
 			} else if ($value->type == 'gos') {
 				$interest =  $value->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
 				if ($interest > 0) {
+					dump($value->app_user->full_name . ' ' . $value->type . ' savings intrested with ' . $interest . " \n");
 					$value->savings_interests()->create([
 						'amount' => $interest
 					]);
@@ -58,6 +60,7 @@ class ProcessInterests extends Command
 			} else if ($value->type == 'locked') {
 				$interest = $value->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
 				if ($interest > 0) {
+					dump($value->app_user->full_name . ' ' . $value->type . ' savings intrested with ' . $interest . " \n");
 					$value->savings_interests()->create([
 						'amount' => $interest
 					]);

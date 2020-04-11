@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
 		$schedule->command('savings:process-interest')
 			->everyMinute()
 			->withoutOverlapping()
-			->sendOutputTo(Module::getModulePath('Admin/Console') . '/log.cson')
+			->sendOutputTo(Module::getModulePath('Admin/Console') . '/log' . now()->toDateString() . '.cson')
 			// ->emailOutputTo('xavi7th@gmail.com')
 			// ->runInBackground() //causes emails not to deliver
 			->onSuccess(function () {
@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
 				// save a notification for the admin
 			});
 
-		$schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
+		// $schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
 	}
 
 	/**
