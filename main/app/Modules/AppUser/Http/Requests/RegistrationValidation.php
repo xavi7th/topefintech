@@ -16,7 +16,7 @@ class RegistrationValidation extends FormRequest
 	public function rules()
 	{
 		return [
-			'name' => 'required|string|max:255',
+			'full_name' => 'required|string|max:255',
 			'email' => 'required|string|email|max:255|unique:users,email',
 			'password' => 'required|string|min:4|max:50|confirmed',
 			'agreement' => 'required|in:1,true,"true"',

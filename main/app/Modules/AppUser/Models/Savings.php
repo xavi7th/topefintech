@@ -80,6 +80,8 @@ class Savings extends Model
 
 			Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
 
+			Route::get('/savings/distribution', 'Savings@getSavingsDistributionRatio');
+
 			Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio');
 		});
 	}
@@ -191,14 +193,42 @@ class Savings extends Model
 		return response()->json(['rsp' => $funds], 201);
 	}
 
+	public function getSavingsDistributionRatio(Request $request)
+	{
+		return response()->json($request->user()->savings_list()->get(['id', 'savings_distribution']), 200);
+	}
+
 	public function updateSavingsDistributionRatio(UpdateSavingsDistributionValidation $request)
 	{
 		/**
-		 * Select the savings and update the percentage
-		 * ! First check if the current distribution percentage sum + the new one is greater than 100%
+		 * ? SAMPLE DATA
+		 * [
+		 *			{
+		 *					"id": 1,
+		 *					"savings_distribution": 30
+		 *			},
+		 *			{
+		 *					"id": 2,
+		 *					"savings_distribution": 15
+		 *			},
+		 *			{
+		 *					"id": 3,
+		 *					"savings_distribution": 15
+		 *			},
+		 *			{
+		 *					"id": 4,
+		 *					"savings_distribution": 25
+		 *			},
+		 *			{
+		 *					"id": 5,
+		 *					"savings_distribution": 5
+		 *			},
+		 *			{
+		 *					"id": 6,
+		 *					"savings_distribution": 10
+		 *			}
+		 *	]
 		 */
-		$savings_to_update = Savings::find($request->savings_id);
-
-		return auth()->user()->update_savings_distribution($savings_to_update, $request->percentage);
+		return auth()->user()->update_savings_distribution($request);
 	}
 }

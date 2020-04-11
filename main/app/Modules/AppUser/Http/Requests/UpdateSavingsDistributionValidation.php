@@ -5,6 +5,7 @@ namespace App\Modules\AppUser\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
+use App\Modules\AppUser\Models\Savings;
 
 class UpdateSavingsDistributionValidation extends FormRequest
 {
@@ -15,10 +16,7 @@ class UpdateSavingsDistributionValidation extends FormRequest
 	 */
 	public function rules()
 	{
-		return [
-			'percentage' => 'required|numeric|max:100',
-			'savings_id' => 'required|exists:savings,id'
-		];
+		return [];
 	}
 
 	/**
@@ -31,22 +29,6 @@ class UpdateSavingsDistributionValidation extends FormRequest
 		return true;
 	}
 
-
-
-	/**
-	 * Configure the error messages for the defined validation rules.
-	 *
-	 * @return array
-	 */
-	public function messages()
-	{
-		return [
-			'savings_id.exists' => 'Invalid savings details selected',
-			'percentage.max' => 'The percentage cannot be more than 100%'
-		];
-	}
-
-
 	/**
 	 * Configure the validator instance.
 	 *
@@ -56,13 +38,22 @@ class UpdateSavingsDistributionValidation extends FormRequest
 	public function withValidator($validator)
 	{
 		$validator->after(function ($validator) {
-			// if ( $this->user()->core_savings()->exists()) {
-			// 	$validator->errors()->add('Pending request', 'You already have a pending card request.');
-			// 	return;
-			// }
+			if (collect($this->all())->sum('savings_distribution') !== 100) {
+				$validator->errors()->add('savings distribution', 'Savings Distribution is greater than 100%');
+				return;
+			}
+
+			/**
+			 * Check if all the savings list sent belong to the logged in user
+			 */
+			foreach ($this->all() as $value) {
+				if (!(Savings::find($value['id'])->app_user_id === auth()->id())) {
+					$validator->errors()->add('savings distribution', 'Invalid savings list selected');
+					return;
+				}
+			}
 		});
 	}
-
 
 	/**
 	 * Overwrite the validator response so we can customise it per the structure requested from the fronend
