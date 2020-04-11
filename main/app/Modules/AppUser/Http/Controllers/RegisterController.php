@@ -82,7 +82,7 @@ class RegisterController extends Controller
 
 	{
 		DB::beginTransaction();
-		event(new Registered($user = $this->create($request->validated())));
+		event(new Registered($user = $this->create($request)));
 
 		// dd($user);
 		$this->guard()->login($user);
@@ -99,7 +99,7 @@ class RegisterController extends Controller
 	 * @param  array  $data
 	 * @return \App\User
 	 */
-	protected function create(array $data): AppUser
+	protected function create(Request $request): AppUser
 	{
 
 		// $url = request()->file('id_card')->store('public/id_cards');
@@ -115,11 +115,7 @@ class RegisterController extends Controller
 		 * ! If there is a referral ID create a referral entry for the agent
 		 */
 
-		return AppUser::create([
-			'name' => $data['name'],
-			'email' => $data['email'],
-			'password' => $data['password'],
-		]);
+		return AppUser::create($request->validated());
 	}
 
 	/**

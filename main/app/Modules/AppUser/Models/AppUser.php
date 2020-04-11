@@ -28,7 +28,7 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 class AppUser extends User
 {
 	protected $fillable = [
-		'name', 'email', 'password', 'phone', 'id_card'
+		'full_name', 'email', 'password', 'phone', 'id_card'
 	];
 
 	protected $casts = [
@@ -111,12 +111,12 @@ class AppUser extends User
 
 	public function core_savings_interests()
 	{
-		return $this->core_savings->savings_interests();
+		return optional($this->core_savings)->savings_interests();
 	}
 
 	public function total_withdrawable_amount(): float
 	{
-		return $this->core_savings_interests()->sum('amount') + $this->core_savings->current_balance;
+		return optional($this->core_savings_interests())->sum('amount') + optional($this->core_savings)->current_balance;
 	}
 
 	public function gos_savings()
@@ -271,20 +271,14 @@ class AppUser extends User
 		DB::commit();
 	}
 
-	public function update_savings_distribution(Savings $savings, float $percentage)
+	public function update_savings_distribution(Request $request)
 	{
-		$total_percentage = $this->savings_list()->where('id', '<>', $savings->id)->sum('savings_distribution') + $percentage;
-		if ($total_percentage < 100) {
-			$savings->savings_distribution = $percentage;
-			$savings->save();
-			return response()->json(['rsp' => 'savings distribution less than 100%'], 202);
-		} else if ($total_percentage > 100) {
-			return generate_422_error('Total percentage above 100%. Reduce one other one first');
-		} else if ($total_percentage == 100) {
-			$savings->savings_distribution = $percentage;
-			$savings->save();
-			return response()->json(['rsp' => true], 201);
+		$savings_list = $request->user()->savings_list;
+		foreach ($request->all() as $val) {
+			$savings_list->where('id', $val['id'])->first()->savings_distribution = $val['savings_distribution'];
 		}
+
+		return response()->json($request->user()->savings_list()->saveMany($savings_list), 201);
 	}
 
 	public function savings_interests()

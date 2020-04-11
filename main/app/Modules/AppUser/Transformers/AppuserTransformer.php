@@ -41,7 +41,7 @@ class AppUserTransformer
 	{
 		return [
 			'email' => (string)$user->email,
-			'name' => (string)$user->name,
+			'full_name' => (string)$user->full_name,
 		];
 	}
 
@@ -66,7 +66,7 @@ class AppUserTransformer
 		})();
 		return [
 			'id' => (int)$user->id,
-			'full_name' => (string)$user->name,
+			'full_name' => (string)$user->full_name,
 			'email' => (string)$user->email,
 			'address' => (string)$user->address,
 			'city' => (string)$user->city,
