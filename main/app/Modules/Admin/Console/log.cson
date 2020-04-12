@@ -1,7 +1,637 @@
-"Mariane Rempel Sr. core savings intrested with 390 \n"
-"Mariane Rempel Sr. locked savings intrested with 2437.5 \n"
-"Mariane Rempel Sr. locked savings intrested with 1417.5 \n"
-"Mariane Rempel Sr. gos savings intrested with 1072.5 \n"
-"Mariane Rempel Sr. gos savings intrested with 352.5 \n"
-"Mariane Rempel Sr. gos savings intrested with 495 \n"
-Completed successfullyCompleted successfullyCompleted successfullyCompleted successfully
+array:11 [
+  "id" => 1
+  "app_user_id" => 2
+  "amount" => 90000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Monday"
+  "time" => "18:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-04-11 21:59:18"
+  "updated_at" => "2020-04-11 21:59:18"
+  "app_user" => array:20 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+  ]
+]
+array:11 [
+  "id" => 2
+  "app_user_id" => 2
+  "amount" => 90000.0
+  "period" => "weekly"
+  "date" => 9
+  "weekday" => "Saturday"
+  "time" => "01:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:12"
+  "updated_at" => "2020-04-11 22:04:12"
+  "app_user" => array:20 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+  ]
+]
+array:11 [
+  "id" => 3
+  "app_user_id" => 2
+  "amount" => 80000.0
+  "period" => "weekly"
+  "date" => 20
+  "weekday" => "Friday"
+  "time" => "23:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:23"
+  "updated_at" => "2020-04-11 22:04:23"
+  "app_user" => array:21 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+    "default_debit_card" => null
+  ]
+]
+array:11 [
+  "id" => 4
+  "app_user_id" => 2
+  "amount" => 90000.0
+  "period" => "monthly"
+  "date" => 11
+  "weekday" => "Monday"
+  "time" => "01:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:35"
+  "updated_at" => "2020-04-11 22:04:35"
+  "app_user" => array:21 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+    "default_debit_card" => null
+  ]
+]
+array:11 [
+  "id" => 5
+  "app_user_id" => 2
+  "amount" => 40000.0
+  "period" => "daily"
+  "date" => 1
+  "weekday" => "Thursday"
+  "time" => "22:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:38"
+  "updated_at" => "2020-04-11 22:04:38"
+  "app_user" => array:21 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+    "default_debit_card" => null
+  ]
+]
+Completed successfullyarray:11 [
+  "id" => 1
+  "app_user_id" => 2
+  "amount" => 90000.0
+  "period" => "daily"
+  "date" => 15
+  "weekday" => "Monday"
+  "time" => "18:00:00"
+  "try_other_cards" => 1
+  "created_at" => "2020-04-11 21:59:18"
+  "updated_at" => "2020-04-11 21:59:18"
+  "app_user" => array:20 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+  ]
+]
+array:11 [
+  "id" => 2
+  "app_user_id" => 2
+  "amount" => 90000.0
+  "period" => "weekly"
+  "date" => 9
+  "weekday" => "Saturday"
+  "time" => "01:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:12"
+  "updated_at" => "2020-04-11 22:04:12"
+  "app_user" => array:20 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+  ]
+]
+"Deduction response 1"
+"Debit success"
+"Savings distribution success"
+"Autosave success"
+array:11 [
+  "id" => 3
+  "app_user_id" => 2
+  "amount" => 80000.0
+  "period" => "weekly"
+  "date" => 20
+  "weekday" => "Friday"
+  "time" => "23:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:23"
+  "updated_at" => "2020-04-11 22:04:23"
+  "app_user" => array:24 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+    "default_debit_card" => array:10 [
+      "id" => 4
+      "app_user_id" => 2
+      "pan" => "ending in 7040"
+      "month" => "8"
+      "year" => "2022"
+      "cvv" => "****"
+      "is_default" => 1
+      "created_at" => "2020-04-11 22:43:39"
+      "updated_at" => "2020-04-11 22:43:39"
+      "deleted_at" => null
+    ]
+    "core_savings" => array:11 [
+      "id" => 1
+      "app_user_id" => 2
+      "type" => "core"
+      "gos_type_id" => null
+      "maturity_date" => null
+      "current_balance" => 62000.0
+      "funded_at" => "2020-04-11 19:11:20"
+      "savings_distribution" => 10.0
+      "created_at" => null
+      "updated_at" => "2020-04-11 22:45:10"
+      "deleted_at" => null
+    ]
+    "gos_savings" => array:3 [
+      0 => array:11 [
+        "id" => 4
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 2
+        "maturity_date" => "2021-02-11 17:53:24"
+        "current_balance" => 121000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 30.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      1 => array:11 [
+        "id" => 5
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 1
+        "maturity_date" => "2021-02-11 17:53:26"
+        "current_balance" => 37000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 10.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      2 => array:11 [
+        "id" => 6
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 3
+        "maturity_date" => "2021-02-11 17:53:27"
+        "current_balance" => 42000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 10.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+    ]
+    "locked_savings" => array:2 [
+      0 => array:11 [
+        "id" => 2
+        "app_user_id" => 2
+        "type" => "locked"
+        "gos_type_id" => null
+        "maturity_date" => "2020-11-11 17:53:09"
+        "current_balance" => 185000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 25.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      1 => array:11 [
+        "id" => 3
+        "app_user_id" => 2
+        "type" => "locked"
+        "gos_type_id" => null
+        "maturity_date" => "2020-11-11 17:53:11"
+        "current_balance" => 108000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 15.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+    ]
+  ]
+]
+array:11 [
+  "id" => 4
+  "app_user_id" => 2
+  "amount" => 90000.0
+  "period" => "monthly"
+  "date" => 11
+  "weekday" => "Monday"
+  "time" => "01:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:35"
+  "updated_at" => "2020-04-11 22:04:35"
+  "app_user" => array:24 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+    "default_debit_card" => array:10 [
+      "id" => 4
+      "app_user_id" => 2
+      "pan" => "ending in 7040"
+      "month" => "8"
+      "year" => "2022"
+      "cvv" => "****"
+      "is_default" => 1
+      "created_at" => "2020-04-11 22:43:39"
+      "updated_at" => "2020-04-11 22:43:39"
+      "deleted_at" => null
+    ]
+    "core_savings" => array:11 [
+      "id" => 1
+      "app_user_id" => 2
+      "type" => "core"
+      "gos_type_id" => null
+      "maturity_date" => null
+      "current_balance" => 62000.0
+      "funded_at" => "2020-04-11 19:11:20"
+      "savings_distribution" => 10.0
+      "created_at" => null
+      "updated_at" => "2020-04-11 22:45:10"
+      "deleted_at" => null
+    ]
+    "gos_savings" => array:3 [
+      0 => array:11 [
+        "id" => 4
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 2
+        "maturity_date" => "2021-02-11 17:53:24"
+        "current_balance" => 121000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 30.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      1 => array:11 [
+        "id" => 5
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 1
+        "maturity_date" => "2021-02-11 17:53:26"
+        "current_balance" => 37000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 10.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      2 => array:11 [
+        "id" => 6
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 3
+        "maturity_date" => "2021-02-11 17:53:27"
+        "current_balance" => 42000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 10.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+    ]
+    "locked_savings" => array:2 [
+      0 => array:11 [
+        "id" => 2
+        "app_user_id" => 2
+        "type" => "locked"
+        "gos_type_id" => null
+        "maturity_date" => "2020-11-11 17:53:09"
+        "current_balance" => 185000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 25.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      1 => array:11 [
+        "id" => 3
+        "app_user_id" => 2
+        "type" => "locked"
+        "gos_type_id" => null
+        "maturity_date" => "2020-11-11 17:53:11"
+        "current_balance" => 108000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 15.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+    ]
+  ]
+]
+"Deduction response "
+"Debit failure"
+"Autosave failure"
+array:11 [
+  "id" => 5
+  "app_user_id" => 2
+  "amount" => 40000.0
+  "period" => "daily"
+  "date" => 1
+  "weekday" => "Thursday"
+  "time" => "22:00:00"
+  "try_other_cards" => 0
+  "created_at" => "2020-04-11 22:04:38"
+  "updated_at" => "2020-04-11 22:04:38"
+  "app_user" => array:24 [
+    "id" => 2
+    "full_name" => "Mariane Rempel Sr."
+    "email" => "xavi7th@gmail.com"
+    "email_verified_at" => null
+    "phone" => null
+    "address" => null
+    "city" => null
+    "country" => "Nigeria"
+    "acc_num" => null
+    "acc_bank" => null
+    "acc_type" => null
+    "bvn" => null
+    "is_bvn_verified" => false
+    "id_card" => null
+    "verified_at" => null
+    "can_withdraw" => false
+    "is_active" => true
+    "created_at" => null
+    "updated_at" => null
+    "deleted_at" => null
+    "default_debit_card" => array:10 [
+      "id" => 4
+      "app_user_id" => 2
+      "pan" => "ending in 7040"
+      "month" => "8"
+      "year" => "2022"
+      "cvv" => "****"
+      "is_default" => 1
+      "created_at" => "2020-04-11 22:43:39"
+      "updated_at" => "2020-04-11 22:43:39"
+      "deleted_at" => null
+    ]
+    "core_savings" => array:11 [
+      "id" => 1
+      "app_user_id" => 2
+      "type" => "core"
+      "gos_type_id" => null
+      "maturity_date" => null
+      "current_balance" => 62000.0
+      "funded_at" => "2020-04-11 19:11:20"
+      "savings_distribution" => 10.0
+      "created_at" => null
+      "updated_at" => "2020-04-11 22:45:10"
+      "deleted_at" => null
+    ]
+    "gos_savings" => array:3 [
+      0 => array:11 [
+        "id" => 4
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 2
+        "maturity_date" => "2021-02-11 17:53:24"
+        "current_balance" => 121000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 30.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      1 => array:11 [
+        "id" => 5
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 1
+        "maturity_date" => "2021-02-11 17:53:26"
+        "current_balance" => 37000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 10.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      2 => array:11 [
+        "id" => 6
+        "app_user_id" => 2
+        "type" => "gos"
+        "gos_type_id" => 3
+        "maturity_date" => "2021-02-11 17:53:27"
+        "current_balance" => 42000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 10.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+    ]
+    "locked_savings" => array:2 [
+      0 => array:11 [
+        "id" => 2
+        "app_user_id" => 2
+        "type" => "locked"
+        "gos_type_id" => null
+        "maturity_date" => "2020-11-11 17:53:09"
+        "current_balance" => 185000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 25.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+      1 => array:11 [
+        "id" => 3
+        "app_user_id" => 2
+        "type" => "locked"
+        "gos_type_id" => null
+        "maturity_date" => "2020-11-11 17:53:11"
+        "current_balance" => 108000.0
+        "funded_at" => "2020-04-11 19:11:20"
+        "savings_distribution" => 15.0
+        "created_at" => null
+        "updated_at" => "2020-04-11 22:45:10"
+        "deleted_at" => null
+      ]
+    ]
+  ]
+]
+"Deduction response 1"
+"Debit success"
+"Savings distribution success"
+"Autosave success"
+Completed successfully
