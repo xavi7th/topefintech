@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Console;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use App\Modules\Admin\Models\ErrLog;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\AutoSaveSetting;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,7 +43,7 @@ class ProcessAutoSaveDeductions extends Command
 	 */
 	public function handle()
 	{
-		foreach (AutoSaveSetting::all() as $deduction_request) {
+		foreach (AutoSaveSetting::with('app_user')->get() as $deduction_request) {
 
 			/**
 			 * ! Put a processed_at so that the stuff is not processed twice by the scheduling running twice
@@ -96,22 +97,40 @@ class ProcessAutoSaveDeductions extends Command
 	{
 
 		//Get the user
-		$app_user = $deduction_request->app_user;
+		$app_user =  $deduction_request->app_user;
 
 		/**
 		 * ! Make sure the user distribution is 100% before we start anything
 		 */
 		if ($app_user->total_distribution_percentage() != 100) {
-			// $app_user->notify(new InvalidSavingsDistributionValue);
+			try {
+				$app_user->notify(new InvalidSavingsDistributionValue);
+			} catch (\Throwable $th) {
+				Admin::find(1)->notify(new InvalidSavingsDistributionValue);
+				ErrLog::notifyAdmin($app_user, $th, 'Invalid savings distribution value of ' . $app_user->total_distribution_percentage());
+			}
 			dump('Invalid savings ditribution settings');
 
-			// $app_user->notify(new AutoSaveSavingsFailure($deduction_request->amount));
+			try {
+				$app_user->notify(new AutoSaveSavingsFailure($deduction_request->amount));
+			} catch (\Throwable $th) {
+				ErrLog::notifyAdmin($app_user, $th, 'Autosave feature notification failed');
+			}
 			dump('Auto save failure');
 			return;
 		}
 
 		//Get the user's default debit card
 		$debit_card_to_deduct = $app_user->default_debit_card;
+
+		if (is_null($debit_card_to_deduct)) {
+			try {
+				$app_user->notify(new DefaultDebitCardNotFound());
+			} catch (\Throwable $th) {
+				ErrLog::notifyAdmin($app_user, $th, 'Default card not found');
+			}
+			return;
+		}
 
 		//Fire a deduction request via paystack
 		$rsp = $app_user->deduct_debit_card($debit_card_to_deduct, $deduction_request->amount);
@@ -121,7 +140,12 @@ class ProcessAutoSaveDeductions extends Command
 		//If it fails,
 		if (!$rsp) {
 			//notify him of failure of default card debit
-			// $app_user->notify(new CardDebitFailure($debit_card_to_deduct, $deduction_request->amount));
+			try {
+				$app_user->notify(new CardDebitFailure($debit_card_to_deduct, $deduction_request->amount));
+			} catch (\Throwable $th) {
+				ErrLog::notifyAdmin($app_user, $th, 'Card debit failure');
+			}
+
 			dump('Debit failure');
 
 			//check if request permits us to try other cards
@@ -139,48 +163,76 @@ class ProcessAutoSaveDeductions extends Command
 					//		if any is successful,
 					if ($rsp) {
 						//notify him of card debit success
-						// $app_user->notify(new CardDebitSuccess($debit_card_to_deduct, $deduction_request->amount));
+						try {
+							$app_user->notify(new CardDebitSuccess($debit_card_to_deduct, $deduction_request->amount));
+						} catch (\Throwable $th) {
+							ErrLog::notifyAdmin($app_user, $th, 'Card debit success');
+						}
 						dump('Debit Success');
 
 						//	fund the user according to their savings distribution
 						$this->processUserSavingsDistribution($app_user, $deduction_request->amount);
 
 						//notify him of autosave success
-						// $app_user->notify(new AutoSaveSavingsSuccess($deduction_request->amount));
+						try {
+							$app_user->notify(new AutoSaveSavingsSuccess($deduction_request->amount));
+						} catch (\Throwable $th) {
+							ErrLog::notifyAdmin($app_user, $th, 'Autosave success');
+						}
 						dump('Autosave success');
 
 						// break the loop and then exit
 						break;
 					} else {
 						//	if it doesnt notify him of card debit failure
-						// $app_user->notify(new CardDebitFailure($debit_card_to_deduct, $deduction_request->amount));
+						try {
+							$app_user->notify(new CardDebitFailure($debit_card_to_deduct, $deduction_request->amount));
+						} catch (\Throwable $th) {
+							ErrLog::notifyAdmin($app_user, $th, 'Card debit failure');
+						}
 						dump('Debit failure');
 					}
 
 					// if there are still cards to try then try next card
 					if ($idx == $num_of_cards_on_file) {
 						//		if none drop an auto save failure notification for him
-						// $app_user->notify(new AutoSaveSavingsFailure($deduction_request->amount));
+						try {
+							$app_user->notify(new AutoSaveSavingsFailure($deduction_request->amount));
+						} catch (\Throwable $th) {
+							ErrLog::notifyAdmin($app_user, $th, 'Auto save failure');
+						}
 						dump('Autosave failure');
 					}
 				}
 				// if request does not permit us to try other cards
 			} else {
 				//notify him of failure to process autosave
-				// $app_user->notify(new AutoSaveSavingsFailure($deduction_request->amount));
+				try {
+					$app_user->notify(new AutoSaveSavingsFailure($deduction_request->amount));
+				} catch (\Throwable $th) {
+					ErrLog::notifyAdmin($app_user, $th, 'Auto save failure');
+				}
 				dump('Autosave failure');
 			}
 			// if default card debit succeeds
 		} else {
 			//notify him of card debit success
-			// $app_user->notify(new CardDebitSuccess($debit_card_to_deduct, $deduction_request->amount));
+			try {
+				$app_user->notify(new CardDebitSuccess($debit_card_to_deduct, $deduction_request->amount));
+			} catch (\Throwable $th) {
+				ErrLog::notifyAdmin($app_user, $th, 'Card debit success');
+			}
 			dump('Debit success');
 
 			//	fund the user according to their savings distribution
 			$this->processUserSavingsDistribution($app_user, $deduction_request->amount);
 
 			//notify him of autosave success
-			// $app_user->notify(new AutoSaveSavingsSuccess($deduction_request->amount));
+			try {
+				$app_user->notify(new AutoSaveSavingsSuccess($deduction_request->amount));
+			} catch (\Throwable $th) {
+				ErrLog::notifyAdmin($app_user, $th, 'Auto save success');
+			}
 			dump('Autosave success');
 		}
 	}
@@ -194,7 +246,7 @@ class ProcessAutoSaveDeductions extends Command
 	 **/
 	private function processUserSavingsDistribution(AppUser $app_user, float $amount)
 	{
-		if ($app_user->has_gos_savings() && !$app_user->has_locked_savings()) {
+		if (!$app_user->has_gos_savings() && !$app_user->has_locked_savings()) {
 			$app_user->fund_core_savings($amount);
 		} else {
 			$app_user->distribute_savings($amount);
