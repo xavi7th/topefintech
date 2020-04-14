@@ -2,26 +2,23 @@
 
 namespace App\Modules\Admin\Http\Controllers;
 
-use App\ErrLog;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\Admin\Models\ApiRoute;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\BasicSite\Models\Message;
-use App\Modules\BasicSite\Models\Testimonial;
-use App\Modules\Admin\Transformers\AdminUserTransformer;
-use App\Modules\Transformers\AdminTestimonialTransformer;
-use App\Modules\Admin\Transformers\AdminActivityTransformer;
-use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Models\GOSType;
+use App\Modules\BasicSite\Models\Message;
 use App\Modules\AppUser\Models\LoanRequest;
+use App\Modules\BasicSite\Models\Testimonial;
+use App\Modules\Admin\Http\Controllers\LoginController;
+use App\Modules\Transformers\AdminTestimonialTransformer;
+use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 
 class AdminController extends Controller
 {
@@ -29,7 +26,7 @@ class AdminController extends Controller
 	{
 		Route::group(['middleware' => ['api', 'throttle:20,1'], 'prefix' =>  Admin::DASHBOARD_ROUTE_PREFIX . '/api/',  'namespace' => '\App\Modules\Admin\Http\Controllers'], function () {
 
-			LoginController::routes();
+			LoginController::apiRoutes();
 
 			ErrLog::apiRoutes();
 		});
@@ -41,15 +38,8 @@ class AdminController extends Controller
 	 */
 	public static function routes()
 	{
-		Route::group(['middleware' => 'api', 'prefix' => 'postman/' . Admin::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Admin\Http\Controllers'], function () {
+		Route::group(['middleware' => 'web', 'prefix' => Admin::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Admin\Http\Controllers'], function () {
 			LoginController::routes();
-		});
-
-		/**
-		 * ! Change middleware to web
-		 */
-		Route::group(['middleware' => 'api', 'prefix' => Admin::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Admin\Http\Controllers'], function () {
-			// LoginController::routes();
 
 			Route::group(['middleware' => ['auth:admin', 'admins']], function () {
 

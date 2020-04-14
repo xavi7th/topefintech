@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use App\Modules\Admin\Http\Middleware\OnlyAdmins;
 use App\Modules\Admin\Http\Middleware\VerifiedAdmins;
+use Tymon\JWTAuth\JWTGuard;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -44,9 +45,12 @@ class AdminServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		//
 		SessionGuard::macro('admin', function () {
 			return Admin::find(Auth::guard('admin')->id());
+		});
+
+		JWTGuard::macro('apiAdmin', function () {
+			return Admin::find(Auth::guard('admin_api')->id());
 		});
 	}
 

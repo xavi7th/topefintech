@@ -9,13 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Modules\Admin\Models\Admin;
 
 class User extends Authenticatable implements JWTSubject //implements MustVerifyEmail
 {
 	use Notifiable, SoftDeletes, Rememberable;
-
-	protected static $admin_id = 1;
-	protected static $super_admin_id = 2;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -59,13 +57,25 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
 	static function dashboardRoute(): string
 	{
 
-		if (Auth::admin()) {
-			return 'admin.dashboard';
-		} else if (Auth::appuser()) {
+		if (Auth::appuser()) {
 			return  'appuser.dashboard';
+		} else if (Auth::admin()) {
+			return 'admin.dashboard';
 		} else {
 			return route('home');
 		}
+	}
+
+
+	/**
+	 * Check if the currently authenticated user is an admin
+	 *
+	 * @return bool
+	 */
+
+	public function isAdmin(): bool
+	{
+		return $this instanceof Admin;
 	}
 
 	public function setPasswordAttribute($value)
