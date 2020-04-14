@@ -17,16 +17,7 @@ class CreateWithdrawalRequestsTable extends Migration
 			$table->bigIncrements('id');
 			$table->integer('app_user_id')->unsigned();
 			$table->double('amount')->nullable();
-			$table->string('payment_option')->nullable();
-			$table->string('bitcoin_acc')->nullable();
-			$table->string('receiver_name')->nullable();
-			$table->string('secret_question')->nullable();
-			$table->string('secret_answer')->nullable();
-			$table->string('id_type')->nullable();
-			$table->string('country')->nullable();
-			$table->string('acc_name')->nullable();
-			$table->string('acc_num')->nullable();
-			$table->string('acc_bank')->nullable();
+			$table->boolean('is_processed')->default(false);
 
 			$table->timestamps();
 			$table->softDeletes();

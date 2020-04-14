@@ -22,6 +22,7 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 use App\Modules\AppUser\Http\Controllers\ResetPasswordController;
 use App\Modules\AppUser\Http\Controllers\ForgotPasswordController;
 use App\Modules\AppUser\Http\Controllers\ConfirmPasswordController;
+use App\Modules\AppUser\Models\WithdrawalRequest;
 
 class AppUserController extends Controller
 {
@@ -40,15 +41,17 @@ class AppUserController extends Controller
 
 				AppUser::apiRoutes();
 
-				Savings::appUserRoutes();
+				Savings::appUserApiRoutes();
 
-				GOSType::appUserRoutes();
+				GOSType::appUserApiRoutes();
 
-				DebitCard::appUserRoutes();
+				DebitCard::appUserApiRoutes();
 
-				LoanRequest::appUserRoutes();
+				LoanRequest::appUserApiRoutes();
 
-				LoanSurety::appUserRoutes();
+				LoanSurety::appUserApiRoutes();
+
+				WithdrawalRequest::appUserApiRoutes();
 			});
 		});
 	}
