@@ -16,7 +16,7 @@ class CreateGOSFundValidation extends FormRequest
 	public function rules()
 	{
 		return [
-			'duration' => 'required|numeric|min:10',
+			'duration' => 'required|numeric|min:4',
 			'gos_type_id' => 'required|exists:gos_types,id'
 		];
 	}

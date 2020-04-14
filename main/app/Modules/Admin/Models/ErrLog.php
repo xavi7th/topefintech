@@ -27,7 +27,7 @@ class ErrLog extends Model
 		if (DB::transactionLevel() > 0) {
 			Db::rollBack();
 		}
-		Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'exception' => $exception]);
+		Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
 	}
 
 	static function apiRoutes()

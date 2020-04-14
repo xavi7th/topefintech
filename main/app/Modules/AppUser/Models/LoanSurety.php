@@ -48,7 +48,7 @@ class LoanSurety extends Model
 		return is_null($this->is_surety_accepted);
 	}
 
-	static function appUserRoutes()
+	static function appUserApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('/surety-requests', 'LoanSurety@getReceivedSuretyRequests');

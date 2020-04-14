@@ -116,7 +116,7 @@ class AppUser extends User
 
 	public function total_withdrawable_amount(): float
 	{
-		return optional($this->core_savings_interests()->where('is_cleared', true))->sum('amount') + optional($this->core_savings)->current_balance;
+		return optional($this->core_savings)->current_balance;
 	}
 
 	public function gos_savings()
@@ -149,9 +149,14 @@ class AppUser extends User
 		return $this->savings_list()->sum('savings_distribution');
 	}
 
-	public function withdrawal_requests()
+	public function withdrawal_request()
 	{
-		return $this->hasMany(WithdrawalRequest::class);
+		return $this->hasOne(WithdrawalRequest::class);
+	}
+
+	public function has_pending_withdrawal_request(): bool
+	{
+		return $this->withdrawal_request()->where('is_processed', false)->exists();
 	}
 
 	public function transactions()
@@ -167,6 +172,16 @@ class AppUser extends User
 	public function total_withdrawal_amount()
 	{
 		return $this->withdrawal_transactions()->sum('amount');
+	}
+
+	public function is_due_for_withdrawal(): bool
+	{
+		/**
+		 * check if withdrawal was done in last month
+		 * check if withdrawal was done in last 20 days
+		 * ! if no but was done in the last month, add 5% charge
+		 */
+		return false;
 	}
 
 	public function deposit_transactions()
@@ -376,6 +391,11 @@ class AppUser extends User
 	public function is_loan_surety(): bool
 	{
 		return  !is_null($this->surety_request) && $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
+	}
+
+	public function loan_surety_amount(): float
+	{
+		return ($this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->get()->load('loan_requests'))->sum('loan_request.amount');
 	}
 
 	public function activeDays(): int

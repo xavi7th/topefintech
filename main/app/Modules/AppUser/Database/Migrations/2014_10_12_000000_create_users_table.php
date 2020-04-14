@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
 			$table->string('acc_type')->nullable();
 			$table->string('bvn')->nullable();
 			$table->boolean('is_bvn_verified')->default(false);
+			$table->boolean('is_bank_verified')->default(false);
 			$table->string('id_card')->nullable();
 			$table->timestamp('verified_at')->nullable();
 			$table->boolean('can_withdraw')->default(false);

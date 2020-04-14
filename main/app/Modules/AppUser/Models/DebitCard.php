@@ -57,7 +57,7 @@ class DebitCard extends Model
 	}
 
 
-	static function appUserRoutes()
+	static function appUserApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 

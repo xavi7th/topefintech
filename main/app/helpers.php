@@ -255,7 +255,7 @@ if (!function_exists('to_naira')) {
 	 * @throws Exception when the amount supplied is not a number
 	 **/
 
-	function to_naira($amount): string
+	function to_naira(float $amount): string
 	{
 		if (!is_numeric($amount)) {
 			throw new Exception("can only convert numbers to naira", 500);
