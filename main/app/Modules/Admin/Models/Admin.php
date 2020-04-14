@@ -20,22 +20,12 @@ class Admin extends User
 
 	static function canAccess()
 	{
-		return parent::isAdmin();
+		return auth()->user()->isAdmin();
 	}
 
 	public function is_verified()
 	{
 		return $this->verified_at !== null;
-	}
-
-	/**
-	 * Check if the currently authenticated user is an admin
-	 *
-	 * @return void
-	 */
-	protected static function isAdmin(): bool
-	{
-		return Auth::admin() ? true : false;
 	}
 
 	public function permitted_api_routes()

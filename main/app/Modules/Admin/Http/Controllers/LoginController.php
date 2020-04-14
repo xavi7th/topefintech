@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 /**
@@ -25,6 +26,8 @@ class LoginController extends Controller
 {
 
 	use AuthenticatesUsers;
+
+	protected $apiToken;
 
 	/**
 	 * Where to redirect admins after login.
@@ -49,6 +52,10 @@ class LoginController extends Controller
 	static function routes()
 	{
 		Route::get('login', 'LoginController@showLoginForm')->name('admin.login');
+	}
+
+	static function apiRoutes()
+	{
 		Route::post('login', 'LoginController@login')->middleware('throttle:5,1'); //->middleware('verified');
 		Route::post('first-time', 'LoginController@resetPassword')->middleware('throttle:5,1');
 		Route::post('logout', 'LoginController@logout')->name('admin.logout');
@@ -65,7 +72,6 @@ class LoginController extends Controller
 		return view('admin::auth');
 	}
 
-
 	/**
 	 * Handle a login request to the application.
 	 *
@@ -76,7 +82,6 @@ class LoginController extends Controller
 	 */
 	public function login(Request $request)
 	{
-		dd('here');
 		$this->validateLogin($request);
 
 		// If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -159,17 +164,15 @@ class LoginController extends Controller
 	 */
 	protected function authenticated(Request $request, $user)
 	{
-		if (Admin::isAdmin()) {
-			if (Auth::admin()->is_verified()) {
-				return response()->json(['status' => true], 202);
+		if ($user->isAdmin()) {
+			if ($user->is_verified()) {
+				return response()->json($this->respondWithToken(), 202);
 			} else {
-				Auth::logout();
-				session()->invalidate();
+				$this->logout($request);
 				return response()->json(['message' => 'Unverified user'], 416);
 			}
 		} else {
-			Auth::logout();
-			session()->invalidate();
+			$this->logout($request);
 			return response()->json(['message' => 'Access Denied'], 401);
 		}
 		return redirect()->route(Admin::dashboardRoute());
@@ -180,7 +183,7 @@ class LoginController extends Controller
 	 *
 	 * @return string
 	 */
-	public function username()
+	public function username(): string
 	{
 		return 'email';
 	}
@@ -196,6 +199,16 @@ class LoginController extends Controller
 	}
 
 	/**
+	 * Get the guard to be used during authentication.
+	 *
+	 * @return \Illuminate\Contracts\Auth\StatefulGuard
+	 */
+	protected function apiGuard()
+	{
+		return Auth::guard('admin_api');
+	}
+
+	/**
 	 * Log the user out of the application.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
@@ -207,6 +220,31 @@ class LoginController extends Controller
 
 		$request->session()->invalidate();
 
+		try {
+			$this->apiGuard()->logout();
+		} catch (\Throwable $th) { }
+
+		if ($request->ajax() || $request->expectsJson()) {
+			return response()->json(['logged_out' => true], 200);
+		}
+
 		return redirect()->route('admin.login');
+	}
+
+	/**
+	 * Get the token array structure.
+	 *
+	 * @param  string $token
+	 *
+	 * @return array api jwt token details
+	 */
+	protected function respondWithToken()
+	{
+		return [
+			'access_token' => $this->apiToken,
+			'token_type' => 'bearer',
+			'expires_in' => $this->apiGuard()->factory()->getTTL() * 60,
+			'status' => true
+		];
 	}
 }
