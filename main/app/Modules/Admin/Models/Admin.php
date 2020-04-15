@@ -3,10 +3,15 @@
 namespace App\Modules\Admin\Models;
 
 use App\User;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\Admin\Models\ApiRoute;
+use App\Modules\AppUser\Models\AppUser;
+use App\Modules\BasicSite\Models\Message;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\AppUser\Models\Transaction;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
 
 class Admin extends User
@@ -33,9 +38,13 @@ class Admin extends User
 		return $this->belongsToMany(ApiRoute::class, 'api_route_permissions', 'user_id')->withTimestamps();
 	}
 
-	static function adminRoutes()
+	static function adminApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
+
+			Route::post('test-route-permission', 'Admin@testRoutePermission');
+
+			Route::get('dashboard/statistics', 'Admin@getDashboardStatistics');
 
 			Route::get('/savings', 'Admin@getListOfUserSavings');
 
@@ -49,9 +58,35 @@ class Admin extends User
 		});
 	}
 
+	public function testRoutePermission()
+	{
+		$api_route = ApiRoute::where('name', request('route'))->first();
+		if ($api_route) {
+			/**
+			 * Give super admin permission to all routes
+			 */
+			if (Auth::admin()->role_id === 2) {
+				return ['rsp' => true];
+			}
+			return ['rsp'  => $api_route->permitted_users()->where('user_id', auth()->id())->exists()];
+		} else {
+			return response()->json(['rsp' => false], 410);
+		}
+	}
+
+	public function getDashboardStatistics()
+	{
+		return [
+			'total_users' => AppUser::count(),
+			'total_transactions' => Transaction::where('trans_type', '<>', 'withdrawal')->count(),
+			'total_withdrawals' => Transaction::where('trans_type', 'withdrawal')->count(),
+			'total_messages' => Message::count(),
+		];
+	}
+
 	public function getAdmins()
 	{
-		return (new AdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForAdminViewAdmins');
+		return (new AdminUserTransformer)->collectionTransformer(self::all(), 'transformForAdminViewAdmins');
 	}
 
 	public function createAdmin()
@@ -59,11 +94,11 @@ class Admin extends User
 
 		try {
 			DB::beginTransaction();
-			$admin = Admin::create(Arr::collapse([
+			$admin = self::create(Arr::collapse([
 				request()->all(),
 				[
 					'password' => bcrypt('amju@admin'),
-					'role_id' => Admin::getAdminId()
+					'role_id' => self::getAdminId()
 				]
 			]));
 			//Give him access to dashboard
@@ -90,7 +125,6 @@ class Admin extends User
 		});
 
 		return ['permitted_routes' => $permitted_routes, 'all_routes' => $all_routes];
-		return (new AdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForAdminViewAdmins');
 	}
 
 	public function editAdminPermissions(Admin $admin)

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use App\Modules\Admin\Models\ErrLog;
 
 class GOSType extends Model
 {
@@ -28,7 +29,7 @@ class GOSType extends Model
 	}
 
 
-	static function adminRoutes()
+	static function adminApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('gos-types', 'GOSType@getGOSTypes');
@@ -56,9 +57,9 @@ class GOSType extends Model
 			$gos_type = GOSType::create([
 				'name' => request('name'),
 			]);
-			return response()->json(['rsp' => $gos_type], 201);
+			return response()->json($gos_type, 201);
 		} catch (\Throwable $e) {
-			Log::error($e);
+			ErrLog::notifyAdmin($request->user(), $e, 'GOS not created');
 			return response()->json(['rsp' => $e->getMessage()], 500);
 		}
 	}
@@ -68,7 +69,7 @@ class GOSType extends Model
 		return GOSType::all();
 	}
 
-	public function adminDeletGOSType($gos_type_id)
+	public function adminDeleteGOSType($gos_type_id)
 	{
 		return response()->json(['rsp' => GOSType::destroy($gos_type_id)], 204);
 	}

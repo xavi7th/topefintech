@@ -411,7 +411,7 @@ class AppUser extends User
 		return $id_url;
 	}
 
-	static function adminRoutes()
+	static function adminApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('users', 'AppUser@getListOfUsers');

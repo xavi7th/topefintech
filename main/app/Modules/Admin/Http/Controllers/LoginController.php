@@ -46,18 +46,18 @@ class LoginController extends Controller
 	 */
 	public function __construct()
 	{
-		$this->middleware('guest:admin')->except('logout');
+		// $this->middleware('guest:admin')->except('logout');
 	}
 
 	static function routes()
 	{
-		Route::get('login', 'LoginController@showLoginForm')->name('admin.login');
+		Route::get('login', 'LoginController@showLoginForm')->middleware('guest:admin')->name('admin.login');
 	}
 
 	static function apiRoutes()
 	{
 		Route::post('login', 'LoginController@login')->middleware('throttle:5,1'); //->middleware('verified');
-		Route::post('first-time', 'LoginController@resetPassword')->middleware('throttle:5,1');
+		Route::post('first-time', 'LoginController@resetPassword')->middleware('guest:admin_api')->middleware('throttle:5,1');
 		Route::post('logout', 'LoginController@logout')->name('admin.logout');
 	}
 
