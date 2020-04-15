@@ -24,5 +24,6 @@ class AdminDatabaseSeeder extends Seeder
         $this->call(SavingsInterestsTableSeeder::class);
         $this->call(DebitCardsTableSeeder::class);
         $this->call(AutoSaveSettingsTableSeeder::class);
+        $this->call(WithdrawalRequestsTableSeeder::class);
     }
 }

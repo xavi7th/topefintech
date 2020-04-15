@@ -153,7 +153,7 @@ class LoanRequest extends Model
 		});
 	}
 
-	static function adminRoutes()
+	static function adminApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 			Route::get('/loan-requests', 'LoanRequest@adminGetLoanRequests');

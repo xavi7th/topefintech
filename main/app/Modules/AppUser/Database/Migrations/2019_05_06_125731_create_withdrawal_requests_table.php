@@ -18,6 +18,8 @@ class CreateWithdrawalRequestsTable extends Migration
 			$table->integer('app_user_id')->unsigned();
 			$table->double('amount')->nullable();
 			$table->boolean('is_processed')->default(false);
+			$table->bigInteger('processed_by')->nullable();
+			$table->string('processor_type')->nullable();
 
 			$table->timestamps();
 			$table->softDeletes();

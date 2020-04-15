@@ -10,6 +10,7 @@ use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Modules\Admin\Models\Admin;
+use App\Modules\AppUser\Models\WithdrawalRequest;
 
 class User extends Authenticatable implements JWTSubject //implements MustVerifyEmail
 {
@@ -45,6 +46,11 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
 	public function activities()
 	{
 		return $this->morphMany(ActivityLog::class, 'user')->latest();
+	}
+
+	public function processed_withdrawal_requests()
+	{
+		return $this->morphMany(WithdrawalRequest::class, 'processor', 'processor_type', 'processed_by')->latest();
 	}
 
 
