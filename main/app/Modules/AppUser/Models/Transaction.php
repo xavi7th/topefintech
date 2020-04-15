@@ -12,7 +12,7 @@ class Transaction extends Model
 	use SoftDeletes;
 
 	protected $fillable = [
-		'amount', 'trans_type', 'savings_id',
+		'amount', 'trans_type', 'savings_id', 'description'
 	];
 	protected $dates = ['trans_date'];
 

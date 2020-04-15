@@ -19,6 +19,7 @@ class CreateTransactionsTable extends Migration
 			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade');
 			$table->enum('trans_type', ['deposit', 'withdrawal']);
 			$table->double('amount');
+			$table->string('description')->nullable();
 
 			$table->timestamps();
 			$table->softDeletes();
