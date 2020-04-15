@@ -149,6 +149,11 @@ class AppUser extends User
 		return $this->savings_list()->sum('savings_distribution');
 	}
 
+	public function previous_withdrawal_requests()
+	{
+		return $this->hasMany(WithdrawalRequest::class)->where('is_processed', true);
+	}
+
 	public function withdrawal_request()
 	{
 		return $this->hasOne(WithdrawalRequest::class)->where('is_processed', false);
@@ -179,9 +184,15 @@ class AppUser extends User
 		/**
 		 * check if withdrawal was done in last month
 		 * check if withdrawal was done in last 20 days
-		 * ! if no but was done in the last month, add 5% charge
 		 */
-		return false;
+
+		if (
+			$this->previous_withdrawal_requests()->whereMonth('created_at', now()->month)->exists() ||
+			$this->previous_withdrawal_requests()->whereDate('created_at', '>=', now()->subDays(20))->exists()
+		) {
+			return false;
+		}
+		return true;
 	}
 
 	public function deposit_transactions()

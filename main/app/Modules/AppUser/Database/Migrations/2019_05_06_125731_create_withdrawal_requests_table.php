@@ -18,6 +18,7 @@ class CreateWithdrawalRequestsTable extends Migration
 			$table->integer('app_user_id')->unsigned();
 			$table->double('amount')->nullable();
 			$table->boolean('is_processed')->default(false);
+			$table->boolean('is_charge_free');
 			$table->bigInteger('processed_by')->nullable();
 			$table->string('processor_type')->nullable();
 

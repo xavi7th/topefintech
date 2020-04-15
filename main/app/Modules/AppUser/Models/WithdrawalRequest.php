@@ -20,7 +20,7 @@ class WithdrawalRequest extends Model
 	use SoftDeletes;
 
 	protected $fillable = [
-		'app_user_id', 'description', 'amount'
+		'app_user_id', 'description', 'amount', 'is_charge_free'
 	];
 
 	public function processor()
@@ -146,10 +146,12 @@ class WithdrawalRequest extends Model
 		/**
 		 * on approval add a withdrawal transaction for the users core savings_id
 		 */
+		$desc = $withdrawal_request->is_charge_free ? 'Withdrawal from core savings balance' : 'Charge-deductible withdrawal from core savings balance';
+
 		$withdrawal_request->app_user->core_savings->transactions()->create([
 			'amount' => $withdrawal_request->amount,
 			'trans_type' => 'withdrawal',
-			'description' => 'Withdrawal from core savings balance',
+			'description' => $desc
 		]);
 
 		/**
@@ -166,7 +168,7 @@ class WithdrawalRequest extends Model
 		 * Notify user that his request has been processed
 		 */
 		try {
-			$withdrawal_request->app_user->notify(new ProcessedWithdrawalRequestNotification);
+			$withdrawal_request->app_user->notify(new ProcessedWithdrawalRequestNotification($withdrawal_request));
 		} catch (\Throwable $th) {
 			ErrLog::notifyAdmin($withdrawal_request->app_user, $th, 'Processed withdrawal notification failed');
 		}

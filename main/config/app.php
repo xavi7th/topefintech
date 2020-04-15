@@ -107,6 +107,18 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | Undue Withdrawal Charges
+    |--------------------------------------------------------------------------
+    |
+		|	User can only withdraw once a month within a 20 day interval without charges.
+		| Any additional withdrawal will attract a charge
+    |
+    */
+
+	'undue_withdrawal_charge_percentage' => env('UNDUE_WITHDRAWAL_CHARGE_PERCENTAGE', 5),
+
+	/*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
