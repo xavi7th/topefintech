@@ -38,6 +38,11 @@ class Savings extends Model
 		return $this->hasMany(Transaction::class);
 	}
 
+	public function withdrawal_transactions()
+	{
+		return $this->transactions()->where('trans_type', 'withdrawal');
+	}
+
 	public function deposit_transactions()
 	{
 		return $this->transactions()->where('trans_type', 'deposit');

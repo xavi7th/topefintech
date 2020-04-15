@@ -12,15 +12,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Http\Requests\CreateWithdrawalRequestValidation;
 use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
 use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
+use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
 
 class WithdrawalRequest extends Model
 {
 	use SoftDeletes;
 
 	protected $fillable = [
-		'app_user_id', 'payment_option', 'bitcoin_acc', 'receiver_name',
-		'secret_question', 'secret_answer', 'id_type', 'country', 'acc_name',
-		'acc_num', 'acc_bank', 'amount'
+		'app_user_id', 'description', 'amount'
 	];
 
 	public function processor()
@@ -45,7 +44,7 @@ class WithdrawalRequest extends Model
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
 			Route::get('', 'WithdrawalRequest@adminGetWithdrawalRequests');
-			Route::post('/{withdrawal_request}/mark-complete', 'WithdrawalRequest@approveWithdrawalRequest');
+			Route::put('/{withdrawal_request}/mark-complete', 'WithdrawalRequest@approveWithdrawalRequest');
 			Route::put('/{withdrawal_request}/cancel', 'WithdrawalRequest@cancelWithdrawalRequest');
 		});
 	}
@@ -130,6 +129,46 @@ class WithdrawalRequest extends Model
 		return response()->json([], 204);
 	}
 
+	public function approveWithdrawalRequest(self $withdrawal_request)
+	{
+		if ($withdrawal_request->is_processed) {
+			ActivityLog::notifyAdmins(auth()->user()->email . ' attempted to approve an already processed request: ' . $withdrawal_request->id);
+			return generate_422_error('Request has been processed already');
+		}
+
+		DB::beginTransaction();
+		/**
+		 * on approval add a withdrawal transaction for the users core savings_id
+		 */
+		$withdrawal_request->app_user->core_savings->transactions()->create([
+			'amount' => $withdrawal_request->amount,
+			'trans_type' => 'withdrawal',
+			'description' => 'Withdrawal from core savings balance',
+		]);
+
+		/**
+		 * Mark the request as processed
+		 */
+		$withdrawal_request->is_processed = true;
+		$withdrawal_request->processed_by = auth()->id();
+		$withdrawal_request->processor_type = get_class(auth()->user());
+		$withdrawal_request->save();
+
+		DB::commit();
+
+		/**
+		 * Notify user that his request has been processed
+		 */
+		try {
+			$withdrawal_request->app_user->notify(new ProcessedWithdrawalRequestNotification);
+		} catch (\Throwable $th) {
+			ErrLog::notifyAdmin($withdrawal_request->app_user, $th, 'Processed withdrawal notification failed');
+		}
+
+
+		return response()->json([], 204);
+	}
+
 
 
 	protected static function boot()
@@ -150,18 +189,13 @@ class WithdrawalRequest extends Model
 			$withdrawal_request->load('app_user');
 		});
 
-		// static::updating(function ($withdrawal_request) {
+		static::updating(function ($withdrawal_request) {
+			// dump($withdrawal_request->getOriginal());
+			// dd($withdrawal_request->toArray());
 
-		// dump($withdrawal_request->getOriginal());
-		// dd($withdrawal_request->toArray());
-
-		/**
-		 * add an entry for the product trail that it's status changed
-		 */
-		// auth()->user()->product_histories()->create([
-		// 	'product_id' => $withdrawal_request->id,
-		// 	'product_status_id' => $withdrawal_request->product_status_id,
-		// ]);
-		// });
+			if ($withdrawal_request->is_processed) {
+				ActivityLog::notifyAdmins(auth()->user()->email . ' processed ' . $withdrawal_request->app_user->full_name . '\'s withdrawal request of ' . $withdrawal_request->amount);
+			}
+		});
 	}
 }
