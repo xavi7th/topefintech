@@ -13,6 +13,7 @@ use App\Modules\AppUser\Http\Requests\CreateWithdrawalRequestValidation;
 use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
 use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
+use Illuminate\Http\Request;
 
 class WithdrawalRequest extends Model
 {
@@ -34,9 +35,9 @@ class WithdrawalRequest extends Model
 
 	static function appUserApiRoutes()
 	{
-		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-			Route::get('/withdrawal-requests', 'WithdrawalRequest@getWithdrawalRequests');
-			Route::post('/withdrawal-request/create', 'WithdrawalRequest@createWithdrawalRequest');
+		Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-request'], function () {
+			Route::get('', 'WithdrawalRequest@getWithdrawalRequests');
+			Route::post('create', 'WithdrawalRequest@createWithdrawalRequest');
 		});
 	}
 
@@ -52,6 +53,11 @@ class WithdrawalRequest extends Model
 	/**
 	 * App User Routes
 	 */
+
+	public function getWithdrawalRequests(Request $request)
+	{
+		return response()->json($request->user()->withdrawal_request, 200);
+	}
 
 	public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request)
 	{
