@@ -151,12 +151,12 @@ class AppUser extends User
 
 	public function withdrawal_request()
 	{
-		return $this->hasOne(WithdrawalRequest::class);
+		return $this->hasOne(WithdrawalRequest::class)->where('is_processed', false);
 	}
 
 	public function has_pending_withdrawal_request(): bool
 	{
-		return $this->withdrawal_request()->where('is_processed', false)->exists();
+		return $this->withdrawal_request()->exists();
 	}
 
 	public function transactions()
