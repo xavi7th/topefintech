@@ -85,14 +85,24 @@ class CreateWithdrawalRequestValidation extends FormRequest
 				$validator->errors()->add('Pemding Request', 'You already have a pending request.');
 				return;
 			}
-
-			/**
-			 * Check if user is due for withdrawal
-			 */
-			if ($this->user()->is_due_for_withdrawal()) {
-				$validator->errors()->add('Withdraw restrictions', 'You are not yet due for free withdrawals');
-			}
 		});
+	}
+
+	public function validated()
+	{
+		/**
+		 * Check if user is due for withdrawal and flag for extra charge
+		 */
+
+		if (!$this->user()->is_due_for_withdrawal()) {
+			return array_merge(parent::validated(), [
+				'is_charge_free' => false
+			]);
+		} else {
+			return array_merge(parent::validated(), [
+				'is_charge_free' => true
+			]);
+		}
 	}
 
 	/**
