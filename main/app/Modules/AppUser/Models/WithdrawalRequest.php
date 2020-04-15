@@ -7,9 +7,11 @@ use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Http\Requests\CreateWithdrawalRequestValidation;
-use App\Modules\Admin\Models\ActivityLog;
+use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
+use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 
 class WithdrawalRequest extends Model
 {
@@ -148,18 +150,18 @@ class WithdrawalRequest extends Model
 			$withdrawal_request->load('app_user');
 		});
 
-		static::updating(function ($withdrawal_request) {
+		// static::updating(function ($withdrawal_request) {
 
-			// dump($withdrawal_request->getOriginal());
-			// dd($withdrawal_request->toArray());
+		// dump($withdrawal_request->getOriginal());
+		// dd($withdrawal_request->toArray());
 
-			/**
-			 * add an entry for the product trail that it's status changed
-			 */
-			// auth()->user()->product_histories()->create([
-			// 	'product_id' => $withdrawal_request->id,
-			// 	'product_status_id' => $withdrawal_request->product_status_id,
-			// ]);
-		});
+		/**
+		 * add an entry for the product trail that it's status changed
+		 */
+		// auth()->user()->product_histories()->create([
+		// 	'product_id' => $withdrawal_request->id,
+		// 	'product_status_id' => $withdrawal_request->product_status_id,
+		// ]);
+		// });
 	}
 }
