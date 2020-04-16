@@ -119,6 +119,18 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | Lock Break Percentage Charge
+    |--------------------------------------------------------------------------
+    |
+		|	User can only withdraw once a month within a 20 day interval without charges.
+		| Any additional withdrawal will attract a charge
+    |
+    */
+
+	'lock_break_percentage_charge' => env('LOCK_BREAK_PERCENTAGE_CHARGE', 20),
+
+	/*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

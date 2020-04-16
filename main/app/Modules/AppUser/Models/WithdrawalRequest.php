@@ -143,16 +143,24 @@ class WithdrawalRequest extends Model
 		}
 
 		DB::beginTransaction();
+
 		/**
 		 * on approval add a withdrawal transaction for the users core savings_id
 		 */
 		$desc = $withdrawal_request->is_charge_free ? 'Withdrawal from core savings balance' : 'Charge-deductible withdrawal from core savings balance';
+		$withdrawal_request->app_user->core_savings->create_withdrawal_transaction($withdrawal_request->amount, $desc);
 
-		$withdrawal_request->app_user->core_savings->transactions()->create([
-			'amount' => $withdrawal_request->amount,
-			'trans_type' => 'withdrawal',
-			'description' => $desc
-		]);
+		if (!$withdrawal_request->is_charge_free) {
+			/**
+			 * Get deductible percentage of withdrawal request amount
+			 */
+			$withdrawal_charge = $withdrawal_request->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+
+			/**
+			 * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
+			 */
+			$withdrawal_request->app_user->core_savings->create_service_charge($withdrawal_charge, 'Amount deducted for multiple consecutive withdrawals');
+		}
 
 		/**
 		 * Mark the request as processed
