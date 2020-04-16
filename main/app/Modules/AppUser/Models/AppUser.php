@@ -54,6 +54,12 @@ class AppUser extends User
 		return $this->email_verified_at !== null;
 	}
 
+	public function service_charges()
+	{
+		return $this->hasManyThrough(ServiceCharge::class, Savings::class);
+	}
+
+
 	public function loan_requests()
 	{
 		return $this->hasMany(LoanRequest::class);
@@ -238,7 +244,7 @@ class AppUser extends User
 		$locked_savings->funded_at  = $locked_savings->funded_at ?? now();
 		$locked_savings->save();
 
-		$locked_savings->create_deposit_transaction($amount);
+		$locked_savings->create_deposit_transaction($amount, 'Funding locked savings');
 
 		DB::commit();
 	}
