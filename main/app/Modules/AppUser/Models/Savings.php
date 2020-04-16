@@ -62,7 +62,9 @@ class Savings extends Model
 
 	public function gos_type()
 	{
-		return $this->belongsTo(GOSType::class);
+		return $this->belongsTo(GOSType::class)->withDefault(function ($user, $post) {
+			$user->name = $post->type;
+		});
 	}
 
 	public function transactions()
@@ -369,6 +371,8 @@ class Savings extends Model
 		$savings->delete();
 
 		DB::commit();
+
+		return response()->json(['status' => true], 200);
 	}
 
 	public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
