@@ -28,8 +28,8 @@ class SavingsTableSeeder extends Seeder
                 'current_balance' => 60290.0,
                 'funded_at' => '2020-04-11 19:11:20',
                 'savings_distribution' => 10.0,
-                'created_at' => NULL,
-                'updated_at' => '2020-04-16 05:26:10',
+                'created_at' => '2020-04-17 00:00:00',
+                'updated_at' => '2019-10-06 00:00:00',
                 'deleted_at' => NULL,
             ),
             1 => 
@@ -42,9 +42,9 @@ class SavingsTableSeeder extends Seeder
                 'current_balance' => 211612.5,
                 'funded_at' => '2020-02-11 19:11:20',
                 'savings_distribution' => 25.0,
-                'created_at' => NULL,
-                'updated_at' => '2020-04-16 05:03:20',
-                'deleted_at' => '2020-04-16 05:03:20',
+                'created_at' => '2020-04-14 00:00:00',
+                'updated_at' => '2019-10-05 00:00:00',
+                'deleted_at' => NULL,
             ),
             2 => 
             array (
@@ -56,8 +56,8 @@ class SavingsTableSeeder extends Seeder
                 'current_balance' => 114000.0,
                 'funded_at' => '2020-04-11 19:11:20',
                 'savings_distribution' => 15.0,
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'created_at' => '2020-04-12 00:00:00',
+                'updated_at' => '2019-10-04 00:00:00',
                 'deleted_at' => NULL,
             ),
             3 => 
@@ -70,8 +70,8 @@ class SavingsTableSeeder extends Seeder
                 'current_balance' => 133000.0,
                 'funded_at' => '2020-04-11 19:11:20',
                 'savings_distribution' => 30.0,
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'created_at' => '2020-04-10 00:00:00',
+                'updated_at' => '2019-10-03 00:00:00',
                 'deleted_at' => NULL,
             ),
             4 => 
@@ -84,8 +84,8 @@ class SavingsTableSeeder extends Seeder
                 'current_balance' => 41000.0,
                 'funded_at' => '2020-04-11 19:11:20',
                 'savings_distribution' => 10.0,
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'created_at' => '2020-04-07 00:00:00',
+                'updated_at' => '2019-10-02 00:00:00',
                 'deleted_at' => NULL,
             ),
             5 => 
@@ -98,8 +98,8 @@ class SavingsTableSeeder extends Seeder
                 'current_balance' => 46000.0,
                 'funded_at' => '2020-04-11 19:11:20',
                 'savings_distribution' => 10.0,
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'created_at' => '2020-04-05 00:00:00',
+                'updated_at' => '2019-10-01 00:00:00',
                 'deleted_at' => NULL,
             ),
         ));
