@@ -24,6 +24,7 @@ use App\Modules\AppUser\Http\Controllers\ForgotPasswordController;
 use App\Modules\AppUser\Http\Controllers\ConfirmPasswordController;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\AppUser\Models\SavingsInterest;
+use App\Modules\AppUser\Models\Transaction;
 
 class AppUserController extends Controller
 {
@@ -55,6 +56,8 @@ class AppUserController extends Controller
 				WithdrawalRequest::appUserApiRoutes();
 
 				SavingsInterest::appUserApiRoutes();
+
+				Transaction::appUserApiRoutes();
 			});
 		});
 	}
