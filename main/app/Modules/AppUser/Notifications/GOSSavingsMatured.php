@@ -54,9 +54,11 @@ class GOSSavingsMatured extends Notification
 	public function toDatabase($user)
 	{
 		return [
-			'action' => 'Your GOS savings started with ' . to_naira($this->savings->initial_deposit_transaction->amount) . ' has matured and has been rolled over to your core savings balance.
-										Over the period it has accrued a total interest of ' . to_naira($this->savings->total_accrued_interest_amount()) . '. We hope you are able to use this amount to achieve
-										your intended goal. Keep living, keep saving'
+			'action' => 'Congratulations! Your GOS savings started with ' . to_naira($this->savings->initial_deposit_transaction->amount) . ' has matured and has been rolled' .
+				' over to your core savings balance. Over the period you added a total of ' .
+				to_naira(value($this->savings->total_deposits_sum() - $this->savings->initial_deposit_transaction->amount)) . ' to this savings portfolio and' .
+				' it accrued a total interest of ' . to_naira($this->savings->total_accrued_interest_amount()) . '.	We hope you are able to use this amount to' .
+				' achieve your intended goal. Keep living, keep saving'
 		];
 	}
 }

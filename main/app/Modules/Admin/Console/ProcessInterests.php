@@ -40,6 +40,17 @@ class ProcessInterests extends Command
 	 */
 	public function handle()
 	{
+
+
+		// foreach (Savings::with(['app_user', 'gos_type'])->get() as $savings_record) {
+		// 	$interest_amount = $savings_record->get_due_interest();
+		// 	if ($interest_amount > 0) {
+		// 		dump($savings_record->app_user->full_name . ' ' . $savings_record->gos_type->name . ' savings intrested with ' . $interest_amount);
+		// 		$savings_record->create_interest_record($interest_amount);
+		// 	}
+		// }
+
+
 		foreach (Savings::with('app_user')->get() as $value) {
 			if ($value->type == 'core') {
 				$interest = $value->interestable_deposit_transactions()->sum('amount') * (config('app.core_savings_interest_rate') / 100);
@@ -67,30 +78,5 @@ class ProcessInterests extends Command
 				}
 			}
 		}
-		echo 'Completed successfully';
-	}
-
-	/**
-	 * Get the console command arguments.
-	 *
-	 * @return array
-	 */
-	protected function getArguments()
-	{
-		return [
-			// ['example', InputArgument::REQUIRED, 'An example argument.'],
-		];
-	}
-
-	/**
-	 * Get the console command options.
-	 *
-	 * @return array
-	 */
-	protected function getOptions()
-	{
-		return [
-			['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
-		];
 	}
 }

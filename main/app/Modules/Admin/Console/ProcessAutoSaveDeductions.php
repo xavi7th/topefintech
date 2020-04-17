@@ -274,7 +274,7 @@ class ProcessAutoSaveDeductions extends Command
 	protected function getOptions()
 	{
 		return [
-			['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
+			// ['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
 		];
 	}
 }

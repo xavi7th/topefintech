@@ -138,6 +138,17 @@ class Savings extends Model
 		return $this->savings_interests()->cleared()->sum('amount');
 	}
 
+	public function get_due_interest(): float
+	{
+		if ($this->is_core_savings()) {
+			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.core_savings_interest_rate') / 100);
+		} else if ($this->is_gos_savings()) {
+			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
+		} else if ($this->is_smart_lock()) {
+			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
+		}
+	}
+
 	public function rollover_uncleared_interests(string $decsription = null): ?float
 	{
 		try {
@@ -153,7 +164,7 @@ class Savings extends Model
 			/**
 			 * Add a deposit transaction for this savings with a description for interest roll over
 			 */
-			$decsription = $decsription ?? 'Quarterly rollover of interest';
+			$decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->gos_type->name . ' savings';
 
 			$this->create_deposit_transaction($uncleared_interests_sum, $decsription);
 
@@ -179,6 +190,68 @@ class Savings extends Model
 			 */
 			return null;
 		}
+	}
+
+	public function is_mature(): ?bool
+	{
+		/**
+		 * ! Fail on core savings
+		 * ? Core savings has no maturity date
+		 */
+		if ($this->is_core_savings()) {
+			return null;
+		}
+
+		/**
+		 * Check if the maturity date is up to today
+		 */
+		return $this->maturity_date->lte(now());
+	}
+
+	public function complete_mature_savings(): bool
+	{
+		/**
+		 * Make sure this is not a core or immature locked or gos savings
+		 */
+		if (!$this->is_mature()) {
+			return false;
+		}
+
+		DB::beginTransaction();
+		/**
+		 * Handle uncleared profits.
+		 *
+		 * * The uncleared profits ae added to this savings' current_balance and then marked as cleared
+		 * ? If return is null, then an error occured
+		 *
+		 * @return ?float
+		 */
+		if (is_null($this->rollover_uncleared_interests())) {
+			return false;
+		}
+
+		/**
+		 * Create a deposit transaction moving the balance of this savings to the core
+		 */
+		$user_core_savings = $this->app_user->core_savings;
+
+		$user_core_savings->create_deposit_transaction($this->current_balance, 'Mature ' . $this->gos_type->name . ' funds rollover');
+
+		/**
+		 * Add same amount to the current balance of core savings
+		 */
+		$user_core_savings->current_balance += $this->current_balance;
+		$user_core_savings->save();
+
+		/**
+		 * Delete this savings (so that it leaves the record of the user)
+		 * // The user can always view the record in the transaction log
+		 */
+		$this->delete();
+
+		DB::commit();
+
+		return true;
 	}
 
 	public function create_deposit_transaction(float $amount, string $desc)
@@ -207,6 +280,13 @@ class Savings extends Model
 		]);
 	}
 
+	public function create_interest_record(float $amount): void
+	{
+		$this->savings_interests()->create([
+			'amount' => $amount
+		]);
+	}
+
 	public function is_balance_consistent(): bool
 	{
 		return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
@@ -231,6 +311,8 @@ class Savings extends Model
 			Route::get('/savings/{savings}/break', 'Savings@breakLockedFunds');
 
 			Route::get('/savings/{savings}/verify', 'Savings@verifySavingsAmount');
+
+			Route::get('/savings/{savings}/check-maturity', 'Savings@checkSavingsMaturity');
 
 			Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
 
@@ -403,6 +485,11 @@ class Savings extends Model
 		return response()->json(['verified' => $savings->is_balance_consistent()], 200);
 	}
 
+	public function checkSavingsMaturity(Request $request, self $savings)
+	{
+		return response()->json(['matured' => $savings->is_mature()], 200);
+	}
+
 	public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
 	{
 		$funds = auth()->user()->locked_savings()->create([
@@ -463,6 +550,17 @@ class Savings extends Model
 
 
 	/**
+	 * Scope a query to only include popular users.
+	 *
+	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeMatured($query)
+	{
+		return $query->whereDate('maturity_date', '<=', now());
+	}
+
+	/**
 	 * The booting method of the model
 	 *
 	 * @return void
@@ -472,8 +570,11 @@ class Savings extends Model
 		parent::boot();
 
 		static::deleting(function ($savings) {
+			/**
+			 * Dispatch notifications
+			 */
 			if ($savings->is_smart_lock()) {
-				if (now()->lte($savings->maturity_date)) {
+				if (now()->lt($savings->maturity_date)) {
 					$savings->app_user->notify(new SmartLockBroken($savings));
 				} else {
 					$savings->app_user->notify(new SmartLockMature($savings));
@@ -481,6 +582,14 @@ class Savings extends Model
 			} elseif ($savings->is_gos_savings()) {
 				$savings->app_user->notify(new GOSSavingsMatured($savings));
 			}
+
+			/**
+			 * Clean up transactions and interests and charges
+			 * ? We can always provide a history preview for the user or admin as necessary
+			 */
+			$savings->transactions()->delete();
+			$savings->service_charges()->delete();
+			$savings->savings_interests()->delete();
 		});
 	}
 }
