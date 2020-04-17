@@ -7,6 +7,7 @@ use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Modules\Admin\Jobs\SendLoginNotification;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Modules\Admin\Models\ActivityLog;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,32 +31,37 @@ class Kernel extends ConsoleKernel
 
 		$schedule->command('savings:process-interest')
 			->everyMinute()
-			->withoutOverlapping()
-			->sendOutputTo(Module::getModulePath('Admin/Console') . '/log' . now()->toDateString() . '.cson')
+			->withoutOverlapping(10)
+			// ->sendOutputTo(Module::getModulePath('Admin/Console') . '/log' . now()->toDateString() . '.cson')
 			// ->emailOutputTo('xavi7th@gmail.com')
-			// ->runInBackground() //causes emails not to deliver
 			->onSuccess(function () {
-				// The task succeeded...
-				// save a notification for the admin
+				ActivityLog::notifyAdmins('Successfully allocated interests to all due deposits');
 			})
 			->onFailure(function () {
-				// The task failed...
-				// save a notification for the admin
+				ActivityLog::notifyAdmins('Failed to successfully process interests for all users');
 			});
 
 		$schedule->command('savings:auto-deduct-savings')
 			->everyMinute()
-			->withoutOverlapping()
-			->appendOutputTo(Module::getModulePath('Admin/Console') . '/log.cson')
+			->withoutOverlapping(30)
 			// ->emailOutputTo('xavi7th@gmail.com')
-			->runInBackground() //causes emails not to deliver
+			->runInBackground()
 			->onSuccess(function () {
-				// The task succeeded...
-				// save a notification for the admin
+				ActivityLog::notifyAdmins('Processing auto save deductions completed successfully');
 			})
 			->onFailure(function () {
-				// The task failed...
-				// save a notification for the admin
+				ActivityLog::notifyAdmins('Processing auto save deductions failed');
+			});
+
+		$schedule->command('savings:process-mature-savings')
+			->everyMinute()
+			->withoutOverlapping(30)
+			->runInBackground()
+			->onSuccess(function () {
+				ActivityLog::notifyAdmins('Processing mature savings completed successfully');
+			})
+			->onFailure(function () {
+				ActivityLog::notifyAdmins('Processing mature savings failed to complete successfully');
 			});
 
 		// $schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();

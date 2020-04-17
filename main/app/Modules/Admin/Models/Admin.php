@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\Admin\Models\ApiRoute;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\BasicSite\Models\Message;
-use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\Admin\Notifications\SavingsMaturedNotification;
 
 class Admin extends User
 {
@@ -33,6 +33,11 @@ class Admin extends User
 		return $this->verified_at !== null;
 	}
 
+	static function send_notification($notification)
+	{
+		self::find(1)->notify($notification);
+	}
+
 	public function permitted_api_routes()
 	{
 		return $this->belongsToMany(ApiRoute::class, 'api_route_permissions', 'user_id')->withTimestamps();
@@ -51,6 +56,8 @@ class Admin extends User
 			Route::get('admins', 'Admin@getAdmins');
 
 			Route::post('admin/create', 'Admin@createAdmin');
+
+			Route::get('admin/notifications/matured-savings', 'Admin@getMaturedSavingsNotifications');
 
 			Route::get('admin/{admin}/permissions', 'Admin@getAdminPermissions');
 
@@ -114,7 +121,12 @@ class Admin extends User
 		}
 	}
 
-	public function getAdminPermissions(Admin $admin)
+	public function getMaturedSavingsNotifications()
+	{
+		return  self::find(1)->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
+	}
+
+	public function getAdminPermissions(self $admin)
 	{
 		$permitted_routes = $admin->permitted_api_routes()->get(['api_routes.id'])->map(function ($item, $key) {
 			return $item->id;
@@ -127,7 +139,7 @@ class Admin extends User
 		return ['permitted_routes' => $permitted_routes, 'all_routes' => $all_routes];
 	}
 
-	public function editAdminPermissions(Admin $admin)
+	public function editAdminPermissions(self $admin)
 	{
 		$admin->permitted_api_routes()->sync(request('permitted_routes'));
 		return response()->json(['rsp' => true], 204);
