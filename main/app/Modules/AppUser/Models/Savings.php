@@ -29,6 +29,12 @@ class Savings extends Model
 	protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
 	protected $table = 'savings';
 	protected $dates = ['funded_at', 'maturity_date'];
+	protected $casts = [
+		'current_balance' => 'double',
+		'app_user_id' => 'int',
+		'gos_type_id' => 'int',
+		'savings_distribution' => 'double',
+	];
 
 	public function service_charges()
 	{
@@ -90,6 +96,16 @@ class Savings extends Model
 	public function interestable_deposit_transactions()
 	{
 		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
+	}
+
+	public function total_deposits_sum(): float
+	{
+		return $this->deposit_transactions()->sum('amount');
+	}
+
+	public function total_withdrawals_sum(): float
+	{
+		return $this->withdrawal_transactions()->sum('amount');
 	}
 
 	public function savings_interests()
@@ -191,6 +207,11 @@ class Savings extends Model
 		]);
 	}
 
+	public function is_balance_consistent(): bool
+	{
+		return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
+	}
+
 	static function appUserApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
@@ -208,6 +229,8 @@ class Savings extends Model
 			Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
 
 			Route::get('/savings/{savings}/break', 'Savings@breakLockedFunds');
+
+			Route::get('/savings/{savings}/verify', 'Savings@verifySavingsAmount');
 
 			Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
 
@@ -373,6 +396,11 @@ class Savings extends Model
 		DB::commit();
 
 		return response()->json(['status' => true], 200);
+	}
+
+	public function verifySavingsAmount(Request $request, self $savings)
+	{
+		return response()->json(['verified' => $savings->is_balance_consistent()], 200);
 	}
 
 	public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
