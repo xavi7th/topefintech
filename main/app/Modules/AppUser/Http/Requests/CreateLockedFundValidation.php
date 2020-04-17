@@ -54,13 +54,12 @@ class CreateLockedFundValidation extends FormRequest
 	public function withValidator($validator)
 	{
 		$validator->after(function ($validator) {
-			// if ( $this->user()->core_savings()->exists()) {
-			// 	$validator->errors()->add('Pending request', 'You already have a pending card request.');
-			// 	return;
-			// }
+			if ($this->user()->has_locked_savings()) {
+				$validator->errors()->add('You already have a smart lock profile');
+				return;
+			}
 		});
 	}
-
 
 	/**
 	 * Overwrite the validator response so we can customise it per the structure requested from the fronend
