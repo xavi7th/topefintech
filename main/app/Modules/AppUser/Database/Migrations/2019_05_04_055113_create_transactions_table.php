@@ -20,6 +20,7 @@ class CreateTransactionsTable extends Migration
 			$table->enum('trans_type', ['deposit', 'withdrawal']);
 			$table->double('amount');
 			$table->string('description')->nullable();
+			$table->timestamp('interest_processed_at')->useCurrent();
 
 			$table->timestamps();
 			$table->softDeletes();

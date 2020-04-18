@@ -28,7 +28,7 @@ class Savings extends Model
 
 	protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
 	protected $table = 'savings';
-	protected $dates = ['funded_at', 'maturity_date'];
+	protected $dates = ['funded_at', 'maturity_date', 'interest_processed_at'];
 	protected $casts = [
 		'current_balance' => 'double',
 		'app_user_id' => 'int',
@@ -95,7 +95,8 @@ class Savings extends Model
 
 	public function interestable_deposit_transactions()
 	{
-		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
+		return $this->deposit_transactions()->whereDate('interest_processed_at', '<', now())
+			->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
 	}
 
 	public function total_deposits_sum(): float
@@ -140,13 +141,25 @@ class Savings extends Model
 
 	public function get_due_interest(): float
 	{
+		/**
+		 * Handle withdrawals. so you dont give interest on deposits that have been "withdrawn"
+		 * -- Only core savings have withdrawals
+		 */
 		if ($this->is_core_savings()) {
-			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.core_savings_interest_rate') / 100);
+			return ($this->interestable_deposit_transactions()->sum('amount') - $this->total_withdrawals_sum()) * (config('app.core_savings_interest_rate') / 100);
 		} else if ($this->is_gos_savings()) {
 			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
 		} else if ($this->is_smart_lock()) {
 			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
 		}
+	}
+
+	public function mark_interest_as_processed(): bool
+	{
+		/**
+		 * Mark all interestable transactions as processed
+		 */
+		return $this->interestable_deposit_transactions()->update(['interest_processed_at' => now()]);
 	}
 
 	public function rollover_uncleared_interests(string $decsription = null): ?float
@@ -246,6 +259,8 @@ class Savings extends Model
 		/**
 		 * Delete this savings (so that it leaves the record of the user)
 		 * // The user can always view the record in the transaction log
+		 * ! It is very important to delete them so that their deposit transactions
+		 * ! don´t continue to receive interests even after they have matured and rolled over
 		 */
 		$this->delete();
 
