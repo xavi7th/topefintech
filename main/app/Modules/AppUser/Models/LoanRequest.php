@@ -15,6 +15,64 @@ use App\Modules\AppUser\Http\Requests\CheckSuretyValidation;
 use App\Modules\AppUser\Http\Requests\LoanRepaymentValidation;
 use App\Modules\AppUser\Http\Requests\MakeLoanRequestValidation;
 
+/**
+ * App\Modules\AppUser\Models\LoanRequest
+ *
+ * @property int $id
+ * @property string $loan_ref
+ * @property int $app_user_id
+ * @property float $amount
+ * @property \Illuminate\Support\Carbon $expires_at
+ * @property float $interest_rate
+ * @property string $repayment_installation_duration
+ * @property bool $auto_debit
+ * @property bool $is_approved
+ * @property \Illuminate\Support\Carbon|null $approved_at
+ * @property int|null $approved_by
+ * @property bool $is_disbursed
+ * @property bool $is_paid
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Modules\AppUser\Models\AppUser $app_user
+ * @property-read mixed $auto_refund_settings
+ * @property-read mixed $grace_period_expiry
+ * @property-read mixed $installments
+ * @property-read mixed $is_defaulted
+ * @property-read mixed $stakes_for_default
+ * @property-read mixed $total_refunded
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanSurety[] $loan_sureties
+ * @property-read int|null $loan_sureties_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanTransaction[] $loan_transactions
+ * @property-read int|null $loan_transactions_count
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereAppUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereApprovedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereApprovedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereAutoDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereIsApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereIsDisbursed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereIsPaid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereLoanRef($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest wherePaidAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereRepaymentInstallationDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest withoutTrashed()
+ * @mixin \Eloquent
+ */
 class LoanRequest extends Model
 {
 	use SoftDeletes;

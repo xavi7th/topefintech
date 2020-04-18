@@ -9,6 +9,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Modules\Admin\Models\ErrLog;
 
+/**
+ * App\Modules\AppUser\Models\GOSType
+ *
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $savings
+ * @property-read int|null $savings_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\GOSType whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class GOSType extends Model
 {
 	protected $fillable = ['name'];

@@ -12,6 +12,38 @@ use App\Modules\AppUser\Models\LoanRequest;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Http\Requests\SwapSuretyValidation;
 
+/**
+ * App\Modules\AppUser\Models\LoanSurety
+ *
+ * @property int $id
+ * @property int $lender_id
+ * @property int $surety_id
+ * @property int $loan_request_id
+ * @property int|null $is_surety_accepted
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Modules\AppUser\Models\AppUser $lender
+ * @property-read \App\Modules\AppUser\Models\LoanRequest $loan_request
+ * @property-read \App\Modules\AppUser\Models\AppUser $surety
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanSurety onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereIsSuretyAccepted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereLenderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereLoanRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereSuretyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanSurety whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanSurety withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanSurety withoutTrashed()
+ * @mixin \Eloquent
+ */
 class LoanSurety extends Model
 {
 	use SoftDeletes;
