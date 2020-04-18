@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Modules\AppUser\Models\DebitCard;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\AppUser\Models\LoanSurety;
+use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\AutoSaveSetting;
@@ -30,13 +31,15 @@ class AppUser extends User
 	protected $fillable = [
 		'full_name', 'email', 'password', 'phone', 'id_card'
 	];
-
+	protected $dates = ['email_verified_at', 'verified_at'];
 	protected $casts = [
 		'can_withdraw' => 'boolean',
 		'is_active' => 'boolean',
 		'is_bvn_verified' => 'boolean',
+		'is_bank_verified' => 'boolean',
 	];
 	protected $table = "users";
+
 	const DASHBOARD_ROUTE_PREFIX = "user";
 
 	static function canAccess()

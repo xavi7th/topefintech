@@ -10,6 +10,11 @@ class AutoSaveSetting extends Model
 	protected $fillable = [
 		'amount', 'period', 'date', 'weekday', 'time', 'try_other_cards',
 	];
+	protected $casts = [
+		'try_other_cards' => 'boolean',
+		'amount' => 'double'
+	];
+
 
 	public function app_user()
 	{

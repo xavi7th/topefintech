@@ -20,6 +20,11 @@ class LoanSurety extends Model
 		'surety_id', 'loan_request_id',
 	];
 
+	// protected $casts = [
+	// 	'is_surety_accepted' => 'boolean',
+	// ];
+
+
 	public function lender()
 	{
 		return $this->belongsTo(AppUser::class, 'lender_id');

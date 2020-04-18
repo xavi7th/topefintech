@@ -18,7 +18,11 @@ class Transaction extends Model
 	protected $fillable = [
 		'amount', 'trans_type', 'savings_id', 'description'
 	];
-	protected $dates = ['trans_date'];
+	protected $dates = ['trans_date', 'interest_processed_at'];
+
+	protected $casts = [
+		'amount' => 'double',
+	];
 
 	public function savings()
 	{

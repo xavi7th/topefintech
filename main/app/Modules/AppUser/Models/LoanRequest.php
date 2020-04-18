@@ -24,14 +24,25 @@ class LoanRequest extends Model
 	];
 
 	protected $dates = [
-		'expires_at'
+		'expires_at',
+		'approved_at',
+		'paid_at',
 	];
 
 	protected $casts = [
-		'auto_debit' => 'boolean'
+		'is_disbursed' => 'boolean',
+		'is_paid' => 'boolean',
+		'auto_debit' => 'boolean',
+		'is_approved' => 'boolean',
+		'amount' => 'double',
+		'interest_rate' => 'double',
+
 	];
 
-	protected $appends = ['is_defaulted', 'stakes_for_default', 'grace_period_expiry', 'installments', 'total_refunded', 'auto_refund_settings'];
+	protected $appends = [
+		'is_defaulted', 'stakes_for_default', 'grace_period_expiry',
+		'installments', 'total_refunded', 'auto_refund_settings'
+	];
 
 	public function app_user()
 	{
@@ -178,6 +189,7 @@ class LoanRequest extends Model
 	{
 		return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
 	}
+
 	public function checkLoanEligibility(Request $request)
 	{
 		if (!$request->amount) {
