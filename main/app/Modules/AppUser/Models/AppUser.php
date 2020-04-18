@@ -216,103 +216,6 @@ class AppUser extends User
 		return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
 	}
 
-	public function deduct_debit_card(DebitCard $debit_card_to_deduct, float $amount): bool
-	{
-		return (bool)mt_rand(0, 1);
-	}
-
-	public function fund_core_savings(float $amount): void
-	{
-		DB::beginTransaction();
-		$core_savings = $this->core_savings;
-		$core_savings->current_balance += $amount;
-		$core_savings->funded_at  = $core_savings->funded_at ?? now();
-		$core_savings->save();
-
-		$core_savings->create_deposit_transaction($amount);
-
-		DB::commit();
-	}
-
-	public function fund_locked_savings(Savings $locked_savings, float $amount): void
-	{
-		if ($locked_savings->type !== 'locked') {
-			throw new Exception("You can only add locked funds to a locked savings", 422);
-		}
-		DB::beginTransaction();
-		$locked_savings->current_balance += $amount;
-		$locked_savings->funded_at  = $locked_savings->funded_at ?? now();
-		$locked_savings->save();
-
-		$locked_savings->create_deposit_transaction($amount, 'Funding locked savings');
-
-		DB::commit();
-	}
-
-	public function distribute_savings(float $amount): void
-	{
-		/**
-		 * ! Find a way to dind out from paystack whether paytment really was made
-		 */
-		DB::beginTransaction();
-		/**
-		 * Fund Core Savings based on distribution
-		 */
-		$core_savings = $this->core_savings;
-		$core_savings_amount = ($amount * ($core_savings->savings_distribution / 100));
-		if ($core_savings_amount > 0) {
-			$core_savings->current_balance += $core_savings_amount;
-			$core_savings->funded_at  = $core_savings->funded_at ?? now();
-			$core_savings->save();
-
-			$core_savings->create_deposit_transaction($core_savings_amount);
-		}
-		/**
-		 * Fund each gos saving based on distribution
-		 */
-		$gos_savings = $this->gos_savings;
-		if (!$gos_savings->isEmpty()) {
-			foreach ($gos_savings->all() as $savings) {
-				$savings_amount = ($amount * ($savings->savings_distribution / 100));
-				if ($savings_amount > 0) {
-					$savings->current_balance += $savings_amount;
-					$savings->funded_at  = $savings->funded_at ?? now();
-					$savings->save();
-
-					$savings->create_deposit_transaction($savings_amount);
-				}
-			}
-		}
-		/**
-		 * Fund each locked savings based on distribution
-		 */
-		$locked_funds = $this->locked_savings;
-		if (!$locked_funds->isEmpty()) {
-			foreach ($locked_funds->all() as $savings) {
-				$savings_amount = ($amount * ($savings->savings_distribution / 100));
-				if ($savings_amount > 0) {
-					$savings->current_balance += $savings_amount;
-					$savings->funded_at  = $savings->funded_at ?? now();
-					$savings->save();
-
-					$savings->create_deposit_transaction($savings_amount);
-				}
-			}
-		}
-
-		DB::commit();
-	}
-
-	public function update_savings_distribution(Request $request)
-	{
-		$savings_list = $request->user()->savings_list;
-		foreach ($request->all() as $val) {
-			$savings_list->where('id', $val['id'])->first()->savings_distribution = $val['savings_distribution'];
-		}
-
-		return response()->json($request->user()->savings_list()->saveMany($savings_list), 201);
-	}
-
 	public function savings_interests()
 	{
 		return $this->hasManyThrough(SavingsInterest::class, Savings::class);
@@ -418,6 +321,107 @@ class AppUser extends User
 	public function activeDays(): int
 	{
 		return now()->diffInDays($this->created_at);
+	}
+
+	public function deduct_debit_card(DebitCard $debit_card_to_deduct, float $amount): bool
+	{
+		return (bool)mt_rand(0, 1);
+	}
+
+	public function fund_core_savings(float $amount): void
+	{
+		DB::beginTransaction();
+		$core_savings = $this->core_savings;
+		$core_savings->current_balance += $amount;
+		/**
+		 * Set the date of his first funding of this savings
+		 */
+		$core_savings->funded_at  = $core_savings->funded_at ?? now();
+		$core_savings->save();
+
+		$core_savings->create_deposit_transaction($amount, $desc = 'Deposit into core savings');
+
+		DB::commit();
+	}
+
+	public function fund_locked_savings(Savings $locked_savings, float $amount): void
+	{
+
+		DB::beginTransaction();
+		$locked_savings->current_balance += $amount;
+		/**
+		 * Specify the first time money was deposited into this profile.
+		 */
+		$locked_savings->funded_at  = $locked_savings->funded_at ?? now();
+		$locked_savings->save();
+
+		$locked_savings->create_deposit_transaction($amount, 'Funding ' . $this->gos_type->name . ' savings');
+
+		DB::commit();
+	}
+
+	public function distribute_savings(float $amount): void
+	{
+		/**
+		 * ! Find a way to dind out from paystack whether paytment really was made
+		 */
+		DB::beginTransaction();
+		/**
+		 * Fund Core Savings based on distribution
+		 */
+		$core_savings = $this->core_savings;
+		$core_savings_amount = ($amount * ($core_savings->savings_distribution / 100));
+		if ($core_savings_amount > 0) {
+			$core_savings->current_balance += $core_savings_amount;
+			$core_savings->funded_at  = $core_savings->funded_at ?? now();
+			$core_savings->save();
+
+			$core_savings->create_deposit_transaction($core_savings_amount, 'Distributed savings into core savings');
+		}
+		/**
+		 * Fund each gos saving based on distribution
+		 */
+		$gos_savings = $this->gos_savings;
+		if (!$gos_savings->isEmpty()) {
+			foreach ($gos_savings->all() as $savings) {
+				$savings_amount = ($amount * ($savings->savings_distribution / 100));
+				if ($savings_amount > 0) {
+					$savings->current_balance += $savings_amount;
+					$savings->funded_at  = $savings->funded_at ?? now();
+					$savings->save();
+
+					$savings->create_deposit_transaction($savings_amount, 'Distributed savings into ' . $savings->gos_type->name . ' savings');
+				}
+			}
+		}
+		/**
+		 * Fund each locked savings based on distribution
+		 */
+		$locked_funds = $this->locked_savings;
+		if (!$locked_funds->isEmpty()) {
+			foreach ($locked_funds->all() as $savings) {
+				$savings_amount = ($amount * ($savings->savings_distribution / 100));
+				if ($savings_amount > 0) {
+					$savings->current_balance += $savings_amount;
+					$savings->funded_at  = $savings->funded_at ?? now();
+					$savings->save();
+
+					$savings->create_deposit_transaction($savings_amount, 'Distributed savings into smart lock savings');
+				}
+			}
+		}
+
+		DB::commit();
+	}
+
+	public function update_savings_distribution(Request $request)
+	{
+		$savings_list = $request->user()->savings_list;
+		foreach ($request->all() as $val) {
+			$savings_list->where('id', $val['id'])->first()->savings_distribution = $val['savings_distribution'];
+		}
+
+		return response()->json($request->user()->savings_list()->saveMany($savings_list), 201);
 	}
 
 	static function store_id_card(Request $request)
