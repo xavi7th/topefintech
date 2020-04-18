@@ -23,6 +23,13 @@ class WithdrawalRequest extends Model
 		'app_user_id', 'description', 'amount', 'is_charge_free'
 	];
 
+	protected $casts = [
+		'is_processed' => 'boolean',
+		'is_charge_free' => 'boolean',
+		'amount' => 'double',
+	];
+
+
 	public function processor()
 	{
 		return $this->morphTo('processor', 'processor_type', 'processed_by');

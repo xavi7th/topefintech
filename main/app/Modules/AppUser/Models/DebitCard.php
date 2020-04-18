@@ -17,6 +17,11 @@ class DebitCard extends Model
 		'pan', 'month', 'year', 'cvv',
 	];
 
+	protected $casts = [
+		'is_default' => 'boolean',
+	];
+
+
 	protected $hidden = ['cvv_hash', 'pan_hash'];
 
 	public function app_user()

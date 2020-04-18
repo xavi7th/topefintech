@@ -12,6 +12,10 @@ class ServiceCharge extends Model
 	use SoftDeletes;
 
 	protected $fillable = ['amount', 'description',];
+	protected $casts = [
+		'is_processed' => 'boolean',
+		'amount' => 'double'
+	];
 
 	public function app_user()
 	{

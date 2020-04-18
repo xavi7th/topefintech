@@ -12,6 +12,10 @@ class LoanTransaction extends Model
 		'trans_type'
 	];
 
+	protected $casts = [
+		'amount' => 'double',
+	];
+
 	public function loan_request()
 	{
 		return $this->belongsTo(LoanRequest::class);

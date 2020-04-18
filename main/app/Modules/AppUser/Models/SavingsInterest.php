@@ -16,6 +16,11 @@ class SavingsInterest extends Model
 
 	protected $fillable = ['amount', 'savings_id'];
 
+	protected $casts = [
+		'is_cleared' => 'boolean',
+		'amount' => 'double',
+	];
+
 	public function savings()
 	{
 		return $this->belongsTo(Savings::class);
