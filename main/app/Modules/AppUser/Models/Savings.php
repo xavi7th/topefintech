@@ -313,7 +313,7 @@ class Savings extends Model
 
 			Route::get('/savings', 'Savings@getListOfUserSavings');
 
-			Route::post('/savings/fund', 'Savings@addFundsToSavings');
+			Route::post('/savings/fund', 'Savings@distributeFundsToSavings');
 
 			Route::get('/savings/get-distribution-details', 'Savings@getDistributionDetails');
 
@@ -384,7 +384,7 @@ class Savings extends Model
 		return response()->json(['rsp' =>  auth()->user()->auto_save_settings()->create($request->all())], 201);
 	}
 
-	public function addFundsToSavings(FundSavingsValidation $request)
+	public function distributeFundsToSavings(FundSavingsValidation $request)
 	{
 		/**
 		 * If user has core but no gos or locked update the core
@@ -416,11 +416,18 @@ class Savings extends Model
 			return generate_422_error('Invalid savings selected');
 		}
 		try {
-			auth()->user()->fund_locked_savings($savings, $request->amount);
+			if ($savings->type == 'core') {
+				auth()->user()->fund_core_savings($request->amount);
+			} else {
+				auth()->user()->fund_locked_savings($savings, $request->amount);
+			}
+
 			return response()->json(['rsp' => 'Created'], 201);
 		} catch (\Throwable $th) {
 			if ($th->getCode() == 422) {
 				return generate_422_error($th->getMessage());
+			} else {
+				ErrLog::notifyAdmin(auth()->user(), $th, 'Add more funds to savings failed');
 			}
 		};
 	}
@@ -441,7 +448,7 @@ class Savings extends Model
 		 * Check if this is a locked fund
 		 */
 		if (!$savings->is_smart_lock()) {
-			return generate_422_error('This is a ' . $savings->type . ' savings. Only locked funds can be broken');
+			return generate_422_error('This is a ' . $savings->type . ' savings. Only smart lock funds can be broken');
 		}
 
 		/**
@@ -507,6 +514,9 @@ class Savings extends Model
 
 	public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
 	{
+		if ($request->user()->has_locked_savings()) {
+			return generate_422_error('You can only have one smart lock profile');
+		}
 		$funds = auth()->user()->locked_savings()->create([
 			'type' => 'locked',
 			'maturity_date' => now()->addMonths($request->duration)
@@ -565,7 +575,7 @@ class Savings extends Model
 
 
 	/**
-	 * Scope a query to only include popular users.
+	 * Scope a query to only include matured savings
 	 *
 	 * @param  \Illuminate\Database\Eloquent\Builder  $query
 	 * @return \Illuminate\Database\Eloquent\Builder
@@ -601,6 +611,7 @@ class Savings extends Model
 			/**
 			 * Clean up transactions and interests and charges
 			 * ? We can always provide a history preview for the user or admin as necessary
+			 * ! It's very important to delete their transactions so that we don´t give them interests on these deposits again
 			 */
 			$savings->transactions()->delete();
 			$savings->service_charges()->delete();
