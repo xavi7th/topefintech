@@ -87,17 +87,24 @@ class LoanSurety extends Model
 
 	static function appUserApiRoutes()
 	{
-		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-			Route::get('/surety-requests', 'LoanSurety@getReceivedSuretyRequests');
-			Route::put('/surety-requests', 'LoanSurety@acceptReceivedSuretyRequest');
-			Route::put('/surety-requests/swap', 'LoanSurety@swapSuretyRequest');
+		Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'surety-requests'], function () {
+			Route::get('status', 'LoanSurety@getRequestsForSureties');
+			Route::get('', 'LoanSurety@getReceivedSuretyRequests');
+			Route::put('', 'LoanSurety@acceptReceivedSuretyRequest');
+			Route::put('/swap', 'LoanSurety@swapSuretyRequest');
 		});
+	}
+
+	public function getRequestsForSureties()
+	{
+		return response()->json(['request_details' => auth()->user()->request_for_surety->load('surety')], 200);
 	}
 
 	public function getReceivedSuretyRequests()
 	{
 		return response()->json(['request_details' => optional(auth()->user()->surety_request)->load(['loan_request'])], 200);
 	}
+
 	public function acceptReceivedSuretyRequest(Request $request)
 	{
 
@@ -123,12 +130,7 @@ class LoanSurety extends Model
 		/**
 		 * ? Create a new surety request with this new guy
 		 */
-		$new_surety_request = auth()->user()->loan_surety_requests()->create(
-			[
-				'surety_id' => AppUser::where('email', $request->new_surety_email)->first()->id,
-				'loan_request_id' => $surety_request->loan_request->id,
-			]
-		);
+		$new_surety_request = $request->user()->create_surety_requests($request->new_surety_email, $surety_request->loan_request->id);
 
 		/**
 		 * * For simplicity just delete the previous one so that each request will always have only 2 sureties

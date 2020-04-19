@@ -161,7 +161,7 @@ class AppUser extends User
 		return $this->hasManyThrough(LoanTransaction::class, LoanRequest::class);
 	}
 
-	public function loan_surety_requests()
+	public function request_for_surety()
 	{
 		return $this->hasMany(LoanSurety::class, 'lender_id');
 	}
@@ -522,7 +522,14 @@ class AppUser extends User
 		return $id_url;
 	}
 
-	public function create_loan_request(float $amount, float $repayment_installation_duration, $auto_debit = false): ?object
+	static function findByEmail($email): object
+	{
+		return self::whereEmail($email)->firstOr(function () {
+			return new self;
+		});
+	}
+
+	public function create_loan_request(float $amount, string $repayment_installation_duration, $auto_debit = false): ?object
 	{
 		try {
 			return $this->loan_requests()->create([
@@ -539,23 +546,25 @@ class AppUser extends User
 		}
 	}
 
-	public function create_surety_requests(string $first_surety_email, string $second_surety_email, int $loan_request_id): ?object
+	public function create_surety_requests(string $first_surety_email, int $loan_request_id, string $second_surety_email = null): ?object
 	{
 		try {
-			auth()->user()->loan_surety_requests()->create(
+			if ($second_surety_email) {
+				$this->request_for_surety()->create(
+					[
+						'surety_id' => self::findByEmail($second_surety_email)->id,
+						'loan_request_id' => $loan_request_id,
+					]
+				);
+			}
+			return $this->request_for_surety()->create(
 				[
-					'surety_id' => AppUser::where('email', $first_surety_email)->first()->id,
-					'loan_request_id' => $loan_request_id,
-				]
-			);
-			return auth()->user()->loan_surety_requests()->create(
-				[
-					'surety_id' => AppUser::where('email', $second_surety_email)->first()->id,
+					'surety_id' => self::findByEmail($first_surety_email)->id,
 					'loan_request_id' => $loan_request_id,
 				]
 			);
 		} catch (\Throwable $th) {
-			ErrLog::notifyAdmin(auth()->user(), $th, 'Loan request creation failed');
+			ErrLog::notifyAdmin($this, $th, 'Loan request creation failed');
 			return null;
 		}
 	}

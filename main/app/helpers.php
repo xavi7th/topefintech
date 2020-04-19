@@ -257,7 +257,7 @@ if (!function_exists('to_naira')) {
 
 	function to_naira(?float $amount): string
 	{
-		if (!is_null($amount)) {
+		if (is_null($amount)) {
 			$amount = 0;
 		}
 		return '₦' . number_format($amount, 2);
