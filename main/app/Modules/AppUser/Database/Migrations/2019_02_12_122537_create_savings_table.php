@@ -16,10 +16,10 @@ class CreateSavingsTable extends Migration
 		Schema::create('savings', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->bigInteger('app_user_id')->unsigned();
-			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade');
+			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 			$table->string('type')->default('core');
 			$table->bigInteger('gos_type_id')->nullable()->unsigned();
-			$table->foreign('gos_type_id')->references('id')->on('gos_types')->onDelete('set null');
+			$table->foreign('gos_type_id')->references('id')->on('gos_types')->onDelete('no action')->onUpdate('cascade');
 			$table->timestamp('maturity_date')->nullable();
 			$table->double('current_balance')->default(0);
 			$table->timestamp('funded_at')->nullable();

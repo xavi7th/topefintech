@@ -16,7 +16,7 @@ class CreateServiceChargesTable extends Migration
 		Schema::create('service_charges', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('savings_id');
-			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade');
+			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade')->onUpdate('cascade');
 			$table->double('amount');
 			$table->string('description');
 			$table->boolean('is_processed')->default(false);
