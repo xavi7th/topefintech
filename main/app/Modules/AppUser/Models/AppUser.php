@@ -418,7 +418,7 @@ class AppUser extends User
 		return (bool)mt_rand(0, 1);
 	}
 
-	public function fund_core_savings(float $amount): void
+	public function fund_core_savings(float $amount, string $desc = null): void
 	{
 		DB::beginTransaction();
 		$core_savings = $this->core_savings;
@@ -429,7 +429,8 @@ class AppUser extends User
 		$core_savings->funded_at  = $core_savings->funded_at ?? now();
 		$core_savings->save();
 
-		$core_savings->create_deposit_transaction($amount, $desc = 'Deposit into core savings');
+		$desc = $desc ?? 'Deposit into core savings';
+		$core_savings->create_deposit_transaction($amount, $desc);
 
 		DB::commit();
 	}
@@ -450,7 +451,7 @@ class AppUser extends User
 		DB::commit();
 	}
 
-	public function distribute_savings(float $amount): void
+	public function distribute_savings(float $amount, string $description = null): void
 	{
 		/**
 		 * ! Find a way to dind out from paystack whether paytment really was made
@@ -466,7 +467,8 @@ class AppUser extends User
 			$core_savings->funded_at  = $core_savings->funded_at ?? now();
 			$core_savings->save();
 
-			$core_savings->create_deposit_transaction($core_savings_amount, 'Distributed savings into core savings');
+			$description = $description ?? 'Distributed savings into core savings';
+			$core_savings->create_deposit_transaction($core_savings_amount, $description);
 		}
 		/**
 		 * Fund each gos saving based on distribution
@@ -480,7 +482,8 @@ class AppUser extends User
 					$savings->funded_at  = $savings->funded_at ?? now();
 					$savings->save();
 
-					$savings->create_deposit_transaction($savings_amount, 'Distributed savings into ' . $savings->gos_type->name . ' savings');
+					$description = $description ?? 'Distributed savings into ' . $savings->gos_type->name . ' savings';
+					$savings->create_deposit_transaction($savings_amount, $description);
 				}
 			}
 		}
@@ -496,7 +499,8 @@ class AppUser extends User
 					$savings->funded_at  = $savings->funded_at ?? now();
 					$savings->save();
 
-					$savings->create_deposit_transaction($savings_amount, 'Distributed savings into smart lock savings');
+					$description = $description ?? 'Distributed savings into smart lock savings';
+					$savings->create_deposit_transaction($savings_amount, $description);
 				}
 			}
 		}

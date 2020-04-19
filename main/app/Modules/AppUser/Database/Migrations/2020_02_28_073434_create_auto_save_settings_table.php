@@ -23,6 +23,7 @@ class CreateAutoSaveSettingsTable extends Migration
 			$table->string('weekday')->nullable();
 			$table->time('time')->nullable();
 			$table->boolean('try_other_cards')->default(false);
+			$table->timestamp('processed_at')->useCurrent();
 
 			$table->timestamps();
 		});
