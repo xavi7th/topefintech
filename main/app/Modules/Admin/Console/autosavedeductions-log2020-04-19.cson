@@ -1,0 +1,77 @@
+array:10 [
+  "id" => 1
+  "app_user_id" => 2
+  "amount" => 5000.0
+  "period" => "daily"
+  "date" => null
+  "weekday" => ""
+  "time" => "10:00:00"
+  "try_other_cards" => true
+  "created_at" => "2020-04-17 00:00:00"
+  "updated_at" => "2020-04-17 00:00:00"
+]
+"Deduction response "
+"Debit failure"
+"Deduction response "
+"Debit failure"
+"Deduction response 1"
+"Debit Success"
+"Savings distribution success"
+array:10 [
+  "id" => 2
+  "app_user_id" => 2
+  "amount" => 25000.0
+  "period" => "weekly"
+  "date" => null
+  "weekday" => "Saturday"
+  "time" => null
+  "try_other_cards" => false
+  "created_at" => "2020-04-14 00:00:00"
+  "updated_at" => "2020-04-15 00:00:00"
+]
+array:10 [
+  "id" => 3
+  "app_user_id" => 3
+  "amount" => 80000.0
+  "period" => "weekly"
+  "date" => null
+  "weekday" => "Sunday"
+  "time" => null
+  "try_other_cards" => false
+  "created_at" => "2020-04-12 00:00:00"
+  "updated_at" => "2020-04-14 00:00:00"
+]
+"Deduction response "
+"Debit failure"
+"Autosave failure: Deducting default card failed or there was no default card set"
+array:10 [
+  "id" => 4
+  "app_user_id" => 2
+  "amount" => 75000.0
+  "period" => "monthly"
+  "date" => 19
+  "weekday" => ""
+  "time" => null
+  "try_other_cards" => true
+  "created_at" => "2020-04-10 00:00:00"
+  "updated_at" => "2020-04-13 00:00:00"
+]
+"Deduction response "
+"Debit failure"
+"Deduction response "
+"Debit failure"
+"Deduction response "
+"Debit failure"
+array:10 [
+  "id" => 5
+  "app_user_id" => 1
+  "amount" => 40000.0
+  "period" => "daily"
+  "date" => null
+  "weekday" => ""
+  "time" => "11:00:00"
+  "try_other_cards" => false
+  "created_at" => "2020-04-08 00:00:00"
+  "updated_at" => "2020-04-11 00:00:00"
+]
+"AutoSave Requests Processing Completed successfully"
