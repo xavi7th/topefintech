@@ -16,7 +16,7 @@ class CreateLoanTransactionsTable extends Migration
 		Schema::create('loan_transactions', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('loan_request_id');
-			$table->foreign('loan_request_id')->references('id')->on('loan_requests')->onDelete('cascade');
+			$table->foreign('loan_request_id')->references('id')->on('loan_requests')->onDelete('cascade')->onUpdate('cascade');
 			$table->double('amount');
 			$table->enum('trans_type', ['loan', 'repayment']);
 

@@ -16,7 +16,7 @@ class CreateSavingsInterestsTable extends Migration
 		Schema::create('savings_interests', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->bigInteger('savings_id')->unsigned();
-			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade');
+			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade')->onUpdate('cascade');
 			$table->double('amount');
 			$table->boolean('is_cleared')->default(false);
 

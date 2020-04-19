@@ -17,7 +17,7 @@ class CreateLoanRequestsTable extends Migration
 			$table->bigIncrements('id');
 			$table->string('loan_ref')->unique();
 			$table->unsignedBigInteger('app_user_id');
-			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade');
+			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 			$table->double('amount');
 			$table->datetime('expires_at');
 			$table->double('interest_rate');
@@ -26,7 +26,7 @@ class CreateLoanRequestsTable extends Migration
 			$table->boolean('is_approved')->default(false);
 			$table->timestamp('approved_at')->nullable();
 			$table->unsignedBigInteger('approved_by')->nullable();
-			$table->foreign('approved_by')->references('id')->on('admins')->onDelete('cascade');
+			$table->foreign('approved_by')->references('id')->on('admins')->onDelete('cascade')->onUpdate('cascade');
 			$table->boolean('is_disbursed')->default(false);
 			$table->boolean('is_paid')->default(false);
 			$table->timestamp('paid_at')->nullable();

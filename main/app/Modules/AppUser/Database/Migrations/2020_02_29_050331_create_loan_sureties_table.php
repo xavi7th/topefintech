@@ -16,11 +16,11 @@ class CreateLoanSuretiesTable extends Migration
 		Schema::create('loan_sureties', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('lender_id');
-			$table->foreign('lender_id')->references('id')->on('users')->onDelete('cascade');
+			$table->foreign('lender_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 			$table->unsignedBigInteger('surety_id');
-			$table->foreign('surety_id')->references('id')->on('users')->onDelete('cascade');
+			$table->foreign('surety_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 			$table->unsignedBigInteger('loan_request_id');
-			$table->foreign('loan_request_id')->references('id')->on('loan_requests')->onDelete('cascade');
+			$table->foreign('loan_request_id')->references('id')->on('loan_requests')->onDelete('cascade')->onUpdate('cascade');
 			$table->boolean('is_surety_accepted')->nullable();
 
 			$table->timestamps();
