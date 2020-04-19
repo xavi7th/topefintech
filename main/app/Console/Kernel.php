@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
 		$schedule->command('savings:process-interest')
 			->everyMinute()
 			->withoutOverlapping(10)
-			// ->sendOutputTo(Module::getModulePath('Admin/Console') . '/log' . now()->toDateString() . '.cson')
+			->sendOutputTo(Module::getModulePath('Admin/Console') . '/log' . now()->toDateString() . '.cson')
 			// ->emailOutputTo('xavi7th@gmail.com')
 			->onSuccess(function () {
 				ActivityLog::notifyAdmins('Successfully allocated interests to all due deposits');
@@ -45,7 +45,7 @@ class Kernel extends ConsoleKernel
 			->everyMinute()
 			->withoutOverlapping(30)
 			// ->emailOutputTo('xavi7th@gmail.com')
-			->runInBackground()
+			// ->runInBackground()
 			->onSuccess(function () {
 				ActivityLog::notifyAdmins('Processing auto save deductions completed successfully');
 			})
@@ -56,7 +56,7 @@ class Kernel extends ConsoleKernel
 		$schedule->command('savings:process-mature-savings')
 			->everyMinute()
 			->withoutOverlapping(30)
-			->runInBackground()
+			// ->runInBackground()
 			->onSuccess(function () {
 				ActivityLog::notifyAdmins('Processing mature savings completed successfully');
 			})

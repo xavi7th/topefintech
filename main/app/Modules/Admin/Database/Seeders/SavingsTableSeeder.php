@@ -63,7 +63,7 @@ class SavingsTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 4,
-                'app_user_id' => 2,
+                'app_user_id' => 1,
                 'type' => 'gos',
                 'gos_type_id' => 2,
                 'maturity_date' => '2021-02-11 17:53:24',
@@ -91,7 +91,7 @@ class SavingsTableSeeder extends Seeder
             5 => 
             array (
                 'id' => 6,
-                'app_user_id' => 2,
+                'app_user_id' => 3,
                 'type' => 'gos',
                 'gos_type_id' => 3,
                 'maturity_date' => '2021-02-11 17:53:27',
@@ -100,6 +100,34 @@ class SavingsTableSeeder extends Seeder
                 'savings_distribution' => 10.0,
                 'created_at' => '2020-04-05 00:00:00',
                 'updated_at' => '2019-10-01 00:00:00',
+                'deleted_at' => NULL,
+            ),
+            6 => 
+            array (
+                'id' => 7,
+                'app_user_id' => 3,
+                'type' => 'core',
+                'gos_type_id' => NULL,
+                'maturity_date' => NULL,
+                'current_balance' => 60290.0,
+                'funded_at' => '2020-04-11 19:11:20',
+                'savings_distribution' => 10.0,
+                'created_at' => '2020-04-17 00:00:00',
+                'updated_at' => '2019-10-06 00:00:00',
+                'deleted_at' => NULL,
+            ),
+            7 => 
+            array (
+                'id' => 8,
+                'app_user_id' => 1,
+                'type' => 'core',
+                'gos_type_id' => NULL,
+                'maturity_date' => NULL,
+                'current_balance' => 60290.0,
+                'funded_at' => '2020-04-11 19:11:20',
+                'savings_distribution' => 10.0,
+                'created_at' => '2020-04-17 00:00:00',
+                'updated_at' => '2019-10-06 00:00:00',
                 'deleted_at' => NULL,
             ),
         ));

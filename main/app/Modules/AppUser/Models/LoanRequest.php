@@ -298,32 +298,22 @@ class LoanRequest extends Model
 		/**
 		 * ! Create a loan request
 		 */
-		$loan_request = auth()->user()->loan_requests()->create([
-			'amount' => $request->amount,
-			'expires_at' => now()->addMonths(3),
-			'interest_rate' => config('app.smart_loan_interest_rate'),
-			'repayment_installation_duration' => $request->repayment_installation_duration,
-			'auto_debit' => filter_var($request->auto_debit, FILTER_VALIDATE_BOOLEAN),
-			'loan_ref' => unique_random('loan_requests', 'loan_ref', null, 12)
-		]);
+		$loan_request = $request->user()->create_loan_request($request->amount, (float)$request->repayment_installation_duration, $request->auto_debit);
+		if (is_null($loan_request)) {
+			return generate_422_error('Loan Request failed. Try again');
+		}
+
 		/**
 		 * ! Create a surety request
 		 */
+		$rsp = $request->user()->create_surety_requests($request->first_surety, $request->second_surety, $loan_request->id);
 
-		auth()->user()->loan_surety_requests()->create(
-			[
-				'surety_id' => AppUser::where('email', $request->first_surety)->first()->id,
-				'loan_request_id' => $loan_request->id,
-			]
-		);
-		auth()->user()->loan_surety_requests()->create(
-			[
-				'surety_id' => AppUser::where('email', $request->second_surety)->first()->id,
-				'loan_request_id' => $loan_request->id,
-			]
-		);
-
+		if (is_null($rsp)) {
+			return generate_422_error('Loan Request failed. Try again');
+		}
 		DB::commit();
+
+		return response()->json($loan_request, 201);
 	}
 
 	public function repayLoan(LoanRepaymentValidation $request, LoanRequest $loan_request)
