@@ -357,7 +357,6 @@ class AppUser extends User
 
 	public function is_eligible_for_loan_surety(float $amount): bool
 	{
-		// dd($this->deposit_transactions()->whereMonth('transactions.created_at', now()->month)->get()->toArray());
 		/**
 		 * ? If the user is not up to two months old return false
 		 */
@@ -521,6 +520,44 @@ class AppUser extends User
 		$id_url = Storage::url($request->file('id_card')->store('public/id_cards/' . now()->toDateString()));
 
 		return $id_url;
+	}
+
+	public function create_loan_request(float $amount, float $repayment_installation_duration, $auto_debit = false): ?object
+	{
+		try {
+			return $this->loan_requests()->create([
+				'amount' => $amount,
+				'expires_at' => now()->addMonths(3),
+				'interest_rate' => config('app.smart_loan_interest_rate'),
+				'repayment_installation_duration' => $repayment_installation_duration,
+				'auto_debit' => filter_var($auto_debit, FILTER_VALIDATE_BOOLEAN),
+				'loan_ref' => unique_random('loan_requests', 'loan_ref', null, 12)
+			]);
+		} catch (\Throwable $th) {
+			ErrLog::notifyAdmin(auth()->user(), $th, 'Loan request creation failed');
+			return null;
+		}
+	}
+
+	public function create_surety_requests(string $first_surety_email, string $second_surety_email, int $loan_request_id): ?object
+	{
+		try {
+			auth()->user()->loan_surety_requests()->create(
+				[
+					'surety_id' => AppUser::where('email', $first_surety_email)->first()->id,
+					'loan_request_id' => $loan_request_id,
+				]
+			);
+			return auth()->user()->loan_surety_requests()->create(
+				[
+					'surety_id' => AppUser::where('email', $second_surety_email)->first()->id,
+					'loan_request_id' => $loan_request_id,
+				]
+			);
+		} catch (\Throwable $th) {
+			ErrLog::notifyAdmin(auth()->user(), $th, 'Loan request creation failed');
+			return null;
+		}
 	}
 
 	static function adminApiRoutes()

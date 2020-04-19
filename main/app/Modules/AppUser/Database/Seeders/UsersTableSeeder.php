@@ -65,6 +65,28 @@ class UsersTableSeeder extends Seeder
 				'is_active' => 1,
 				'remember_token' => NULL,
 			),
+			2 =>
+			array(
+				'full_name' => 'Kaya Klein',
+				'email' => 'goconner@example.com',
+				'email_verified_at' => '2020-04-18 12:15:11',
+				'password' => '$2y$10$J3D4biHeKT06BTQfRHH/4.gXoZTnGYnqqG2CVZb94uIu3sMxZtHJW',
+				'phone' => '939-404-8575 x37602',
+				'address' => NULL,
+				'city' => NULL,
+				'country' => 'Mauritania',
+				'acc_num' => NULL,
+				'acc_bank' => NULL,
+				'acc_type' => NULL,
+				'bvn' => NULL,
+				'is_bvn_verified' => 1,
+				'is_bank_verified' => 1,
+				'id_card' => '/storage/id_cards/',
+				'verified_at' => NULL,
+				'can_withdraw' => 0,
+				'is_active' => 1,
+				'remember_token' => 'xCGLIhobBd',
+			),
 		));
 	}
 }

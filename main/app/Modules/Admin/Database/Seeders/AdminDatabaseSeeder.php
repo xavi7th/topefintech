@@ -29,5 +29,7 @@ class AdminDatabaseSeeder extends Seeder
         $this->call(ServiceChargesTableSeeder::class);
         $this->call(NotificationsTableSeeder::class);
         $this->call(ErrLogsTableSeeder::class);
+        $this->call(LoanRequestsTableSeeder::class);
+        $this->call(LoanSuretiesTableSeeder::class);
     }
 }

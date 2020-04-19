@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 6.6.0 on 2020-04-18 11:34:29.
+ * Generated for Laravel 6.6.0 on 2020-04-18 20:38:13.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -20491,6 +20491,13 @@ namespace App\Modules\BasicSite\Models {
     * @method \Illuminate\Database\Eloquent\Collection|Testimonial[]|Testimonial make($attributes = [])
     */
     class TestimonialFactoryBuilder extends \Illuminate\Database\Eloquent\FactoryBuilder {}
+}
+namespace App\Modules\AppUser\Models {
+    /**
+    * @method \Illuminate\Database\Eloquent\Collection|DebitCard[]|DebitCard create($attributes = [])
+    * @method \Illuminate\Database\Eloquent\Collection|DebitCard[]|DebitCard make($attributes = [])
+    */
+    class DebitCardFactoryBuilder extends \Illuminate\Database\Eloquent\FactoryBuilder {}
 }
 namespace App\Modules\AppUser\Models {
     /**
