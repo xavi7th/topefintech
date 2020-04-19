@@ -172,7 +172,7 @@ class LoanRequest extends Model
 			$installmental_amount = ceil($this->amount / $duration_in_weeks);
 			return [
 				'amount' => (float)$installmental_amount,
-				'description' => to_naira($installmental_amount) . '/week',
+				'description' => to_naira((float)$installmental_amount) . '/week',
 				'duration' => $duration_in_weeks . ' weeks'
 			];
 		} elseif ($this->repayment_installation_duration == 'monthly') {
@@ -180,7 +180,7 @@ class LoanRequest extends Model
 			$installmental_amount = ceil($this->amount / $duration_in_months);
 			return [
 				'amount' => (float)$installmental_amount,
-				'description' => to_naira($installmental_amount) . '/month',
+				'description' => to_naira((float)$installmental_amount) . '/month',
 				'duration' => $duration_in_months . ' months'
 			];
 		} else {
@@ -298,7 +298,7 @@ class LoanRequest extends Model
 		/**
 		 * ! Create a loan request
 		 */
-		$loan_request = $request->user()->create_loan_request($request->amount, (float)$request->repayment_installation_duration, $request->auto_debit);
+		$loan_request = $request->user()->create_loan_request($request->amount, $request->repayment_installation_duration, $request->auto_debit);
 		if (is_null($loan_request)) {
 			return generate_422_error('Loan Request failed. Try again');
 		}
@@ -306,7 +306,7 @@ class LoanRequest extends Model
 		/**
 		 * ! Create a surety request
 		 */
-		$rsp = $request->user()->create_surety_requests($request->first_surety, $request->second_surety, $loan_request->id);
+		$rsp = $request->user()->create_surety_requests($request->first_surety, $loan_request->id, $request->second_surety);
 
 		if (is_null($rsp)) {
 			return generate_422_error('Loan Request failed. Try again');
