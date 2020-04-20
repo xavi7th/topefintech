@@ -52,7 +52,7 @@ class DebitCard extends Model
 	use SoftDeletes;
 
 	protected $fillable = [
-		'pan', 'month', 'year', 'cvv',
+		'pan', 'month', 'year', 'cvv', 'brand', 'sub_brand', 'country', 'card_type', 'bank',
 	];
 
 	protected $casts = [
@@ -75,6 +75,11 @@ class DebitCard extends Model
 	public function is_default_card(): bool
 	{
 		return $this->is_default;
+	}
+
+	public function setMonthAttribute($value)
+	{
+		$this->attributes['month'] = str_pad($value, 2, "0", STR_PAD_LEFT);
 	}
 
 	public function setPanAttribute($value)
@@ -121,7 +126,7 @@ class DebitCard extends Model
 
 	public function addNewDebitCard(AddNewDebitCardValidation $request)
 	{
-		return response()->json(['rsp' => auth()->user()->debit_cards()->create($request->all())], 201);
+		return response()->json(['rsp' => auth()->user()->debit_cards()->create($request->validated())], 201);
 	}
 
 	public function setDefaultDebitCard()

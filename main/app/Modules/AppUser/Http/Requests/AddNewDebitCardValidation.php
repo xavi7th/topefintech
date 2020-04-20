@@ -12,6 +12,9 @@ use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 
 class AddNewDebitCardValidation extends FormRequest
 {
+	/** @var object $details The details gotten from resolving the BIN number of this card */
+	private $details = null;
+
 	/**
 	 * Get the validation rules that apply to the request.
 	 *
@@ -50,7 +53,6 @@ class AddNewDebitCardValidation extends FormRequest
 		return [];
 	}
 
-
 	/**
 	 * Configure the validator instance.
 	 *
@@ -60,8 +62,33 @@ class AddNewDebitCardValidation extends FormRequest
 	public function withValidator($validator)
 	{
 		$validator->after(function ($validator) {
-			// dd($this->get('year'));
+
+			/**
+			 * Check to make sure the card is a nigerian card
+			 */
+			$this->details = resolve_debit_card_bin(substr($this->pan, 0, 6));
+
+			if ($this->details->country_name !== 'Nigeria') {
+				$validator->errors()->add('Invalid Card', 'Only Cards issued by Nigerian financial institutions allowed');
+				return;
+			}
 		});
+	}
+
+
+	public function validated()
+	{
+		/**
+		 * Add the extra details gotten from the BIN resolution to the validated request params
+		 */
+
+		return array_merge(parent::validated(), [
+			'brand' => $this->details->brand,
+			'sub_brand' => $this->details->sub_brand,
+			'country' => $this->details->country_name,
+			'card_type' => $this->details->card_type,
+			'bank' => $this->details->bank
+		]);
 	}
 
 
