@@ -3,20 +3,24 @@
 namespace App\Modules\AppUser\Models;
 
 use App\User;
-use Exception;
+use Paystack\Bank\GetBVN;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Paystack\Bank\ListBanks;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Auth;
+use Paystack\Bank\GetAccountDetails;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\AppUser\Models\DebitCard;
-use Illuminate\Database\Eloquent\Builder;
+use GuzzleHttp\Exception\ClientException;
 use App\Modules\AppUser\Models\LoanSurety;
 use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\AppUser\Models\Transaction;
+use Gbowo\Adapter\Paystack\PaystackAdapter;
 use App\Modules\AppUser\Models\AutoSaveSetting;
 use App\Modules\AppUser\Models\LoanTransaction;
 use App\Modules\AppUser\Models\SavingsInterest;
@@ -113,6 +117,8 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanSurety[] $request_for_surety
+ * @property-read int|null $request_for_surety_count
  */
 class AppUser extends User
 {
@@ -573,6 +579,113 @@ class AppUser extends User
 		}
 	}
 
+	public function validate_bvn(string $bvn, string $phone_number = null, string $full_name = null): object
+	{
+		$comparison_phone_number = $phone_number ?? $this->phone;
+		$comparison_full_name = $full_name ?? $this->full_name;
+		$paystack = new PaystackAdapter();
+		$paystack->addPlugin(new GetBVN(PaystackAdapter::API_LINK));
+
+		$rsp = [
+			"data" =>  [
+				"first_name" => "EHIKIOYA",
+				"last_name" => "AKHILE",
+				"dob" => "15-Aug-85",
+				"formatted_dob" => "1985-08-15",
+				"mobile" => "08034411661",
+				"bvn" => "22358166951",
+			],
+			"meta" =>  [
+				"calls_this_month" => 5,
+				"free_calls_left" => 5,
+			]
+		];
+
+		try {
+			// $rsp = $paystack->getBVN($bvn);
+			$data = (object)$rsp['data'];
+		} catch (\Throwable $th) {
+			ErrLog::notifyAdmin($this, $th, $th->getMessage());
+			return (object)[
+				'code' => $th->getCode(),
+				'msg' => $th->getMessage()
+			];
+		}
+
+		/**
+		 * ! Verify via phone number
+		 */
+		if ($data->mobile === get_11_digit_nigerian_number($comparison_phone_number)) {
+			return (object)[
+				'code' => 200,
+				'msg' => 'The BVN is correct'
+			];
+		} else {
+			ErrLog::notifyAdmin($this, (new \Exception('BVN mismatch: ' . $bvn)), 'BVN supplied does not match supplied phone number');
+			return (object)[
+				'code' => 409,
+				'msg' => 'This BVN does not belong to you.'
+			];
+		}
+
+
+		/**
+		 * ! Verify via full name
+		 */
+		// if (Str::containsAll(strtoupper($comparison_full_name), [$data->first_name, $data->last_name])) {
+		// 	return (object)[
+		// 		'code' => 200,
+		// 		'msg' => 'The BVN is correct'
+		// 	];
+		// } else {
+		// 	ErrLog::notifyAdmin($this, (new \Exception('BVN mismatch: ' . $bvn)), 'BVN supplied does not match supplied full name');
+		// 	return (object)[
+		// 		'code' => 409,
+		// 		'msg' => 'This BVN does not belong to you.'
+		// 	];
+		// }
+	}
+
+	public function validate_bank_account(string $acc_num, string $acc_bank, string $acc_name = null): int
+	{
+		$paystack = new PaystackAdapter();
+		$paystack->addPlugin(new ListBanks(PaystackAdapter::API_LINK));
+		$paystack->addPlugin(new GetAccountDetails(PaystackAdapter::API_LINK));
+
+		$acc_name_to_compare = $acc_name ?? $this->full_name;
+
+		$banks = collect($paystack->listBanks());
+		$bank_details = $banks->filter(function ($item) use ($acc_bank) {
+			return false !== stristr($item['name'], $acc_bank);
+		})->first();
+
+		if (is_null($bank_details)) {
+			return 400;
+		}
+
+		$bank_object = (object)$bank_details;
+
+		try {
+			$data = (object)$paystack->getAccountDetails(["account_number" => $acc_num, "bank_code" => $bank_object->code]);
+		} catch (ClientException $th) {
+			if ($th->getCode() == 400) {
+				ErrLog::notifyAdmin($this, $th, $th->getMessage());
+				abort(400, $th->getResponse()->getReasonPhrase());
+			} elseif ($th->getCode() == 422) {
+				ErrLog::notifyAdmin($this, $th, $th->getMessage());
+				return 422;
+			}
+		}
+
+		if (Str::containsAll(strtolower($data->account_name), explode(' ', strtolower($acc_name_to_compare)))) {
+			return 200;
+		} else {
+			return 409;
+		}
+
+		dd($data);
+	}
+
 	static function adminApiRoutes()
 	{
 		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
@@ -611,7 +724,11 @@ class AppUser extends User
 			 * If updating bvn, set is_bvn_verified to false
 			 */
 			if ($request->bvn) {
-				$request->user()->is_bvn_verified = false;
+				$request->user()->is_bvn_verified = true;
+			}
+
+			if ($request->acc_num) {
+				$request->user()->is_bank_verified = true;
 			}
 
 			if ($request->id_card) {
@@ -621,6 +738,7 @@ class AppUser extends User
 			foreach (collect($request->validated())->except('id_card') as $key => $value) {
 				$request->user()->$key = $value;
 			}
+
 			$request->user()->save();
 
 			return response()->json([], 204);

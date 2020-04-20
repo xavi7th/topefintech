@@ -25,9 +25,9 @@ class EditUserProfileValidation extends FormRequest
 			'address' => 'filled|string',
 			'city' => 'filled|string',
 			'country' => 'filled|string',
-			'acc_num' => ['filled', 'numeric', Rule::unique('users')->ignore(Auth::apiuser()->acc_num)],
-			'acc_bank' => 'filled|string',
-			'acc_type' => 'filled|string',
+			'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('users')->ignore(Auth::apiuser()->acc_num)],
+			'acc_bank' => 'bail|required_with:acc_num,acc_type|string',
+			'acc_type' => 'bail|required_with:acc_num,acc_bank|string',
 			'bvn' => ['filled', 'numeric', Rule::unique('users')->ignore(Auth::apiuser()->bvn)],
 			'id_card' => 'bail|filled|file|mimes:jpeg,bmp,png',
 		];
@@ -43,6 +43,64 @@ class EditUserProfileValidation extends FormRequest
 		return true;
 	}
 
+	/**
+	 * Configure the error messages for the defined validation rules.
+	 *
+	 * @return array
+	 */
+	public function messages()
+	{
+		return [
+			'acc_num.required_with' => 'You must enter your bank name and account type along with your account number',
+			'acc_bank.required_with' => 'You must enter your account number and account type along with your bank name',
+			'acc_type.required_with' => 'You must enter your account number and bank name along with your account type',
+		];
+	}
+
+	/**
+	 * Configure the validator instance.
+	 *
+	 * @param  \Illuminate\Validation\Validator  $validator
+	 * @return void
+	 */
+	public function withValidator($validator)
+	{
+		$validator->after(function ($validator) {
+
+			if ($this->bvn) {
+				$rsp = $this->user()->validate_bvn($this->bvn, $this->phone, $this->full_name);
+
+				if ($rsp->code === 0) {
+					$validator->errors()->add('BVN Error', $rsp->msg);
+					return;
+				} elseif ($rsp->code === 400) {
+					$validator->errors()->add('BVN Error', 'We were unable to resolve your provided BVN. Check it again to make sure there are no errors');
+					return;
+				} elseif ($rsp->code === 409) {
+					$validator->errors()->add('BVN Error', $rsp->msg);
+					return;
+				}
+				return;
+			}
+
+			/**
+			 * Validate the user's bank account details
+			 * ! We are using Paystack endpoint
+			 */
+			if ($this->acc_num && $this->acc_bank) {
+				$rsp = $this->user()->validate_bank_account($this->acc_num, $this->acc_bank, $this->full_name);
+
+				if ($rsp === 409) {
+					$validator->errors()->add('Invalid Account Number', 'This bank account number does not match the full name you supplied');
+				} elseif ($rsp === 422) {
+					$validator->errors()->add('Invalid Account Number', 'This account number is invalid');
+				} elseif ($rsp === 400) {
+					$validator->errors()->add('Invalid Account Number', 'This bank name is incorrect or not verifiable. Try another form of the name if any');
+				}
+				return;
+			}
+		});
+	}
 
 	/**
 	 * Overwrite the validator response so we can customise it per the structure requested from the fronend
