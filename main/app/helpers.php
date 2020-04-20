@@ -1,8 +1,15 @@
 <?php
-use Illuminate\Contracts\Filesystem\FileNotFoundException as FileGetException;
-
-use League\Flysystem\FileNotFoundException as FileDownloadException;
 use Carbon\Carbon;
+
+use Paystack\Bank\GetBVN;
+use Illuminate\Support\Str;
+use Paystack\Bank\ListBanks;
+use App\Modules\Admin\Models\ErrLog;
+use Paystack\Bank\GetAccountDetails;
+use GuzzleHttp\Exception\ClientException;
+use Gbowo\Adapter\Paystack\PaystackAdapter;
+use League\Flysystem\FileNotFoundException as FileDownloadException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException as FileGetException;
 
 // if (env('APP_DEBUG')) ini_set('opcache.revalidate_freq', '0');
 
@@ -246,13 +253,230 @@ if (!function_exists('slug_to_string')) {
 }
 
 
+if (!function_exists('validate_bank_account')) {
+	/**
+	 * validate a NUBAN Bank Account number that it matches the givem full name
+	 *
+	 * @package https://github.com/adelowo/gbowo
+	 * @package https://paystack.com
+	 *
+	 * @param string $acc_num The account number to verify
+	 * @param string $acc_bank The domiciling bank name
+	 * @param string $acc_name_to_compare The supplied account name / full name
+	 *
+	 * @return object
+	 **/
+
+	function validate_bank_account(string $acc_num, string $acc_bank, string $acc_name_to_compare): object
+	{
+		$paystack = new PaystackAdapter();
+		$paystack->addPlugin(new ListBanks(PaystackAdapter::API_LINK));
+		$paystack->addPlugin(new GetAccountDetails(PaystackAdapter::API_LINK));
+
+		/**
+		 * Get a list of banks supported by paystack
+		 */
+		$banks_list = collect($paystack->listBanks());
+
+		/**
+		 * Search for the user's bank among the list
+		 */
+		$bank_details = $banks_list->filter(function ($item) use ($acc_bank) {
+			return false !== stristr($item['name'], $acc_bank);
+		})->first();
+
+		if (is_null($bank_details)) {
+			return (object)[
+				'code' => 400,
+				'msg' => 'Bank not found. Try verifying with an alternate form of your bank\'s name'
+			];
+		}
+
+		$bank_object = (object)$bank_details;
+
+		try {
+			/**
+			 * Query for the account number details at the gotten bank
+			 */
+			$data = (object)$paystack->getAccountDetails(["account_number" => $acc_num, "bank_code" => $bank_object->code]);
+		} catch (ClientException $th) {
+			if ($th->getCode() == 400) {
+				return (object)[
+					'code' => 400,
+					'msg' => $th->getResponse()->getReasonPhrase()
+				];
+			} elseif ($th->getCode() == 422) {
+				return (object)[
+					'code' => 422,
+					'msg' => 'Invalid account number'
+				];
+			}
+		}
+
+		if (Str::containsAll(strtolower($data->account_name), explode(' ', strtolower($acc_name_to_compare)))) {
+			return (object)[
+				'code' => 200,
+				'msg' => 'Bank Account Number Verified'
+			];
+		} else {
+			return (object)[
+				'code' => 409,
+				'msg' => 'This bank account number does not match the full name supplied'
+			];
+		}
+
+		dd($data);
+	}
+}
+
+if (!function_exists('validate_bvn_by_phone_number')) {
+	/**
+	 * validate a BVN number that it matches the givem phone number
+	 *
+	 * @package https://github.com/adelowo/gbowo
+	 * @package https://paystack.com
+	 *
+	 * @param string $bvn The bvn number to verify
+	 * @param string $comparison_phone_number The phone number to verify the bvn agaibst
+	 *
+	 * @return object
+	 **/
+
+
+	function validate_bvn_by_phone_number(string $bvn, string $comparison_phone_number): object
+	{
+		$paystack = new PaystackAdapter();
+		$paystack->addPlugin(new GetBVN(PaystackAdapter::API_LINK));
+
+		/**
+		 * --  SAMPLE RESPONSE FROM ENDPOINT --
+		 * $rsp = [
+		 * 	"data" =>  [
+		 * 		"first_name" => "EHIKIOYA",
+		 * 		"last_name" => "AKHILE",
+		 * 		"dob" => "15-Aug-85",
+		 * 		"formatted_dob" => "1985-08-15",
+		 * 		"mobile" => "08034411661",
+		 * 		"bvn" => "22358166951",
+		 * 	],
+		 * 	"meta" =>  [
+		 * 		"calls_this_month" => 5,
+		 * 		"free_calls_left" => 5,
+		 * 	]
+		 * ];
+		 */
+
+
+		try {
+			$rsp = $paystack->getBVN($bvn);
+			$data = (object)$rsp['data'];
+		} catch (\Throwable $th) {
+			return (object)[
+				'code' => $th->getCode(),
+				'msg' => $th->getMessage()
+			];
+		}
+
+		/**
+		 * ! Verify via phone number
+		 */
+		if ($data->mobile === get_11_digit_nigerian_number($comparison_phone_number)) {
+			return (object)[
+				'code' => 200,
+				'msg' => 'BVN verified'
+			];
+		} else {
+			return (object)[
+				'code' => 409,
+				'msg' => 'BVN supplied does not match supplied phone number.'
+			];
+		}
+	}
+}
+
+if (!function_exists('validate_bvn_by_full_name')) {
+	/**
+	 * validate a BVN number that it matches the givem full name
+	 *
+	 * @package https://github.com/adelowo/gbowo
+	 * @package https://paystack.com
+	 *
+	 * @param string $bvn The bvn number to verify
+	 * @param string $comparison_full_name The full name to verify the bvn agaibst
+	 *
+	 * @return object
+	 **/
+
+	function validate_bvn_by_full_name(string $bvn, string $comparison_full_name): object
+	{
+		$paystack = new PaystackAdapter();
+		$paystack->addPlugin(new GetBVN(PaystackAdapter::API_LINK));
+
+		/**
+		 * --  SAMPLE RESPONSE FROM ENDPOINT --
+		 * $rsp = [
+		 * 	"data" =>  [
+		 * 		"first_name" => "EHIKIOYA",
+		 * 		"last_name" => "AKHILE",
+		 * 		"dob" => "15-Aug-85",
+		 * 		"formatted_dob" => "1985-08-15",
+		 * 		"mobile" => "08034411661",
+		 * 		"bvn" => "22358166951",
+		 * 	],
+		 * 	"meta" =>  [
+		 * 		"calls_this_month" => 5,
+		 * 		"free_calls_left" => 5,
+		 * 	]
+		 * ];
+		 */
+
+
+		try {
+			$rsp = $paystack->getBVN($bvn);
+			$data = (object)$rsp['data'];
+		} catch (\Throwable $th) {
+			return (object)[
+				'code' => $th->getCode(),
+				'msg' => $th->getMessage()
+			];
+		}
+
+		if (Str::containsAll(strtoupper($comparison_full_name), [$data->first_name, $data->last_name])) {
+			return (object)[
+				'code' => 200,
+				'msg' => 'The BVN is correct'
+			];
+		} else {
+			return (object)[
+				'code' => 409,
+				'msg' => 'BVN supplied does not match supplied full name'
+			];
+		}
+	}
+}
+
+if (!function_exists('get_11_digit_nigerian_number')) {
+	/**
+	 * convert a number from international standard to 11 digit number
+	 *
+	 * @param float $number The number to convert
+	 *
+	 * @return string
+	 **/
+
+	function get_11_digit_nigerian_number(string $number): string
+	{
+		return '0' . mb_substr(preg_replace('/(\D+)/i', '', $number), -10);
+	}
+}
+
 if (!function_exists('to_naira')) {
 	/**
 	 * convert a number to naira with the naira symbol
 	 *
 	 * @param float $amount The amount to convert
+	 *
 	 * @return string
-	 * @throws Exception when the amount supplied is not a number
 	 **/
 
 	function to_naira(?float $amount): string
