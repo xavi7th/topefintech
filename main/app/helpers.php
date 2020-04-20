@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Paystack\Bank\GetBVN;
 use Illuminate\Support\Str;
 use Paystack\Bank\ListBanks;
+use Paystack\Bank\GetCardBIN;
 use App\Modules\Admin\Models\ErrLog;
 use Paystack\Bank\GetAccountDetails;
 use GuzzleHttp\Exception\ClientException;
@@ -252,6 +253,35 @@ if (!function_exists('slug_to_string')) {
 	}
 }
 
+if (!function_exists('resolve_debit_card_bin')) {
+	/**
+	 * resolve a debit card BIN (first 6 digits) to get extra details about the card
+	 * ? This can be useful for determining the validity of the card without prying for personal details
+	 *
+	 * @package https://github.com/adelowo/gbowo
+	 * @package https://paystack.com
+	 *
+	 * @param string $card_bin The first 6 digits of a debit card
+	 *
+	 * @return object
+	 **/
+
+	function resolve_debit_card_bin(string $card_bin): object
+	{
+		$paystack = new PaystackAdapter();
+		$paystack->addPlugin(new GetCardBIN(PaystackAdapter::API_LINK));
+
+		try {
+			$data = $paystack->getCardBIN($card_bin);
+		} catch (\Throwable $th) {
+			return (object)[
+				'code' => $th->getCode(),
+				'msg' => $th->getMessage()
+			];
+		}
+		return (object)$data;
+	}
+}
 
 if (!function_exists('validate_bank_account')) {
 	/**

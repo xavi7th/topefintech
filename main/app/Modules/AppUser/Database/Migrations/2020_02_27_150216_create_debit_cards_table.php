@@ -17,6 +17,11 @@ class CreateDebitCardsTable extends Migration
 			$table->bigIncrements('id');
 			$table->bigInteger('app_user_id')->unsigned();
 			$table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+			$table->string('brand')->nullable();
+			$table->string('sub_brand')->nullable();
+			$table->string('country')->nullable();
+			$table->string('card_type')->nullable();
+			$table->string('bank')->nullable();
 			$table->text('pan');
 			$table->text('pan_hash');
 			$table->string('month')->nullable();
