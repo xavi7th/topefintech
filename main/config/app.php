@@ -24,6 +24,17 @@ return [
     |
     */
 
+	'balance_before_bvn_validation' => env('BALANCE_BEFORE_BVN_VALIDATION', 5000),
+
+	/*
+    |--------------------------------------------------------------------------
+    | Core Savings Interest Rate
+    |--------------------------------------------------------------------------
+    |
+    |The interest rate that will be applied to all core savings.
+    |
+    */
+
 	'core_savings_interest_rate' => env('CORE_SAVINGS_INTEREST_RATE', 0.5),
 
 	/*

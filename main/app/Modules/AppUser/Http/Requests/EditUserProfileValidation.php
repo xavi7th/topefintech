@@ -68,6 +68,11 @@ class EditUserProfileValidation extends FormRequest
 		$validator->after(function ($validator) {
 
 			if ($this->bvn) {
+				if ($this->user()->total_balance() < config('app.balance_before_bvn_validation')) {
+					$validator->errors()->add('BVN Error', 'You are not yet due to enter and validate your bvn. Become active on out platform before updating your BVN');
+					return;
+				}
+
 				$rsp = $this->user()->validate_bvn($this->bvn, $this->phone, $this->full_name);
 
 				if ($rsp->code === 0) {
