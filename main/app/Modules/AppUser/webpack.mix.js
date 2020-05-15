@@ -24,27 +24,33 @@ mix.webpackConfig( {
 
 mix.scripts( [
     __dirname + '/Resources/js/vendor/jquery-3.2.1.min.js',
+    __dirname + '/Resources/js/vendor/jquery.min.js',
     __dirname + '/Resources/js/vendor/popper.min.js',
     __dirname + '/Resources/js/vendor/bootstrap.min.js',
-    __dirname + '/Resources/js/vendor/simplebar.min.js',
-    __dirname + '/Resources/js/vendor/morris.min.js',
-    __dirname + '/Resources/js/vendor/chartjs.min.js',
-    __dirname + '/Resources/js/vendor/raphael.min.js',
-    __dirname + '/Resources/js/vendor/owl.carousel.min.js'
+    __dirname + '/Resources/js/vendor/feather.min.js',
+    __dirname + '/Resources/js/vendor/jquery.overlayScrollbars.min.js',
+    __dirname + '/Resources/js/vendor/yaybar.js',
+    __dirname + '/Resources/js/vendor/ofi.min.js',
+    __dirname + '/Resources/js/vendor/jquery.fancybox.min.js',
+    __dirname + '/Resources/js/vendor/emojione.min.js',
+    __dirname + '/Resources/js/vendor/emojionearea.min.js',
+    __dirname + '/Resources/js/vendor/moment.min.js',
+    __dirname + '/Resources/js/vendor/swiper.min.js',
+    __dirname + '/Resources/js/vendor/Chart.min.js',
+    __dirname + '/Resources/js/vendor/chartist.min.js',
+    __dirname + '/Resources/js/vendor/all.js',
+    __dirname + '/Resources/js/vendor/v4-shims.js',
 ], 'public_html/js/user-dashboard-app-vendor.js' );
 
 mix.scripts( [
-    __dirname + '/Resources/js/vendor/main.js'
+    __dirname + '/Resources/js/vendor/rootui.js',
+    __dirname + '/Resources/js/vendor/rootui-init.js',
 ], 'public_html/js/user-dashboard-main.js' );
-
-mix.scripts( [
-    __dirname + '/Resources/js/vendor/layout-side.js'
-], 'public_html/js/user-dashboard-nav.js' );
 
 mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
 mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
 
-mix.js( __dirname + '/Resources/js/main.js', 'js/user-dashboard-app.js' )
+mix.js( __dirname + '/Resources/js/app.js', 'js/user-dashboard-app.js' )
 
 if ( mix.inProduction() ) {
     mix.version();

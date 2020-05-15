@@ -1,87 +1,154 @@
 <template>
-  <div class="preloader">
-    <div class="preloader-body">
-      <div class="preloader-item">
-        <div class="diamond"></div>
-        <div class="diamond"></div>
-        <div class="diamond"></div>
-      </div>
+  <div class="rui-page-preloader" role="status">
+    <div class="rui-page-preloader-inner">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
   </div>
 </template>
-
-<script>
-  export default {};
-</script>
-<style lang="scss" scoped>
-  .preloader {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 9999999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 20px 6%;
-    background: #fff;
-    transition: 0.15s all linear;
+<style scoped>
+  .rui-page-preloader {
+    display: none;
   }
 
-  .preloader.loaded {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .preloader-body {
-    text-align: center;
-  }
-
-  .preloader-item {
-    position: relative;
-    width: 30px;
-    height: 120px;
-    display: flex;
-    flex-flow: column nowrap;
-  }
-
-  .preloader-item .diamond {
+  .rui-page-preloader.rui-page-preloader-active {
     position: absolute;
-    left: 0;
+    display: block;
+    top: 0;
     right: 0;
-    bottom: 0;
-    margin: 0 auto;
-    width: 30px;
-    height: 30px;
-    border-radius: 2px;
-    background: #00b9d4;
-    transform: translateY(0) rotate(45deg) scale(0);
-    animation: diamonds 1500ms linear infinite;
+    left: 0;
+    height: 1px;
+    opacity: 0;
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -o-transition: 0.3s opacity ease-in-out;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1002;
   }
 
-  .preloader-item .diamond:nth-child(1) {
-    animation-delay: -1000ms;
+  .rui-page-loading-state .rui-page-preloader.rui-page-preloader-active {
+    opacity: 1;
   }
 
-  .preloader-item .diamond:nth-child(2) {
-    animation-delay: -2000ms;
+  .rui-page-preloader.rui-page-preloader-active .rui-page-preloader-inner {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    height: 100%;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 
-  .preloader-item .diamond:nth-child(3) {
-    animation-delay: -3000ms;
+  .rui-page-preloader.rui-page-preloader-active .rui-page-preloader-inner > div {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    background: #725ec3;
+    -webkit-box-shadow: 0 2px 20px #725ec3;
+    box-shadow: 0 2px 20px #725ec3;
+    -webkit-animation: rui-preloader-animation 0.8s ease infinite alternate;
+    animation: rui-preloader-animation 0.8s ease infinite alternate;
   }
 
-  .preloader-item .diamond:nth-child(4) {
-    animation-delay: -4000ms;
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:first-child {
+    -webkit-animation-delay: 0.08s;
+    animation-delay: 0.08s;
   }
 
-  @keyframes diamonds {
-    50% {
-      transform: translateY(-50px) rotate(45deg) scale(1);
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(2) {
+    -webkit-animation-delay: 0.16s;
+    animation-delay: 0.16s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(3) {
+    -webkit-animation-delay: 0.24s;
+    animation-delay: 0.24s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(4) {
+    -webkit-animation-delay: 0.32s;
+    animation-delay: 0.32s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(5) {
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(6) {
+    -webkit-animation-delay: 0.48s;
+    animation-delay: 0.48s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(7) {
+    -webkit-animation-delay: 0.56s;
+    animation-delay: 0.56s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(8) {
+    -webkit-animation-delay: 0.64s;
+    animation-delay: 0.64s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(9) {
+    -webkit-animation-delay: 0.72s;
+    animation-delay: 0.72s;
+  }
+
+  .rui-page-preloader.rui-page-preloader-active
+    .rui-page-preloader-inner
+    > div:nth-child(10) {
+    -webkit-animation-delay: 0.8s;
+    animation-delay: 0.8s;
+  }
+
+  @-webkit-keyframes rui-preloader-animation {
+    to {
+      -webkit-box-flex: 10;
+      -webkit-flex: 10;
+      flex: 10;
+      background: rgba(0, 0, 0, 0);
+      -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
-    100% {
-      transform: translateY(-100px) rotate(45deg) scale(0);
+  }
+
+  @keyframes rui-preloader-animation {
+    to {
+      -webkit-box-flex: 10;
+      -webkit-flex: 10;
+      -ms-flex: 10;
+      flex: 10;
+      background: rgba(0, 0, 0, 0);
+      -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
   }
 </style>

@@ -6,37 +6,27 @@
 
 require( '@basicsite-assets/js/bootstrap' )
 
-import Vue from 'vue'
-// import Vue2Filters from 'vue2-filters'
-import VeeValidate from 'vee-validate'
-import LoadScript from 'vue-plugin-load-script'
+
 import {
-    createRouter
-} from './router'
+    InertiaApp
+} from '@inertiajs/inertia-vue'
+import Vue from 'vue'
+import VeeValidate from 'vee-validate'
+import Vue2Filters from 'vue2-filters'
+import LoadScript from 'vue-plugin-load-script'
 
-// Vue.use( Vue2Filters )
-Vue.use( VeeValidate )
+Vue.use( Vue2Filters )
 Vue.use( LoadScript )
+Vue.use( VeeValidate )
+Vue.use( InertiaApp )
 
-import App from '@basicsite-components/BasicSiteAppComponent';
+const app = document.getElementById( 'app' )
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-const router = createRouter()
-router.beforeEach( ( to, from, next ) => {
-    document.title = to.meta.title
-    next()
-} )
-
-const app = new Vue( {
-    el: '#app',
-    components: {
-        App
-    },
-    template: '<App/>',
-    router
-} )
+new Vue( {
+    render: h => h( InertiaApp, {
+        props: {
+            initialPage: JSON.parse( app.dataset.page ),
+            resolveComponent: name => require( `./components/${name}` ).default,
+        },
+    } ),
+} ).$mount( app )

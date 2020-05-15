@@ -1,49 +1,141 @@
 <template>
-  <aside class="side-menu">
-    <div class="side-menu-head">
-      <div class="header-logo logo-type no-margin">
-        <a href="index.html">SmartScoop</a>
+  <div class="yaybar yay-hide-to-small yay-shrink yay-gestures rui-yaybar">
+    <div class="yay-wrap-menu">
+      <div class="yaybar-wrap">
+        <ul>
+          <li class="yay-label">Get Started</li>
+          <li class="yay-item-active">
+            <a href="dashboard.html">
+              <span class="yay-icon">
+                <!-- <span class="fa fa-home"></span> -->
+                <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+              <span>Dashboard</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="savings.html">
+              <span class="yay-icon">
+                <span class="fas fa-wallet"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+
+              <span>Savings</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="statement.html">
+              <span class="yay-icon">
+                <span data-feather="file-text" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+              <span>Statement</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="smartloan.html">
+              <span class="yay-icon">
+                <span class="fas fa-money-check"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>SmartLoan</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="withdraw.html">
+              <span class="yay-icon">
+                <span class="fas fa-money-bill-wave"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>Withdraw</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="smartinterest.html">
+              <span class="yay-icon">
+                <span class="fas fa-money-check-alt"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>SmartInterest</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="bank_account.html">
+              <span class="yay-icon">
+                <span class="fa fa-suitcase"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>Bank Account</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="my_cards.html">
+              <span class="yay-icon">
+                <span class="far fa-credit-card"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>My Cards</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="bvn.html">
+              <span class="yay-icon">
+                <span class="fa fa-qrcode"></span>
+                <!-- <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>BVN Validation</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li class="yay-label">Personal</li>
+          <li>
+            <a href="profile.html">
+              <span class="yay-icon">
+                <span class="fa fa-user"></span>
+                <!-- <span data-feather="user" class="rui-icon rui-icon-stroke-1_5"></span> -->
+              </span>
+              <span>Profile</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="messages.html">
+              <span class="yay-icon">
+                <span data-feather="mail" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+              <span>Messages</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+          <li>
+            <a href="gos_plans.html">
+              <span class="yay-icon">
+                <span class="far fa-folder"></span>
+              </span>
+              <span>GOS Plans</span>
+              <span class="rui-yaybar-circle"></span>
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-    <nav data-simplebar>
-      <ul class="menu">
-        <li class="menu-title">ADMIN</li>
-
-        <li v-for="(item, index) in routes" :key="index" :class="{'sub-item':item.children}">
-          <router-link :to="item.path" v-if="item.name && !item.meta.skip">
-            <i class="icon" :class="item.meta.iconClass"></i>
-            <span>{{item.meta.menuName}}</span>
-          </router-link>
-          <a href="#" v-else-if="!item.meta.skip" class="sub-item-toggle">
-            <i class="icon" v-bind:class="item.meta.iconClass"></i>
-            <span>{{item.meta.menuName}}</span>
-          </a>
-          <div class="sub-menu" v-if="item.children">
-            <ul>
-              <li
-                v-for="childItem in item.children"
-                :key="childItem.name"
-                v-show="!childItem.meta.skip"
-              >
-                <router-link :to="childItem.path">{{childItem.meta.menuName}}</router-link>
-              </li>
-            </ul>
-          </div>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-</template>
-
+  </div>
 </template>
 
 <script>
   export default {
     name: "UserDashboardNav",
     mounted() {
-      this.$loadScript("/js/user-dashboard-nav.js").then(() => {
-        this.isLoading = false;
-      });
+      // this.$loadScript("/js/user-dashboard-nav.js").then(() => {
+      //   this.isLoading = false;
+      // });
     },
     computed: {
       routes() {

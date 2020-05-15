@@ -19,16 +19,16 @@
 
               <ul>
                 <li>
-                  <router-link :to="{name:'site.terms'}">Terms &amp; Conditions</router-link>
+                  <inertia-link href="{name:'site.terms'}">Terms &amp; Conditions</inertia-link>
                 </li>
                 <li>
-                  <router-link :to="{name:'site.faq'}">FAQs</router-link>
+                  <inertia-link href="{name:'site.faq'}">FAQs</inertia-link>
                 </li>
                 <li>
-                  <router-link :to="{name:'site.privacy'}">Privacy Policy</router-link>
+                  <inertia-link href="{name:'site.privacy'}">Privacy Policy</inertia-link>
                 </li>
                 <li>
-                  <router-link :to="{name:'site.career'}">Careers</router-link>
+                  <inertia-link href="{name:'site.career'}">Careers</inertia-link>
                 </li>
                 <li>
                   <a

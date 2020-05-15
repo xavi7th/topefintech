@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <layout title="Hello Boss">
     <Hero />
     <Highlights />
     <!-- <InterestCalculator /> -->
@@ -8,7 +8,7 @@
     <!-- <SaverOfTheMonth /> -->
     <!-- <StoriesSummary /> -->
     <Testimonials />
-  </div>
+  </layout>
 </template>
 
 <script>
@@ -20,6 +20,7 @@
   import SaverOfTheMonth from "@basicsite-components/home/SaverOfTheMonth";
   import StoriesSummary from "@basicsite-components/home/StoriesSummary";
   import Testimonials from "@basicsite-components/home/Testimonials";
+  import Layout from "@basicsite-components/BasicSiteAppComponent";
   export default {
     name: "HomePage",
     components: {
@@ -30,13 +31,23 @@
       RegistrationSteps,
       SaverOfTheMonth,
       StoriesSummary,
-      Testimonials
+      Testimonials,
+      Layout
     },
     data: () => ({
       details: {}
     }),
     mounted() {
-      this.$emit("page-loaded");
+      this.$loadScript("/js/main.js").then(() => {
+        if (this.freshLoad) {
+          this.freshLoad = false;
+          $(".rd-dropdown-item").click(function() {
+            $(".rd-nav-item").addClass(
+              "rd-navbar--has-dropdown rd-navbar-submenu"
+            );
+          });
+        }
+      });
     },
     beforeDestroy() {
       this.$unloadScript("/js/main.js");

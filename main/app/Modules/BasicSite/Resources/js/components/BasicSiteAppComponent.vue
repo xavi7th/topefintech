@@ -1,13 +1,13 @@
 <template>
-  <div class="page">
-    <site-header v-if="!is404" :isHome="isHome"></site-header>
+  <transition name="nav-transition" mode="out-in">
+    <div class="page">
+      <site-header></site-header>
 
-    <transition name="nav-transition" mode="out-in">
-      <router-view @page-loaded="pageLoaded" />
-    </transition>
+      <slot></slot>
 
-    <site-footer v-if="!is404"></site-footer>
-  </div>
+      <site-footer></site-footer>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -15,45 +15,20 @@
   import SiteFooter from "@basicsite-components/partials/FooterComponent";
 
   export default {
-    name: "BasicSiteApp",
-    created() {},
-    data() {
-      return {
-        freshLoad: true
-      };
-    },
+    name: "Layout",
     components: {
       SiteHeader,
       SiteFooter
     },
-    methods: {
-      pageLoaded() {
-        this.$loadScript("/js/main.js").then(() => {
-          if (this.freshLoad) {
-            this.freshLoad = false;
-            $(".rd-dropdown-item").click(function() {
-              $(".rd-nav-item").addClass(
-                "rd-navbar--has-dropdown rd-navbar-submenu"
-              );
-            });
-          }
-        });
-      }
+    props: {
+      title: String
     },
-    computed: {
-      is404() {
-        return this.$route.name
-          ? this.$route.name.match("site.error")
-            ? true
-            : false
-          : false;
-      },
-      isHome() {
-        return this.$route.name
-          ? this.$route.name.match("site.root")
-            ? true
-            : false
-          : false;
+    watch: {
+      title: {
+        immediate: true,
+        handler(title) {
+          document.title = title;
+        }
       }
     }
   };
