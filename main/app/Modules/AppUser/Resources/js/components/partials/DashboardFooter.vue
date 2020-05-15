@@ -1,10 +1,7 @@
 <template>
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <p>2011 - {{ (new Date().getFullYear() )}} &copy; Copyright SmartCoop - All Rights Reserved.</p>
-        <nav></nav>
-      </div>
+  <footer class="rui-footer">
+    <div class="container-fluid">
+      <p class="mb-0">2020 &copy; SmartCoop.</p>
     </div>
   </footer>
 </template>

@@ -4,9 +4,9 @@
       <div class="row align-items-center">
         <div class="col-md-2">
           <div class="logo">
-            <router-link :to="{name:'site.root'}">
+            <inertia-link href="{name:'site.root'}">
               <img src="/img/logo.png" alt />
-            </router-link>
+            </inertia-link>
           </div>
         </div>
         <div class="col-md-8">
@@ -18,10 +18,10 @@
             </a>
             <ul>
               <li v-for="(item, index) in routes" :key="index">
-                <router-link
+                <inertia-link
                   :to="item.path"
                   v-if="item.name && !item.meta.navSkip"
-                >{{item.meta.menuName}}</router-link>
+                >{{item.meta.menuName}}</inertia-link>
                 <a href="#" v-else-if="!item.meta.skip">{{item.meta.menuName}}</a>
                 <ul class="sub-menu" v-if="item.children">
                   <li
@@ -29,7 +29,7 @@
                     :key="childItem.name"
                     v-show="!childItem.meta.skip"
                   >
-                    <router-link :to="childItem.path">{{childItem.meta.menuName}}</router-link>
+                    <inertia-link :to="childItem.path">{{childItem.meta.menuName}}</inertia-link>
                   </li>
                 </ul>
               </li>
@@ -52,25 +52,19 @@
 <script>
   export default {
     name: "Header",
-    props: {
-      isHome: {
-        type: Boolean,
-        default: false,
-        required: true
-      }
-    },
+    props: {},
     data() {
       return {};
     },
     computed: {
       routes() {
-        return this.$router.options.routes;
+        return [];
       },
       breadcrumb() {
-        return this.$route.meta.breadcrumb;
+        return "breadcrumb";
       },
       routes() {
-        return this.$router.options.routes.filter(x => !x.meta.navSkip);
+        return [].filter(x => !x.meta.navSkip);
       }
     }
   };

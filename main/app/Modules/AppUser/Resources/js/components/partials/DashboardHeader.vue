@@ -1,112 +1,68 @@
 <template>
-  <header class="header">
-    <div class="header-top">
-      <div class="container">
-        <div class="header-left">
-          <a href class="side-menu-toggle mr-30">
-            <span></span>
-            <span></span>
-            <span></span>
-          </a>
-        </div>
-
-        <div class="header-right">
-          <div class="dropdown-message dropdown d-none d-sm-block">
-            <a href data-toggle="dropdown" class="dropdown-toggle">
-              <i class="far fa-envelope"></i>
+  <nav class="rui-navbar rui-navbar-top rui-navbar-sticky">
+    <div class="rui-navbar-brand">
+      <a href="dashboard.html" class="rui-navbar-logo">
+        <img
+          src="/img/logo.svg"
+          data-src-night="/img/logo-white.svg"
+          data-src-day="/img/logo.svg"
+          alt
+          width="45"
+        />
+      </a>
+      <button class="yay-toggle rui-yaybar-toggle" type="button">
+        <span></span>
+      </button>
+    </div>
+    <div class="container-fluid">
+      <div class="rui-navbar-content">
+        <ul class="nav"></ul>
+        <ul class="nav rui-navbar-right">
+          <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
+            <a
+              class="dropdown-item rui-navbar-avatar mnr-6"
+              href="#"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img src="/img/avatar-1.png" alt />
             </a>
-
-            <div class="dropdown-menu dropdown-menu-right">
-              <div class="dropdown-header">
-                <div class="dropdown-title">
-                  <h5>Last Mails</h5>
-                </div>
-                <a href>Show All</a>
-              </div>
-              <ul class="media-list">
-                <li class="dropdown-item">
-                  <a href="#">
-                    <div class="media-item">
-                      <div class="media-circle bg-success">
-                        <img src="/img/avatar1.jpg" class="img-responsive" alt="..." />
-                      </div>
-                      <div class="media-item-text">
-                        <span>2018 income-expense report</span>
-                        <small>CARL SUCKS</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="dropdown-item">
-                  <a href="#">
-                    <div class="media-item">
-                      <div class="media-circle bg-success">
-                        <img src="/img/avatar2.jpg" class="img-responsive" alt="..." />
-                      </div>
-                      <div class="media-item-text">
-                        <span>Order notification #1344763</span>
-                        <small>LISA DEEP</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="dropdown-item">
-                  <a href="#">
-                    <div class="media-item">
-                      <div class="media-circle bg-success">
-                        <img src="/img/avatar3.jpg" class="img-responsive" alt="..." />
-                      </div>
-                      <div class="media-item-text">
-                        <span>About the latest update</span>
-                        <small>KEVIN BELL</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="dropdown-item">
-                  <a href="#">
-                    <div class="media-item">
-                      <div class="media-circle bg-success">
-                        <img src="/img/avatar4.jpg" class="img-responsive" alt="..." />
-                      </div>
-                      <div class="media-item-text">
-                        <span>Security settings</span>
-                        <small>BETSA MINTHOW</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="dropdown-logged-user dropdown">
-            <a href data-toggle="dropdown" class="avatar dropdown-toggle">
-              <img src="/img/avatar1.jpg" class="img-responsive" alt="..." />
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-              <ul>
-                <li>
-                  <a href class="dropdown-item">
-                    <i class="fas fa-user-circle"></i> Update Profile
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" class="dropdown-item" @click.prevent="$emit('logout-user')">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <!-- dropdown #end -->
-        </div>
-        <!-- header right #end -->
+            <ul class="nav dropdown-menu">
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Create new Post</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="users" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Manage Users</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Check Updates</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+              <li>
+                <a href="profile.html" class="nav-link">
+                  <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span>Exit</span>
+                  <span class="rui-nav-circle"></span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
-  </header>
-  <!-- header #end -->
+  </nav>
 </template>
 <script>
   export default {

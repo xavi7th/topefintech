@@ -374,6 +374,16 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $brand
+ * @property string|null $sub_brand
+ * @property string|null $country
+ * @property string|null $card_type
+ * @property string|null $bank
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereBrand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCardType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereSubBrand($value)
  */
 	class DebitCard extends \Eloquent {}
 }
@@ -827,6 +837,6 @@ namespace App{
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
  */
-	class User extends \Eloquent {}
+	class User extends \Eloquent implements \Tymon\JWTAuth\Contracts\JWTSubject {}
 }
 

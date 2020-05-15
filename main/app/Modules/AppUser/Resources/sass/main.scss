@@ -1,8 +1,36 @@
-@import './vendor/bootstrap.min';
-@import './vendor/font-awesome.min';
-@import './vendor/simplebar.min';
-@import './vendor/morris.min';
-@import './vendor/cryptocoins';
-@import './vendor/cryptocoins-colors';
-@import './vendor/datatable';
-@import './vendor/main.min';
+@import './vendor/bootstrap-custom';
+@import './vendor/OverlayScrollbars';
+@import './vendor/yaybar';
+@import './vendor/jquery.fancybox';
+@import './vendor/emojionearea';
+@import './vendor/swiper.min';
+@import './vendor/chartist';
+@import './vendor/rootui';
+
+
+html.rui-nightmode {
+    @import './vendor/rootui-night';
+}
+
+
+/* PLACE YOUR CUSTOM STYLES IN THIS FILE */
+
+.rui-widget.rui-widget-total {
+    min-height: 100px;
+}
+
+#surety-validation {
+    position: relative;
+    left: 10px;
+    top: 10px;
+}
+
+.input-group-text.verified {
+    background-color: #2fc787;
+    border-color: #2fc787;
+    color: #fff;
+}
+
+.table td .surties {
+    font-size: 12px;
+}

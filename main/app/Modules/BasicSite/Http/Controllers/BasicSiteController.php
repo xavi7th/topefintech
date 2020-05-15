@@ -4,6 +4,8 @@ namespace App\Modules\BasicSite\Http\Controllers;
 
 use Exception;
 use Carbon\Carbon;
+use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\App;
@@ -21,73 +23,86 @@ use App\Modules\BasicSite\Http\Requests\AccountCreationFormValidation;
 
 class BasicSiteController extends Controller
 {
-	/**
-	 * The basic site routes that don't require authentication
-	 * @return Response
-	 */
-	public static function routes()
-	{
-		Route::group(['middleware' => 'web', 'namespace' => 'App\\Modules\BasicSite\Http\Controllers'], function () {
+  public function __construct()
+  {
+    Inertia::setRootView('basicsite::app');
+  }
+  /**
+   * The basic site routes that don't require authentication
+   * @return Response
+   */
+  public static function routes()
+  {
+    Route::group(['middleware' => 'web', 'namespace' => 'App\\Modules\BasicSite\Http\Controllers'], function () {
 
-			Route::get('/site/setup/{key?}',  function ($key = null) {
+      Route::get('/site/setup/{key?}',  function ($key = null) {
 
-				if ($key == config('app.migration_key')) {
-					// dd(config('app.migration_key'));
+        if ($key == config('app.migration_key')) {
+          // dd(config('app.migration_key'));
 
-					try {
-						echo '<br>init storage:link...';
-						$rsp = Artisan::call('storage:link');
-						echo 'done storage:link. Result: ' . $rsp;
+          try {
+            echo '<br>init storage:link...';
+            $rsp = Artisan::call('storage:link');
+            echo 'done storage:link. Result: ' . $rsp;
 
-						echo '<br>init migrate:fresh...';
-						$rsp =  Artisan::call('migrate:fresh');
-						echo 'done migrate:fresh. Result: ' . $rsp;
+            echo '<br>init migrate:fresh...';
+            $rsp =  Artisan::call('migrate:fresh');
+            echo 'done migrate:fresh. Result: ' . $rsp;
 
-						echo '<br>init module:seed...';
-						$rsp =  Artisan::call('module:seed');
-						echo 'done module:seed. Result: ' . $rsp;
-					} catch (Exception $e) {
-						Response::make($e->getMessage(), 500);
-					}
-				} else {
-					App::abort(404);
-				}
-			});
+            echo '<br>init module:seed...';
+            $rsp =  Artisan::call('module:seed');
+            echo 'done module:seed. Result: ' . $rsp;
+          } catch (Exception $e) {
+            Response::make($e->getMessage(), 500);
+          }
+        } else {
+          App::abort(404);
+        }
+      });
 
-			Route::get('/{subcat?}', function () {
-				if (request()->expectsJson()) {
-					return 'home page route';
-				}
-				return view('basicsite::index');
-			})->where('subcat', '^((?!(api|' . Admin::DASHBOARD_ROUTE_PREFIX . '|' . AppUser::DASHBOARD_ROUTE_PREFIX . '|tinker|_debugbar|css|js|_ignition|ignition-vendor)).)*')->name('home'); //Matches all routes except routes that start with the list provided.
-
-		});
+      Route::get('/', [BasicSiteController::class, 'index'])->name('app.home');
+    });
 
 
-		Route::group(['middleware' => 'web', 'prefix' => 'api'], function () {
+    Route::group(['middleware' => 'web', 'prefix' => 'api'], function () {
 
-			Route::get('testimonials', function () {
-				$testimonials = Testimonial::all();
+      Route::get('testimonials', function () {
+        $testimonials = Testimonial::all();
 
-				return (new TestimonialTransformer)->collectionTransformer($testimonials, 'transformForHomePage');
-			});
+        return (new TestimonialTransformer)->collectionTransformer($testimonials, 'transformForHomePage');
+      });
 
-			Route::get('team', function () {
-				$teams = TeamMember::all();
+      Route::get('team', function () {
+        $teams = TeamMember::all();
 
-				return (new TeamMemberTransformer)->collectionTransformer($teams, 'transformForHomePage');
-			});
+        return (new TeamMemberTransformer)->collectionTransformer($teams, 'transformForHomePage');
+      });
 
-			Route::get('faq', function () {
-				// $teams = TeamMember::all();
+      Route::get('faq', function () {
+        // $teams = TeamMember::all();
 
-				// return (new TeamMemberTransformer)->collectionTransformer($teams, 'transformForHomePage');
-			});
+        // return (new TeamMemberTransformer)->collectionTransformer($teams, 'transformForHomePage');
+      });
 
-			Route::post('/contact', function (ContactFormValidation $request) {
-				Message::create($request->all());
-				return response()->json(['status' => true], 201);
-			});
-		});
-	}
+      Route::post('/contact', function (ContactFormValidation $request) {
+        Message::create($request->all());
+        return response()->json(['status' => true], 201);
+      });
+    });
+  }
+
+  public function index(Request $request)
+  {
+
+    // Inertia::setRootView('basicsite::app');
+
+    return Inertia::render('HomePage', [
+      'event' => $request->only(
+        'id',
+        'title',
+        'start_date',
+        'description'
+      ),
+    ]);
+  }
 }
