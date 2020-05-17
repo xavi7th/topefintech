@@ -17,7 +17,6 @@
               <span></span>
             </a>
             <ul>
-              <!-- {{$page.routes}} -->
               <li v-for="(item, index) in $page.routes" :key="index">
                 <inertia-link :href="$route(item.name)">{{item.menu_name}}</inertia-link>
               </li>

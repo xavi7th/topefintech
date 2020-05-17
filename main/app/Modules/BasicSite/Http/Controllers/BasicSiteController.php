@@ -61,6 +61,8 @@ class BasicSiteController extends Controller
       Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog');
       Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
       Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.careers');
+      Route::get('/privacy', [BasicSiteController::class, 'showContactForm'])->name('app.privacy');
+      Route::get('/terms-and-conditions', [BasicSiteController::class, 'showContactForm'])->name('app.terms');
       Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us');
       Route::post('/contact', [BasicSiteController::class, 'sendContactMessage'])->name('app.contact');
     });
@@ -93,61 +95,33 @@ class BasicSiteController extends Controller
     });
   }
 
-  public function index(Request $request)
+  public function index()
   {
     return Inertia::render('HomePage');
   }
 
-  public function blog(Request $request)
+  public function blog()
   {
     return Inertia::render('OurBlogPage');
   }
 
-  public function faqs(Request $request)
+  public function faqs()
   {
-    return Inertia::render('HomePage', [
-      'event' => $request->only(
-        'id',
-        'title',
-        'start_date',
-        'description'
-      ),
-    ]);
+    return Inertia::render('FAQPage');
   }
 
-  public function careers(Request $request)
+  public function careers()
   {
-    return Inertia::render('HomePage', [
-      'event' => $request->only(
-        'id',
-        'title',
-        'start_date',
-        'description'
-      ),
-    ]);
+    return Inertia::render('CareersPage');
   }
 
-  public function showContactForm(Request $request)
+  public function showContactForm()
   {
-    return Inertia::render('HomePage', [
-      'event' => $request->only(
-        'id',
-        'title',
-        'start_date',
-        'description'
-      ),
-    ]);
+    return Inertia::render('ContactUsPage');
   }
 
-  public function sendContactMessage(Request $request)
+  public function sendContactMessage()
   {
-    return Inertia::render('HomePage', [
-      'event' => $request->only(
-        'id',
-        'title',
-        'start_date',
-        'description'
-      ),
-    ]);
+    return Inertia::render('HomePage');
   }
 }

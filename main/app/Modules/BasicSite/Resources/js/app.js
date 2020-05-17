@@ -6,7 +6,6 @@
 
 require( '@basicsite-assets/js/bootstrap' )
 
-
 import {
     InertiaApp
 } from '@inertiajs/inertia-vue'
@@ -15,7 +14,6 @@ import Vue from 'vue'
 import Vue2Filters from 'vue2-filters'
 import LoadScript from 'vue-plugin-load-script'
 import route from 'ziggy';
-
 
 Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 
