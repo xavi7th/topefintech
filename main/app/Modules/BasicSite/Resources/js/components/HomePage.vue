@@ -23,6 +23,9 @@
   import Layout from "@basicsite-components/BasicSiteAppComponent";
   export default {
     name: "HomePage",
+    props: {
+      app: Object
+    },
     components: {
       Hero,
       Highlights,

@@ -11,25 +11,25 @@ mix.webpackConfig( {
     },
 } )
 
-mix.scripts( [
-    __dirname + '/Resources/js/vendor/jquery.js',
-    __dirname + '/Resources/js/vendor/bootstrap.min.js',
-    __dirname + '/Resources/js/vendor/modernizr.custom.js',
-    __dirname + '/Resources/js/vendor/jquery.themepunch.revolution.min.js',
-    __dirname + '/Resources/js/vendor/jquery.themepunch.tools.min.js',
-    __dirname + '/Resources/js/vendor/jquery-ui.js',
-    __dirname + '/Resources/js/vendor/shuffle.js',
-    __dirname + '/Resources/js/vendor/slick.js',
-    __dirname + '/Resources/js/vendor/owl.carousel.js',
-], 'public_html/js/site-app-vendor.js' );
+if ( [ 'buildcss' ].includes( process.env.npm_config_section ) ) {
+    mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
+    mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
 
-mix.copy( __dirname + '/Resources/js/vendor/theme.js', 'public_html/js/main.js' );
+    mix.sass( __dirname + '/Resources/sass/app.scss', 'css/site-app.css' );
+} else {
 
-mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
-mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
+    mix.scripts( [
+        __dirname + '/Resources/js/vendor/jquery.js',
+        __dirname + '/Resources/js/vendor/bootstrap.min.js',
+        __dirname + '/Resources/js/vendor/modernizr.custom.js',
+        __dirname + '/Resources/js/vendor/jquery.themepunch.revolution.min.js',
+        __dirname + '/Resources/js/vendor/jquery.themepunch.tools.min.js',
+        __dirname + '/Resources/js/vendor/jquery-ui.js',
+        __dirname + '/Resources/js/vendor/shuffle.js',
+        __dirname + '/Resources/js/vendor/slick.js',
+        __dirname + '/Resources/js/vendor/owl.carousel.js',
+    ], 'public_html/js/site-app-vendor.js' );
 
-mix.js( __dirname + '/Resources/js/app.js', 'js/site-app.js' );
-
-if ( mix.inProduction() ) {
-    mix.version();
+    mix.copy( __dirname + '/Resources/js/vendor/theme.js', 'public_html/js/main.js' );
+    mix.js( __dirname + '/Resources/js/app.js', 'js/site-app.js' )
 }

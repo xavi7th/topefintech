@@ -15,6 +15,7 @@
         <meta name="author" content="nK">
         <link rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400%7cOpen+Sans:300,400,600%7cPT+Serif:400i">
+        <link rel="stylesheet" href="{{mix('css/dashboard-app.css')}}">
 
 
 

@@ -117,5 +117,5 @@
 </script>
 
 <style lang="scss">
-  @import "~@admin-assets/sass/main";
+  @import "~@admin-assets/sass/app";
 </style>

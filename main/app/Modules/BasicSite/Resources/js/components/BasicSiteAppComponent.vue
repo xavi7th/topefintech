@@ -1,6 +1,7 @@
 <template>
   <transition name="nav-transition" mode="out-in">
     <div class="page">
+      <!-- {{ $page }} -->
       <site-header></site-header>
 
       <slot></slot>
@@ -21,13 +22,14 @@
       SiteFooter
     },
     props: {
-      title: String
+      title: String,
+      app: Object
     },
     watch: {
       title: {
         immediate: true,
         handler(title) {
-          document.title = title;
+          document.title = `${title} - `;
         }
       }
     }
@@ -36,5 +38,5 @@
 
 
 <style lang="scss">
-  @import "~@basicsite-assets/sass/app";
+  // @import "~@basicsite-assets/sass/app";
 </style>
