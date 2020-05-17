@@ -1,18 +1,18 @@
 <template>
-  <div class="wrapper" v-if="isAuth">
-    <transition name="fade">
-      <pre-loader v-if="isLoading"></pre-loader>
-    </transition>
-    <transition name="slide-out-in" mode="out-in" :duration="{ enter: 1300, leave: 200 }">
-      <router-view @page-loaded="pageLoaded" @is-leaving="isLoading = true"></router-view>
-    </transition>
+  <div class="rui-main" v-if="isAuth">
+    <div class="rui-sign align-items-center justify-content-center">
+      <div class="bg-image">
+        <div class="bg-grey-1"></div>
+      </div>
+      <div class="form rui-sign-form rui-sign-form-cloud">
+        <transition name="slide-out-in" mode="out-in" :duration="{ enter: 1300, leave: 200 }">
+          <slot></slot>
+        </transition>
+      </div>
+    </div>
   </div>
 
   <div v-else>
-    <transition name="fade">
-      <pre-loader v-if="isLoading"></pre-loader>
-    </transition>
-
     <dashboard-nav></dashboard-nav>
     <div class="rui-yaybar-bg"></div>
 
@@ -25,11 +25,7 @@
 
       <div class="rui-page-content">
         <transition name="slide-out-in" mode="out-in" :duration="{ enter: 1300, leave: 200 }">
-          <router-view
-            @page-loaded="pageLoaded"
-            @is-leaving="isLoading = true"
-            @title="setPageTitle"
-          ></router-view>
+          <slot></slot>
         </transition>
       </div>
 
@@ -47,7 +43,7 @@
   import PageTitle from "@dashboard-components/partials/PageTitle";
   import { logout } from "@dashboard-assets/js/config";
   export default {
-    name: "DashboardApp",
+    name: "DashboardAppLayout",
     components: {
       DashboardHeader,
       DashboardFooter,
@@ -56,28 +52,20 @@
       MobileDashboardHeader,
       PageTitle
     },
-    data: () => ({
-      isLoading: true,
-      title: "loading"
-    }),
-    computed: {
-      isAuth() {
-        return (
-          this.$route.path.match("login") || this.$route.path.match("register")
-        );
+    props: {
+      title: String,
+      app: Object,
+      isAuth: {
+        type: Boolean,
+        default: true
       }
     },
-    methods: {
-      logoutUser() {
-        logout("Securing your account and logging you out.");
-      },
-      pageLoaded() {
-        this.$loadScript("/js/user-dashboard-main.js").then(() => {
-          this.isLoading = false;
-        });
-      },
-      setPageTitle(e) {
-        this.title = e;
+    watch: {
+      title: {
+        immediate: true,
+        handler(title) {
+          document.title = `${title} - ${this.$page.app.name}`;
+        }
       }
     }
   };

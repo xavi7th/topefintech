@@ -19,16 +19,16 @@
 
               <ul>
                 <li>
-                  <inertia-link href="{name:'site.terms'}">Terms &amp; Conditions</inertia-link>
+                  <inertia-link :href="$route('app.terms')">Terms &amp; Conditions</inertia-link>
                 </li>
                 <li>
-                  <inertia-link href="{name:'site.faq'}">FAQs</inertia-link>
+                  <inertia-link :href="$route('app.faqs')">FAQs</inertia-link>
                 </li>
                 <li>
-                  <inertia-link href="{name:'site.privacy'}">Privacy Policy</inertia-link>
+                  <inertia-link :href="$route('app.privacy')">Privacy Policy</inertia-link>
                 </li>
                 <li>
-                  <inertia-link href="{name:'site.career'}">Careers</inertia-link>
+                  <inertia-link :href="$route('app.career')">Careers</inertia-link>
                 </li>
                 <li>
                   <a
@@ -50,9 +50,7 @@
           <div class="col-lg-4 col-md-6">
             <aside class="widget subscribe_widgets">
               <h4>Find us at:</h4>
-              <p
-                class="text-black"
-              >Janet Akintola Street, Akins Bus Stop, off Addor road, Ajah, Lagos State, Nigeria</p>
+              <p class="text-black">{{$page.app.address}}</p>
 
               <h5 class="mt-5">Our Community</h5>
               <ul class="social">

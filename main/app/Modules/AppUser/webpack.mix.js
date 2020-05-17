@@ -36,12 +36,12 @@ if ( [ 'buildcss' ].includes( process.env.npm_config_section ) ) {
         __dirname + '/Resources/js/vendor/chartist.min.js',
         __dirname + '/Resources/js/vendor/all.js',
         __dirname + '/Resources/js/vendor/v4-shims.js',
-    ], 'public_html/js/user-dashboard-app-vendor.js' );
+    ], 'public_html/js/dashboard-app-vendor.js' );
 
     mix.scripts( [
         __dirname + '/Resources/js/vendor/rootui.js',
         __dirname + '/Resources/js/vendor/rootui-init.js',
-    ], 'public_html/js/user-dashboard-main.js' );
+    ], 'public_html/js/user-dashboard-init.js' );
 
-    mix.js( __dirname + '/Resources/js/app.js', 'js/user-dashboard-app.js' )
+    mix.js( __dirname + '/Resources/js/app.js', 'js/dashboard-app.js' )
 }

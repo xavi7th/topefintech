@@ -1,161 +1,135 @@
 <template>
-  <div class="plyenz-main bg-primary">
-    <div class="auth-box card-animation">
-      <div class="auth-logo">
-        <div class="header-logo logo-type no-margin">
-          <a href="/">SmartCoop</a>
+  <layout :isAuth="true" title="Register Account">
+    <form @submit.prevent="createAccount" :class="{'was-validated': formSubmitted}" novalidate>
+      <div class="row vertical-gap sm-gap justify-content-center">
+        <div class="header-logo logo-type no-margin col-12 display-3 text-center">
+          <a :href="$route('app.home')">SmartCoop</a>
         </div>
-      </div>
-      <div class="auth-desc">
-        <p class="mb-0">
-          <span>Welcome,</span> register now.
-        </p>
-      </div>
-      <form @submit.prevent="createAccount">
-        <div class="form-group mb-20">
-          <label for="form-name">
-            <strong>Full Name</strong>
-          </label>
+        <div class="col-12">
+          <h2 class="display-4 mb-10 text-center">Sign Up</h2>
+        </div>
+        <div class="col-12">
           <input
             type="text"
-            class="form-control form-control-pill"
+            class="form-control"
+            :class="{'is-invalid': errors.full_name, 'is-valid': !errors.full_name}"
             id="form-name"
-            v-model="details.name"
-            v-validate="'required'"
-            name="name"
+            v-model="details.full_name"
+            name="full_name"
+            placeholder="Full Name"
           />
+          <div class="invalid-feedback" v-if="errors.full_name">{{errors.full_name[0]}}</div>
         </div>
-        <div class="form-group mb-20">
-          <label for="form-mail">
-            <strong>E-Mail</strong>
-          </label>
+        <div class="col-12">
           <input
             type="email"
-            class="form-control form-control-pill"
-            id="form-mail"
+            class="form-control"
+            :class="{'is-invalid': errors.email, 'is-valid': !errors.email}"
+            id="form-email"
             v-model="details.email"
-            v-validate="'required|email'"
-            name="email"
+            name="name"
+            placeholder="Email"
           />
+
+          <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
         </div>
-        <div class="form-group mb-20">
-          <label for="form-pass">
-            <strong>Password</strong>
-          </label>
+        <div class="col-12">
           <input
             type="password"
-            class="form-control form-control-pill"
+            class="form-control"
+            :class="{'is-invalid': errors.password, 'is-valid': !errors.password}"
             id="form-pass"
             v-model="details.password"
-            v-validate="'required|min:6'"
             name="password"
+            placeholder="Password"
           />
+          <div class="invalid-feedback" v-if="errors.password">{{errors.password[0]}}</div>
         </div>
-        <div class="form-group mb-20">
-          <label for="form-pass2">
-            <strong>Confirm Password</strong>
-          </label>
+        <div class="col-12">
           <input
             type="password"
-            class="form-control form-control-pill"
-            id="form-pass2"
+            class="form-control"
+            :class="{'is-invalid': errors.password_confirmation, 'is-valid': !errors.password_confirmation}"
+            id="form-pass-confirm"
             v-model="details.password_confirmation"
-            v-validate="'required'"
             name="password_confirmation"
+            placeholder="Confirm Password"
           />
+          <div
+            class="invalid-feedback"
+            v-if="errors.password_confirmation"
+          >{{errors.password_confirmation[0]}}</div>
         </div>
-        <div class="form-group mb-20">
-          <label for="form-phone">
-            <strong>Phone</strong>
-          </label>
+        <div class="col-12">
           <input
             type="text"
-            class="form-control form-control-pill"
+            class="form-control"
+            :class="{'is-invalid': errors.phone, 'is-valid': !errors.phone}"
             id="form-phone"
             v-model="details.phone"
-            v-validate="'required'"
             name="phone"
+            placeholder="Phone"
           />
+          <div class="invalid-feedback" v-if="errors.phone">{{errors.phone[0]}}</div>
         </div>
-        <div class="form-group mb-20">
-          <label for="form-id-card">
-            <strong>Upload your ID Card</strong>
-          </label>
-          <input
-            type="file"
-            id="form-id-card"
-            v-validate="'required'"
-            name="id_card"
-            ref="id_card"
-            @change="attachFile"
-            accept="image/*, application/pdf"
-          />
-          <label for="form-id-card">{{ details.fileUploadName }}</label>
+        <div class="col-sm-12">
+          <div class="custom-control custom-checkbox d-flex justify-content-start flex-wrap">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              :class="{'is-invalid': errors.agreement, 'is-valid': !errors.agreement}"
+              v-model="details.agreement"
+              id="agreement"
+            />
+            <label class="custom-control-label fs-13" for="agreement">Accept terms and conditions</label>
+            <div class="invalid-feedback" v-if="errors.agreement">{{errors.agreement[0]}}</div>
+          </div>
         </div>
-        <!-- <div class="form-group mb-20">
-          <label for="form-country">
-            <strong>Country</strong>
-          </label>
-          <select
-            name="country"
-            id="country"
-            v-model="details.country"
-            class="form-control form-control-pill select-css"
-            :class="{'filled': details.country}"
-            v-validate="'required'"
-          >
-            <option :value="null">Select Country</option>
-            <option v-for="country in countriesList" :key="country">{{ country }}</option>
-          </select>
-        </div>-->
-        <!-- <div class="form-group mb-20">
-          <label for="form-currency">
-            <strong>Currency</strong>
-          </label>
-          <select
-            name="currency"
-            id="currency"
-            v-model="details.currency"
-            class="form-control form-control-pill select-css"
-            :class="{'filled': details.currency}"
-            v-validate="'required'"
-          >
-            <option :value="null">Select Currency</option>
-            <option v-for="currency in basicCurrencies" :key="currency">{{ currency }}</option>
-          </select>
-        </div>-->
-
-        <div class="form-group">
-          <label class="control control-checkbox">
-            <span class="text-light">Accept terms and conditions</span>
-            <input type="checkbox" v-model="details.agreement" />
-            <span class="control-icon"></span>
-          </label>
+        <div class="col-12">
+          <button type="submit" class="btn btn-brand btn-block text-center">Sign Up</button>
         </div>
-        <div class="form-group mt-25">
-          <button class="btn btn-primary btn-shadow btn-round btn-block">Register</button>
+        <div class="col-12">
+          <div class="rui-sign-or mt-2 mb-5">or</div>
         </div>
-        <div>
-          <hr />
-          <p class="fs-12 text-center text-light">
-            Do you have an account?
-            <router-link :to="{name:'dashboard.login'}" class="text-primary">Log In</router-link>
-          </p>
+        <div class="col-12">
+          <ul class="rui-social-links text-center">
+            <li>
+              <a href="#" class="rui-social-github">
+                <span class="fab fa-github"></span> Github
+              </a>
+            </li>
+            <li>
+              <a href="#" class="rui-social-facebook">
+                <span class="fab fa-facebook-f"></span> Facebook
+              </a>
+            </li>
+            <li>
+              <a href="#" class="rui-social-google">
+                <span class="fab fa-google"></span> Google
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
-    </div>
-  </div>
-  <!-- main content #end -->
+      </div>
+      <div class="mt-20 text-grey-5 text-center">
+        Do you have an account?
+        <inertia-link :href="$route('app.login')" class="text-2">Sign In</inertia-link>
+      </div>
+    </form>
+  </layout>
 </template>
 
 <script>
-  import { siteRegister } from "@dashboard-assets/js/config";
   import { mixins } from "@dashboard-assets/js/config";
+  import Layout from "@dashboard-assets/js/AppComponent";
   // import countriesList from "@basicsite-assets/js/CountriesList";
   // import { basicCurrencies } from "@basicsite-assets/js/CurrenciesList";
   export default {
     mixins: [mixins],
+    props: ["errors"],
+    components: { Layout },
     data: () => ({
+      formSubmitted: false,
       details: {
         country: null,
         fileUploadName: "Upload your ID Card",
@@ -164,15 +138,7 @@
       // basicCurrencies
       // countriesList
     }),
-    mounted() {
-      this.$emit("page-loaded");
-    },
     methods: {
-      attachFile() {
-        this.details.fileUploadName = this.$refs.id_card.files[0].name;
-
-        this.details.id_card = this.$refs.id_card.files[0];
-      },
       createAccount() {
         BlockToast.fire({
           text: "Setting up user account..."
@@ -183,106 +149,29 @@
           formData.append(key, val);
         });
 
-        axios
-          .post(siteRegister, formData, {
+        this.$inertia
+          .post(this.$route("appuser.register"), formData, {
             headers: {
               "Content-Type": "multipart/form-data"
             }
           })
           .then(rsp => {
-            if (rsp && rsp.status == 201) {
-              swal
-                .fire({
-                  title: "Success",
-                  text: `Check your email for a verification email link.`,
-                  icon: "success"
-                })
-                .then(() => {
-                  // location.replace("/login");
-                  // swal.close();
-                  this.$router.push({ name: "dashboard.login" });
-                });
-            }
+            swal.close();
           });
       }
     }
   };
 </script>
 
-<style lang="scss" scoped>
-  .form-control,
-  .btn-round {
-    padding: 12px;
+
+<style lang="scss">
+  .rui-sign .rui-sign-form-cloud {
+    max-width: 450px;
   }
-
-  [type="file"] {
-    height: 0;
-    overflow: hidden;
-    width: 0;
-
-    &#file {
-      border: none;
-      border-radius: 0;
-      padding: 0;
+  .was-validated {
+    .form-control.is-invalid {
+      background-color: #fef9fa !important;
+      border-color: #fac6cc !important;
     }
-  }
-
-  [type="file"] + label {
-    // background: #f15d22;
-    border: 1px solid #c0c0c0;
-    border-radius: 40px;
-    color: #686565;
-    cursor: pointer;
-    display: block;
-    font-family: "Poppins", sans-serif;
-    font-size: inherit;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    outline: none;
-    padding: 0.8rem 20px;
-    position: relative;
-    transition: all 0.3s;
-    vertical-align: middle;
-    &:hover {
-      background-color: darken(#fff, 5%);
-    }
-  }
-
-  .select-css {
-    height: auto !important;
-    display: block;
-    font-size: 16px;
-    font-family: sans-serif;
-    font-weight: 700;
-    color: #888;
-    line-height: 1.3;
-    padding: 12px 12px 12px 20px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    margin: 0;
-    border: 1px solid #ebebeb;
-    border-radius: 1.5em;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background-color: #fff;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat, repeat;
-    background-position: right 0.7em top 50%, 0 0;
-    background-size: 0.65em auto, 100%;
-  }
-  .select-css::-ms-expand {
-    display: none;
-  }
-  .select-css:hover {
-    border-color: darken(#ebebeb, 10%);
-  }
-  .select-css:focus {
-    border-color: darken(#ebebeb, 5%);
-    color: darken(#222, 10%);
-  }
-  .select-css option {
-    font-weight: normal;
   }
 </style>
