@@ -1,7 +1,6 @@
 <template>
   <transition name="nav-transition" mode="out-in">
     <div class="page">
-      <!-- {{ $page }} -->
       <site-header></site-header>
 
       <slot></slot>
@@ -29,14 +28,9 @@
       title: {
         immediate: true,
         handler(title) {
-          document.title = `${title} - `;
+          document.title = `${title} - ${this.$page.app.name}`;
         }
       }
     }
   };
 </script>
-
-
-<style lang="scss">
-  // @import "~@basicsite-assets/sass/app";
-</style>

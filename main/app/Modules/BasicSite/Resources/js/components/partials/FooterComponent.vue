@@ -10,10 +10,10 @@
 
               <p>
                 <i class="fa fa-phone"></i>
-                {{ CONSTANTS.phone1 }}
+                {{ $page.app.phone }}
               </p>
 
-              <a :href="`mailto:${CONSTANTS.email}`">{{ CONSTANTS.email }}</a>
+              <a :href="`mailto:${$page.app.email}`">{{ $page.app.email }}</a>
 
               <h5>Recources</h5>
 
@@ -98,12 +98,10 @@
 </template>
 
 <script>
-  import { siteContact, CONSTANTS } from "@basicsite-assets/js/config";
   export default {
     name: "SiteFooter",
     data: () => ({
-      details: {},
-      CONSTANTS
+      details: {}
     }),
     methods: {
       sendMessage() {

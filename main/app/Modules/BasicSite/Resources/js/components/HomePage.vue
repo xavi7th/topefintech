@@ -21,8 +21,10 @@
   import StoriesSummary from "@basicsite-components/home/StoriesSummary";
   import Testimonials from "@basicsite-components/home/Testimonials";
   import Layout from "@basicsite-components/BasicSiteAppComponent";
+  import { mixins } from "@basicsite-assets/js/misc";
   export default {
     name: "HomePage",
+    mixins: [mixins],
     props: {
       app: Object
     },
@@ -36,24 +38,6 @@
       StoriesSummary,
       Testimonials,
       Layout
-    },
-    data: () => ({
-      details: {}
-    }),
-    mounted() {
-      this.$loadScript("/js/main.js").then(() => {
-        if (this.freshLoad) {
-          this.freshLoad = false;
-          $(".rd-dropdown-item").click(function() {
-            $(".rd-nav-item").addClass(
-              "rd-navbar--has-dropdown rd-navbar-submenu"
-            );
-          });
-        }
-      });
-    },
-    beforeDestroy() {
-      this.$unloadScript("/js/main.js");
     }
   };
 </script>
