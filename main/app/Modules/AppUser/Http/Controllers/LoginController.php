@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Http\Controllers;
 
 use App\User;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -28,6 +29,8 @@ class LoginController extends Controller
 
   private $apiToken;
 
+
+
   /**
    * Where to redirect users after login.
    *
@@ -36,18 +39,6 @@ class LoginController extends Controller
   // protected $redirectTo = route('appuser.dashboard');
   protected function redirectTo()
   {
-    // if (request()->ajax()) {
-    // 	if (Auth::appuser()->is_verified()) {
-    // 		return response()->json(['status' => true], 202);
-    // 	} else {
-    // 		Auth::logout();
-    // 		return response()->json(['message' => 'Unverified user'], 416);
-    // 	}
-    // }
-
-    if (request()->expectsJson()) {
-      return response()->json(['logged_in' => true], 202);
-    }
     return route(User::dashboardRoute());
   }
 
@@ -58,14 +49,19 @@ class LoginController extends Controller
    */
   public function __construct()
   {
-    // $this->middleware('guest:')->except('logout');
+    Inertia::setRootView('appuser::app');
   }
 
   static function routes()
   {
-    Route::view('/login', 'appuser::index')->middleware('guest')->name('login');
-    Route::post('login', 'LoginController@login')->middleware('guest:api_user');
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login');
+    Route::post('login', 'LoginController@login')->middleware('guest:api_user')->name('appuser.login');
     Route::post('logout', 'LoginController@logout')->name('appuser.logout')->middleware('auth:api_user');
+  }
+
+  public function showLoginForm(Request $request)
+  {
+    return Inertia::render('auth/Login');
   }
 
   /**

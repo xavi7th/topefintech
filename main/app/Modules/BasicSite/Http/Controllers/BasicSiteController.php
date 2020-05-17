@@ -34,7 +34,7 @@ class BasicSiteController extends Controller
       Route::get('/', [BasicSiteController::class, 'index'])->name('app.home')->defaults('nav_skip', true);
       Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog');
       Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
-      Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.careers');
+      Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.career');
       Route::get('/privacy', [BasicSiteController::class, 'showContactForm'])->name('app.privacy')->defaults('nav_skip', true);
       Route::get('/terms-and-conditions', [BasicSiteController::class, 'showContactForm'])->name('app.terms')->defaults('nav_skip', true);
       Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us');
@@ -44,7 +44,6 @@ class BasicSiteController extends Controller
 
   public function index()
   {
-    // dd(\Illuminate\Support\Facades\Route::getRoutes()->get()[100]->defaults);
     return Inertia::render('HomePage', [
       // 'testimonials' => (new TestimonialTransformer)->collectionTransformer(Testimonial::all(), 'transformForHomePage'),
       // 'team_members' => (new TeamMemberTransformer)->collectionTransformer(TeamMember::all(), 'transformForHomePage')

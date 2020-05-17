@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Http\Controllers;
 
 
+use Inertia\Inertia;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Modules\Admin\Models\ErrLog;
@@ -14,84 +15,74 @@ use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\DebitCard;
 use App\Modules\AppUser\Models\LoanSurety;
 use App\Modules\AppUser\Models\LoanRequest;
-use App\Modules\AppUser\Transformers\AppuserTransformer;
+use App\Modules\AppUser\Models\Transaction;
+use App\Modules\AppUser\Models\SavingsInterest;
+use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\AppUser\Http\Controllers\LoginController;
 use App\Modules\AppUser\Http\Controllers\RegisterController;
 use App\Modules\AppUser\Http\Controllers\VerificationController;
-use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
-use App\Modules\AppUser\Http\Controllers\ResetPasswordController;
-use App\Modules\AppUser\Http\Controllers\ForgotPasswordController;
-use App\Modules\AppUser\Http\Controllers\ConfirmPasswordController;
-use App\Modules\AppUser\Models\WithdrawalRequest;
-use App\Modules\AppUser\Models\SavingsInterest;
-use App\Modules\AppUser\Models\Transaction;
 
 class AppUserController extends Controller
 {
 
-	public static function apiRoutes()
-	{
-		Route::group(['middleware' => ['api', 'throttle:20,1'], 'prefix' => '/api/',  'namespace' => '\App\Modules\AppUser\Http\Controllers'], function () {
+  public function __construct()
+  {
+    Inertia::setRootView('appuser::app');
+  }
 
-			LoginController::routes();
+  public static function apiRoutes()
+  {
+    Route::group(['middleware' => ['api', 'throttle:20,1'], 'prefix' => '/api/',  'namespace' => '\App\Modules\AppUser\Http\Controllers'], function () {
 
-			RegisterController::apiRoutes();
+      ErrLog::apiRoutes();
 
-			ErrLog::apiRoutes();
+      Route::group(['middleware' => ['auth:api_user', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
-			Route::group(['middleware' => ['auth:api_user', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+        AppUser::apiRoutes();
 
-				AppUser::apiRoutes();
+        Savings::appUserApiRoutes();
 
-				Savings::appUserApiRoutes();
+        GOSType::appUserApiRoutes();
 
-				GOSType::appUserApiRoutes();
+        DebitCard::appUserApiRoutes();
 
-				DebitCard::appUserApiRoutes();
+        LoanRequest::appUserApiRoutes();
 
-				LoanRequest::appUserApiRoutes();
+        LoanSurety::appUserApiRoutes();
 
-				LoanSurety::appUserApiRoutes();
+        WithdrawalRequest::appUserApiRoutes();
 
-				WithdrawalRequest::appUserApiRoutes();
+        SavingsInterest::appUserApiRoutes();
 
-				SavingsInterest::appUserApiRoutes();
+        Transaction::appUserApiRoutes();
+      });
+    });
+  }
 
-				Transaction::appUserApiRoutes();
-			});
-		});
-	}
+  /**
+   * @return Response
+   */
+  public static function routes()
+  {
+    Route::group(['middleware' => 'web', 'namespace' => 'App\Modules\AppUser\Http\Controllers'], function () {
+      LoginController::routes();
+      RegisterController::routes();
+      // ResetPasswordController::routes();
+      // ForgotPasswordController::routes();
+      // ConfirmPasswordController::routes();
+      VerificationController::routes();
 
-	/**
-	 * @return Response
-	 */
-	public static function routes()
-	{
+      AppUser::routes();
 
-		Route::group(['middleware' => 'web', 'namespace' => 'App\Modules\AppUser\Http\Controllers'], function () {
+      Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+        Route::get('/', 'AppUserController@loadUserApp')->name('appuser.dashboard');
+      });
+    });
+  }
 
-			LoginController::routes();
-			RegisterController::webRoutes();
-			// ResetPasswordController::routes();
-			// ForgotPasswordController::routes();
-			// ConfirmPasswordController::routes();
-			VerificationController::routes();
-
-			AppUser::routes();
-
-			Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
-				/**
-				 ** Matches all routes except routes that start with the list provided.
-				 */
-				Route::get('/{subcat?}', 'AppUserController@loadUserApp')->name('appuser.dashboard')->where('subcat', '^((?!(api)).)*');
-			});
-		});
-	}
-
-	public function loadUserApp()
-	{
-		// Auth::logout();
-		// dd(Auth::appuser());
-		return view('appuser::index');
-	}
+  public function loadUserApp()
+  {
+    // Auth::logout();
+    return Inertia::render('dashboard/UserDashboard');
+  }
 }

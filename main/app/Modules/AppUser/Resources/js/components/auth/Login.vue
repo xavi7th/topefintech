@@ -1,109 +1,126 @@
 <template>
-  <!-- main content -->
-  <div class="plyenz-main h-100v bg-primary">
-    <div class="auth-box card-animation">
-      <div class="auth-logo">
-        <div class="header-logo logo-type no-margin">
-          <a href="/">SmartCoop</a>
+  <layout :isAuth="true" title="Login">
+    <form @submit.prevent="loginUser" :class="{'was-validated': formSubmitted}" novalidate>
+      <div class="row vertical-gap sm-gap justify-content-center">
+        <div class="header-logo logo-type no-margin col-12 display-3 text-center">
+          <a :href="$route('app.home')">SmartCoop</a>
         </div>
-      </div>
-      <div class="auth-desc">
-        <p class="mb-0">
-          <span>Welcome,</span> sign in to continue.
-        </p>
-      </div>
-      <form @submit.prevent="loginUser">
-        <div class="form-group mb-20">
-          <label for="form-mail">
-            <strong>E-Mail</strong>
-          </label>
+        <div class="col-12">
+          <h2 class="display-4 mb-10 text-center">Sign In</h2>
+        </div>
+        <div class="col-12">
           <input
             type="email"
-            class="form-control form-control-pill"
+            class="form-control"
+            :class="{'is-invalid': errors.email, 'is-valid': !errors.email}"
             id="form-mail"
             v-model="details.email"
-            v-validate="'required|email'"
             name="email"
+            placeholder="Email"
           />
+          <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
         </div>
-        <div class="form-group mb-20">
-          <label for="form-pass">
-            <strong>Password</strong>
-          </label>
+        <div class="col-12">
           <input
             type="password"
-            class="form-control form-control-pill"
+            class="form-control"
+            :class="{'is-invalid': errors.password, 'is-valid': !errors.password}"
             id="form-pass"
             v-model="details.password"
-            v-validate="'required'"
-            name="email"
+            name="password"
+            placeholder="Password"
           />
+          <div class="invalid-feedback" v-if="errors.password">{{errors.password[0]}}</div>
         </div>
-        <div class="form-group">
-          <label class="control control-checkbox">
-            <span class="text-light">Remember</span>
-            <input type="checkbox" v-model="details.remember" />
-            <span class="control-icon"></span>
-          </label>
+        <div class="col-sm-6">
+          <div class="custom-control custom-checkbox d-flex justify-content-start">
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              v-model="details.remember"
+              id="rememberMe"
+            />
+            <label class="custom-control-label fs-13" for="rememberMe">Remember me</label>
+          </div>
         </div>
-        <div class="form-group mt-20">
-          <button class="btn btn-primary btn-shadow btn-round btn-block">Log In</button>
+        <div class="col-sm-6">
+          <div class="d-flex justify-content-end">
+            <a href="#" class="fs-13">Forgot password?</a>
+          </div>
         </div>
-        <div>
-          <hr />
-          <p class="fs-12 text-center text-light">
-            Do not have an account?
-            <router-link :to="{name:'dashboard.register'}" class="text-primary">Register</router-link>
-          </p>
+        <div class="col-12">
+          <button type="submit" class="btn btn-brand btn-block text-center">Sign in</button>
         </div>
-      </form>
-    </div>
-  </div>
-  <!-- main content #end -->
+        <div class="col-12">
+          <div class="rui-sign-or mt-2 mb-5">or</div>
+        </div>
+        <div class="col-12">
+          <ul class="rui-social-links text-center">
+            <li>
+              <a href="#" class="rui-social-github">
+                <span class="fab fa-github"></span> Github
+              </a>
+            </li>
+            <li>
+              <a href="#" class="rui-social-facebook">
+                <span class="fab fa-facebook-f"></span> Facebook
+              </a>
+            </li>
+            <li>
+              <a href="#" class="rui-social-google">
+                <span class="fab fa-google"></span> Google
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-20 text-grey-5 text-center">
+        Don't you have an account?
+        <inertia-link :href="$route('app.register')" class="text-2">Sign Up</inertia-link>
+      </div>
+    </form>
+  </layout>
 </template>
 
 <script>
-  import { siteLogin } from "@dashboard-assets/js/config";
   import { mixins } from "@dashboard-assets/js/config";
+  import Layout from "@dashboard-assets/js/AppComponent";
   export default {
+    name: "LoginPage",
     data: () => ({
-      details: {}
+      details: {},
+      formSubmitted: false
     }),
-    mounted() {
-      this.$emit("page-loaded");
-    },
     mixins: [mixins],
+    props: ["errors"],
+    components: { Layout },
     methods: {
       loginUser() {
-        this.$validator.validateAll().then(result => {
-          if (!result) {
-            Toast.fire({
-              title: "Invalid data! Try again",
-              position: "center",
-              type: "error"
-            });
-          } else {
-            BlockToast.fire({
-              text: "Accessing your dashboard..."
-            });
-
-            axios.post(siteLogin, { ...this.details }).then(rsp => {
-              if (undefined !== rsp && rsp.status == 202) {
-                swal.close();
-                // sessionStorage.clear();
-                this.$router.push({ name: "dashboard.root" });
-              }
-            });
-          }
+        BlockToast.fire({
+          text: "Accessing your dashboard..."
         });
+
+        this.$inertia
+          .post(this.$route("appuser.login"), { ...this.details })
+          .then(rsp => {
+            if (_.size(this.errors)) {
+              this.formSubmitted = true;
+            }
+            swal.close();
+          });
       }
     }
   };
 </script>
 
-<style lang="scss" scoped>
-  .form-control,
-  .btn-round {
-    padding: 12px;
+<style lang="scss">
+  .rui-sign .rui-sign-form-cloud {
+    max-width: 450px;
+  }
+  .was-validated {
+    .form-control.is-invalid {
+      background-color: #fef9fa !important;
+      border-color: #fac6cc !important;
+    }
   }
 </style>
