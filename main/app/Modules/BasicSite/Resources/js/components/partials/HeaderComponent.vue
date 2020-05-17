@@ -17,7 +17,7 @@
               <span></span>
             </a>
             <ul>
-              <li v-for="(item, index) in $page.routes" :key="index">
+              <li v-for="(item, index) in routes" :key="index">
                 <inertia-link :href="$route(item.name)">{{item.menu_name}}</inertia-link>
               </li>
               <li>
@@ -51,7 +51,9 @@
         return "breadcrumb";
       },
       routes() {
-        return [].filter(x => !x.meta.navSkip);
+        console.log(this.$page.routes);
+
+        return _.filter(this.$page.routes, x => !x.nav_skip);
       }
     }
   };
