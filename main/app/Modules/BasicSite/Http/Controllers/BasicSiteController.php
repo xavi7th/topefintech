@@ -3,15 +3,13 @@
 namespace App\Modules\BasicSite\Http\Controllers;
 
 use Exception;
-use Carbon\Carbon;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
-use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Support\Facades\Artisan;
 use App\Modules\BasicSite\Models\Message;
 use App\Modules\AppUser\Models\TeamMember;
@@ -19,7 +17,6 @@ use App\Modules\BasicSite\Models\Testimonial;
 use App\Modules\BasicSite\Transformers\TeamMemberTransformer;
 use App\Modules\BasicSite\Http\Requests\ContactFormValidation;
 use App\Modules\BasicSite\Transformers\TestimonialTransformer;
-use App\Modules\BasicSite\Http\Requests\AccountCreationFormValidation;
 
 class BasicSiteController extends Controller
 {
@@ -61,6 +58,11 @@ class BasicSiteController extends Controller
       });
 
       Route::get('/', [BasicSiteController::class, 'index'])->name('app.home');
+      Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog');
+      Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
+      Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.careers');
+      Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us');
+      Route::post('/contact', [BasicSiteController::class, 'sendContactMessage'])->name('app.contact');
     });
 
 
@@ -93,9 +95,52 @@ class BasicSiteController extends Controller
 
   public function index(Request $request)
   {
+    return Inertia::render('HomePage');
+  }
 
-    // Inertia::setRootView('basicsite::app');
+  public function blog(Request $request)
+  {
+    return Inertia::render('OurBlogPage');
+  }
 
+  public function faqs(Request $request)
+  {
+    return Inertia::render('HomePage', [
+      'event' => $request->only(
+        'id',
+        'title',
+        'start_date',
+        'description'
+      ),
+    ]);
+  }
+
+  public function careers(Request $request)
+  {
+    return Inertia::render('HomePage', [
+      'event' => $request->only(
+        'id',
+        'title',
+        'start_date',
+        'description'
+      ),
+    ]);
+  }
+
+  public function showContactForm(Request $request)
+  {
+    return Inertia::render('HomePage', [
+      'event' => $request->only(
+        'id',
+        'title',
+        'start_date',
+        'description'
+      ),
+    ]);
+  }
+
+  public function sendContactMessage(Request $request)
+  {
     return Inertia::render('HomePage', [
       'event' => $request->only(
         'id',

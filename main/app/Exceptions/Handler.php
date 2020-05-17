@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Throwable;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\App;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -46,6 +48,17 @@ class Handler extends ExceptionHandler
    */
   public function render($request, Throwable $exception)
   {
-    return parent::render($request, $exception);
+    $response = parent::render($request, $exception);
+    if (
+      (App::environment('production'))
+      && $request->header('X-Inertia')
+      && in_array($response->status(), [500, 503, 404, 403])
+    ) {
+      Inertia::setRootView('publicpages::app');
+      return Inertia::render('DisplayError', ['status' => $response->status()])
+        ->toResponse($request)
+        ->setStatusCode($response->status());
+    }
+    return $response;
   }
 }

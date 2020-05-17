@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 7.11.0 on 2020-05-15 20:24:43.
+ * Generated for Laravel 7.11.0 on 2020-05-16 07:01:34.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -11979,6 +11979,26 @@ namespace Illuminate\Support\Facades {
         public static function inertia($uri, $component, $props = [])
         {
                         return \Illuminate\Routing\Router::inertia($uri, $component, $props);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function blacklist($group = null)
+        {
+                        return \Illuminate\Routing\Router::blacklist($group);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function whitelist($group = null)
+        {
+                        return \Illuminate\Routing\Router::whitelist($group);
         }
          
     }

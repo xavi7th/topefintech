@@ -17,21 +17,9 @@
               <span></span>
             </a>
             <ul>
-              <li v-for="(item, index) in routes" :key="index">
-                <inertia-link
-                  :to="item.path"
-                  v-if="item.name && !item.meta.navSkip"
-                >{{item.meta.menuName}}</inertia-link>
-                <a href="#" v-else-if="!item.meta.skip">{{item.meta.menuName}}</a>
-                <ul class="sub-menu" v-if="item.children">
-                  <li
-                    v-for="childItem in item.children"
-                    :key="childItem.name"
-                    v-show="!childItem.meta.skip"
-                  >
-                    <inertia-link :to="childItem.path">{{childItem.meta.menuName}}</inertia-link>
-                  </li>
-                </ul>
+              <!-- {{$page.routes}} -->
+              <li v-for="(item, index) in $page.routes" :key="index">
+                <inertia-link :href="$route(item.name)">{{item.menu_name}}</inertia-link>
               </li>
               <li>
                 <a href="/login">Login</a>
@@ -52,10 +40,10 @@
 <script>
   export default {
     name: "Header",
-    props: {},
     data() {
       return {};
     },
+    mounted() {},
     computed: {
       routes() {
         return [];

@@ -1,14 +1,14 @@
 import '@basicsite-assets/js/bootstrap'
 import Vue from 'vue'
-import VeeValidate from 'vee-validate'
+// import VeeValidate from 'vee-validate'
 import App from './AdminAppComponent'
-const {
-    authRouter
-} = require( './router' )
+// const {
+//     authRouter
+// } = require( './router' )
 
-Vue.use( VeeValidate, {
-    fieldsBagName: 'formFields'
-} )
+// Vue.use( VeeValidate, {
+//     fieldsBagName: 'formFields'
+// } )
 
 
 let mediaHandler = () => {
@@ -32,29 +32,29 @@ let mediaHandler = () => {
     // } )
 }
 
-authRouter.beforeEach( ( to, from, next ) => {
-    /**
-     * Emit is loading event? Will App component catch it?
-     */
-    // store.commit( 'setLoading', true )
-    next()
-} )
+// authRouter.beforeEach( ( to, from, next ) => {
+//     /**
+//      * Emit is loading event? Will App component catch it?
+//      */
+//     // store.commit( 'setLoading', true )
+//     next()
+// } )
 
-authRouter.afterEach( ( to, from ) => {
-    /**
-     * Emit finished loading event?
-     */
-    // store.commit( 'setLoading', false )
-    /**
-     * Handle resize based on the browser size
-     */
-    mediaHandler()
-} )
+// authRouter.afterEach( ( to, from ) => {
+//     /**
+//      * Emit finished loading event?
+//      */
+//     // store.commit( 'setLoading', false )
+//     /**
+//      * Handle resize based on the browser size
+//      */
+//     mediaHandler()
+// } )
 
 /* eslint-disable no-new */
 new Vue( {
     el: '#auth-app',
-    router: authRouter,
+    // router: authRouter,
     template: '<App/>',
     components: {
         App

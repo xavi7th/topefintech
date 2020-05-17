@@ -10,6 +10,7 @@
         <link rel="icon" type="image/png" href="/img/favicon.png">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{{mix('css/admin-app.css')}}">
 
         @yield('customCSS')
 

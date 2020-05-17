@@ -77,12 +77,12 @@
         });
       },
       setPageTitle(e) {
-        this.title = e
+        this.title = e;
       }
     }
   };
 </script>
 
 <style lang="scss">
-  @import "~@dashboard-assets/sass/main";
+  // @import "~@dashboard-assets/sass/app";
 </style>

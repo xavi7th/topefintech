@@ -1,69 +1,22 @@
-const mix = require('laravel-mix');
-mix.setPublicPath( './public_html' )
+if ( [ 'buildcss', 'buildjs' ].includes( process.env.npm_config_section ) ) {
+  require( `${__dirname}/webpack.${process.env.npm_config_section}.mix.js` )
+} else {
+  console.log(
+    '\x1b[41m%s\x1b[0m',
+    'Provide correct --section argument to build command: buildcss, buildjs. For example npm --section=buildjs run dev '
+  )
 
+  function createError( msg, status ) {
+    var err = new Error( msg );
+    err.status = status;
 
-let fs = require( 'fs-extra' )
+    // uncomment this next line to get a clean stack trace in node.js
+    // Error.captureStackTrace( err, createError );
+    Error.captureStackTrace( err, function () {} );
+    return err;
+  }
 
-let modules = fs.readdirSync( './main/app/Modules' ) // Make sure the path of your modules are correct
-
-if ( modules && modules.length > 0 ) {
-	modules.forEach( module => {
-		let path = `./main/app/Modules/${module}/webpack.mix.js`
-		if ( fs.existsSync( path ) ) {
-			require( path )
-		}
-	} )
+  var err = createError( 'Provide correct --section argument to build command!', 500 );
+  throw err;
+  // throw new Error(  )
 }
-
-
-/*
- |--------------------------------------------------------------------------
- | Mix Asset Management
- |--------------------------------------------------------------------------
- |
- | Mix provides a clean, fluent API for defining some Webpack build steps
- | for your Laravel application. By default, we are compiling the Sass
- | file for the application as well as bundling up all the JS files.
- |
- */
-mix
-	// .sourceMaps()
-	.options( {
-		fileLoaderDirs: {
-			images: 'img',
-			// fonts: 'web-fonts'
-		},
-		postCss: [
-			require( 'postcss-fixes' )(), // add fallbacks for rem units and other fixes
-		],
-	} )
-	.extract( [ 'vue', 'sweetalert2', 'axios', 'lodash', 'vue-plugin-load-script', 'vue-router' ] )
-	.version()
-
-
-if ( !mix.inProduction() ) {
-	mix.sourceMaps();
-}
-
-
-
-// mix.webpackConfig( {
-// 	devtool: 'source-map',
-// } )
-
-// mix.browserSync( {
-// 	injectChanges: true,
-// 	ghostMode: {
-// 		clicks: false,
-// 		forms: false,
-// 		scroll: false,
-// 	},
-// 	proxy: {
-// 		target: 'localhost:8000',
-// 		reqHeaders: function () {
-// 			return {
-// 				host: 'localhost:3000',
-// 			}
-// 		},
-// 	},
-// } )
