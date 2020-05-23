@@ -54,9 +54,9 @@ class LoginController extends Controller
 
   static function routes()
   {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login');
-    Route::post('login', 'LoginController@login')->middleware('guest:api_user')->name('appuser.login');
-    Route::post('logout', 'LoginController@logout')->name('appuser.logout')->middleware('auth:api_user');
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('nav_skip', true);
+    Route::post('login', 'LoginController@login')->middleware('guest')->name('appuser.login');
+    Route::post('logout', 'LoginController@logout')->name('appuser.logout')->middleware('auth');
   }
 
   public function showLoginForm(Request $request)
@@ -203,9 +203,9 @@ class LoginController extends Controller
       $this->apiGuard()->logout();
     } catch (\Throwable $th) { }
 
-    if ($request->ajax() || $request->expectsJson()) {
-      return response()->json(['logged_out' => true], 200);
-    }
-    return redirect()->route('home');
+    // if ($request->ajax() || $request->expectsJson()) {
+    //   return response()->json(['logged_out' => true], 200);
+    // }
+    return redirect()->route('app.home');
   }
 }
