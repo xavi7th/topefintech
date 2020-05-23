@@ -4,7 +4,7 @@
       <div class="row align-items-center">
         <div class="col-md-2">
           <div class="logo">
-            <inertia-link href="{name:'site.root'}">
+            <inertia-link :href="$route('app.home')">
               <img src="/img/logo.png" alt />
             </inertia-link>
           </div>
@@ -39,17 +39,7 @@
 <script>
   export default {
     name: "Header",
-    data() {
-      return {};
-    },
-    mounted() {},
     computed: {
-      routes() {
-        return [];
-      },
-      breadcrumb() {
-        return "breadcrumb";
-      },
       routes() {
         return _.filter(this.$page.routes, x => !x.nav_skip);
       }

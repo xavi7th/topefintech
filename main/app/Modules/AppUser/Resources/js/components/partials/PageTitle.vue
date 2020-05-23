@@ -4,7 +4,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="dashboard.html">Smartcoop</a>
+            <inertia-link :href="$route('appuser.dashboard')">Smartcoop</inertia-link>
           </li>
         </ol>
       </nav>
@@ -15,9 +15,12 @@
 <script>
   export default {
     name: "PageTitle",
-    props: ["title"],
-    computed: {},
-    mounted() {}
+    props: {
+      title: {
+        type: String,
+        required: true
+      }
+    }
   };
 </script>
 

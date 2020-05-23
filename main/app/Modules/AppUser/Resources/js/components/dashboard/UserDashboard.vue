@@ -60,7 +60,7 @@
             </div>
             <div class="card-body">
               <inertia-link
-                :to="{name:'savings.savings-distribution', params:{amount:100}}"
+                :href="$route('appuser.savings.distribution')"
                 class="btn btn-shadow btn-info btn-w-sm"
               >100</inertia-link>
               <button type="button" class="btn btn-shadow btn-secondary btn-w-sm">200</button>
