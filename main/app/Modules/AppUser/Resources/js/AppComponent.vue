@@ -16,8 +16,8 @@
     <dashboard-nav></dashboard-nav>
     <div class="rui-yaybar-bg"></div>
 
-    <dashboard-header @logout-user="logoutUser()"></dashboard-header>
-    <mobile-dashboard-header @logout-user="logoutUser()"></mobile-dashboard-header>
+    <dashboard-header></dashboard-header>
+    <mobile-dashboard-header></mobile-dashboard-header>
     <div class="rui-navbar-bg"></div>
 
     <div class="rui-page content-wrap">
@@ -70,7 +70,3 @@
     }
   };
 </script>
-
-<style lang="scss">
-  // @import "~@dashboard-assets/sass/app";
-</style>

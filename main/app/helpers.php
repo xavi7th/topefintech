@@ -414,7 +414,7 @@ if (!function_exists('get_related_routes')) {
    *
    * Route::get('/', [BasicSiteController::class, 'index'])->name('app.home')->defaults('nav_skip', true);
    */
-  function get_related_routes(string $namespace, array $methods)
+  function get_related_routes(string $namespace, array $methods): object
   {
     return collect(\Illuminate\Support\Facades\Route::getRoutes())->map(function (\Illuminate\Routing\Route $route) use ($namespace) {
       return (object)[
@@ -424,8 +424,8 @@ if (!function_exists('get_related_routes')) {
         'method' => \Str::of(implode('|', $route->methods())),
         'menu_name' => \Str::of($route->getName())->replaceMatches('/[^A-Za-z0-9]++/', ' ')->trim($namespace)->title()->trim()->__toString()
       ];
-    })->filter(function ($value, $key) use ($methods) {
-      return \Str::startsWith($value->name, 'app.') && $value->method->contains($methods);
+    })->filter(function ($value, $key) use ($methods, $namespace) {
+      return \Str::startsWith($value->name, $namespace) && $value->method->contains($methods);
     })->transform(function ($v) {
       return collect($v)->merge(['method' => $v->method->__toString()]);
     });

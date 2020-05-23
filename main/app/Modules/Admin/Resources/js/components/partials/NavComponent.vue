@@ -3,45 +3,15 @@
     <div class="yay-wrap-menu">
       <div class="yaybar-wrap">
         <ul>
-          <li class="yay-label">Components</li>
-
-          <li v-for="(item, index) in routes.filter(x => x.path !== '*')" :key="index">
-            <router-link :to="item.path" v-if="item.name && !item.meta.skip">
+          <li class="yay-label">Menu</li>
+          <li v-for="(item, index) in routes" :key="index">
+            <inertia-link :href="$route(item.name)">
               <span class="yay-icon">
-                <span
-                  data-feather="menu"
-                  class="rui-icon rui-icon-stroke-1_5"
-                  :class="item.meta.iconClass"
-                ></span>
+                <span data-feather="home" class="rui-icon rui-icon-stroke-1_5"></span>
               </span>
-              {{item.meta.menuName}}
+              <span>{{item.menu_name}}</span>
               <span class="rui-yaybar-circle"></span>
-            </router-link>
-            <a href="#" v-else-if="!item.meta.skip" class="yay-sub-toggle">
-              <span class="yay-icon">
-                <span
-                  data-feather="layers"
-                  class="rui-icon rui-icon-stroke-1_5"
-                  :class="item.meta.iconClass"
-                ></span>
-              </span>
-              <span>{{item.meta.menuName}}</span>
-              <span class="yay-icon-collapse">
-                <span
-                  data-feather="chevron-right"
-                  class="rui-icon rui-icon-collapse rui-icon-stroke-1_5"
-                ></span>
-              </span>
-            </a>
-            <ul class="yay-submenu dropdown-triangle" v-if="item.children">
-              <li
-                v-for="childItem in item.children"
-                :key="childItem.name"
-                v-show="!childItem.meta.skip"
-              >
-                <router-link :to="childItem.path">{{childItem.meta.menuName}}</router-link>
-              </li>
-            </ul>
+            </inertia-link>
           </li>
         </ul>
       </div>
@@ -121,7 +91,7 @@
   export default {
     computed: {
       routes() {
-        return this.$router.options.routes;
+        return _.filter(this.$page.routes, x => !x.nav_skip);
       }
     }
   };

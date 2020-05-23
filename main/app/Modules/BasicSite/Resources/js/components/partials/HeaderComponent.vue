@@ -51,8 +51,6 @@
         return "breadcrumb";
       },
       routes() {
-        console.log(this.$page.routes);
-
         return _.filter(this.$page.routes, x => !x.nav_skip);
       }
     }
