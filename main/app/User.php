@@ -2,14 +2,15 @@
 
 namespace App;
 
+use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Modules\Admin\Models\Admin;
 use App\Modules\AppUser\Models\WithdrawalRequest;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * App\User
@@ -81,15 +82,6 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
   use Notifiable, SoftDeletes;
 
   /**
-   * The attributes that are mass assignable.
-   *
-   * @var array
-   */
-  protected $fillable = [
-    'name', 'email', 'password',
-  ];
-
-  /**
    * The attributes that should be hidden for arrays.
    *
    * @var array
@@ -107,17 +99,20 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     'email_verified_at' => 'datetime',
   ];
 
-  public function activities()
+  public function activities(): MorphMany
   {
     return $this->morphMany(ActivityLog::class, 'user')->latest();
   }
 
-  public function processed_withdrawal_requests()
+  public function processed_withdrawal_requests(): MorphMany
   {
     return $this->morphMany(WithdrawalRequest::class, 'processor', 'processor_type', 'processed_by')->latest();
   }
 
-
+  public function get_navigation_routes(): object
+  {
+    return $this->isAdmin() ? get_related_routes('admin.', ['GET']) : get_related_routes('app.', ['GET']);
+  }
 
   /**
    * Returns the dashboard route of the authenticated user
@@ -148,7 +143,7 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     return $this instanceof Admin;
   }
 
-  public function setPasswordAttribute($value)
+  public function setPasswordAttribute($value): void
   {
     $this->attributes['password'] = bcrypt($value);
   }

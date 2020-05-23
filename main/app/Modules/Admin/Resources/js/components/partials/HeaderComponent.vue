@@ -3,9 +3,9 @@
     <div class="rui-navbar-brand">
       <a href="dashboard.html" class="rui-navbar-logo">
         <img
-          src="/img/logo.svg"
-          data-src-night="/img/logo-white.svg"
-          data-src-day="/img/logo.svg"
+          src="/img/logo.png"
+          data-src-night="/img/logo-white.png"
+          data-src-day="/img/logo.png"
           alt
           width="45"
         />
@@ -79,7 +79,7 @@
           </li>
         </ul>
         <ul class="nav rui-navbar-right">
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a
               class="d-flex"
               data-fancybox
@@ -93,58 +93,8 @@
                 <span data-feather="search" class="rui-icon rui-icon-stroke-1_5"></span>
               </span>
             </a>
-          </li>
-          <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
-            <a
-              class="dropdown-item"
-              href="#"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              data-offset="0,12"
-            >
-              <span class="btn btn-custom-round">
-                <span data-feather="flag" class="rui-icon rui-icon-stroke-1_5"></span>
-              </span>
-            </a>
-            <ul class="nav dropdown-menu rui-navbar-dropdown-language">
-              <li>
-                <a href="#" class="rui-navbar-language active">
-                  <span class="rui-navbar-language-img">
-                    <img src="/img/united-states-of-america.svg" alt />
-                  </span>USA
-                </a>
-              </li>
-              <li>
-                <a href="#" class="rui-navbar-language">
-                  <span class="rui-navbar-language-img">
-                    <img src="/img/china.svg" alt />
-                  </span>China
-                </a>
-              </li>
-              <li>
-                <a href="#" class="rui-navbar-language">
-                  <span class="rui-navbar-language-img">
-                    <img src="/img/germany.svg" alt />
-                  </span>Germany
-                </a>
-              </li>
-              <li>
-                <a href="#" class="rui-navbar-language">
-                  <span class="rui-navbar-language-img">
-                    <img src="/img/japan.svg" alt />
-                  </span>Japan
-                </a>
-              </li>
-              <li>
-                <a href="#" class="rui-navbar-language">
-                  <span class="rui-navbar-language-img">
-                    <img src="/img/spain.svg" alt />
-                  </span>Spain
-                </a>
-              </li>
-            </ul>
-          </li>
+          </li>-->
+
           <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
             <a
               class="dropdown-item"
@@ -172,7 +122,7 @@
                 <div class="media media-success media-filled mnl-30 mnr-30">
                   <a href="profile.html" class="media-link">
                     <span class="media-img">
-                      <img src="/img/avatar-5.png" alt />
+                      <img :src="$page.auth.user.user_passport" alt />
                     </span>
                     <span class="media-body">
                       <span class="media-title">Amber Smith</span>
@@ -198,25 +148,9 @@
                   </a>
                 </div>
               </li>
-              <li>
-                <div class="media media-filled mnl-30 mnr-30">
-                  <a href="profile.html" class="media-link">
-                    <span class="media-img bg-transparent">
-                      <img src="/img/icon-zip.svg" class="icon-file" alt />
-                    </span>
-                    <span class="media-body">
-                      <span class="media-title">Added banner archive</span>
-                      <small class="media-subtitle">Commerce</small>
-                    </span>
-                  </a>
-                  <a href="#" class="media-icon">
-                    <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
-                  </a>
-                </div>
-              </li>
             </ul>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a
               class="d-flex"
               data-fancybox
@@ -231,7 +165,7 @@
                 <span data-feather="message-circle" class="rui-icon rui-icon-stroke-1_5"></span>
               </span>
             </a>
-          </li>
+          </li>-->
           <li class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open">
             <a
               class="dropdown-item rui-navbar-avatar mnr-6"
@@ -240,16 +174,9 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img src="/img/avatar-1.png" alt />
+              <img :src="$page.auth.user.user_passport" alt="user passport" />
             </a>
             <ul class="nav dropdown-menu">
-              <li>
-                <a href="profile.html" class="nav-link">
-                  <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
-                  <span>Create new Post</span>
-                  <span class="rui-nav-circle"></span>
-                </a>
-              </li>
               <li>
                 <a href="profile.html" class="nav-link">
                   <span data-feather="users" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -258,18 +185,11 @@
                 </a>
               </li>
               <li>
-                <a href="profile.html" class="nav-link">
-                  <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
-                  <span>Check Updates</span>
-                  <span class="rui-nav-circle"></span>
-                </a>
-              </li>
-              <li>
-                <a href="profile.html" class="nav-link">
+                <inertia-link method="post" :href="$route('admin.logout')" class="nav-link">
                   <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
-                  <span>Exit</span>
+                  <span>Logout</span>
                   <span class="rui-nav-circle"></span>
-                </a>
+                </inertia-link>
               </li>
             </ul>
           </li>
@@ -343,20 +263,6 @@
                   <label class="dropdown-item custom-control-label" for="toggleDarkSidebar">
                     <span data-feather="sidebar" class="rui-icon rui-icon-stroke-1_5"></span>
                     <span>Dark</span>
-                    <span class="rui-dropdown-circle"></span>
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="custom-control custom-switch dropdown-item-switch">
-                  <input
-                    type="checkbox"
-                    class="custom-control-input rui-staticSidebar-toggle"
-                    id="toggleStaticSidebar"
-                  />
-                  <label class="dropdown-item custom-control-label" for="toggleStaticSidebar">
-                    <span data-feather="sidebar" class="rui-icon rui-icon-stroke-1_5"></span>
-                    <span>Static</span>
                     <span class="rui-dropdown-circle"></span>
                   </label>
                 </div>

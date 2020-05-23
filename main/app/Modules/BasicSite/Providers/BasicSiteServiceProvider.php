@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Http\Request;
 
 class BasicSiteServiceProvider extends ServiceProvider
 {
@@ -51,8 +52,8 @@ class BasicSiteServiceProvider extends ServiceProvider
         'phone' => config('app.phone'),
         'email' => config('app.email'),
       ],
-      'routes' => function () {
-        return get_related_routes('app.', ['GET']);
+      'routes' => function (Request $request) {
+        return $request->user()->get_navigation_routes();
       },
       'isInertiaRequest' => request()->header('X-Inertia'),
       'auth' => function () {
