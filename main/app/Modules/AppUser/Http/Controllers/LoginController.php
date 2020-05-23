@@ -128,24 +128,50 @@ class LoginController extends Controller
    * @param  mixed  $user
    * @return mixed
    */
-  protected function authenticated(Request $request, $user)
+  protected function authenticated(Request $request, AppUser $user)
   {
-    if (AppUser::canAccess()) {
+    if ($user->isAppUser()) {
       if (Auth::appuser()->is_email_verified()) {
         config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
-        return response()->json($this->respondWithToken($this->apiToken), 202);
+        if ($request->isApi()) {
+          return response()->json($this->respondWithToken($this->apiToken), 202);
+        }
+        return redirect()->route($user->dashboardRoute());
       } else {
         Auth::logout();
         session()->invalidate();
-        return response()->json(['message' => 'Unverified user'], 416);
+        if ($request->isApi()) {
+          return response()->json(['message' => 'Unverified user'], 416);
+        }
+        return back()->withError('Unverified');
       }
     } else {
       Auth::logout();
       session()->invalidate();
-      return response()->json(['message' => 'Access Denied'], 401);
+      if ($request->isApi()) {
+        return response()->json(['message' => 'Access Denied'], 401);
+      }
+      abort(401, 'Access Denied');
     }
-    return redirect()->route(Admin::dashboardRoute());
+    return redirect()->route('app.login');
   }
+
+  public function logout(Request $request)
+  {
+    $this->guard()->logout();
+    $request->session()->invalidate();
+
+    try {
+      $this->apiGuard()->logout();
+    } catch (\Throwable $th) { }
+
+    if ($request->isApi()) {
+      return response()->json(['logged_out' => true], 200);
+    }
+    return redirect()->route('app.login');
+  }
+
+
 
   /**
    * Get the login username to be used by the controller.
@@ -186,26 +212,5 @@ class LoginController extends Controller
   protected function apiGuard()
   {
     return Auth::guard('api_user');
-  }
-
-  /**
-   * Log the user out of the application.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function logout(Request $request)
-  {
-    $this->guard()->logout();
-    $request->session()->invalidate();
-
-    try {
-      $this->apiGuard()->logout();
-    } catch (\Throwable $th) { }
-
-    // if ($request->ajax() || $request->expectsJson()) {
-    //   return response()->json(['logged_out' => true], 200);
-    // }
-    return redirect()->route('app.home');
   }
 }

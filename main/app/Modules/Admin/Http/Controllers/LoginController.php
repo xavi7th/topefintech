@@ -115,10 +115,6 @@ class LoginController extends Controller
       $this->apiGuard()->logout();
     } catch (\Throwable $th) { }
 
-    if ($request->ajax() || $request->expectsJson()) {
-      return response()->json(['logged_out' => true], 200);
-    }
-
     return redirect()->route('admin.login');
   }
 

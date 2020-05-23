@@ -1,19 +1,4 @@
-// @import '../vendor/bootstrap-custom';
-// @import '../vendor/overlayscrollbars/css/OverlayScrollbars';
-// @import '../vendor/yaybar';
-// @import '../vendor/fancybox/dist/jquery.fancybox';
-// @import '../vendor/emojionearea/dist/emojionearea';
-// @import '../vendor/swiper/css/swiper.min';
-// @import '../vendor/chartist/dist/chartist';
-// @import '../vendor/jqvmap/dist/jqvmap';
-// @import '../vendor/rootui';
-
-
-// #night-mode {
-//     @import '../vendor/rootui-night';
-// }
-
-// rootui-night.css" media="(night)"
+@import '@/vendor/nprogress';
 
 @for $i from 1 through 5 {
     $enter-delay: 400ms;
