@@ -53,7 +53,7 @@ class BasicSiteServiceProvider extends ServiceProvider
         'email' => config('app.email'),
       ],
       'routes' => function (Request $request) {
-        return $request->user()->get_navigation_routes();
+        return optional($request->user())->get_navigation_routes() ?? [];
       },
       'isInertiaRequest' => request()->header('X-Inertia'),
       'auth' => function () {

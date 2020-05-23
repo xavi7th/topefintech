@@ -10,121 +10,126 @@ use Illuminate\Database\Eloquent\Factory;
 use App\Modules\Admin\Http\Middleware\OnlyAdmins;
 use App\Modules\Admin\Http\Middleware\VerifiedAdmins;
 use Tymon\JWTAuth\JWTGuard;
+use Illuminate\Http\Request;
 
 class AdminServiceProvider extends ServiceProvider
 {
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+  /**
+   * Indicates if loading of the provider is deferred.
+   *
+   * @var bool
+   */
+  protected $defer = false;
 
-	/**
-	 * Boot the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		$this->registerTranslations();
-		$this->registerConfig();
-		$this->registerViews();
-		$this->registerFactories();
-		$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+  /**
+   * Boot the application events.
+   *
+   * @return void
+   */
+  public function boot()
+  {
+    $this->registerTranslations();
+    $this->registerConfig();
+    $this->registerViews();
+    $this->registerFactories();
+    $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
-		/**** Register the modules middlewares *****/
-		app()->make('router')->aliasMiddleware('admins', OnlyAdmins::class);
-		app()->make('router')->aliasMiddleware('admin_verified', VerifiedAdmins::class);
-	}
+    /**** Register the modules middlewares *****/
+    app()->make('router')->aliasMiddleware('admins', OnlyAdmins::class);
+    app()->make('router')->aliasMiddleware('admin_verified', VerifiedAdmins::class);
+  }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		SessionGuard::macro('admin', function () {
-			return Admin::find(Auth::guard('admin')->id());
-		});
+  /**
+   * Register the service provider.
+   *
+   * @return void
+   */
+  public function register()
+  {
+    SessionGuard::macro('admin', function () {
+      return Admin::find(Auth::guard('admin')->id());
+    });
 
-		JWTGuard::macro('apiAdmin', function () {
-			return Admin::find(Auth::guard('admin_api')->id());
-		});
-	}
+    JWTGuard::macro('apiAdmin', function () {
+      return Admin::find(Auth::guard('admin_api')->id());
+    });
 
-	/**
-	 * Register config.
-	 *
-	 * @return void
-	 */
-	protected function registerConfig()
-	{
-		$this->publishes([
-			__DIR__ . '/../Config/config.php' => config_path('admin.php'),
-		], 'config');
-		$this->mergeConfigFrom(
-			__DIR__ . '/../Config/config.php',
-			'admin'
-		);
-	}
+    Request::macro('isApi', function () {
+      return ($this->ajax() || $this->expectsJson()) && !$this->header('X-Inertia');
+    });
+  }
 
-	/**
-	 * Register views.
-	 *
-	 * @return void
-	 */
-	public function registerViews()
-	{
-		$viewPath = resource_path('views/modules/admin');
+  /**
+   * Register config.
+   *
+   * @return void
+   */
+  protected function registerConfig()
+  {
+    $this->publishes([
+      __DIR__ . '/../Config/config.php' => config_path('admin.php'),
+    ], 'config');
+    $this->mergeConfigFrom(
+      __DIR__ . '/../Config/config.php',
+      'admin'
+    );
+  }
 
-		$sourcePath = __DIR__ . '/../Resources/views';
+  /**
+   * Register views.
+   *
+   * @return void
+   */
+  public function registerViews()
+  {
+    $viewPath = resource_path('views/modules/admin');
 
-		$this->publishes([
-			$sourcePath => $viewPath
-		], 'views');
+    $sourcePath = __DIR__ . '/../Resources/views';
 
-		$this->loadViewsFrom(array_merge(array_map(function ($path) {
-			return $path . '/modules/admin';
-		}, \Config::get('view.paths')), [$sourcePath]), 'admin');
-	}
+    $this->publishes([
+      $sourcePath => $viewPath
+    ], 'views');
 
-	/**
-	 * Register translations.
-	 *
-	 * @return void
-	 */
-	public function registerTranslations()
-	{
-		$langPath = resource_path('lang/modules/admin');
+    $this->loadViewsFrom(array_merge(array_map(function ($path) {
+      return $path . '/modules/admin';
+    }, \Config::get('view.paths')), [$sourcePath]), 'admin');
+  }
 
-		if (is_dir($langPath)) {
-			$this->loadTranslationsFrom($langPath, 'admin');
-		} else {
-			$this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'admin');
-		}
-	}
+  /**
+   * Register translations.
+   *
+   * @return void
+   */
+  public function registerTranslations()
+  {
+    $langPath = resource_path('lang/modules/admin');
 
-	/**
-	 * Register an additional directory of factories.
-	 *
-	 * @return void
-	 */
-	public function registerFactories()
-	{
-		if (!app()->environment('production')) {
-			app(Factory::class)->load(__DIR__ . '/../Database/factories');
-		}
-	}
+    if (is_dir($langPath)) {
+      $this->loadTranslationsFrom($langPath, 'admin');
+    } else {
+      $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'admin');
+    }
+  }
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return [];
-	}
+  /**
+   * Register an additional directory of factories.
+   *
+   * @return void
+   */
+  public function registerFactories()
+  {
+    if (!app()->environment('production')) {
+      app(Factory::class)->load(__DIR__ . '/../Database/factories');
+    }
+  }
+
+  /**
+   * Get the services provided by the provider.
+   *
+   * @return array
+   */
+  public function provides()
+  {
+    return [];
+  }
 }

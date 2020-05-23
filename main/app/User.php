@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Modules\AppUser\Models\AppUser;
 
 /**
  * App\User
@@ -131,16 +132,14 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     }
   }
 
-
-  /**
-   * Check if the currently authenticated user is an admin
-   *
-   * @return bool
-   */
-
   public function isAdmin(): bool
   {
     return $this instanceof Admin;
+  }
+
+  public function isAppUser(): bool
+  {
+    return $this instanceof AppUser;
   }
 
   public function setPasswordAttribute($value): void
