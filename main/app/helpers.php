@@ -420,7 +420,8 @@ if (!function_exists('get_related_routes')) {
       return (object)[
         'uri' => $route->uri(),
         'name' => $route->getName(),
-        'nav_skip' => $route->defaults['nav_skip'] ?? false,
+        'nav_skip' => $route->defaults['extras']['nav_skip'] ?? false,
+        'icon' => $route->defaults['extras']['icon'] ?? null,
         'method' => \Str::of(implode('|', $route->methods())),
         'menu_name' => \Str::of($route->getName())->replaceMatches('/[^A-Za-z0-9]++/', ' ')->trim($namespace)->title()->trim()->__toString()
       ];
