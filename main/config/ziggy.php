@@ -4,7 +4,12 @@ return [
   'groups' => [
     'admin' => [
       'admin.*',
-      'posts.*',
+      'appuser.*',
+      'app.*',
+    ],
+    'appuser' => [
+      'appuser.*',
+      'app.*',
     ],
     'basic' => [
       'app.*',

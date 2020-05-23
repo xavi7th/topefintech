@@ -1,46 +1,44 @@
 <template>
-  <div class="rui-sign align-items-center justify-content-center">
-    <div class="bg-image">
-      <div class="bg-grey-1"></div>
-    </div>
-    <div class="form rui-sign-form rui-sign-form-cloud">
+  <layout :isAuth="true" title="Login">
+    <form @submit.prevent="loginUser" :class="{'was-validated': formSubmitted}" novalidate>
       <div class="row vertical-gap sm-gap justify-content-center">
+        <div class="header-logo logo-type no-margin col-12 display-3 text-center">
+          <a :href="$route('app.home')">SmartCoop</a>
+        </div>
         <div class="col-12">
-          <h1 class="display-4 mb-10 text-center">Sign In</h1>
+          <h2 class="display-4 mb-10 text-center">Sign In</h2>
         </div>
         <div class="col-12">
           <input
             type="email"
             class="form-control"
-            id="email"
-            :class="{'has-error': errors.has('email')}"
-            placeholder="Email"
+            :class="{'is-invalid': errors.email, 'is-valid': !errors.email}"
+            id="form-mail"
             v-model="details.email"
-            v-validate="'required|email'"
             name="email"
+            placeholder="Email"
           />
-          <div class="invalid-feedback">{{ errors.first('email') }}.</div>
+          <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
         </div>
         <div class="col-12">
           <input
             type="password"
             class="form-control"
-            id="password"
-            :class="{'has-error': errors.has('password')}"
-            placeholder="Password"
+            :class="{'is-invalid': errors.password, 'is-valid': !errors.password}"
+            id="form-pass"
             v-model="details.password"
-            v-validate="'required'"
             name="password"
+            placeholder="Password"
           />
-          <div class="invalid-feedback">{{ errors.first('password') }}.</div>
+          <div class="invalid-feedback" v-if="errors.password">{{errors.password[0]}}</div>
         </div>
         <div class="col-sm-6">
           <div class="custom-control custom-checkbox d-flex justify-content-start">
             <input
               type="checkbox"
               class="custom-control-input"
-              id="rememberMe"
               v-model="details.remember"
+              id="rememberMe"
             />
             <label class="custom-control-label fs-13" for="rememberMe">Remember me</label>
           </div>
@@ -51,169 +49,106 @@
           </div>
         </div>
         <div class="col-12">
-          <button @click="loginUser" class="btn btn-brand btn-block text-center">
-            Sign
-            in
-          </button>
-        </div>
-        <div class="col-12">
-          <div class="rui-sign-or mt-2 mb-5">or</div>
-        </div>
-        <div class="col-12">
-          <ul class="rui-social-links">
-            <li>
-              <a href="dashboard.html" class="rui-social-github">
-                <span class="fab fa-github"></span> Github
-              </a>
-            </li>
-            <li>
-              <a href="dashboard.html" class="rui-social-facebook">
-                <span class="fab fa-facebook-f"></span> Facebook
-              </a>
-            </li>
-            <li>
-              <a href="dashboard.html" class="rui-social-google">
-                <span class="fab fa-google"></span> Google
-              </a>
-            </li>
-          </ul>
+          <button type="submit" class="btn btn-brand btn-block text-center">Sign in</button>
         </div>
       </div>
-    </div>
-    <div class="mt-20 text-grey-5">
-      Don't you have an account?
-      <router-link to="/register" class="text-2">
-        Sign
-        Up
-      </router-link>
-    </div>
-  </div>
+    </form>
+  </layout>
 </template>
 
 <script>
+  import Layout from "@dashboard-assets/js/AppComponent";
+  import { mixins } from "@dashboard-assets/js/config";
   export default {
-    mounted() {
-      this.$emit("page-loaded");
-      sessionStorage.removeItem("token");
-    },
+    mixins: [mixins],
+    props: ["errors", "flash"],
+    components: { Layout },
     data: () => ({
-      details: {}
+      details: {},
+      formSubmitted: false
     }),
     methods: {
       loginUser() {
-        this.$validator.validateAll().then(result => {
-          if (!result) {
-            Toast.fire({
-              title: "Invalid data! Try again",
-              position: "top",
-              icon: "error"
-            });
-          } else {
-            BlockToast.fire({
-              text: "Accessing your dashboard..."
-            });
-
-            axios
-              .post("/api/v1/auth/login", { ...this.details })
-              .then(({ status, data: { access_token } }) => {
-                if (undefined !== status && status == 202) {
-                  // swal.close();
-                  sessionStorage.setItem("token", access_token);
-                  location.reload();
-                } else if (undefined !== status && status == 205) {
-                  swal
-                    .fire({
-                      title: "Suspended Account",
-                      text: rsp.data.msg,
-                      icon: "warning"
-                    })
-                    .then(() => {
-                      location.reload();
-                    });
-                }
-              })
-              .catch(err => {
-                if (undefined !== err.response && err.response.status == 416) {
-                  swal
-                    .fire({
-                      title: "Unverified",
-                      text: `This seems to be your first login. You need to supply a password`,
-                      icon: "info"
-                    })
-                    .then(() => {
-                      swal
-                        .fire({
-                          title: "Enter a password",
-                          input: "text",
-                          inputAttributes: {
-                            autocapitalize: "off"
-                          },
-                          showCancelButton: true,
-                          confirmButtonText: "Set Password",
-                          showLoaderOnConfirm: true,
-                          preConfirm: pw => {
-                            return axios
-                              .post("first-time", {
-                                pw,
-                                email: this.details.email
-                              })
-                              .then(response => {
-                                if (response.status !== 204) {
-                                  throw new Error(response.statusText);
-                                }
-                                return { rsp: true };
-                              })
-                              .catch(error => {
-                                swal.showValidationMessage(
-                                  `Request failed: ${error}`
-                                );
-                              });
-                          },
-                          allowOutsideClick: () => !swal.isLoading()
-                        })
-                        .then(result => {
-                          if (result.value) {
-                            swal
-                              .fire({
-                                title: `Success`,
-                                text: "Password set successfully!",
-                                icon: "success"
-                              })
-                              .then(() => {
-                                location.reload();
-                              });
-                          }
-                        });
-                    });
-                }
-              });
-          }
+        BlockToast.fire({
+          text: "Accessing your dashboard..."
         });
+
+        this.$inertia
+          .post(this.$route("admin.login"), { ...this.details })
+          .then(rsp => {
+            if (_.size(this.errors)) {
+              this.formSubmitted = true;
+            } else if (this.flash.error.suspended) {
+              swal.fire({
+                title: "Suspended Account",
+                text: rsp.data.msg,
+                icon: "warning"
+              });
+            } else if (this.flash.error.unverified) {
+              swal
+                .fire({
+                  title: "One more thing!",
+                  text: `This seems to be your first login. You need to supply a password`,
+                  icon: "info"
+                })
+                .then(() => {
+                  swal
+                    .fire({
+                      title: "Enter a password",
+                      input: "text",
+                      inputAttributes: {
+                        autocapitalize: "off"
+                      },
+                      showCancelButton: true,
+                      confirmButtonText: "Set Password",
+                      showLoaderOnConfirm: true,
+                      preConfirm: pw => {
+                        return this.$inertia
+                          .post(this.$route("admin.password.new"), {
+                            pw,
+                            email: this.details.email
+                          })
+                          .then(() => {
+                            swal.close();
+                            return { rsp: true };
+                          });
+                      },
+                      allowOutsideClick: () => !swal.isLoading()
+                    })
+                    .then(result => {
+                      console.log(result);
+
+                      if (result.value) {
+                        swal.fire({
+                          title: `Success`,
+                          text: "Password set successfully!",
+                          icon: "success"
+                        });
+                      } else if (result.dismiss) {
+                        swal.fire({
+                          title: "Cancelled",
+                          text: "You can´t login without setting a password",
+                          icon: "info"
+                        });
+                      }
+                    });
+                });
+            }
+            swal.close();
+          });
       }
     }
   };
 </script>
 
 <style lang="scss" scoped>
-  .has-error {
-    background-color: #fef9fa;
-    border-color: #fac6cc;
-    padding-right: calc(1.5em + 0.75rem);
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23ef5164'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3E%3Ccircle cx='6' cy='8.2' r='.6' fill='%23ef5164' stroke='none'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-
-    & + .invalid-feedback {
-      display: block;
-      position: absolute;
-      bottom: 9px;
-      right: 15%;
-      width: auto;
-    }
-
-    &:focus + .invalid-feedback {
-      display: none;
+  .rui-sign .rui-sign-form-cloud {
+    max-width: 450px;
+  }
+  .was-validated {
+    .form-control.is-invalid {
+      background-color: #fef9fa !important;
+      border-color: #fac6cc !important;
     }
   }
 </style>

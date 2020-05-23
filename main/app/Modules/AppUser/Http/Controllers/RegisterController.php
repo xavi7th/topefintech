@@ -66,7 +66,7 @@ class RegisterController extends Controller
   static function routes()
   {
     Route::group(['middleware' => 'guest'], function () {
-      Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('app.register');
+      Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('app.register')->defaults('nav_skip', true);
       Route::post('register', 'RegisterController@register')->name('appuser.register');
     });
   }

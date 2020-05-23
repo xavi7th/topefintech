@@ -1,5 +1,5 @@
 const mix = require( 'laravel-mix' );
-mix.setPublicPath( './public_html' )
+
 let fs = require( 'fs-extra' )
 let modules = fs.readdirSync( './main/app/Modules' ) // Make sure the path of your modules are correct
 
@@ -12,6 +12,8 @@ if ( modules && modules.length > 0 ) {
   } )
 }
 
+mix.setPublicPath( './public_html' )
+
 // mix.webpackConfig( {
 //   entry: {
 //     main: [
@@ -19,7 +21,7 @@ if ( modules && modules.length > 0 ) {
 //       './main/app/Modules/AppUser/Resources/sass/app.scss',
 //       './main/app/Modules/Admin/Resources/sass/app.scss'
 //     ]
-//   }
+//   },
 // } );
 
 mix

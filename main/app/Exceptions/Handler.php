@@ -52,12 +52,14 @@ class Handler extends ExceptionHandler
     if (
       (App::environment('production'))
       && $request->header('X-Inertia')
-      && in_array($response->status(), [500, 503, 404, 403])
+      && in_array($response->status(), [500, 503, 404, 403, 429])
     ) {
       Inertia::setRootView('publicpages::app');
       return Inertia::render('DisplayError', ['status' => $response->status()])
         ->toResponse($request)
         ->setStatusCode($response->status());
+    } elseif (in_array($response->status(), [429])) {
+      return back()->withError('Too many requests');
     }
     return $response;
   }
