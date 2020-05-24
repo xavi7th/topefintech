@@ -11,6 +11,7 @@
         "php": "^7.2.5",
         "adelowo/gbowo": "^1.7",
         "adelowo/gbowo-paystack": "^1.1",
+        "danielme85/laravel-log-to-db": "^2.3",
         "fideloper/proxy": "^4.0",
         "fruitcake/laravel-cors": "^2.0",
         "inertiajs/inertia-laravel": "^0.2.5",
@@ -63,13 +64,35 @@
     "prefer-stable": true,
     "scripts": {
         "compile": [
-            "npm run prod",
-            "@php artisan migrate:fresh",
-            "@php artisan module:seed"
+            "@php artisan config:clear",
+            "@php artisan debugbar:clear",
+            "@php artisan route:clear",
+            "@php artisan cache:clear",
+            "@php artisan view:clear",
+            "@php artisan event:clear",
+            "@php artisan log:delete",
+            "@php artisan key:generate",
+            "@php artisan storage:link",
+            "@php artisan db:wipe",
+            "@php artisan migrate:fresh --force",
+            "@php artisan module:seed",
+            "@php artisan auth:clear-resets",
+            "@php artisan route:cache",
+            "@php artisan config:cache",
+            "@php artisan optimize",
+            "composer dumpautoload",
+            "npm run prod-all"
         ],
         "reseed": [
+            "@php artisan config:clear",
+            "@php artisan debugbar:clear",
+            "@php artisan route:clear",
+            "@php artisan cache:clear",
+            "@php artisan view:clear",
+            "@php artisan event:clear",
             "@php artisan migrate:fresh",
             "@php artisan module:seed"
+
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

@@ -2,7 +2,7 @@
 
 return [
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application Name
     |--------------------------------------------------------------------------
@@ -13,9 +13,13 @@ return [
     |
     */
 
-	'name' => env('APP_NAME', 'Laravel'),
+  'name' => env('APP_NAME', null),
+  'phone' => env('APP_PHONE', null),
+  'email' => env('APP_EMAIL', null),
+  'address' => env('APP_ADDRESS', null),
+  'whatsapp' => env('APP_WHATSAPP', null),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Core Savings Interest Rate
     |--------------------------------------------------------------------------
@@ -24,9 +28,9 @@ return [
     |
     */
 
-	'balance_before_bvn_validation' => env('BALANCE_BEFORE_BVN_VALIDATION', 5000),
+  'balance_before_bvn_validation' => env('BALANCE_BEFORE_BVN_VALIDATION', 5000),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Core Savings Interest Rate
     |--------------------------------------------------------------------------
@@ -35,9 +39,9 @@ return [
     |
     */
 
-	'core_savings_interest_rate' => env('CORE_SAVINGS_INTEREST_RATE', 0.5),
+  'core_savings_interest_rate' => env('CORE_SAVINGS_INTEREST_RATE', 0.5),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | GOS Interest Rate
     |--------------------------------------------------------------------------
@@ -46,9 +50,9 @@ return [
     |
     */
 
-	'gos_savings_interest_rate' => env('GOS_SAVINGS_INTEREST_RATE', 0.5),
+  'gos_savings_interest_rate' => env('GOS_SAVINGS_INTEREST_RATE', 0.5),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | LOCKED Savings Interest Rate
     |--------------------------------------------------------------------------
@@ -57,9 +61,9 @@ return [
     |
     */
 
-	'locked_savings_interest_rate' => env('LOCKED_SAVINGS_INTEREST_RATE', 0.5),
+  'locked_savings_interest_rate' => env('LOCKED_SAVINGS_INTEREST_RATE', 0.5),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | LOCKED Savings Interest Rate
     |--------------------------------------------------------------------------
@@ -68,9 +72,9 @@ return [
     |
     */
 
-	'days_before_interest_starts_counting' => env('DAYS_BEFORE_INTEREST', 2),
+  'days_before_interest_starts_counting' => env('DAYS_BEFORE_INTEREST', 2),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Smart Loan Interest Rate
     |--------------------------------------------------------------------------
@@ -79,9 +83,9 @@ return [
     |
     */
 
-	'smart_loan_interest_rate' => env('SMART_LOAN_INTEREST_RATE', 10),
+  'smart_loan_interest_rate' => env('SMART_LOAN_INTEREST_RATE', 10),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Smart Loan Duration
     |--------------------------------------------------------------------------
@@ -91,9 +95,9 @@ return [
     |
     */
 
-	'smart_loan_duration' => env('SMART_LOAN_DURATION', 3),
+  'smart_loan_duration' => env('SMART_LOAN_DURATION', 3),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Smart Loan Grace Period
     |--------------------------------------------------------------------------
@@ -102,9 +106,9 @@ return [
     |
     */
 
-	'smart_loan_grace_period' => env('SMART_LOAN_GRACE_PERIOD', 30),
+  'smart_loan_grace_period' => env('SMART_LOAN_GRACE_PERIOD', 30),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Smart Loan Auto Debit Day
     |--------------------------------------------------------------------------
@@ -113,10 +117,10 @@ return [
     |
     */
 
-	'smart_loan_weekly_auto_debit_day' => env('SMART_LOAN_WEEKLY_AUTO_DEBIT_DAY', 'friday'),
-	'smart_loan_monthly_auto_debit_day' => env('SMART_LOAN_MONTHLY_AUTO_DEBIT_DAY', 23),
+  'smart_loan_weekly_auto_debit_day' => env('SMART_LOAN_WEEKLY_AUTO_DEBIT_DAY', 'friday'),
+  'smart_loan_monthly_auto_debit_day' => env('SMART_LOAN_MONTHLY_AUTO_DEBIT_DAY', 23),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Undue Withdrawal Charges
     |--------------------------------------------------------------------------
@@ -126,9 +130,9 @@ return [
     |
     */
 
-	'undue_withdrawal_charge_percentage' => env('UNDUE_WITHDRAWAL_CHARGE_PERCENTAGE', 5),
+  'undue_withdrawal_charge_percentage' => env('UNDUE_WITHDRAWAL_CHARGE_PERCENTAGE', 5),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Lock Break Percentage Charge
     |--------------------------------------------------------------------------
@@ -138,9 +142,9 @@ return [
     |
     */
 
-	'lock_break_percentage_charge' => env('LOCK_BREAK_PERCENTAGE_CHARGE', 20),
+  'lock_break_percentage_charge' => env('LOCK_BREAK_PERCENTAGE_CHARGE', 20),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
@@ -151,9 +155,9 @@ return [
     |
     */
 
-	'env' => env('APP_ENV', 'production'),
+  'env' => env('APP_ENV', 'production'),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
@@ -164,9 +168,9 @@ return [
     |
     */
 
-	'debug' => env('APP_DEBUG', false),
+  'debug' => env('APP_DEBUG', false),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
@@ -177,11 +181,11 @@ return [
     |
     */
 
-	'url' => env('APP_URL', 'http://localhost'),
+  'url' => env('APP_URL', 'http://localhost'),
 
-	'asset_url' => env('ASSET_URL', null),
+  'asset_url' => env('ASSET_URL', null),
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
@@ -192,9 +196,9 @@ return [
     |
     */
 
-	'timezone' => 'Africa/Lagos',
+  'timezone' => 'Africa/Lagos',
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
@@ -205,9 +209,9 @@ return [
     |
     */
 
-	'locale' => 'en',
+  'locale' => 'en',
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------
@@ -218,9 +222,9 @@ return [
     |
     */
 
-	'fallback_locale' => 'en',
+  'fallback_locale' => 'en',
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Faker Locale
     |--------------------------------------------------------------------------
@@ -231,9 +235,9 @@ return [
     |
     */
 
-	'faker_locale' => 'en_US',
+  'faker_locale' => 'en_US',
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
@@ -244,11 +248,11 @@ return [
     |
     */
 
-	'key' => env('APP_KEY'),
+  'key' => env('APP_KEY'),
 
-	'cipher' => 'AES-256-CBC',
+  'cipher' => 'AES-256-CBC',
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
@@ -259,50 +263,50 @@ return [
     |
     */
 
-	'providers' => [
+  'providers' => [
 
-		/*
+    /*
          * Laravel Framework Service Providers...
          */
-		Illuminate\Auth\AuthServiceProvider::class,
-		Illuminate\Broadcasting\BroadcastServiceProvider::class,
-		Illuminate\Bus\BusServiceProvider::class,
-		Illuminate\Cache\CacheServiceProvider::class,
-		Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-		Illuminate\Cookie\CookieServiceProvider::class,
-		Illuminate\Database\DatabaseServiceProvider::class,
-		Illuminate\Encryption\EncryptionServiceProvider::class,
-		Illuminate\Filesystem\FilesystemServiceProvider::class,
-		Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-		Illuminate\Hashing\HashServiceProvider::class,
-		Illuminate\Mail\MailServiceProvider::class,
-		Illuminate\Notifications\NotificationServiceProvider::class,
-		Illuminate\Pagination\PaginationServiceProvider::class,
-		Illuminate\Pipeline\PipelineServiceProvider::class,
-		Illuminate\Queue\QueueServiceProvider::class,
-		// Illuminate\Redis\RedisServiceProvider::class,
-		Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-		Illuminate\Session\SessionServiceProvider::class,
-		Illuminate\Translation\TranslationServiceProvider::class,
-		Illuminate\Validation\ValidationServiceProvider::class,
-		Illuminate\View\ViewServiceProvider::class,
+    Illuminate\Auth\AuthServiceProvider::class,
+    Illuminate\Broadcasting\BroadcastServiceProvider::class,
+    Illuminate\Bus\BusServiceProvider::class,
+    Illuminate\Cache\CacheServiceProvider::class,
+    Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+    Illuminate\Cookie\CookieServiceProvider::class,
+    Illuminate\Database\DatabaseServiceProvider::class,
+    Illuminate\Encryption\EncryptionServiceProvider::class,
+    Illuminate\Filesystem\FilesystemServiceProvider::class,
+    Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+    Illuminate\Hashing\HashServiceProvider::class,
+    Illuminate\Mail\MailServiceProvider::class,
+    Illuminate\Notifications\NotificationServiceProvider::class,
+    Illuminate\Pagination\PaginationServiceProvider::class,
+    Illuminate\Pipeline\PipelineServiceProvider::class,
+    Illuminate\Queue\QueueServiceProvider::class,
+    // Illuminate\Redis\RedisServiceProvider::class,
+    Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+    Illuminate\Session\SessionServiceProvider::class,
+    Illuminate\Translation\TranslationServiceProvider::class,
+    Illuminate\Validation\ValidationServiceProvider::class,
+    Illuminate\View\ViewServiceProvider::class,
 
-		/*
+    /*
          * Package Service Providers...
          */
 
-		/*
+    /*
          * Application Service Providers...
          */
-		App\Providers\AppServiceProvider::class,
-		App\Providers\AuthServiceProvider::class,
-		// App\Providers\BroadcastServiceProvider::class,
-		App\Providers\EventServiceProvider::class,
-		App\Providers\RouteServiceProvider::class,
+    App\Providers\AppServiceProvider::class,
+    App\Providers\AuthServiceProvider::class,
+    // App\Providers\BroadcastServiceProvider::class,
+    App\Providers\EventServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
 
-	],
+  ],
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Class Aliases
     |--------------------------------------------------------------------------
@@ -313,44 +317,44 @@ return [
     |
     */
 
-	'aliases' => [
+  'aliases' => [
 
-		'App' => Illuminate\Support\Facades\App::class,
-		'Arr' => Illuminate\Support\Arr::class,
-		'Artisan' => Illuminate\Support\Facades\Artisan::class,
-		'Auth' => Illuminate\Support\Facades\Auth::class,
-		'Blade' => Illuminate\Support\Facades\Blade::class,
-		'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
-		'Bus' => Illuminate\Support\Facades\Bus::class,
-		'Cache' => Illuminate\Support\Facades\Cache::class,
-		'Config' => Illuminate\Support\Facades\Config::class,
-		'Cookie' => Illuminate\Support\Facades\Cookie::class,
-		'Crypt' => Illuminate\Support\Facades\Crypt::class,
-		'DB' => Illuminate\Support\Facades\DB::class,
-		'Eloquent' => Illuminate\Database\Eloquent\Model::class,
-		'Event' => Illuminate\Support\Facades\Event::class,
-		'File' => Illuminate\Support\Facades\File::class,
-		'Gate' => Illuminate\Support\Facades\Gate::class,
-		'Hash' => Illuminate\Support\Facades\Hash::class,
-		'Lang' => Illuminate\Support\Facades\Lang::class,
-		'Log' => Illuminate\Support\Facades\Log::class,
-		'Mail' => Illuminate\Support\Facades\Mail::class,
-		'Notification' => Illuminate\Support\Facades\Notification::class,
-		'Password' => Illuminate\Support\Facades\Password::class,
-		'Queue' => Illuminate\Support\Facades\Queue::class,
-		'Redirect' => Illuminate\Support\Facades\Redirect::class,
-		'Redis' => Illuminate\Support\Facades\Redis::class,
-		'Request' => Illuminate\Support\Facades\Request::class,
-		'Response' => Illuminate\Support\Facades\Response::class,
-		'Route' => Illuminate\Support\Facades\Route::class,
-		'Schema' => Illuminate\Support\Facades\Schema::class,
-		'Session' => Illuminate\Support\Facades\Session::class,
-		'Storage' => Illuminate\Support\Facades\Storage::class,
-		'Str' => Illuminate\Support\Str::class,
-		'URL' => Illuminate\Support\Facades\URL::class,
-		'Validator' => Illuminate\Support\Facades\Validator::class,
-		'View' => Illuminate\Support\Facades\View::class,
+    'App' => Illuminate\Support\Facades\App::class,
+    'Arr' => Illuminate\Support\Arr::class,
+    'Artisan' => Illuminate\Support\Facades\Artisan::class,
+    'Auth' => Illuminate\Support\Facades\Auth::class,
+    'Blade' => Illuminate\Support\Facades\Blade::class,
+    'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
+    'Bus' => Illuminate\Support\Facades\Bus::class,
+    'Cache' => Illuminate\Support\Facades\Cache::class,
+    'Config' => Illuminate\Support\Facades\Config::class,
+    'Cookie' => Illuminate\Support\Facades\Cookie::class,
+    'Crypt' => Illuminate\Support\Facades\Crypt::class,
+    'DB' => Illuminate\Support\Facades\DB::class,
+    'Eloquent' => Illuminate\Database\Eloquent\Model::class,
+    'Event' => Illuminate\Support\Facades\Event::class,
+    'File' => Illuminate\Support\Facades\File::class,
+    'Gate' => Illuminate\Support\Facades\Gate::class,
+    'Hash' => Illuminate\Support\Facades\Hash::class,
+    'Lang' => Illuminate\Support\Facades\Lang::class,
+    'Log' => Illuminate\Support\Facades\Log::class,
+    'Mail' => Illuminate\Support\Facades\Mail::class,
+    'Notification' => Illuminate\Support\Facades\Notification::class,
+    'Password' => Illuminate\Support\Facades\Password::class,
+    'Queue' => Illuminate\Support\Facades\Queue::class,
+    'Redirect' => Illuminate\Support\Facades\Redirect::class,
+    'Redis' => Illuminate\Support\Facades\Redis::class,
+    'Request' => Illuminate\Support\Facades\Request::class,
+    'Response' => Illuminate\Support\Facades\Response::class,
+    'Route' => Illuminate\Support\Facades\Route::class,
+    'Schema' => Illuminate\Support\Facades\Schema::class,
+    'Session' => Illuminate\Support\Facades\Session::class,
+    'Storage' => Illuminate\Support\Facades\Storage::class,
+    'Str' => Illuminate\Support\Str::class,
+    'URL' => Illuminate\Support\Facades\URL::class,
+    'Validator' => Illuminate\Support\Facades\Validator::class,
+    'View' => Illuminate\Support\Facades\View::class,
 
-	],
+  ],
 
 ];
