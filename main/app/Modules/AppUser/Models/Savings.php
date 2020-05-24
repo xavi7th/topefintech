@@ -69,598 +69,597 @@ use App\Modules\AppUser\Http\Requests\UpdateSavingsDistributionValidation;
  */
 class Savings extends Model
 {
-	use SoftDeletes;
-
-	protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
-	protected $table = 'savings';
-	protected $dates = ['funded_at', 'maturity_date', 'interest_processed_at'];
-	protected $casts = [
-		'current_balance' => 'double',
-		'app_user_id' => 'int',
-		'gos_type_id' => 'int',
-		'savings_distribution' => 'double',
-	];
-
-	public function service_charges()
-	{
-		return $this->hasMany(ServiceCharge::class);
-	}
-
-	public function app_user()
-	{
-		return $this->belongsTo(AppUser::class);
-	}
-
-	public function belongs_to(AppUser $user): bool
-	{
-		return $this->app_user_id === $user->id;
-	}
-
-	public function is_core_savings(): bool
-	{
-		return $this->type == 'core';
-	}
-
-	public function is_smart_lock(): bool
-	{
-		return $this->type == 'locked';
-	}
-
-	public function is_gos_savings(): bool
-	{
-		return $this->type == 'gos';
-	}
-
-	public function gos_type()
-	{
-		return $this->belongsTo(GOSType::class)->withDefault(function ($user, $post) {
-			$user->name = $post->type;
-		});
-	}
-
-	public function transactions()
-	{
-		return $this->hasMany(Transaction::class);
-	}
-
-	public function withdrawal_transactions()
-	{
-		return $this->transactions()->where('trans_type', 'withdrawal');
-	}
-
-	public function deposit_transactions()
-	{
-		return $this->transactions()->where('trans_type', 'deposit');
-	}
-
-	public function initial_deposit_transaction()
-	{
-		return $this->hasOne(Transaction::class)->oldest();
-	}
-
-	public function interestable_deposit_transactions()
-	{
-		return $this->deposit_transactions()->whereDate('interest_processed_at', '<', now())
-			->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
-	}
-
-	public function total_deposits_sum(): float
-	{
-		return $this->deposit_transactions()->sum('amount');
-	}
-
-	public function total_withdrawals_sum(): float
-	{
-		return $this->withdrawal_transactions()->sum('amount');
-	}
-
-	public function savings_interests()
-	{
-		return $this->hasMany(SavingsInterest::class);
-	}
-
-	public function uncleared_savings_interests()
-	{
-		return $this->savings_interests()->where('is_cleared', false);
-	}
-
-	public function cleared_savings_interests()
-	{
-		return $this->savings_interests()->where('is_cleared', true);
-	}
-
-	public function total_accrued_interest_amount(): float
-	{
-		return $this->savings_interests()->sum('amount');
-	}
-
-	public function total_uncleared_interest_amount(): float
-	{
-		return $this->savings_interests()->uncleared()->sum('amount');
-	}
-
-	public function total_cleared_interest_amount(): float
-	{
-		return $this->savings_interests()->cleared()->sum('amount');
-	}
-
-	public function get_due_interest(): float
-	{
-		/**
-		 * Handle withdrawals. so you dont give interest on deposits that have been "withdrawn"
-		 * -- Only core savings have withdrawals
-		 */
-		if ($this->is_core_savings()) {
-			return ($this->interestable_deposit_transactions()->sum('amount') - $this->total_withdrawals_sum()) * (config('app.core_savings_interest_rate') / 100);
-		} else if ($this->is_gos_savings()) {
-			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
-		} else if ($this->is_smart_lock()) {
-			return $this->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
-		}
-	}
-
-	public function mark_interest_as_processed(): bool
-	{
-		/**
-		 * Mark all interestable transactions as processed
-		 */
-		return $this->interestable_deposit_transactions()->update(['interest_processed_at' => now()]);
-	}
-
-	public function rollover_uncleared_interests(string $decsription = null): ?float
-	{
-		try {
-			/**
-			 * Get sum of uncleared interests
-			 */
-			$uncleared_interests_sum = $this->total_uncleared_interest_amount();
-
-			if ($uncleared_interests_sum <= 0) {
-				return 0;
-			}
-
-			/**
-			 * Add a deposit transaction for this savings with a description for interest roll over
-			 */
-			$decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->gos_type->name . ' savings';
-
-			$this->create_deposit_transaction($uncleared_interests_sum, $decsription);
-
-			/**
-			 * Mark all the interests as cleared
-			 */
-			$this->uncleared_savings_interests()->update(['is_cleared' => true]);
-
-			/**
-			 * Add the amount to this saving's current_balance
-			 */
-			$this->current_balance += $uncleared_interests_sum;
-			$this->save();
-
-			/**
-			 * Return success
-			 */
-			return $uncleared_interests_sum;
-		} catch (\Throwable $th) {
-			ErrLog::notifyAdminAndFail($this->app_user, $th, 'Failed to rollover uncleared interests');
-			/**
-			 * Return null on failure
-			 */
-			return null;
-		}
-	}
-
-	public function is_mature(): ?bool
-	{
-		/**
-		 * ! Fail on core savings
-		 * ? Core savings has no maturity date
-		 */
-		if ($this->is_core_savings()) {
-			return null;
-		}
-
-		/**
-		 * Check if the maturity date is up to today
-		 */
-		return $this->maturity_date->lte(now());
-	}
-
-	public function complete_mature_savings(): bool
-	{
-		/**
-		 * Make sure this is not a core or immature locked or gos savings
-		 */
-		if (!$this->is_mature()) {
-			return false;
-		}
-
-		DB::beginTransaction();
-		/**
-		 * Handle uncleared profits.
-		 *
-		 * * The uncleared profits ae added to this savings' current_balance and then marked as cleared
-		 * ? If return is null, then an error occured
-		 *
-		 * @return ?float
-		 */
-		if (is_null($this->rollover_uncleared_interests())) {
-			return false;
-		}
-
-		/**
-		 * Create a deposit transaction moving the balance of this savings to the core
-		 */
-		$user_core_savings = $this->app_user->core_savings;
-
-		$user_core_savings->create_deposit_transaction($this->current_balance, 'Mature ' . $this->gos_type->name . ' funds rollover');
-
-		/**
-		 * Add same amount to the current balance of core savings
-		 */
-		$user_core_savings->current_balance += $this->current_balance;
-		$user_core_savings->save();
-
-		/**
-		 * Delete this savings (so that it leaves the record of the user)
-		 * // The user can always view the record in the transaction log
-		 * ! It is very important to delete them so that their deposit transactions
-		 * ! don´t continue to receive interests even after they have matured and rolled over
-		 */
-		$this->delete();
-
-		DB::commit();
-
-		return true;
-	}
-
-	public function create_deposit_transaction(float $amount, string $desc)
-	{
-		$this->transactions()->create([
-			'trans_type' => 'deposit',
-			'amount' => $amount,
-			'description' => $desc
-		]);
-	}
-
-	public function create_withdrawal_transaction(float $amount, string $desc)
-	{
-		$this->transactions()->create([
-			'trans_type' => 'withdrawal',
-			'amount' => $amount,
-			'description' => $desc
-		]);
-	}
-
-	public function create_service_charge(float $amount, string $desc): void
-	{
-		$this->service_charges()->create([
-			'amount' => $amount,
-			'description' => $desc
-		]);
-	}
-
-	public function create_interest_record(float $amount): void
-	{
-		$this->savings_interests()->create([
-			'amount' => $amount
-		]);
-	}
-
-	public function is_balance_consistent(): bool
-	{
-		return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
-	}
-
-	static function appUserApiRoutes()
-	{
-		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-
-			Route::get('/savings', 'Savings@getListOfUserSavings');
-
-			Route::post('/savings/fund', 'Savings@distributeFundsToSavings');
-
-			Route::get('/savings/get-distribution-details', 'Savings@getDistributionDetails');
-
-			Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings');
-
-			Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile');
-
-			Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
-
-			Route::get('/savings/{savings}/break', 'Savings@breakLockedFunds');
-
-			Route::get('/savings/{savings}/verify', 'Savings@verifySavingsAmount');
-
-			Route::get('/savings/{savings}/check-maturity', 'Savings@checkSavingsMaturity');
-
-			Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
-
-			Route::get('/savings/distribution', 'Savings@getSavingsDistributionRatio');
-
-			Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio');
-		});
-	}
-
-	public function getListOfUserSavings()
-	{
-		// dd(get_class(auth()->user()));
-		return auth()->user()->savings_list;
-	}
-
-	public function getDistributionDetails(FundSavingsValidation $request)
-	{
-		/**
-		 * If user has core but no gos or locked update the core
-		 * If user has gos or locked use distribution to spread it
-		 *
-		 * ! UPDATE CORE Update savings and create a transactions record
-		 * !
-		 */
-		if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
-			return ['core' => $request->amount];
-		} else {
-
-			$savings_distribution = [];
-			$savings_distribution_percentage = 0;
-			$savings_distribution_percentage += auth()->user()->core_savings->savings_distribution;
-			$savings_distribution['core'] = $request->amount * (auth()->user()->core_savings->savings_distribution / 100);
-			foreach (auth()->user()->gos_savings->all() as $savings) {
-				$savings_distribution_percentage += $savings->savings_distribution;
-				$savings_distribution[$savings->gos_type->name] = $request->amount * ($savings->savings_distribution / 100);
-			}
-			foreach (auth()->user()->locked_savings->all() as $savings) {
-				$savings_distribution_percentage += $savings->savings_distribution;
-				$savings_distribution['locked' . $savings->id] = $request->amount * ($savings->savings_distribution / 100);
-			}
-
-			if (intval($savings_distribution_percentage) !== 100) {
-				return generate_422_error('Your savings distribution is not 100%. Go to savings distribution and edit');
-			} else {
-				return $savings_distribution;
-			}
-		}
-
-		return response()->json(['rsp' => auth()->user()->savings_list], 201);
-	}
-
-	public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)
-	{
-		return response()->json(['rsp' =>  auth()->user()->auto_save_settings()->create($request->all())], 201);
-	}
-
-	public function distributeFundsToSavings(FundSavingsValidation $request)
-	{
-		/**
-		 * If user has core but no gos or locked update the core
-		 * If user has gos or locked use distribution to spread it
-		 *
-		 * ! UPDATE CORE Update savings and create a transactions record
-		 * !
-		 */
-		if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
-			auth()->user()->fund_core_savings($request->amount);
-		} else {
-			auth()->user()->distribute_savings($request->amount);
-		}
-
-		return response()->json(['rsp' => auth()->user()->savings_list], 201);
-	}
-
-	public function lockMoreFunds(Request $request)
-	{
-		if (!$request->savings_id) {
-			return generate_422_error('Invalid savings selected');
-		}
-		if (!$request->amount) {
-			return generate_422_error('You need to specify the amount to lock');
-		}
-		$savings = self::find($request->savings_id);
-
-		if (is_null($savings)) {
-			return generate_422_error('Invalid savings selected');
-		}
-		try {
-			if ($savings->type == 'core') {
-				auth()->user()->fund_core_savings($request->amount);
-			} else {
-				auth()->user()->fund_locked_savings($savings, $request->amount);
-			}
-
-			return response()->json(['rsp' => 'Created'], 201);
-		} catch (\Throwable $th) {
-			if ($th->getCode() == 422) {
-				return generate_422_error($th->getMessage());
-			} else {
-				ErrLog::notifyAdmin(auth()->user(), $th, 'Add more funds to savings failed');
-			}
-		};
-	}
-
-	public function breakLockedFunds(Request $request, self $savings)
-	{
-		// return $savings;
-		/**
-		 * Check if this savings belongs to this user
-		 */
-		if (!$savings->belongs_to($request->user())) {
-			auth()->logout();
-			$request->session()->invalidate();
-			abort(403, 'Invalid transaction');
-		}
-
-		/**
-		 * Check if this is a locked fund
-		 */
-		if (!$savings->is_smart_lock()) {
-			return generate_422_error('This is a ' . $savings->type . ' savings. Only smart lock funds can be broken');
-		}
-
-		/**
-		 * Check if this savings is more than 30 days old
-		 */
-		if ($savings->funded_at->gte(now()->subDays(30))) {
-			return generate_422_error('Smart lock must be 30 days old before they can be broken');
-		}
-
-		/**
-		 * Get deductible percentage of total accrued funds
-		 */
-		$service_charge = $savings->total_accrued_interest_amount() * (config('app.lock_break_percentage_charge') / 100);
-
-		DB::beginTransaction();
-		/**
-		 * Handle uncleared profits
-		 */
-
-		if (is_null($savings->rollover_uncleared_interests($desc = 'Break lock interests rollover'))) {
-			return generate_422_error('There was an error breaking your lock. Try again');
-		}
-
-		/**
-		 * Create a service charge transaction for this savings for the lock break charge
-		 */
-		$savings->create_service_charge($service_charge, 'Amount deducted for breaking locked funds');
-
-		/**
-		 * Create a deposit transaction moving the balance of this savings to the core
-		 * ! deduct the charge from it
-		 */
-		$user_core_savings = $savings->app_user->core_savings;
-		$balance_amount = $savings->current_balance - $service_charge;
-
-		$user_core_savings->create_deposit_transaction($balance_amount, 'Broken smart lock funds rollover');
-
-		/**
-		 * Add same amount to the current balance of core savings
-		 */
-		$user_core_savings->current_balance += $balance_amount;
-		$user_core_savings->save();
-
-		/**
-		 * Delete this savings (so that it leaves the record of the user)
-		 */
-		$savings->delete();
-
-		DB::commit();
-
-		return response()->json(['status' => true], 200);
-	}
-
-	public function verifySavingsAmount(Request $request, self $savings)
-	{
-		return response()->json(['verified' => $savings->is_balance_consistent()], 200);
-	}
-
-	public function checkSavingsMaturity(Request $request, self $savings)
-	{
-		return response()->json(['matured' => $savings->is_mature()], 200);
-	}
-
-	public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
-	{
-		if ($request->user()->has_locked_savings()) {
-			return generate_422_error('You can only have one smart lock profile');
-		}
-		$funds = auth()->user()->locked_savings()->create([
-			'type' => 'locked',
-			'maturity_date' => now()->addMonths($request->duration)
-		]);
-		return response()->json(['rsp' => $funds], 201);
-	}
-
-	public function createNewGOSSavingsProfile(CreateGOSFundValidation $request)
-	{
-		$funds = auth()->user()->gos_savings()->create([
-			'type' => 'gos',
-			'gos_type_id' => $request->gos_type_id,
-			'maturity_date' => now()->addMonths($request->duration)
-		]);
-		return response()->json(['rsp' => $funds], 201);
-	}
-
-	public function getSavingsDistributionRatio(Request $request)
-	{
-		return response()->json($request->user()->savings_list()->get(['id', 'savings_distribution']), 200);
-	}
-
-	public function updateSavingsDistributionRatio(UpdateSavingsDistributionValidation $request)
-	{
-		/**
-		 * ? SAMPLE DATA
-		 * [
-		 *			{
-		 *					"id": 1,
-		 *					"savings_distribution": 30
-		 *			},
-		 *			{
-		 *					"id": 2,
-		 *					"savings_distribution": 15
-		 *			},
-		 *			{
-		 *					"id": 3,
-		 *					"savings_distribution": 15
-		 *			},
-		 *			{
-		 *					"id": 4,
-		 *					"savings_distribution": 25
-		 *			},
-		 *			{
-		 *					"id": 5,
-		 *					"savings_distribution": 5
-		 *			},
-		 *			{
-		 *					"id": 6,
-		 *					"savings_distribution": 10
-		 *			}
-		 *	]
-		 */
-		return auth()->user()->update_savings_distribution($request);
-	}
-
-
-	/**
-	 * Scope a query to only include matured savings
-	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeMatured($query)
-	{
-		return $query->whereDate('maturity_date', '<=', now());
-	}
-
-	/**
-	 * The booting method of the model
-	 *
-	 * @return void
-	 */
-	protected static function boot()
-	{
-		parent::boot();
-
-		static::deleting(function ($savings) {
-			/**
-			 * Dispatch notifications
-			 */
-			if ($savings->is_smart_lock()) {
-				if (now()->lt($savings->maturity_date)) {
-					$savings->app_user->notify(new SmartLockBroken($savings));
-				} else {
-					$savings->app_user->notify(new SmartLockMature($savings));
-				}
-			} elseif ($savings->is_gos_savings()) {
-				$savings->app_user->notify(new GOSSavingsMatured($savings));
-			}
-
-			/**
-			 * Clean up transactions and interests and charges
-			 * ? We can always provide a history preview for the user or admin as necessary
-			 * ! It's very important to delete their transactions so that we don´t give them interests on these deposits again
-			 */
-			$savings->transactions()->delete();
-			$savings->service_charges()->delete();
-			$savings->savings_interests()->delete();
-		});
-	}
+  use SoftDeletes;
+
+  protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
+  protected $table = 'savings';
+  protected $dates = ['funded_at', 'maturity_date', 'interest_processed_at'];
+  protected $casts = [
+    'current_balance' => 'double',
+    'app_user_id' => 'int',
+    'gos_type_id' => 'int',
+    'savings_distribution' => 'double',
+  ];
+
+  public function service_charges()
+  {
+    return $this->hasMany(ServiceCharge::class);
+  }
+
+  public function app_user()
+  {
+    return $this->belongsTo(AppUser::class);
+  }
+
+  public function belongs_to(AppUser $user): bool
+  {
+    return $this->app_user_id === $user->id;
+  }
+
+  public function is_core_savings(): bool
+  {
+    return $this->type == 'core';
+  }
+
+  public function is_smart_lock(): bool
+  {
+    return $this->type == 'locked';
+  }
+
+  public function is_gos_savings(): bool
+  {
+    return $this->type == 'gos';
+  }
+
+  public function gos_type()
+  {
+    return $this->belongsTo(GOSType::class)->withDefault(function ($user, $post) {
+      $user->name = $post->type;
+    });
+  }
+
+  public function transactions()
+  {
+    return $this->hasMany(Transaction::class);
+  }
+
+  public function withdrawal_transactions()
+  {
+    return $this->transactions()->where('trans_type', 'withdrawal');
+  }
+
+  public function deposit_transactions()
+  {
+    return $this->transactions()->where('trans_type', 'deposit');
+  }
+
+  public function initial_deposit_transaction()
+  {
+    return $this->hasOne(Transaction::class)->oldest();
+  }
+
+  public function interestable_deposit_transactions()
+  {
+    return $this->deposit_transactions()->whereDate('interest_processed_at', '<', now())
+      ->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
+  }
+
+  public function total_deposits_sum(): float
+  {
+    return $this->deposit_transactions()->sum('amount');
+  }
+
+  public function total_withdrawals_sum(): float
+  {
+    return $this->withdrawal_transactions()->sum('amount');
+  }
+
+  public function savings_interests()
+  {
+    return $this->hasMany(SavingsInterest::class);
+  }
+
+  public function uncleared_savings_interests()
+  {
+    return $this->savings_interests()->where('is_cleared', false);
+  }
+
+  public function cleared_savings_interests()
+  {
+    return $this->savings_interests()->where('is_cleared', true);
+  }
+
+  public function total_accrued_interest_amount(): float
+  {
+    return $this->savings_interests()->sum('amount');
+  }
+
+  public function total_uncleared_interest_amount(): float
+  {
+    return $this->savings_interests()->uncleared()->sum('amount');
+  }
+
+  public function total_cleared_interest_amount(): float
+  {
+    return $this->savings_interests()->cleared()->sum('amount');
+  }
+
+  public function get_due_interest(): float
+  {
+    /**
+     * Handle withdrawals. so you dont give interest on deposits that have been "withdrawn"
+     * -- Only core savings have withdrawals
+     */
+    if ($this->is_core_savings()) {
+      return ($this->interestable_deposit_transactions()->sum('amount') - $this->total_withdrawals_sum()) * (config('app.core_savings_interest_rate') / 100);
+    } else if ($this->is_gos_savings()) {
+      return $this->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
+    } else if ($this->is_smart_lock()) {
+      return $this->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
+    }
+  }
+
+  public function mark_interest_as_processed(): bool
+  {
+    /**
+     * Mark all interestable transactions as processed
+     */
+    return $this->interestable_deposit_transactions()->update(['interest_processed_at' => now()]);
+  }
+
+  public function rollover_uncleared_interests(string $decsription = null): ?float
+  {
+    try {
+      /**
+       * Get sum of uncleared interests
+       */
+      $uncleared_interests_sum = $this->total_uncleared_interest_amount();
+
+      if ($uncleared_interests_sum <= 0) {
+        return 0;
+      }
+
+      /**
+       * Add a deposit transaction for this savings with a description for interest roll over
+       */
+      $decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->gos_type->name . ' savings';
+
+      $this->create_deposit_transaction($uncleared_interests_sum, $decsription);
+
+      /**
+       * Mark all the interests as cleared
+       */
+      $this->uncleared_savings_interests()->update(['is_cleared' => true]);
+
+      /**
+       * Add the amount to this saving's current_balance
+       */
+      $this->current_balance += $uncleared_interests_sum;
+      $this->save();
+
+      /**
+       * Return success
+       */
+      return $uncleared_interests_sum;
+    } catch (\Throwable $th) {
+      ErrLog::notifyAdminAndFail($this->app_user, $th, 'Failed to rollover uncleared interests');
+      /**
+       * Return null on failure
+       */
+      return null;
+    }
+  }
+
+  public function is_mature(): ?bool
+  {
+    /**
+     * ! Fail on core savings
+     * ? Core savings has no maturity date
+     */
+    if ($this->is_core_savings()) {
+      return null;
+    }
+
+    /**
+     * Check if the maturity date is up to today
+     */
+    return $this->maturity_date->lte(now());
+  }
+
+  public function complete_mature_savings(): bool
+  {
+    /**
+     * Make sure this is not a core or immature locked or gos savings
+     */
+    if (!$this->is_mature()) {
+      return false;
+    }
+
+    DB::beginTransaction();
+    /**
+     * Handle uncleared profits.
+     *
+     * * The uncleared profits ae added to this savings' current_balance and then marked as cleared
+     * ? If return is null, then an error occured
+     *
+     * @return ?float
+     */
+    if (is_null($this->rollover_uncleared_interests())) {
+      return false;
+    }
+
+    /**
+     * Create a deposit transaction moving the balance of this savings to the core
+     */
+    $user_core_savings = $this->app_user->core_savings;
+
+    $user_core_savings->create_deposit_transaction($this->current_balance, 'Mature ' . $this->gos_type->name . ' funds rollover');
+
+    /**
+     * Add same amount to the current balance of core savings
+     */
+    $user_core_savings->current_balance += $this->current_balance;
+    $user_core_savings->save();
+
+    /**
+     * Delete this savings (so that it leaves the record of the user)
+     * // The user can always view the record in the transaction log
+     * ! It is very important to delete them so that their deposit transactions
+     * ! don´t continue to receive interests even after they have matured and rolled over
+     */
+    $this->delete();
+
+    DB::commit();
+
+    return true;
+  }
+
+  public function create_deposit_transaction(float $amount, string $desc)
+  {
+    $this->transactions()->create([
+      'trans_type' => 'deposit',
+      'amount' => $amount,
+      'description' => $desc
+    ]);
+  }
+
+  public function create_withdrawal_transaction(float $amount, string $desc)
+  {
+    $this->transactions()->create([
+      'trans_type' => 'withdrawal',
+      'amount' => $amount,
+      'description' => $desc
+    ]);
+  }
+
+  public function create_service_charge(float $amount, string $desc): void
+  {
+    $this->service_charges()->create([
+      'amount' => $amount,
+      'description' => $desc
+    ]);
+  }
+
+  public function create_interest_record(float $amount): void
+  {
+    $this->savings_interests()->create([
+      'amount' => $amount
+    ]);
+  }
+
+  public function is_balance_consistent(): bool
+  {
+    return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
+  }
+
+  static function appUserApiRoutes()
+  {
+    Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+
+      Route::get('/savings', 'Savings@getListOfUserSavings');
+
+      Route::post('/savings/fund', 'Savings@distributeFundsToSavings');
+
+      Route::get('/savings/get-distribution-details', 'Savings@getDistributionDetails');
+
+      Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings');
+
+      Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile');
+
+      Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
+
+      Route::get('/savings/{savings}/break', 'Savings@breakLockedFunds');
+
+      Route::get('/savings/{savings}/verify', 'Savings@verifySavingsAmount');
+
+      Route::get('/savings/{savings}/check-maturity', 'Savings@checkSavingsMaturity');
+
+      Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
+
+      Route::get('/savings/distribution', 'Savings@getSavingsDistributionRatio');
+
+      Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio');
+    });
+  }
+
+  public function getListOfUserSavings()
+  {
+    return auth()->user()->savings_list;
+  }
+
+  public function getDistributionDetails(FundSavingsValidation $request)
+  {
+    /**
+     * If user has core but no gos or locked update the core
+     * If user has gos or locked use distribution to spread it
+     *
+     * ! UPDATE CORE Update savings and create a transactions record
+     * !
+     */
+    if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
+      return ['core' => $request->amount];
+    } else {
+
+      $savings_distribution = [];
+      $savings_distribution_percentage = 0;
+      $savings_distribution_percentage += auth()->user()->core_savings->savings_distribution;
+      $savings_distribution['core'] = $request->amount * (auth()->user()->core_savings->savings_distribution / 100);
+      foreach (auth()->user()->gos_savings->all() as $savings) {
+        $savings_distribution_percentage += $savings->savings_distribution;
+        $savings_distribution[$savings->gos_type->name] = $request->amount * ($savings->savings_distribution / 100);
+      }
+      foreach (auth()->user()->locked_savings->all() as $savings) {
+        $savings_distribution_percentage += $savings->savings_distribution;
+        $savings_distribution['locked' . $savings->id] = $request->amount * ($savings->savings_distribution / 100);
+      }
+
+      if (intval($savings_distribution_percentage) !== 100) {
+        return generate_422_error('Your savings distribution is not 100%. Go to savings distribution and edit');
+      } else {
+        return $savings_distribution;
+      }
+    }
+
+    return response()->json(['rsp' => auth()->user()->savings_list], 201);
+  }
+
+  public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)
+  {
+    return response()->json(['rsp' =>  auth()->user()->auto_save_settings()->create($request->all())], 201);
+  }
+
+  public function distributeFundsToSavings(FundSavingsValidation $request)
+  {
+    /**
+     * If user has core but no gos or locked update the core
+     * If user has gos or locked use distribution to spread it
+     *
+     * ! UPDATE CORE Update savings and create a transactions record
+     * !
+     */
+    if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
+      auth()->user()->fund_core_savings($request->amount);
+    } else {
+      auth()->user()->distribute_savings($request->amount);
+    }
+
+    return response()->json(['rsp' => auth()->user()->savings_list], 201);
+  }
+
+  public function lockMoreFunds(Request $request)
+  {
+    if (!$request->savings_id) {
+      return generate_422_error('Invalid savings selected');
+    }
+    if (!$request->amount) {
+      return generate_422_error('You need to specify the amount to lock');
+    }
+    $savings = self::find($request->savings_id);
+
+    if (is_null($savings)) {
+      return generate_422_error('Invalid savings selected');
+    }
+    try {
+      if ($savings->type == 'core') {
+        auth()->user()->fund_core_savings($request->amount);
+      } else {
+        auth()->user()->fund_locked_savings($savings, $request->amount);
+      }
+
+      return response()->json(['rsp' => 'Created'], 201);
+    } catch (\Throwable $th) {
+      if ($th->getCode() == 422) {
+        return generate_422_error($th->getMessage());
+      } else {
+        ErrLog::notifyAdmin(auth()->user(), $th, 'Add more funds to savings failed');
+      }
+    };
+  }
+
+  public function breakLockedFunds(Request $request, self $savings)
+  {
+    // return $savings;
+    /**
+     * Check if this savings belongs to this user
+     */
+    if (!$savings->belongs_to($request->user())) {
+      auth()->logout();
+      $request->session()->invalidate();
+      abort(403, 'Invalid transaction');
+    }
+
+    /**
+     * Check if this is a locked fund
+     */
+    if (!$savings->is_smart_lock()) {
+      return generate_422_error('This is a ' . $savings->type . ' savings. Only smart lock funds can be broken');
+    }
+
+    /**
+     * Check if this savings is more than 30 days old
+     */
+    if ($savings->funded_at->gte(now()->subDays(30))) {
+      return generate_422_error('Smart lock must be 30 days old before they can be broken');
+    }
+
+    /**
+     * Get deductible percentage of total accrued funds
+     */
+    $service_charge = $savings->total_accrued_interest_amount() * (config('app.lock_break_percentage_charge') / 100);
+
+    DB::beginTransaction();
+    /**
+     * Handle uncleared profits
+     */
+
+    if (is_null($savings->rollover_uncleared_interests($desc = 'Break lock interests rollover'))) {
+      return generate_422_error('There was an error breaking your lock. Try again');
+    }
+
+    /**
+     * Create a service charge transaction for this savings for the lock break charge
+     */
+    $savings->create_service_charge($service_charge, 'Amount deducted for breaking locked funds');
+
+    /**
+     * Create a deposit transaction moving the balance of this savings to the core
+     * ! deduct the charge from it
+     */
+    $user_core_savings = $savings->app_user->core_savings;
+    $balance_amount = $savings->current_balance - $service_charge;
+
+    $user_core_savings->create_deposit_transaction($balance_amount, 'Broken smart lock funds rollover');
+
+    /**
+     * Add same amount to the current balance of core savings
+     */
+    $user_core_savings->current_balance += $balance_amount;
+    $user_core_savings->save();
+
+    /**
+     * Delete this savings (so that it leaves the record of the user)
+     */
+    $savings->delete();
+
+    DB::commit();
+
+    return response()->json(['status' => true], 200);
+  }
+
+  public function verifySavingsAmount(Request $request, self $savings)
+  {
+    return response()->json(['verified' => $savings->is_balance_consistent()], 200);
+  }
+
+  public function checkSavingsMaturity(Request $request, self $savings)
+  {
+    return response()->json(['matured' => $savings->is_mature()], 200);
+  }
+
+  public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
+  {
+    if ($request->user()->has_locked_savings()) {
+      return generate_422_error('You can only have one smart lock profile');
+    }
+    $funds = auth()->user()->locked_savings()->create([
+      'type' => 'locked',
+      'maturity_date' => now()->addMonths($request->duration)
+    ]);
+    return response()->json(['rsp' => $funds], 201);
+  }
+
+  public function createNewGOSSavingsProfile(CreateGOSFundValidation $request)
+  {
+    $funds = auth()->user()->gos_savings()->create([
+      'type' => 'gos',
+      'gos_type_id' => $request->gos_type_id,
+      'maturity_date' => now()->addMonths($request->duration)
+    ]);
+    return response()->json(['rsp' => $funds], 201);
+  }
+
+  public function getSavingsDistributionRatio(Request $request)
+  {
+    return response()->json($request->user()->savings_list()->get(['id', 'savings_distribution']), 200);
+  }
+
+  public function updateSavingsDistributionRatio(UpdateSavingsDistributionValidation $request)
+  {
+    /**
+     * ? SAMPLE DATA
+     * [
+     *			{
+     *					"id": 1,
+     *					"savings_distribution": 30
+     *			},
+     *			{
+     *					"id": 2,
+     *					"savings_distribution": 15
+     *			},
+     *			{
+     *					"id": 3,
+     *					"savings_distribution": 15
+     *			},
+     *			{
+     *					"id": 4,
+     *					"savings_distribution": 25
+     *			},
+     *			{
+     *					"id": 5,
+     *					"savings_distribution": 5
+     *			},
+     *			{
+     *					"id": 6,
+     *					"savings_distribution": 10
+     *			}
+     *	]
+     */
+    return auth()->user()->update_savings_distribution($request);
+  }
+
+
+  /**
+   * Scope a query to only include matured savings
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder  $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   */
+  public function scopeMatured($query)
+  {
+    return $query->whereDate('maturity_date', '<=', now());
+  }
+
+  /**
+   * The booting method of the model
+   *
+   * @return void
+   */
+  protected static function boot()
+  {
+    parent::boot();
+
+    static::deleting(function ($savings) {
+      /**
+       * Dispatch notifications
+       */
+      if ($savings->is_smart_lock()) {
+        if (now()->lt($savings->maturity_date)) {
+          $savings->app_user->notify(new SmartLockBroken($savings));
+        } else {
+          $savings->app_user->notify(new SmartLockMature($savings));
+        }
+      } elseif ($savings->is_gos_savings()) {
+        $savings->app_user->notify(new GOSSavingsMatured($savings));
+      }
+
+      /**
+       * Clean up transactions and interests and charges
+       * ? We can always provide a history preview for the user or admin as necessary
+       * ! It's very important to delete their transactions so that we don´t give them interests on these deposits again
+       */
+      $savings->transactions()->delete();
+      $savings->service_charges()->delete();
+      $savings->savings_interests()->delete();
+    });
+  }
 }
