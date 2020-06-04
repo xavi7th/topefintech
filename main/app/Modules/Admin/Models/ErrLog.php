@@ -50,7 +50,8 @@ class ErrLog extends Model
 
   static function notifyAdmin(User $user, Throwable $exception, string $message = null)
   {
-    Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
+    Log::error(json_encode(['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]));
+    // Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
   }
 
   static function notifyAdminAndFail(User $user, Throwable $exception, string $message = null)

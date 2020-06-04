@@ -258,9 +258,63 @@
               role="tabpanel"
               aria-labelledby="editAccountPage-tab"
             >
-              <p
-                class="mnb-4"
-              >Kind third day saw set itself fowl after whales upon can't sixth of days let fill Replenish waters make. Dry gathering winged land they're you'll above green was she'd moving.</p>
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="row vertical-gap sm-gap justify-content-end"
+                    :class="{'was-validated': formSubmitted}"
+                  >
+                    <div class="col-12">
+                      <FlashMessage />
+                    </div>
+
+                    <div class="col-12">
+                      <label for="acc_num">Account Number</label>
+                      <input
+                        class="form-control"
+                        :class="{'is-invalid': errors.acc_num, 'is-valid': !errors.acc_num}"
+                        v-model="details.acc_num"
+                        id="acc_num"
+                        placeholder="Account Number"
+                      />
+                      <FlashMessage v-if="errors.acc_num" :msg="errors.acc_num[0]" />
+                    </div>
+
+                    <div class="col-6">
+                      <label for="acc_type">Account Type</label>
+                      <input
+                        class="form-control"
+                        :class="{'is-invalid': errors.acc_type, 'is-valid': !errors.acc_type}"
+                        v-model="details.acc_type"
+                        id="acc_type"
+                        placeholder="Your Account Type"
+                      />
+                      <FlashMessage v-if="errors.acc_type" :msg="errors.acc_type[0]" />
+                    </div>
+
+                    <div class="col-6">
+                      <label for="acc_bank">Bank Name</label>
+                      <input
+                        class="form-control"
+                        v-model="details.acc_bank"
+                        id="acc_bank"
+                        placeholder="Your Bank Name"
+                        :class="{'is-invalid': errors.acc_bank, 'is-valid': !errors.acc_bank}"
+                      />
+                      <FlashMessage v-if="errors.acc_bank" :msg="errors.acc_bank[0]" />
+                    </div>
+
+                    <div class="col-auto">
+                      <button
+                        class="btn btn-brand"
+                        type="button"
+                        @click="updateUserProfile"
+                        :disabled="!details.acc_num"
+                      >Verify</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               class="tab-pane fade"

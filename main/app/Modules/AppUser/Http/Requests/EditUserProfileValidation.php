@@ -21,13 +21,13 @@ class EditUserProfileValidation extends FormRequest
   {
     return [
       // 'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::apiuser()->id)],
-      'full_name' => 'required|string',
-      'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/|confirmed',
-      'phone' => ['required_without:password', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', Rule::unique('users')->ignore($this->user()->phone, 'phone')],
-      'address' => 'required_without:password|nullable|string',
-      'city' => 'required_without:password|nullable|string',
-      'country' => 'required_without:password|nullable|string',
-      'date_of_birth' => 'required_without:password|nullable|date',
+      'full_name' => 'required|string|max:50',
+      'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/|confirmed|max:20',
+      'phone' => ['required_without_all:password,acc_bank,acc_num,acc_type', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', 'max:20', Rule::unique('users')->ignore($this->user()->phone, 'phone')],
+      'address' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
+      'city' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
+      'country' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
+      'date_of_birth' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|date',
       'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('users')->ignore($this->user()->acc_num)],
       'acc_bank' => 'bail|required_with:acc_num,acc_type|string',
       'acc_type' => 'bail|required_with:acc_num,acc_bank|string',
@@ -57,11 +57,11 @@ class EditUserProfileValidation extends FormRequest
       'acc_num.required_with' => 'You must enter your bank name and account type along with your account number',
       'acc_bank.required_with' => 'You must enter your account number and account type along with your bank name',
       'acc_type.required_with' => 'You must enter your account number and bank name along with your account type',
-      'phone.required_without' => 'Your phone number is required',
-      'address.required_without' => 'Your address is required',
-      'city.required_without' => 'Your city is required',
-      'country.required_without' => 'Your country is required',
-      'date_of_birth.required_without' => 'Your date of birth is required',
+      'phone.required_without_all' => 'Your phone number is required',
+      'address.required_without_all' => 'Your address is required',
+      'city.required_without_all' => 'Your city is required',
+      'country.required_without_all' => 'Your country is required',
+      'date_of_birth.required_without_all' => 'Your date of birth is required',
     ];
   }
 
@@ -116,11 +116,11 @@ class EditUserProfileValidation extends FormRequest
         $rsp = $this->user()->validate_bank_account($this->acc_num, $this->acc_bank, $this->full_name);
 
         if ($rsp === 409) {
-          $validator->errors()->add('Invalid Account Number', 'This bank account number does not match the full name you supplied');
+          $validator->errors()->add('acc_num', 'This bank account number does not match the full name you supplied');
         } elseif ($rsp === 422) {
-          $validator->errors()->add('Invalid Account Number', 'This account number is invalid');
+          $validator->errors()->add('acc_num', 'This account number is invalid');
         } elseif ($rsp === 400) {
-          $validator->errors()->add('Invalid Account Number', 'This bank name is incorrect or not verifiable. Try another form of the name if any');
+          $validator->errors()->add('acc_bank', 'This bank name is incorrect or not verifiable. Try another form of the name if any');
         }
         return;
       }
