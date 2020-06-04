@@ -2,10 +2,11 @@
 
 namespace App\Modules\AppUser\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-use \Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 
 class EditUserProfileValidation extends FormRequest
@@ -19,17 +20,18 @@ class EditUserProfileValidation extends FormRequest
   {
     return [
       // 'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::apiuser()->id)],
-      'full_name' => 'filled|string',
+      'full_name' => 'required|string',
       'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/',
-      // 'phone' => ['filled', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', Rule::unique('users')->ignore(Auth::apiuser()->phone)],
-      'address' => 'filled|string',
-      'city' => 'filled|string',
-      'country' => 'filled|string',
+      'phone' => ['required', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', Rule::unique('users')->ignore($this->user()->phone)],
+      'address' => 'required|string',
+      'city' => 'required|string',
+      'country' => 'required|string',
+      'date_of_birth' => 'required|date',
       'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('users')->ignore($this->user()->acc_num)],
       'acc_bank' => 'bail|required_with:acc_num,acc_type|string',
       'acc_type' => 'bail|required_with:acc_num,acc_bank|string',
       'bvn' => ['filled', 'numeric', Rule::unique('users')->ignore($this->user()->bvn)],
-      'id_card' => 'bail|filled|file|mimes:jpeg,bmp,png',
+      'id_card' => 'bail|nullable|file|mimes:jpeg,bmp,png',
     ];
   }
 
@@ -66,6 +68,11 @@ class EditUserProfileValidation extends FormRequest
   public function withValidator($validator)
   {
     $validator->after(function ($validator) {
+
+      /** User muat be above 18 */
+      if (Carbon::parse($this->date_of_birth)->gte(now()->subYears(18))) {
+        $validator->errors()->add('date_of_birth', 'You have to be 18 and older.');
+      }
 
       if ($this->bvn) {
         if ($this->user()->total_balance() < config('app.balance_before_bvn_validation')) {

@@ -7,6 +7,7 @@ import Vue from 'vue'
 import Vue2Filters from 'vue2-filters'
 import LoadScript from 'vue-plugin-load-script'
 import route from 'ziggy';
+import FlashMessage from '@dashboard-components/partials/FlashMessage'
 
 Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
@@ -29,6 +30,8 @@ let mediaHandler = () => {
 
 const app = document.getElementById( 'app' )
 
+Vue.component( 'FlashMessage', FlashMessage );
+
 new Vue( {
     render: h => h( InertiaApp, {
         props: {
@@ -36,5 +39,6 @@ new Vue( {
             resolveComponent: name => import( /* webpackChunkName: "js/user-" */ `./components/${name}.vue` )
                 .then( module => module.default ),
         },
-    } ),
+
+    } )
 } ).$mount( app )

@@ -38,8 +38,6 @@ class AppUserController extends Controller
 
       Route::group(['middleware' => ['auth:api_user', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
-        AppUser::apiRoutes();
-
         Savings::appUserApiRoutes();
 
         GOSType::appUserApiRoutes();
@@ -72,9 +70,11 @@ class AppUserController extends Controller
       // ConfirmPasswordController::routes();
       VerificationController::routes();
 
-      AppUser::routes();
 
       Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+
+        AppUser::routes();
+
         Route::redirect('/', '/user/dashboard', 303);
         Route::get('dashboard', 'AppUserController@loadDashboard')->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);
         Route::get('savings', 'AppUserController@viewUserSavings')->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
@@ -86,7 +86,7 @@ class AppUserController extends Controller
         Route::get('make-withdrawals', 'AppUserController@loadUserApp')->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
         Route::get('smart-interests', 'AppUserController@loadUserApp')->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
         Route::get('my-cards', 'AppUserController@viewDebitCards')->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
-        Route::get('profile', 'AppUserController@manageProfile')->name('appuser.profile.')->defaults('extras', ['icon' => 'fa fa-user']);
+
         Route::get('messages', 'AppUserController@loadUserApp')->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
         Route::get('gos-funds/create', 'AppUserController@initialiseGOSFund')->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
       });
@@ -118,11 +118,6 @@ class AppUserController extends Controller
   public function viewDebitCards()
   {
     return Inertia::render('savings/DebitCards');
-  }
-
-  public function manageProfile()
-  {
-    return Inertia::render('UserProfile');
   }
 
   public function showRequestSmartLoanForm()

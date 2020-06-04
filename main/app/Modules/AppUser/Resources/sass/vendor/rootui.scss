@@ -294,32 +294,40 @@ body.rui-no-transition * {
     body:not(.rui-section-lines).yay-hide .yaybar.yay-hide-to-small .yaybar-wrap>ul {
         padding-top: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.rui-navbar-mobile {
         left: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.rui-navbar-mobile .rui-navbar-head {
         -webkit-transition: padding-left .15s ease-in-out;
         -o-transition: padding-left .15s ease-in-out;
         transition: padding-left .15s ease-in-out
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.rui-navbar-mobile:not(.rui-navbar-show) .rui-navbar-head {
         padding-left: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-page-title {
         padding-top: 5px;
         padding-left: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-page-title>.container,
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-page-title>.container-fluid {
         padding-left: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-page-content {
         padding-left: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-page-content>.container,
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-page-content>.container-fluid {
         padding-left: 0
     }
+
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-footer,
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-footer .container,
     body:not(.rui-section-lines) .yaybar.yay-hide-to-small~.content-wrap .rui-footer .container-fluid {
@@ -4039,6 +4047,7 @@ h6 {
 }
 
 @media (max-width:1199.98px) {
+
     .rui-navbar-top .container-fluid,
     .rui-navbar-top .rui-navbar-brand {
         display: none
@@ -4471,6 +4480,7 @@ h6 {
         opacity: 1;
         z-index: 1002
     }
+
     .rui-navbar-mobile.rui-navbar-show.rui-navbar,
     .rui-navbar-mobile.rui-navbar-show.rui-navbar.rui-navbar-dark {
         border-color: #f3f4f7;
@@ -4478,11 +4488,13 @@ h6 {
         -webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, .03);
         box-shadow: 0 3px 10px rgba(0, 0, 0, .03)
     }
+
     .rui-navbar-mobile.rui-navbar-show.rui-navbar+.rui-navbar-bg,
     .rui-navbar-mobile.rui-navbar-show.rui-navbar.rui-navbar-dark+.rui-navbar-bg {
         visibility: visible;
         opacity: 1
     }
+
     .rui-navbar-mobile .rui-navbar-logo {
         visibility: visible
     }
@@ -5433,6 +5445,7 @@ h6 {
 }
 
 @media (max-width:1199.98px) {
+
     .rui-mailbox .rui-mailbox-list,
     .rui-mailbox .rui-mailbox-search {
         -webkit-box-flex: 0;
@@ -5441,6 +5454,7 @@ h6 {
         flex: 0 0 40%;
         max-width: 40%
     }
+
     .rui-mailbox .rui-mailbox-buttons,
     .rui-mailbox .rui-mailbox-content {
         -webkit-box-flex: 0;
@@ -5452,6 +5466,7 @@ h6 {
 }
 
 @media (max-width:767.98px) {
+
     .rui-mailbox .rui-mailbox-buttons,
     .rui-mailbox .rui-mailbox-content,
     .rui-mailbox .rui-mailbox-list,
@@ -5462,28 +5477,35 @@ h6 {
         flex: none;
         max-width: none
     }
+
     .rui-mailbox .rui-mailbox-head {
         background-color: #fff
     }
+
     .rui-mailbox .rui-mailbox-search {
         width: 100%;
         max-width: 100%
     }
+
     .rui-mailbox .rui-mailbox-list {
         width: 100%;
         height: 380px;
         border-right: 0
     }
+
     .rui-mailbox .os-content>ul,
     .rui-mailbox .rui-mailbox-list>ul {
         margin: 15px 0
     }
+
     .rui-mailbox .rui-mailbox-item.active {
         background-color: rgba(0, 0, 0, 0)
     }
+
     .rui-mailbox .rui-mailbox-item-date {
         top: 14px
     }
+
     .rui-mailbox .rui-mailbox-content {
         position: absolute;
         top: 0;
@@ -5498,13 +5520,16 @@ h6 {
         transition: visibility .15s ease-in-out, opacity .15s ease-in-out;
         z-index: -1
     }
+
     .rui-mailbox .rui-mailbox-content.open {
         visibility: visible;
         opacity: 1
     }
+
     .rui-mailbox .rui-mailbox-content.show {
         z-index: 2
     }
+
     .rui-mailbox .rui-mailbox-content-body {
         height: calc(100% - 104px)
     }
@@ -5713,21 +5738,26 @@ h6 {
         padding-right: 8px;
         padding-left: 0
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-list .collapse,
     .rui-messenger.rui-messenger-full .rui-messenger-list .collapsing {
         margin-right: 0;
         margin-left: 0
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-list .rui-messenger-collapse-btn>.rui-icon {
         margin-right: 5px
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-list .media:before {
         left: 30px
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-list .media>.media-link {
         padding-right: 0;
         padding-left: 0
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-list .media>.media-icon {
         right: 0
     }
@@ -5839,6 +5869,7 @@ h6 {
 }
 
 @media (max-width:1199.98px) {
+
     .rui-messenger.rui-messenger-full .rui-messenger-head-search,
     .rui-messenger.rui-messenger-full .rui-messenger-list {
         -webkit-box-flex: 0;
@@ -5847,6 +5878,7 @@ h6 {
         flex: 0 0 40%;
         max-width: 40%
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-chat,
     .rui-messenger.rui-messenger-full .rui-messenger-head-buttons {
         -webkit-box-flex: 0;
@@ -5865,6 +5897,7 @@ h6 {
         border: 1px solid #e6ecf0;
         border-radius: .25rem
     }
+
     .rui-messenger.rui-messenger-full.open>.rui-messenger-footer,
     .rui-messenger.rui-messenger-full.open>.rui-messenger-head,
     .rui-messenger.rui-messenger-full.open>.rui-messenger-list {
@@ -5874,6 +5907,7 @@ h6 {
         visibility: hidden;
         opacity: 0
     }
+
     .rui-messenger.rui-messenger-full.open>.rui-messenger-chat {
         position: relative;
         margin-top: -75px;
@@ -5881,9 +5915,11 @@ h6 {
         visibility: visible;
         opacity: 1
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-head {
         position: absolute
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-head-search {
         -webkit-box-flex: 0;
         -webkit-flex: 0 0 100%;
@@ -5899,6 +5935,7 @@ h6 {
         max-width: 100%;
         padding-right: 20px
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-list {
         -webkit-box-flex: 0;
         -webkit-flex: none;
@@ -5908,9 +5945,11 @@ h6 {
         height: 380px;
         border-right: 0
     }
+
     .rui-messenger.rui-messenger-full .media.media-filled.active>.rui-messenger-item {
         background-color: rgba(0, 0, 0, 0)
     }
+
     .rui-messenger.rui-messenger-full>.rui-messenger-footer {
         display: -webkit-box;
         display: -webkit-flex;
@@ -5925,6 +5964,7 @@ h6 {
         -ms-flex-pack: justify;
         justify-content: space-between
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-chat {
         position: absolute;
         -webkit-box-flex: 0;
@@ -5944,12 +5984,14 @@ h6 {
         transition: visibility .15s ease-in-out, opacity .15s ease-in-out;
         z-index: -1
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-chat .rui-messenger-head {
         position: absolute;
         top: 0;
         right: 0;
         left: 0
     }
+
     .rui-messenger.rui-messenger-full .rui-messenger-chat .rui-messenger-footer {
         position: absolute;
         right: 0;
@@ -8860,83 +8902,63 @@ textarea.form-control {
     box-shadow: 0 0 0 1px #fff, 0 0 0 .2rem rgba(114, 94, 195, .25)
 }
 
-.custom-select.is-valid,
-.form-control.is-valid,
-.was-validated .custom-select:valid,
-.was-validated .form-control:valid {
+.was-validated .custom-select.is-valid,
+.was-validated .form-control.is-valid {
     background-color: #effbf6;
     border-color: #91e5c1
 }
 
-.custom-select.is-valid:focus,
-.form-control.is-valid:focus,
-.was-validated .custom-select:valid:focus,
-.was-validated .form-control:valid:focus {
+.was-validated .custom-select.is-valid:focus,
+.was-validated .form-control.is-valid:focus {
     border-color: #7ce0b6;
-    -webkit-box-shadow: 0 0 0 .2rem rgba(47, 199, 135, .15);
     box-shadow: 0 0 0 .2rem rgba(47, 199, 135, .15)
 }
 
-.custom-select.is-invalid,
-.form-control.is-invalid,
-.was-validated .custom-select:invalid,
-.was-validated .form-control:invalid {
+.was-validated .custom-select.is-invalid,
+.was-validated .form-control.is-invalid {
     background-color: #fef9fa;
     border-color: #fac6cc
 }
 
-.custom-select.is-invalid:focus,
-.form-control.is-invalid:focus,
-.was-validated .custom-select:invalid:focus,
-.was-validated .form-control:invalid:focus {
+.was-validated .custom-select.is-invalid:focus,
+.was-validated .form-control.is-invalid:focus {
     border-color: #f8aeb7;
-    -webkit-box-shadow: 0 0 0 .2rem rgba(239, 81, 100, .15);
     box-shadow: 0 0 0 .2rem rgba(239, 81, 100, .15)
 }
 
-.form-control.is-invalid,
-.form-control.is-valid,
-.was-validated .form-control:invalid,
-.was-validated .form-control:valid {
-    background-image: none
-}
+// .was-validated .form-control.is-invalid,
+// .was-validated .form-control.is-valid {
+//     background-image: none
+// }
 
-.custom-select.is-invalid,
-.custom-select.is-valid,
-.was-validated .custom-select:invalid,
-.was-validated .custom-select:valid {
+.was-validated .custom-select.is-invalid,
+.was-validated .custom-select.is-valid {
     background-position: calc(100% - 19px) 50%;
     background-size: 8px 10px, 0 0
 }
 
-.custom-control-input.is-valid~.custom-control-label:before,
-.was-validated .custom-control-input:valid~.custom-control-label:before {
+.was-validated .custom-control-input.is-valid~.custom-control-label:before {
     background-color: #91e5c1;
     border-color: #91e5c1
 }
 
-.custom-control-input.is-invalid~.custom-control-label:before,
-.was-validated .custom-control-input:invalid~.custom-control-label:before {
+.was-validated .custom-control-input.is-invalid~.custom-control-label:before {
     background-color: #fac6cc;
     border-color: #fac6cc
 }
 
-.custom-control-input.is-valid:focus:not(:checked)~.custom-control-label:before,
-.was-validated .custom-control-input:valid:focus:not(:checked)~.custom-control-label:before {
+.was-validated .custom-control-input.is-valid:focus:not(:checked)~.custom-control-label:before {
     background-color: #7ce0b6;
     border-color: #7ce0b6
 }
 
-.custom-control-input.is-invalid:focus:not(:checked)~.custom-control-label:before,
-.was-validated .custom-control-input:invalid:focus:not(:checked)~.custom-control-label:before {
+.was-validated .custom-control-input.is-invalid:focus:not(:checked)~.custom-control-label:before {
     background-color: #f8aeb7;
     border-color: #f8aeb7
 }
 
-.custom-control-input.is-invalid~.custom-control-label,
-.custom-control-input.is-valid~.custom-control-label,
-.was-validated .custom-control-input:invalid~.custom-control-label,
-.was-validated .custom-control-input:valid~.custom-control-label {
+.was-validated .custom-control-input.is-invalid~.custom-control-label,
+.was-validated .custom-control-input.is-valid~.custom-control-label {
     color: #393f49
 }
 
@@ -10014,6 +10036,7 @@ textarea.form-control {
     0% {
         background-position: 2rem 0
     }
+
     to {
         background-position: 0 0
     }
@@ -10023,6 +10046,7 @@ textarea.form-control {
     0% {
         background-position: 2rem 0
     }
+
     to {
         background-position: 0 0
     }
@@ -10137,6 +10161,7 @@ textarea.form-control {
         top: auto;
         bottom: 20px
     }
+
     .rui-toast-container .rui-toast {
         max-width: 400px
     }
@@ -10150,6 +10175,7 @@ textarea.form-control {
         margin: 20px 20px 10px;
         z-index: 1010
     }
+
     .rui-toast-container .rui-toast {
         max-width: none
     }
@@ -10246,14 +10272,17 @@ textarea.form-control {
 }
 
 @media (min-width:992px) {
+
     .rui-popup::-webkit-scrollbar,
     .rui-popup::-webkit-scrollbar-track {
         background-color: #fff;
         border-radius: .25rem
     }
+
     .rui-popup::-webkit-scrollbar {
         width: 4px
     }
+
     .rui-popup::-webkit-scrollbar-thumb {
         background-color: #d7d9e0;
         border-radius: .25rem
@@ -10431,6 +10460,7 @@ textarea.form-control {
 }
 
 @media (max-width:575.98px) {
+
     .rui-snippet.rui-snippet-frame .rui-snippet-html,
     .rui-snippet.rui-snippet-frame .rui-snippet-js,
     .rui-snippet.rui-snippet-frame .rui-snippet-preview {
@@ -10601,30 +10631,36 @@ textarea.form-control {
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item+.rui-timeline-item {
         margin-top: 20px
     }
+
     .rui-timeline.rui-timeline-left-xl .rui-timeline-content {
         -webkit-box-ordinal-group: 2;
         -webkit-order: 1;
         -ms-flex-order: 1;
         order: 1
     }
+
     .rui-timeline.rui-timeline-left-xl .rui-timeline-date {
         -webkit-box-ordinal-group: 13;
         -webkit-order: 12;
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item-swap .rui-timeline-date {
         text-align: left
     }
+
     .rui-timeline.rui-timeline-right-xl .rui-timeline-item+.rui-timeline-item {
         margin-top: 20px
     }
+
     .rui-timeline.rui-timeline-right-xl .rui-timeline-content {
         -webkit-box-ordinal-group: 13;
         -webkit-order: 12;
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-right-xl .rui-timeline-date {
         -webkit-box-ordinal-group: 2;
         -webkit-order: 1;
@@ -10632,6 +10668,7 @@ textarea.form-control {
         order: 1;
         text-align: right
     }
+
     .rui-timeline.rui-timeline-right-xl .rui-timeline-item-swap .rui-timeline-date {
         text-align: right
     }
@@ -10641,6 +10678,7 @@ textarea.form-control {
     .rui-timeline .rui-timeline-item+.rui-timeline-item {
         margin-top: 20px
     }
+
     .rui-timeline .rui-timeline-line {
         right: 95px;
         left: 95px;
@@ -10649,29 +10687,35 @@ textarea.form-control {
         border-right: 1px solid #e6ecf0;
         border-left: 1px solid #e6ecf0
     }
+
     .rui-timeline .rui-timeline-icon {
         right: 70px;
         left: auto;
         margin-left: 0
     }
+
     .rui-timeline .rui-timeline-date {
         width: 40px;
         min-width: 40px;
         margin-left: 110px
     }
+
     .rui-timeline .rui-timeline-content {
         width: 100%;
         background-color: #fff
     }
+
     .rui-timeline .rui-timeline-item-swap .rui-timeline-date {
         margin-right: 110px;
         margin-left: 0;
         text-align: left
     }
+
     .rui-timeline .rui-timeline-item-swap .rui-timeline-icon {
         right: auto;
         left: 70px
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-line,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-line,
     .rui-timeline.rui-timeline-left .rui-timeline-line {
@@ -10682,6 +10726,7 @@ textarea.form-control {
         background-color: #f3f4f7;
         border: 0
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-content,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-content,
     .rui-timeline.rui-timeline-left .rui-timeline-content {
@@ -10690,6 +10735,7 @@ textarea.form-control {
         -ms-flex-order: 1;
         order: 1
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-date,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-date,
     .rui-timeline.rui-timeline-left .rui-timeline-date {
@@ -10700,12 +10746,14 @@ textarea.form-control {
         margin-right: 0;
         margin-left: 110px
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-icon,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-icon,
     .rui-timeline.rui-timeline-left .rui-timeline-icon {
         right: 70px;
         left: auto
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-content,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-content,
     .rui-timeline.rui-timeline-right .rui-timeline-content {
@@ -10714,6 +10762,7 @@ textarea.form-control {
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-date,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-date,
     .rui-timeline.rui-timeline-right .rui-timeline-date {
@@ -10725,6 +10774,7 @@ textarea.form-control {
         margin-left: 0;
         text-align: left
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-icon,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-icon,
     .rui-timeline.rui-timeline-right .rui-timeline-icon {
@@ -10737,19 +10787,23 @@ textarea.form-control {
     .rui-timeline .rui-timeline-line {
         display: none
     }
+
     .rui-timeline .rui-timeline-date {
         margin-left: 55px
     }
+
     .rui-timeline .rui-timeline-item-swap .rui-timeline-date {
         margin-right: 55px;
         margin-left: 0
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-line,
     .rui-timeline.rui-timeline-left-md .rui-timeline-line,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-line,
     .rui-timeline.rui-timeline-left .rui-timeline-line {
         display: none
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-icon,
     .rui-timeline.rui-timeline-left-md .rui-timeline-icon,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-icon,
@@ -10757,6 +10811,7 @@ textarea.form-control {
         right: 70px;
         left: auto
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-content,
     .rui-timeline.rui-timeline-left-md .rui-timeline-content,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-content,
@@ -10766,6 +10821,7 @@ textarea.form-control {
         -ms-flex-order: 1;
         order: 1
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-date,
     .rui-timeline.rui-timeline-left-md .rui-timeline-date,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-date,
@@ -10777,6 +10833,7 @@ textarea.form-control {
         margin-right: auto;
         margin-left: 55px
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-item-swap .rui-timeline-content,
     .rui-timeline.rui-timeline-left-md .rui-timeline-item-swap .rui-timeline-content,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item-swap .rui-timeline-content,
@@ -10786,6 +10843,7 @@ textarea.form-control {
         -ms-flex-order: 1;
         order: 1
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-item-swap .rui-timeline-date,
     .rui-timeline.rui-timeline-left-md .rui-timeline-item-swap .rui-timeline-date,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item-swap .rui-timeline-date,
@@ -10799,6 +10857,7 @@ textarea.form-control {
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-date,
     .rui-timeline.rui-timeline-right-md .rui-timeline-date,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-date,
@@ -10811,6 +10870,7 @@ textarea.form-control {
         margin-left: 0;
         text-align: left
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-icon,
     .rui-timeline.rui-timeline-right-md .rui-timeline-icon,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-icon,
@@ -10831,13 +10891,16 @@ textarea.form-control {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     .rui-timeline .rui-timeline-item+.rui-timeline-item {
         margin-top: 30px
     }
+
     .rui-timeline .rui-timeline-item.hover .rui-timeline-icon,
     .rui-timeline .rui-timeline-item:hover .rui-timeline-icon {
         background-color: rgba(0, 0, 0, 0)
     }
+
     .rui-timeline .rui-timeline-icon {
         top: 0;
         right: auto;
@@ -10846,6 +10909,7 @@ textarea.form-control {
         height: auto;
         border: 0
     }
+
     .rui-timeline .rui-timeline-date {
         -webkit-box-ordinal-group: 2;
         -webkit-order: 1;
@@ -10856,36 +10920,43 @@ textarea.form-control {
         padding-top: 0;
         margin: -4px 0 10px 30px
     }
+
     .rui-timeline .rui-timeline-content {
         -webkit-box-ordinal-group: 13;
         -webkit-order: 12;
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline .rui-timeline-item-swap .rui-timeline-date {
         margin: -4px 0 10px 30px
     }
+
     .rui-timeline .rui-timeline-item-swap .rui-timeline-icon {
         left: 0
     }
+
     .rui-timeline .rui-timeline-item-swap>.rui-timeline-date {
         -webkit-box-ordinal-group: 2;
         -webkit-order: 1;
         -ms-flex-order: 1;
         order: 1
     }
+
     .rui-timeline .rui-timeline-item-swap>.rui-timeline-content {
         -webkit-box-ordinal-group: 13;
         -webkit-order: 12;
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-item+.rui-timeline-item,
     .rui-timeline.rui-timeline-left-md .rui-timeline-item+.rui-timeline-item,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item+.rui-timeline-item,
     .rui-timeline.rui-timeline-left .rui-timeline-item+.rui-timeline-item {
         margin-top: 30px
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-icon,
     .rui-timeline.rui-timeline-left-md .rui-timeline-icon,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-icon,
@@ -10893,6 +10964,7 @@ textarea.form-control {
         right: auto;
         left: 0
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-content,
     .rui-timeline.rui-timeline-left-md .rui-timeline-content,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-content,
@@ -10902,6 +10974,7 @@ textarea.form-control {
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-date,
     .rui-timeline.rui-timeline-left-md .rui-timeline-date,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-date,
@@ -10913,6 +10986,7 @@ textarea.form-control {
         margin-right: auto;
         margin-left: 30px
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-item-swap .rui-timeline-content,
     .rui-timeline.rui-timeline-left-md .rui-timeline-item-swap .rui-timeline-content,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item-swap .rui-timeline-content,
@@ -10922,6 +10996,7 @@ textarea.form-control {
         -ms-flex-order: 12;
         order: 12
     }
+
     .rui-timeline.rui-timeline-left-lg .rui-timeline-item-swap .rui-timeline-date,
     .rui-timeline.rui-timeline-left-md .rui-timeline-item-swap .rui-timeline-date,
     .rui-timeline.rui-timeline-left-xl .rui-timeline-item-swap .rui-timeline-date,
@@ -10931,12 +11006,14 @@ textarea.form-control {
         -ms-flex-order: 1;
         order: 1
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-item+.rui-timeline-item,
     .rui-timeline.rui-timeline-right-md .rui-timeline-item+.rui-timeline-item,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-item+.rui-timeline-item,
     .rui-timeline.rui-timeline-right .rui-timeline-item+.rui-timeline-item {
         margin-top: 30px
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-date,
     .rui-timeline.rui-timeline-right-md .rui-timeline-date,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-date,
@@ -10944,6 +11021,7 @@ textarea.form-control {
         margin-right: auto;
         margin-left: 30px
     }
+
     .rui-timeline.rui-timeline-right-lg .rui-timeline-icon,
     .rui-timeline.rui-timeline-right-md .rui-timeline-icon,
     .rui-timeline.rui-timeline-right-xl .rui-timeline-icon,
@@ -12535,9 +12613,11 @@ textarea.form-control {
     .yaybar.rui-yaybar:not(.yay-overlay) {
         opacity: 0
     }
+
     .yaybar.rui-yaybar.yay-hide-to-small.yay-shrink~.content-wrap {
         margin-left: 70px
     }
+
     .yaybar.rui-yaybar.yay-hide-to-small.yay-overlay~.content-wrap {
         margin-left: 70px
     }
@@ -13932,6 +14012,7 @@ textarea.form-control {
         -ms-flex-direction: column;
         flex-direction: column
     }
+
     .rui-calendar .fc-toolbar .fc-center {
         -webkit-box-ordinal-group: 1;
         -webkit-order: 0;
@@ -13939,6 +14020,7 @@ textarea.form-control {
         order: 0;
         margin-bottom: 10px
     }
+
     .rui-calendar .fc-toolbar .fc-left {
         -webkit-box-ordinal-group: 2;
         -webkit-order: 1;
@@ -13946,6 +14028,7 @@ textarea.form-control {
         order: 1;
         margin-bottom: 10px
     }
+
     .rui-calendar .fc-toolbar .fc-right {
         -webkit-box-ordinal-group: 3;
         -webkit-order: 2;
@@ -14061,6 +14144,7 @@ textarea.form-control {
 }
 
 @media (max-width:575.98px) {
+
     .rui-calendar .fc-dayGridMonth-view .fc-head th,
     .rui-calendar .fc-month-view .fc-head th {
         padding: 10px 15px
@@ -14115,6 +14199,7 @@ textarea.form-control {
 }
 
 @media (max-width:575.98px) {
+
     .rui-calendar .fc-agenda-view .fc-head .fc-day-header,
     .rui-calendar .fc-timeGridDay-view .fc-head .fc-day-header {
         padding: 10px 0
@@ -15506,6 +15591,7 @@ textarea.form-control {
     .daterangepicker {
         width: 307px
     }
+
     .daterangepicker .drp-calendar.left,
     .daterangepicker .drp-calendar.right {
         padding: 15px
@@ -17265,10 +17351,12 @@ p>.peity {
     .rui-dropzone {
         min-height: 100px
     }
+
     .rui-dropzone .rui-dropzone-icon>.rui-icon {
         width: 40px;
         height: 40px
     }
+
     .rui-dropzone .rui-dropzone-text {
         font-size: 1rem
     }
@@ -17286,6 +17374,7 @@ p>.peity {
 }
 
 @media (max-width:1199.98px) {
+
     .rui-dropzone .dz-preview,
     .rui-dropzone .dz-preview.dz-file-preview {
         -webkit-box-flex: 0;
@@ -17297,6 +17386,7 @@ p>.peity {
 }
 
 @media (max-width:767.98px) {
+
     .rui-dropzone .dz-preview,
     .rui-dropzone .dz-preview.dz-file-preview {
         -webkit-box-flex: 0;
@@ -17308,6 +17398,7 @@ p>.peity {
 }
 
 @media (max-width:575.98px) {
+
     .rui-dropzone .dz-preview,
     .rui-dropzone .dz-preview.dz-file-preview {
         -webkit-box-flex: 0;
@@ -17580,9 +17671,11 @@ p>.peity {
     0% {
         opacity: 1
     }
+
     50% {
         opacity: 1
     }
+
     to {
         opacity: 0
     }
@@ -17592,9 +17685,11 @@ p>.peity {
     0% {
         opacity: 1
     }
+
     50% {
         opacity: 1
     }
+
     to {
         opacity: 0
     }

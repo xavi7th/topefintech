@@ -66,7 +66,7 @@ class ErrLog extends Model
     if (DB::transactionLevel() > 0) {
       Db::rollBack();
     }
-    Log::error('hello', ['id' => 1]);
+    // Log::error('hello', ['id' => 1]);
     Log::error(get_class($validation_class) . ' validation failed. <br> Data Supplied: ' . json_encode($validator->getData()) . '. <br> The errors are: ' . json_encode((object)$validator->errors()->all()));
   }
 

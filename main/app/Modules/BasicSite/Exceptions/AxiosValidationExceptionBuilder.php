@@ -50,6 +50,6 @@ class AxiosValidationExceptionBuilder extends Exception
         "message" => $this->validator->errors()->all()
       ], $this->code);
     }
-    return back()->withErrors($this->validator);
+    return back()->withErrors($this->validator)->withError('There are errors in your form');
   }
 }

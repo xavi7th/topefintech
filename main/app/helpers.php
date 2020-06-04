@@ -432,3 +432,73 @@ if (!function_exists('get_related_routes')) {
     });
   }
 }
+
+
+
+if (!function_exists('compress_image_upload')) {
+
+  /**
+   * Compress uploaded image files for better optimisation
+   *
+   * Uses the Intervention library to compress files into the specified size at 85% quality
+   *  and optionally create thumbnail images and saves them in the paths provided
+   * for the image and the thumbnail. The aspect ration can optionally be maintained
+   * returns an array of file names.
+   *
+   * @param string $key The index name of the file field in the request object
+   * @param string $save_path The path to save the compressed image
+   * @param string $thumb_path The optional path to save the thumbnail. If provided, thumbnails will be generated
+   * @param int $size The size to compress the image into. Defaults to 1400px
+   * @param bool $constrain_aspect_ration Boolean value indication whether to constrain the aspect ratio on compression
+   *
+   * @package \Intervention\Image\Facades\Image
+   *
+   * composer require intervention/image
+   *
+   * @return array
+   **/
+
+  function compress_image_upload(string $key, string $save_path, ?string $thumb_path = null, ?int $size = 1400, ?bool $constrain_aspect_ratio = true)
+  {
+    if (!File::isDirectory(public_path($save_path))) {
+      File::makeDirectory(public_path($save_path), 0755);
+    }
+
+    if ($thumb_path && !File::isDirectory(public_path($thumb_path))) {
+      File::makeDirectory(public_path($thumb_path), 0755);
+    }
+
+    $image = \Intervention\Image\Facades\Image::make(request()->file($key)->getRealPath());
+
+    if ($constrain_aspect_ratio) {
+      $image->resize($size, null, function ($constraint) {
+        $constraint->aspectRatio();
+      })->save(public_path($save_path) . request()->file($key)->hashName(), 85);
+
+      $url = $save_path . request()->file($key)->hashName();
+
+      if ($thumb_path) {
+        $image->resize(200, null, function ($constraint) {
+          $constraint->aspectRatio();
+        })->save(public_path($thumb_path) . request()->file($key)->hashName(), 70);
+
+        $thumb_url = $thumb_path . request()->file($key)->hashName();
+
+        return [$url, $thumb_url];
+      }
+      return $url;
+    } else {
+      $image->resize($size)->save(public_path($save_path) . request()->file($key)->hashName(), 85);
+      $url = $save_path . request()->file($key)->hashName();
+
+      if ($thumb_path) {
+        $image->resize(200)->save(public_path($thumb_path) . request()->file($key)->hashName(), 70);
+        $thumb_url = $thumb_path . request()->file($key)->hashName();
+
+        return [$url, $thumb_url];
+      }
+
+      return $url;
+    }
+  }
+}

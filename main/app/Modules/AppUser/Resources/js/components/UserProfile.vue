@@ -2,7 +2,7 @@
   <layout title="My Profile" :isAuth="false">
     <div class="container-fluid">
       <div class="rui-profile row vertical-gap">
-        <div class="col-lg-6 col-xl-5">
+        <div class="col-lg-5 col-xl-4">
           <div class="card">
             <div class="card-body">
               <div class="row vertical-gap">
@@ -42,6 +42,160 @@
             </div>
           </div>
         </div>
+        <div class="col-12 col-lg-7 col-xl-8"></div>
+        <div class="col-12 col-lg-auto">
+          <div class="card">
+            <div class="card-body pt-20 pr-10 pb-20 pl-10">
+              <ul class="nav flex-column mnt-3">
+                <li>
+                  <a class="nav-link active" href="#">
+                    <span data-feather="user" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Personal information</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nav-link" href="#">
+                    <span data-feather="key" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Change Password</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nav-link" href="#">
+                    <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Account information</span>
+                  </a>
+                </li>
+                <!-- <li>
+                  <a class="nav-link" href="#">
+                    <span data-feather="shopping-cart" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span>Purchases</span>
+                  </a>
+                </li>-->
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-7 col-xl-8">
+          <div class="card">
+            <div class="card-body">
+              <div
+                class="row vertical-gap sm-gap justify-content-end"
+                :class="{'was-validated': formSubmitted}"
+              >
+                <div class="col-12">
+                  <label for="full_name">Full Name</label>
+                  <input
+                    class="form-control"
+                    :class="{'is-invalid': errors.full_name, 'is-valid': !errors.full_name}"
+                    v-model="details.full_name"
+                    id="full_name"
+                    placeholder="Your Full Name"
+                  />
+                  <FlashMessage v-if="errors.full_name" :msg="errors.full_name[0]" />
+                </div>
+
+                <div class="col-6">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    :class="{'is-invalid': errors.email, 'is-valid': !errors.email}"
+                    v-model="details.email"
+                    id="email"
+                    placeholder="Your Email"
+                  />
+                  <FlashMessage v-if="errors.email" :msg="errors.email[0]" />
+                </div>
+
+                <div class="col-6">
+                  <label for="phone">Phone Number</label>
+                  <input
+                    class="form-control"
+                    v-model="details.phone"
+                    id="phone"
+                    placeholder="Your Phone"
+                    :class="{'is-invalid': errors.phone, 'is-valid': !errors.phone}"
+                  />
+                  <FlashMessage v-if="errors.phone" :msg="errors.phone[0]" />
+                </div>
+
+                <div class="col-12">
+                  <label for="address">Address</label>
+                  <textarea
+                    name="address"
+                    id="address"
+                    rows="1"
+                    class="form-control"
+                    :class="{'is-invalid': errors.address, 'is-valid': !errors.address}"
+                    v-model="details.address"
+                  ></textarea>
+                  <FlashMessage v-if="errors.address" :msg="errors.address[0]" />
+                </div>
+
+                <div class="col-6">
+                  <label for="city">City</label>
+                  <input
+                    class="form-control"
+                    v-model="details.city"
+                    id="city"
+                    placeholder="Your city"
+                    :class="{'is-invalid': errors.city, 'is-valid': !errors.city}"
+                  />
+                  <FlashMessage v-if="errors.city" :msg="errors.city[0]" />
+                </div>
+
+                <div class="col-6">
+                  <label for="country">Country</label>
+                  <input
+                    class="form-control"
+                    v-model="details.country"
+                    id="country"
+                    placeholder="Your country"
+                    :class="{'is-invalid': errors.country, 'is-valid': !errors.country}"
+                  />
+                  <FlashMessage v-if="errors.country" :msg="errors.country[0]" />
+                </div>
+
+                <div class="col-6">
+                  <label for="date_of_birth">Date of Birth</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    v-model="details.date_of_birth"
+                    id="date_of_birth"
+                    placeholder="Your date_of_birth"
+                    :class="{'is-invalid': errors.date_of_birth, 'is-valid': !errors.date_of_birth}"
+                  />
+                  <FlashMessage v-if="errors.date_of_birth" :msg="errors.date_of_birth[0]" />
+                </div>
+
+                <div class="col-6">
+                  <label for="id_car">ID Card</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="details.id_car"
+                    id="id_car"
+                    placeholder="Your id_car"
+                    :class="{'is-invalid': errors.id_car, 'is-valid': !errors.id_car}"
+                  />
+                  <FlashMessage v-if="errors.id_car" :msg="errors.id_car[0]" />
+                </div>
+
+                <div class="col-12">
+                  <FlashMessage />
+                </div>
+
+                <div class="col-auto">
+                  <button class="btn btn-grey-2" type="button" @click="resetUserDetails">Reset</button>
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-brand" type="button" @click="updateUserProfile">Update</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </layout>
@@ -56,8 +210,53 @@
     components: {
       Layout
     },
-    data: () => {
-      return {};
+    data() {
+      return {
+        details: this.auth.user,
+        formSubmitted: false
+      };
+    },
+    methods: {
+      resetUserDetails() {
+        this.$inertia.reload({
+          method: "get",
+          data: {},
+          preserveState: false,
+          preserveScroll: true,
+          only: []
+        });
+      },
+      updateUserProfile() {
+        BlockToast.fire({
+          text: "Updating profile ..."
+        });
+        this.formSubmitted = false;
+
+        let formData = new FormData();
+
+        this.details._method = "PUT";
+
+        _.forEach(this.details, (val, key) => {
+          formData.append(key, val);
+        });
+
+        this.$inertia
+          .post(this.$route("appuser.profile.edit"), formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            },
+
+            replace: false,
+            preserveState: true,
+            preserveScroll: true
+          })
+          .then(rsp => {
+            if (_.size(this.errors)) {
+              this.formSubmitted = true;
+            }
+            swal.close();
+          });
+      }
     }
   };
 </script>
@@ -67,5 +266,9 @@
     &.rounded {
       border-radius: 5px;
     }
+  }
+
+  textarea.form-control {
+    height: auto;
   }
 </style>
