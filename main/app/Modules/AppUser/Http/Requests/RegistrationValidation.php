@@ -56,4 +56,23 @@ class RegistrationValidation extends FormRequest
       'agreement.in' => 'You must accept our terms and conditions to register',
     ];
   }
+
+
+
+  /**
+   * Overwrite the validator response so we can customise it per the structure requested from the fronend
+   *
+   * @param \Illuminate\Contracts\Validation\Validator $validator
+   * @return void
+   */
+  protected function failedValidation(Validator $validator)
+  {
+    /**
+     * * Alternatively throw new AuthenticationFailedException($validator). Remember to use App\Exceptions\Admin\AuthenticationFailedException;
+     * * And handle there. That will help for reuse. Handling here for compactness purposes
+     * ? Who knows they might ask for a different format for the enxt validation
+     */
+
+    throw new AxiosValidationExceptionBuilder($validator, $this);
+  }
 }

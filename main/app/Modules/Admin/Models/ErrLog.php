@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Admin\Transformers\ErrLogTransformer;
-
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * App\Modules\Admin\Models\ErrLog
@@ -45,32 +46,41 @@ use App\Modules\Admin\Transformers\ErrLogTransformer;
  */
 class ErrLog extends Model
 {
-	protected $fillable = [];
+  protected $fillable = [];
 
-	static function notifyAdmin(User $user, Throwable $exception, string $message = null)
-	{
-		Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
-	}
+  static function notifyAdmin(User $user, Throwable $exception, string $message = null)
+  {
+    Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
+  }
 
-	static function notifyAdminAndFail(User $user, Throwable $exception, string $message = null)
-	{
-		if (DB::transactionLevel() > 0) {
-			Db::rollBack();
-		}
-		Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
-	}
+  static function notifyAdminAndFail(User $user, Throwable $exception, string $message = null)
+  {
+    if (DB::transactionLevel() > 0) {
+      Db::rollBack();
+    }
+    Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
+  }
 
-	static function apiRoutes()
-	{
-		Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
-			Route::get('err-logs', 'ErrLog@getErrorLogs')->middleware('auth:admin_api');
-		});
-	}
+  static function logValidationErrors(Validator $validator, FormRequest $validation_class)
+  {
+    if (DB::transactionLevel() > 0) {
+      Db::rollBack();
+    }
+    Log::error('hello', ['id' => 1]);
+    Log::error(get_class($validation_class) . ' validation failed. <br> Data Supplied: ' . json_encode($validator->getData()) . '. <br> The errors are: ' . json_encode((object)$validator->errors()->all()));
+  }
 
-	public function getErrorLogs()
-	{
-		if (auth('admin_api')->check()) {
-			return (new ErrLogTransformer)->collectionTransformer(ErrLog::latest()->get(), 'basicTransform');
-		}
-	}
+  static function apiRoutes()
+  {
+    Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
+      Route::get('err-logs', 'ErrLog@getErrorLogs')->middleware('auth:admin_api');
+    });
+  }
+
+  public function getErrorLogs()
+  {
+    if (auth('admin_api')->check()) {
+      return (new ErrLogTransformer)->collectionTransformer(ErrLog::latest()->get(), 'basicTransform');
+    }
+  }
 }
