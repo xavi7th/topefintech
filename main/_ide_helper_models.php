@@ -208,16 +208,14 @@ namespace App\Modules\AppUser\Models{
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\AutoSaveSetting[] $auto_save_settings
  * @property-read int|null $auto_save_settings_count
- * @property-read \App\Modules\AppUser\Models\Savings $core_savings
+ * @property-read \App\Modules\AppUser\Models\Savings|null $core_savings
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\DebitCard[] $debit_cards
  * @property-read int|null $debit_cards_count
- * @property-read \App\Modules\AppUser\Models\DebitCard $default_debit_card
+ * @property-read \App\Modules\AppUser\Models\DebitCard|null $default_debit_card
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $gos_savings
  * @property-read int|null $gos_savings_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanRequest[] $loan_requests
  * @property-read int|null $loan_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanSurety[] $loan_surety_requests
- * @property-read int|null $loan_surety_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanTransaction[] $loan_transactions
  * @property-read int|null $loan_transactions_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $locked_savings
@@ -228,16 +226,18 @@ namespace App\Modules\AppUser\Models{
  * @property-read int|null $previous_withdrawal_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
  * @property-read int|null $processed_withdrawal_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanSurety[] $request_for_surety
+ * @property-read int|null $request_for_surety_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
  * @property-read int|null $savings_interests_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $savings_list
  * @property-read int|null $savings_list_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
  * @property-read int|null $service_charges_count
- * @property-read \App\Modules\AppUser\Models\LoanSurety $surety_request
+ * @property-read \App\Modules\AppUser\Models\LoanSurety|null $surety_request
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
  * @property-read int|null $transactions_count
- * @property-read \App\Modules\AppUser\Models\WithdrawalRequest $withdrawal_request
+ * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawal_request
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser query()
@@ -264,9 +264,6 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
- * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanSurety[] $request_for_surety
- * @property-read int|null $request_for_surety_count
  */
 	class AppUser extends \Eloquent {}
 }
