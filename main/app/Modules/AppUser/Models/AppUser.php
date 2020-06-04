@@ -118,6 +118,8 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property string|null $date_of_birth
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDateOfBirth($value)
  */
 class AppUser extends User
 {

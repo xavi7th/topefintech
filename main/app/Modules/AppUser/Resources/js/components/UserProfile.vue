@@ -2,21 +2,23 @@
   <layout title="My Profile" :isAuth="false">
     <div class="container-fluid">
       <div class="rui-profile row vertical-gap">
-        <div class="col-lg-5 col-xl-4">
+        <div class="col-lg-5 col-xl-4 col-12">
           <div class="card">
             <div class="card-body">
               <div class="row vertical-gap">
                 <div class="col-auto">
                   <div class="rui-profile-img">
-                    <img src="/img/avatar-1-profile.png" alt />
+                    <img :src="auth.user.id_card" alt="user id card" />
                   </div>
                 </div>
                 <div class="col">
                   <div class="rui-profile-info">
-                    <h3 class="rui-profile-info-title h4">Jack Boyd</h3>
-                    <small class="text-grey-6 mt-2 mb-15">i love beans and dodo</small>
-                    <a class="rui-profile-info-mail" href="#">jackboyd@smartscoop.com</a>
-                    <a class="rui-profile-info-phone" href="#">+44 987 065 909</a>
+                    <h3 class="rui-profile-info-title h4">{{auth.user.full_name}}</h3>
+                    <small
+                      class="text-grey-6 mt-2 mb-15"
+                    >Registered: {{auth.user.num_of_days_active}} days ago</small>
+                    <a class="rui-profile-info-mail" href="#">{{auth.user.email}}</a>
+                    <a class="rui-profile-info-phone" href="#">{{auth.user.phone}}</a>
                   </div>
                 </div>
               </div>
@@ -32,7 +34,7 @@
                   <div class="col p-0"></div>
                   <div class="col-auto">
                     <div class="rui-profile-number text-center">
-                      <h4 class="rui-profile-number-title h2">05, May 1995</h4>
+                      <h4 class="rui-profile-number-title h2">{{auth.user.date_of_birth}}</h4>
                       <small class="text-grey-6">Date of Birth</small>
                     </div>
                   </div>
@@ -41,9 +43,9 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-12 col-lg-7 col-xl-8"></div>
-        <div class="col-12 col-lg-auto">
+
+          <hr />
+
           <div class="card">
             <div class="card-body pt-20 pr-10 pb-20 pl-10">
               <ul class="nav flex-column mnt-3">
@@ -159,27 +161,29 @@
                 <div class="col-6">
                   <label for="date_of_birth">Date of Birth</label>
                   <input
-                    type="date"
                     class="form-control"
+                    type="date"
                     v-model="details.date_of_birth"
                     id="date_of_birth"
                     placeholder="Your date_of_birth"
                     :class="{'is-invalid': errors.date_of_birth, 'is-valid': !errors.date_of_birth}"
                   />
+
                   <FlashMessage v-if="errors.date_of_birth" :msg="errors.date_of_birth[0]" />
                 </div>
 
                 <div class="col-6">
-                  <label for="id_car">ID Card</label>
+                  <label for="id_card">{{fileUploadName || 'ID Card'}}</label>
                   <input
-                    type="text"
+                    type="file"
                     class="form-control"
-                    v-model="details.id_car"
-                    id="id_car"
-                    placeholder="Your id_car"
-                    :class="{'is-invalid': errors.id_car, 'is-valid': !errors.id_car}"
+                    @change="attachFile"
+                    ref="id_card"
+                    id="id_card"
+                    placeholder="Your id_card"
+                    :class="{'is-invalid': errors.id_card, 'is-valid': !errors.id_card}"
                   />
-                  <FlashMessage v-if="errors.id_car" :msg="errors.id_car[0]" />
+                  <FlashMessage v-if="errors.id_card" :msg="errors.id_card[0]" />
                 </div>
 
                 <div class="col-12">
@@ -212,11 +216,22 @@
     },
     data() {
       return {
-        details: this.auth.user,
-        formSubmitted: false
+        details: _.omit(this.auth.user, ["id_card"]),
+        formSubmitted: false,
+        fileUploadName: null,
+        datePick: {
+          onSelect: function(dateText, inst) {
+            alert(dateText);
+          }
+        }
       };
     },
     methods: {
+      attachFile() {
+        this.fileUploadName = this.$refs.id_card.files[0].name;
+
+        this.details.id_card = this.$refs.id_card.files[0];
+      },
       resetUserDetails() {
         this.$inertia.reload({
           method: "get",
@@ -270,5 +285,12 @@
 
   textarea.form-control {
     height: auto;
+  }
+
+  .rui-profile .rui-profile-img img {
+    object-fit: cover;
+    display: block;
+    height: 100px;
+    width: 100px;
   }
 </style>

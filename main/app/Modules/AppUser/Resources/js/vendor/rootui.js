@@ -717,7 +717,8 @@
                         n = String( e.attr( "data-datetimepicker-format" ) ),
                         i = String( e.attr( "data-datetimepicker-date" ) ),
                         o = String( e.attr( "data-datetimepicker-time" ) ),
-                        r = {};
+                        r = {}
+
 
                     function s( t ) {
                         u < 576 && !t.parent( ".rui-datetimepicker-wrap" ).length && t.wrap( '<div class="rui-datetimepicker-wrap"></div>' ), u > 576 && t.parent( ".rui-datetimepicker-wrap" ).length && t.unwrap()

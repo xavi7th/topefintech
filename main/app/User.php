@@ -77,6 +77,8 @@ use App\Modules\AppUser\Models\AppUser;
  * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $date_of_birth
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDateOfBirth($value)
  */
 class User extends Authenticatable implements JWTSubject //implements MustVerifyEmail
 {

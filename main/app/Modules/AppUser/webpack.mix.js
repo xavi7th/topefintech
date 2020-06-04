@@ -36,6 +36,7 @@ if ( [ 'buildcss' ].includes( process.env.npm_config_section ) ) {
         __dirname + '/Resources/js/vendor/chartist.min.js',
         __dirname + '/Resources/js/vendor/all.js',
         __dirname + '/Resources/js/vendor/v4-shims.js',
+        __dirname + '/Resources/js/vendor/jquery.datetimepicker.full.min.js',
     ], 'public_html/js/dashboard-app-vendor.js' );
 
     mix.scripts( [
