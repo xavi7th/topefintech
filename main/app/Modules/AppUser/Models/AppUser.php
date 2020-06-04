@@ -764,6 +764,10 @@ class AppUser extends User
 
       $request->user()->save();
 
+      if ($request->password) {
+        Auth::logout();
+      }
+
       if ($request->isApi()) {
         return response()->json([], 204);
       }

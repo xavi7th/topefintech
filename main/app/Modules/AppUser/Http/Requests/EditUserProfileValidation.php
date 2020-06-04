@@ -5,6 +5,7 @@ namespace App\Modules\AppUser\Http\Requests;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
@@ -21,12 +22,12 @@ class EditUserProfileValidation extends FormRequest
     return [
       // 'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::apiuser()->id)],
       'full_name' => 'required|string',
-      'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/',
-      'phone' => ['required', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', Rule::unique('users')->ignore($this->user()->phone)],
-      'address' => 'required|string',
-      'city' => 'required|string',
-      'country' => 'required|string',
-      'date_of_birth' => 'required|date',
+      'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/|confirmed',
+      'phone' => ['required_without:password', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', Rule::unique('users')->ignore($this->user()->phone, 'phone')],
+      'address' => 'required_without:password|nullable|string',
+      'city' => 'required_without:password|nullable|string',
+      'country' => 'required_without:password|nullable|string',
+      'date_of_birth' => 'required_without:password|nullable|date',
       'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('users')->ignore($this->user()->acc_num)],
       'acc_bank' => 'bail|required_with:acc_num,acc_type|string',
       'acc_type' => 'bail|required_with:acc_num,acc_bank|string',
@@ -56,6 +57,11 @@ class EditUserProfileValidation extends FormRequest
       'acc_num.required_with' => 'You must enter your bank name and account type along with your account number',
       'acc_bank.required_with' => 'You must enter your account number and account type along with your bank name',
       'acc_type.required_with' => 'You must enter your account number and bank name along with your account type',
+      'phone.required_without' => 'Your phone number is required',
+      'address.required_without' => 'Your address is required',
+      'city.required_without' => 'Your city is required',
+      'country.required_without' => 'Your country is required',
+      'date_of_birth.required_without' => 'Your date of birth is required',
     ];
   }
 
@@ -70,8 +76,15 @@ class EditUserProfileValidation extends FormRequest
     $validator->after(function ($validator) {
 
       /** User muat be above 18 */
-      if (Carbon::parse($this->date_of_birth)->gte(now()->subYears(18))) {
+      if (!is_null($this->date_of_birth) && Carbon::parse($this->date_of_birth)->gte(now()->subYears(18))) {
         $validator->errors()->add('date_of_birth', 'You have to be 18 and older.');
+      }
+
+      if ($this->password) {
+        if (!Hash::check($this->current_password, $this->user()->password)) {
+          $validator->errors()->add('current_password', 'The supplied password is not correct. Have you forgotten your password?');
+          return;
+        }
       }
 
       if ($this->bvn) {
