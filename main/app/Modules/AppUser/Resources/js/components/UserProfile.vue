@@ -45,37 +45,6 @@
           </div>
 
           <hr />
-
-          <div class="card">
-            <div class="card-body pt-20 pr-10 pb-20 pl-10">
-              <ul class="nav flex-column mnt-3">
-                <li>
-                  <a class="nav-link active" href="#">
-                    <span data-feather="user" class="rui-icon rui-icon-stroke-1_5"></span>
-                    <span>Personal information</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="nav-link" href="#">
-                    <span data-feather="key" class="rui-icon rui-icon-stroke-1_5"></span>
-                    <span>Change Password</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="nav-link" href="#">
-                    <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
-                    <span>Account information</span>
-                  </a>
-                </li>
-                <!-- <li>
-                  <a class="nav-link" href="#">
-                    <span data-feather="shopping-cart" class="rui-icon rui-icon-stroke-1_5"></span>
-                    <span>Purchases</span>
-                  </a>
-                </li>-->
-              </ul>
-            </div>
-          </div>
         </div>
 
         <div class="col-12 col-lg-7 col-xl-8">
@@ -120,6 +89,20 @@
               >
                 <span data-feather="key" class="rui-icon rui-icon-stroke-1_5"></span>
                 <span>Change Password</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link rui-tabs-link"
+                id="verifyBVNPage-tab"
+                data-toggle="tab"
+                href="#verifyBVNPage"
+                role="tab"
+                aria-controls="verifyBVNPage"
+                aria-selected="false"
+              >
+                <span data-feather="trello" class="rui-icon rui-icon-stroke-1_5"></span>
+                <span>BVN</span>
               </a>
             </li>
           </ul>
@@ -316,6 +299,7 @@
                 </div>
               </div>
             </div>
+
             <div
               class="tab-pane fade"
               id="changePasswordPage"
@@ -384,6 +368,48 @@
                         @click="updateUserProfile"
                         :disabled="!details.password"
                       >Update</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="tab-pane fade"
+              id="verifyBVNPage"
+              role="tabpanel"
+              aria-labelledby="verifyBVNPage-tab"
+            >
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="row vertical-gap sm-gap justify-content-end"
+                    :class="{'was-validated': formSubmitted}"
+                  >
+                    <div class="col-12">
+                      <FlashMessage />
+                    </div>
+
+                    <div class="col-12">
+                      <label for="bvn">Enter BVN</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        :class="{'is-invalid': errors.bvn, 'is-valid': !errors.bvn}"
+                        v-model="details.bvn"
+                        id="bvn"
+                        placeholder="Enter your BVN Number"
+                      />
+                      <FlashMessage v-if="errors.bvn" :msg="errors.bvn[0]" />
+                    </div>
+
+                    <div class="col-auto">
+                      <button
+                        class="btn btn-brand"
+                        type="button"
+                        @click="updateUserProfile"
+                        :disabled="!details.bvn"
+                      >Verify</button>
                     </div>
                   </div>
                 </div>

@@ -587,7 +587,14 @@ class AppUser extends User
 
   public function validate_bvn(string $bvn, string $phone_number = null, string $full_name = null): object
   {
-    $comparison_phone_number = $phone_number ?? $this->phone;
+    try {
+      $comparison_phone_number = $phone_number ?? $this->phone ?? abort(422,  'A valid phone number required to validate your BVN');
+    } catch (\Throwable $th) {
+      return (object)[
+        'code' => 409,
+        'msg' => $th->getMessage()
+      ];
+    }
     $comparison_full_name = $full_name ?? $this->full_name;
     $paystack = new PaystackAdapter();
     $paystack->addPlugin(new GetBVN(PaystackAdapter::API_LINK));

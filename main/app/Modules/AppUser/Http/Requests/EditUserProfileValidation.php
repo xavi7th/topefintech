@@ -89,20 +89,20 @@ class EditUserProfileValidation extends FormRequest
 
       if ($this->bvn) {
         if ($this->user()->total_balance() < config('app.balance_before_bvn_validation')) {
-          $validator->errors()->add('BVN Error', 'You are not yet due to enter and validate your bvn. Become active on out platform before updating your BVN');
+          $validator->errors()->add('bvn', 'You are not yet due to enter and validate your bvn. Become active on out platform before updating your BVN');
           return;
         }
 
         $rsp = $this->user()->validate_bvn($this->bvn, $this->phone, $this->full_name);
 
         if ($rsp->code === 0) {
-          $validator->errors()->add('BVN Error', $rsp->msg);
+          $validator->errors()->add('bvn', $rsp->msg);
           return;
         } elseif ($rsp->code === 400) {
-          $validator->errors()->add('BVN Error', 'We were unable to resolve your provided BVN. Check it again to make sure there are no errors');
+          $validator->errors()->add('bvn', 'We were unable to resolve your provided BVN. Check it again to make sure there are no errors');
           return;
         } elseif ($rsp->code === 409) {
-          $validator->errors()->add('BVN Error', $rsp->msg);
+          $validator->errors()->add('bvn', $rsp->msg);
           return;
         }
         return;
