@@ -1,4 +1,11 @@
 export const mixins = {
+    props: {
+        app: Object,
+        isInertiaRequest: Boolean,
+        auth: Object,
+        flash: Object,
+        errors: Object
+    },
     beforeDestroy() {
         this.$unloadScript( "/js/user-dashboard-init.js" );
     },

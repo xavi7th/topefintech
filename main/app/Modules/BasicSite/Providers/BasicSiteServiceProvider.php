@@ -3,11 +3,12 @@
 namespace App\Modules\BasicSite\Providers;
 
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Http\Request;
+use App\Modules\AppUser\Transformers\AppUserTransformer;
 
 class BasicSiteServiceProvider extends ServiceProvider
 {
@@ -55,10 +56,10 @@ class BasicSiteServiceProvider extends ServiceProvider
       'routes' => function (Request $request) {
         return optional($request->user())->get_navigation_routes() ?? [];
       },
-      'isInertiaRequest' => request()->header('X-Inertia'),
-      'auth' => function () {
+      'isInertiaRequest' => (bool)request()->header('X-Inertia'),
+      'auth' => function (Request $request) {
         return [
-          'user' => Auth::user() ? Auth::user() : (object)[],
+          'user' => Auth::user() ? (new AppUserTransformer)->detailed($request->user()) : (object)[],
         ];
       },
       'flash' => function () {
