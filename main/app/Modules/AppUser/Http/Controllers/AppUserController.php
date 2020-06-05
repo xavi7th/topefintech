@@ -86,7 +86,6 @@ class AppUserController extends Controller
         Route::get('make-withdrawals', 'AppUserController@loadUserApp')->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
         Route::get('smart-interests', 'AppUserController@loadUserApp')->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
         Route::get('my-cards', 'AppUserController@viewDebitCards')->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
-
         Route::get('messages', 'AppUserController@loadUserApp')->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
         Route::get('gos-funds/create', 'AppUserController@initialiseGOSFund')->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
       });

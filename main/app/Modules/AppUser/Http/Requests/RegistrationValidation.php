@@ -57,8 +57,6 @@ class RegistrationValidation extends FormRequest
     ];
   }
 
-
-
   /**
    * Overwrite the validator response so we can customise it per the structure requested from the fronend
    *

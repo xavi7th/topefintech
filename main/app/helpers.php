@@ -353,6 +353,7 @@ if (!function_exists('to_naira')) {
   }
 }
 
+
 if (!function_exists('generate_422_error')) {
   /**
    * Generate a 422 error in a format that axios and sweetalert 2 can display it
@@ -432,8 +433,6 @@ if (!function_exists('get_related_routes')) {
     });
   }
 }
-
-
 
 if (!function_exists('compress_image_upload')) {
 
