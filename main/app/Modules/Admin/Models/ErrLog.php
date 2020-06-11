@@ -50,8 +50,8 @@ class ErrLog extends Model
 
   static function notifyAdmin(User $user, Throwable $exception, string $message = null)
   {
-    Log::error(json_encode(['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]));
-    // Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
+    // Log::error(json_encode(['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]));
+    Log::error($message, ['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]);
   }
 
   static function notifyAdminAndFail(User $user, Throwable $exception, string $message = null)
@@ -67,8 +67,7 @@ class ErrLog extends Model
     if (DB::transactionLevel() > 0) {
       Db::rollBack();
     }
-    // Log::error('hello', ['id' => 1]);
-    Log::error(get_class($validation_class) . ' validation failed. <br> Data Supplied: ' . json_encode($validator->getData()) . '. <br> The errors are: ' . json_encode((object)$validator->errors()->all()));
+    Log::error(get_class($validation_class) . ' validation failed.', ['Data Supplied: ' => $validator->getData(), 'Errors: ' => $validator->errors()->all()]);
   }
 
   static function apiRoutes()

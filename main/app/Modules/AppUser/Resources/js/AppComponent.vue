@@ -31,6 +31,7 @@
 
       <dashboard-footer></dashboard-footer>
     </div>
+    <slot name="modals"></slot>
   </div>
 </template>
 

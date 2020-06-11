@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev-all": "concurrently -m 1 \"npm --section=buildjs run dev\" \"npm --section=buildcss run dev\"  --kill-others-on-fail",
-    "prod-all": "concurrently -m 1 \"npm --section=buildjs run prod\" \"npm --section=buildcss run prod\"  --kill-others-on-fail",
+    "prod-all": "concurrently \"npm --section=buildjs run prod\" \"npm --section=buildcss run prod\"  --kill-others-on-fail",
     "watch-all": "concurrently \"npm --section=buildjs run watch\" \"npm --section=buildcss run watch\"  --kill-others-on-fail",
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -35,6 +35,7 @@
   "dependencies": {
     "@inertiajs/inertia": "~0.1.9",
     "@inertiajs/inertia-vue": "~0.1.4",
+    "moment": "^2.26.0",
     "sweetalert2": "^9.13.1",
     "vee-validate": "^3.3.0",
     "vue-plugin-load-script": "^1.2.0",

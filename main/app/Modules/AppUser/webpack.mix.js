@@ -34,6 +34,7 @@ if ( [ 'buildcss' ].includes( process.env.npm_config_section ) ) {
         __dirname + '/Resources/js/vendor/swiper.min.js',
         __dirname + '/Resources/js/vendor/Chart.min.js',
         __dirname + '/Resources/js/vendor/chartist.min.js',
+        __dirname + '/Resources/js/vendor/jquery.dataTables.min.js',
         __dirname + '/Resources/js/vendor/all.js',
         __dirname + '/Resources/js/vendor/v4-shims.js',
         __dirname + '/Resources/js/vendor/jquery.datetimepicker.full.min.js',

@@ -740,6 +740,7 @@
         }
 
         function J() {
+
             void 0 !== a.fn.dataTable && a( ".rui-datatable:not(.rui-datatable-ready)" ).addClass( "rui-datatable-ready" ).each( ( function () {
                 var t = a( this ),
                     e = t.attr( "data-datatable-order" ),

@@ -8,7 +8,11 @@ import Vue2Filters from 'vue2-filters'
 import LoadScript from 'vue-plugin-load-script'
 import route from 'ziggy';
 import FlashMessage from '@dashboard-components/partials/FlashMessage'
+import Modal from '@dashboard-components/partials/Modal'
+import moment from 'moment'
 
+
+Vue.prototype.moment = moment
 Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
 
@@ -31,6 +35,7 @@ let mediaHandler = () => {
 const app = document.getElementById( 'app' )
 
 Vue.component( 'FlashMessage', FlashMessage );
+Vue.component( 'Modal', Modal );
 
 new Vue( {
     render: h => h( InertiaApp, {

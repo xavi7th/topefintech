@@ -526,8 +526,7 @@ class AppUser extends User
     foreach ($request->all() as $val) {
       $savings_list->where('id', $val['id'])->first()->savings_distribution = $val['savings_distribution'];
     }
-
-    return response()->json($request->user()->savings_list()->saveMany($savings_list), 201);
+    return $request->user()->savings_list()->saveMany($savings_list);
   }
 
   static function store_id_card(Request $request)

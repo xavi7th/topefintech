@@ -11,7 +11,7 @@
         "php": "^7.2.5",
         "adelowo/gbowo": "^1.7",
         "adelowo/gbowo-paystack": "^1.1",
-        "danielme85/laravel-log-to-db": "^2.3",
+        "danielme85/laravel-log-to-db": "dev-master",
         "fideloper/proxy": "^4.0",
         "fruitcake/laravel-cors": "^2.0",
         "inertiajs/inertia-laravel": "^0.2.5",
@@ -91,7 +91,8 @@
             "@php artisan view:clear",
             "@php artisan event:clear",
             "@php artisan migrate:fresh",
-            "@php artisan module:seed"
+            "@php artisan module:seed",
+            "composer dumpautoload"
 
         ],
         "post-autoload-dump": [

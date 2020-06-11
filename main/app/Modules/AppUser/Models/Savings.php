@@ -374,17 +374,24 @@ class Savings extends Model
 
       Route::get('/savings/{savings}/check-maturity', 'Savings@checkSavingsMaturity');
 
-      Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile');
+      Route::get('/savings/gos-funds/create', [self::class, 'viewGOSList'])->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
+
+      Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile')->name('appuser.savings.gos.initialise');
 
       Route::get('/savings/distribution', 'Savings@getSavingsDistributionRatio');
 
-      Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio');
+      Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio')->name('appuser.savings.distribution.update');
     });
   }
 
   public function getListOfUserSavings()
   {
     return auth()->user()->savings_list;
+  }
+
+  public function viewGOSList()
+  {
+    return Inertia::render('savings/CreateGOSPlan');
   }
 
   public function getDistributionDetails(FundSavingsValidation $request)
@@ -575,7 +582,11 @@ class Savings extends Model
       'gos_type_id' => $request->gos_type_id,
       'maturity_date' => now()->addMonths($request->duration)
     ]);
-    return response()->json(['rsp' => $funds], 201);
+    if ($request->isApi()) {
+      return response()->json(['rsp' => $funds], 201);
+    } else {
+      return back()->withSuccess('Created');
+    }
   }
 
   public function getSavingsDistributionRatio(Request $request)
@@ -614,7 +625,12 @@ class Savings extends Model
      *			}
      *	]
      */
-    return auth()->user()->update_savings_distribution($request);
+    $result = $request->user()->update_savings_distribution($request);
+
+    if ($request->isApi()) {
+      return response()->json($result, 201);
+    }
+    return back()->withSuccess('Updated');
   }
 
 

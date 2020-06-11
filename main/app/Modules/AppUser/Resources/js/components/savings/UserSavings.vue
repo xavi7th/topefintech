@@ -51,6 +51,8 @@
               <thead class="thead-dark">
                 <tr>
                   <th scope="col">Type</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Amount</th>
                   <th scope="col">Amount</th>
                 </tr>
               </thead>
@@ -202,65 +204,80 @@
           role="tabpanel"
           aria-labelledby="contactPillsSliding-tab"
         >
-          <div class="col-lg-8 col-xl-8">
+          <div class="col-12">
             <div class="d-flex align-items-center justify-content-between mb-25">
               <h2 class="mnb-2" id="formBase">My Savings Distribution (%)</h2>
+              <template v-if="errors">
+                <FlashMessage v-for="err in errors" :msg="err[0]" :key="err[0]" />
+              </template>
             </div>
-            <table class="table table-bordered">
+            <table class="table table-bordered rui-datatable" data-datatable-order="0:asc">
               <thead class="thead-dark">
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Percentage</th>
-                  <th scope="col">Action</th>
+                  <th scope="col">
+                    #
+                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </th>
+                  <th scope="col">
+                    Type
+                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </th>
+                  <th scope="col">
+                    Name
+                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </th>
+                  <th scope="col">
+                    Current Balance
+                    <span
+                      data-feather="chevron-down"
+                      class="rui-icon rui-icon-stroke-1_5"
+                    ></span>
+                  </th>
+                  <th scope="col">
+                    Start Date
+                    <span
+                      data-feather="chevron-down"
+                      class="rui-icon rui-icon-stroke-1_5"
+                    ></span>
+                  </th>
+                  <th scope="col">
+                    Maturity Date
+                    <span
+                      data-feather="chevron-down"
+                      class="rui-icon rui-icon-stroke-1_5"
+                    ></span>
+                  </th>
+                  <th scope="col">
+                    Percentage
+                    <span
+                      data-feather="chevron-down"
+                      class="rui-icon rui-icon-stroke-1_5"
+                    ></span>
+                  </th>
+                  <th scope="col">
+                    Action
+                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Core Savings</td>
-                  <td>10%</td>
+                <tr v-for="savings in savings_list" :key="savings.id">
+                  <th scope="row">{{savings.id}}</th>
+                  <td class="text-capitalize">{{savings.type}} Savings</td>
+                  <td class="text-capitalize">{{savings.gos_type.name || 'N/A'}}</td>
+                  <td class="text-capitalize">{{savings.current_balance | currency }}</td>
+                  <td class="text-capitalize">{{moment(savings.funded_at).format('YYYY-MM-DD')}}</td>
+                  <td class="text-capitalize">{{moment(savings.maturity_date).format('YYYY-MM-DD')}}</td>
                   <td>
-                    <a href="#">
-                      <span class="icon">
-                        <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
-                      </span>
-                      Edit
-                    </a>
+                    <input
+                      v-model="savings.savings_distribution"
+                      v-if="editDistribution"
+                      class="form-control"
+                    />
+                    <span v-else>{{ savings.savings_distribution }}%</span>
                   </td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Locked Funds</td>
-                  <td>30%</td>
                   <td>
-                    <a href="#">
-                      <span class="icon">
-                        <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
-                      </span>
-                      Edit
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>NYSC POP</td>
-                  <td>50%</td>
-                  <td>
-                    <a href="#">
-                      <span class="icon">
-                        <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
-                      </span>
-                      Edit
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">4</th>
-                  <td>After School Savings</td>
-                  <td>10%</td>
-                  <td>
-                    <a href="#">
+                    <a @click.prevent="editDistribution = true" href="#">
                       <span class="icon">
                         <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
                       </span>
@@ -271,9 +288,81 @@
               </tbody>
             </table>
           </div>
+          <div class="row mt-30">
+            <div class="col-sm-7 justify-content-between">
+              <button
+                type="button"
+                class="btn btn-brand"
+                data-toggle="modal"
+                data-target="#newGOSModal"
+              >New GOS</button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#newLockedModal"
+              >New Locked Fund</button>
+            </div>
+            <div class="col text-right">
+              <button
+                type="button"
+                class="btn btn-success btn-uniform btn-round"
+                @click="editDistribution = false"
+                v-if="editDistribution"
+              >
+                <span class="icon">
+                  <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                </span>
+              </button>
+              <button
+                v-if="editDistribution"
+                type="button"
+                class="btn btn-danger"
+                @click="updateSavingsDistribution"
+              >Update Savings Distribution</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <template v-slot:modals>
+      <modal modalId="newGOSModal" modalTitle="hello World">
+        <form class="#" @submit.prevent="createGOS">
+          <FlashMessage />
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12">
+              <label for="duration">Duration (Months)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="duration"
+                v-model="details.duration"
+                placeholder="Enter duration of savings"
+              />
+              <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
+            </div>
+            <div class="col-12">
+              <label for="week">Select GOS Plan</label>
+              <select class="custom-select" name="week" v-model="details.gos_type_id">
+                <option selected>Select</option>
+                <option v-for="gos in gos_types" :key="gos.id" :value="gos.id">{{gos.name}}</option>
+              </select>
+              <FlashMessage v-if="errors.gos_type_id" :msg="errors.gos_type_id[0]" />
+            </div>
+
+            <div class="col-12">
+              <button type="submit" class="btn btn-success btn-long">
+                <span class="text">Create</span>
+              </button>&nbsp;
+            </div>
+          </div>
+        </form>
+      </modal>
+      <modal
+        modalId="newLockedModal"
+        modalTitle="hello World Again"
+      >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur minima ex, veniam animi veritatis iste atque fugiat illum illo enim distinctio quasi reiciendis libero facere consequatur aut in explicabo nemo.</modal>
+    </template>
   </layout>
 </template>
 
@@ -283,11 +372,70 @@
   export default {
     name: "UserSavings",
     mixins: [mixins],
+    props: ["gos_types", "savings_list"],
     components: {
       Layout
     },
     data: () => {
-      return {};
+      return {
+        editDistribution: false,
+        details: {}
+      };
+    },
+    computed: {
+      savings_distribution() {
+        return _.map(this.savings_list, val => {
+          return _.pick(val, ["id", "savings_distribution"]);
+        });
+      }
+    },
+    methods: {
+      createGOS() {
+        BlockToast.fire({ text: "creating..." });
+        this.$inertia
+          .post(this.$route("appuser.savings.gos.initialise"), {
+            ...this.details
+          })
+          .then(() => {
+            this.details = {};
+            swal.close();
+          });
+      },
+      updateSavingsDistribution() {
+        this.editDistribution = false;
+        Toast.fire({
+          title: "Please Wait!",
+          text: "Updating savings distribution...",
+          icon: "info",
+          timer: 100000,
+          position: "center"
+        });
+
+        this.$inertia
+          .put(
+            this.$route("appuser.savings.distribution.update", {
+              ...this.savings_distribution
+            })
+          )
+          .then(() => {
+            if (this.flash.success) {
+              Toast.fire({
+                title: "Success!",
+                text: this.flash.success,
+                icon: "success",
+                position: "center"
+              });
+            } else {
+              Toast.fire({
+                title: "Error!",
+                text: "An error occured",
+
+                icon: "error",
+                position: "center"
+              });
+            }
+          });
+      }
     }
   };
 </script>

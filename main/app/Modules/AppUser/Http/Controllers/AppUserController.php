@@ -36,24 +36,19 @@ class AppUserController extends Controller
 
       ErrLog::apiRoutes();
 
-      Route::group(['middleware' => ['auth:api_user', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+      Savings::appUserApiRoutes();
 
-        Savings::appUserApiRoutes();
+      DebitCard::appUserApiRoutes();
 
-        GOSType::appUserApiRoutes();
+      LoanRequest::appUserApiRoutes();
 
-        DebitCard::appUserApiRoutes();
+      LoanSurety::appUserApiRoutes();
 
-        LoanRequest::appUserApiRoutes();
+      WithdrawalRequest::appUserApiRoutes();
 
-        LoanSurety::appUserApiRoutes();
+      SavingsInterest::appUserApiRoutes();
 
-        WithdrawalRequest::appUserApiRoutes();
-
-        SavingsInterest::appUserApiRoutes();
-
-        Transaction::appUserApiRoutes();
-      });
+      Transaction::appUserApiRoutes();
     });
   }
 
@@ -62,7 +57,7 @@ class AppUserController extends Controller
    */
   public static function routes()
   {
-    Route::group(['middleware' => 'web', 'namespace' => 'App\Modules\AppUser\Http\Controllers'], function () {
+    Route::group(['middleware' => 'web', 'namespace' => '\App\Modules\AppUser\Http\Controllers'], function () {
       LoginController::routes();
       RegisterController::routes();
       // ResetPasswordController::routes();
@@ -76,18 +71,19 @@ class AppUserController extends Controller
         AppUser::routes();
 
         Route::redirect('/', '/user/dashboard', 303);
-        Route::get('dashboard', 'AppUserController@loadDashboard')->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);
-        Route::get('savings', 'AppUserController@viewUserSavings')->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
-        Route::get('savings/get-distribution-details', 'AppUserController@getSavingsDistribution')->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
-        Route::get('statement', 'AppUserController@loadUserApp')->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
-        Route::get('request-smart-loan', 'AppUserController@showRequestSmartLoanForm')->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
-        Route::get('smart-loan-logs', 'AppUserController@viewSmartLoans')->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
-        Route::get('smart-loan-details', 'AppUserController@viewSmartLoanDetails')->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
-        Route::get('make-withdrawals', 'AppUserController@loadUserApp')->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
-        Route::get('smart-interests', 'AppUserController@loadUserApp')->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
-        Route::get('my-cards', 'AppUserController@viewDebitCards')->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
-        Route::get('messages', 'AppUserController@loadUserApp')->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
-        Route::get('gos-funds/create', 'AppUserController@initialiseGOSFund')->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
+        Route::get('dashboard', [self::class, 'loadDashboard'])->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);
+        Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
+        Route::get('savings/get-distribution-details', [self::class, 'getSavingsDistribution'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
+        Route::get('statement', [self::class, 'loadUserApp'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
+        Route::get('request-smart-loan', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
+        Route::get('smart-loan-logs', [self::class, 'viewSmartLoans'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
+        Route::get('smart-loan-details', [self::class, 'viewSmartLoanDetails'])->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
+        Route::get('make-withdrawals', [self::class, 'loadUserApp'])->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
+        Route::get('smart-interests', [self::class, 'loadUserApp'])->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
+        Route::get('my-cards', [self::class, 'viewDebitCards'])->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
+        Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
+
+        GOSType::routes();
       });
     });
   }
@@ -100,18 +96,14 @@ class AppUserController extends Controller
   public function viewUserSavings()
   {
     return Inertia::render('savings/UserSavings', [
-      'savings' => auth()->user()->savings_list
+      'savings_list' => auth()->user()->savings_list->load('gos_type'),
+      'gos_types' => GOSType::all()
     ]);
   }
 
   public function getSavingsDistribution()
   {
     return Inertia::render('savings/GetSavingsDistribution');
-  }
-
-  public function initialiseGOSFund()
-  {
-    return Inertia::render('savings/CreateGOSPlan');
   }
 
   public function viewDebitCards()
