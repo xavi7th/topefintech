@@ -50,11 +50,11 @@
             </a>
           </li>
           <li>
-            <a href="profile.html" class="nav-link">
+            <inertia-link method="post" :href="$route('appuser.logout')" class="nav-link">
               <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
-              <span>Exit</span>
+              <span>Logout</span>
               <span class="rui-nav-circle"></span>
-            </a>
+            </inertia-link>
           </li>
         </ul>
       </div>

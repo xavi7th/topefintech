@@ -12,7 +12,13 @@
     </div>
   </div>
 
-  <div v-else>
+  <div
+    data-spy="scroll"
+    data-target=".rui-page-sidebar"
+    data-offset="140"
+    class="elelele rui-no-transition rui-navbar-autohide rui-section-lines"
+    v-else
+  >
     <dashboard-nav></dashboard-nav>
     <div class="rui-yaybar-bg"></div>
 

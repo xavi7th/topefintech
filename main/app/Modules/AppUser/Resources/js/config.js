@@ -7,12 +7,24 @@ export const mixins = {
         errors: Object
     },
     beforeDestroy() {
+        // console.log( 'clearing event handlers ...' );
+
+        // var el = document.getElementsByTagName( 'body' )[ 0 ],
+        //     clone = el.cloneNode( true );
+        // console.log( el );
+        // el.parentNode.replaceChild( clone, el );
         this.$unloadScript( "/js/user-dashboard-init.js" );
+
+    },
+    destroyed() {
+
     },
     mounted() {
-        this.$loadScript( '/js/user-dashboard-init.js' ).then( () => {
-            $( '.preloader' ).delay( 600 ).fadeOut( 300 );
-        } )
+        setTimeout( () => {
+            this.$loadScript( '/js/user-dashboard-init.js' ).then( () => {
+                $( '.preloader' ).delay( 600 ).fadeOut( 300 );
+            } )
+        }, 2000 );
     },
 }
 
