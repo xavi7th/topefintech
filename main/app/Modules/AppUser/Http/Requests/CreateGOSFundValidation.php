@@ -41,7 +41,7 @@ class CreateGOSFundValidation extends FormRequest
   public function messages()
   {
     return [
-      'duration.min' => 'Locked funds duration must be a minimum of 10 months'
+      'duration.min' => 'GOS Locked funds duration must be a minimum of 10 months'
     ];
   }
 

@@ -55,7 +55,7 @@ class CreateLockedFundValidation extends FormRequest
   {
     $validator->after(function ($validator) {
       if ($this->user()->has_locked_savings()) {
-        $validator->errors()->add('You already have a smart lock profile');
+        $validator->errors()->add('duration', 'You already have a smart lock profile');
         return;
       }
     });

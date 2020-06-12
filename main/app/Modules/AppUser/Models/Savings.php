@@ -364,7 +364,7 @@ class Savings extends Model
 
       Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings');
 
-      Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile');
+      Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile')->name('appuser.savings.locked.initialise');
 
       Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
 
@@ -572,7 +572,12 @@ class Savings extends Model
       'type' => 'locked',
       'maturity_date' => now()->addMonths($request->duration)
     ]);
-    return response()->json(['rsp' => $funds], 201);
+
+    if ($request->isApi()) {
+      return response()->json(['rsp' => $funds], 201);
+    } else {
+      return back()->withSuccess('Locked Funds savings profile created');
+    }
   }
 
   public function createNewGOSSavingsProfile(CreateGOSFundValidation $request)

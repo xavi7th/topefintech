@@ -205,128 +205,136 @@
           aria-labelledby="contactPillsSliding-tab"
         >
           <div class="col-12">
-            <div class="d-flex align-items-center justify-content-between mb-25">
-              <h2 class="mnb-2" id="formBase">My Savings Distribution (%)</h2>
-              <template v-if="errors">
+            <div
+              class="d-flex align-items-center justify-content-between mb-25 flex-wrap flex-md-nowrap"
+            >
+              <h2 class="mb-0 mr-md-5" id="formBase">My Savings Distribution (%)</h2>
+
+              <div class="col-12 col-md justify-content-between">
+                <button
+                  type="button"
+                  class="btn btn-brand"
+                  data-toggle="modal"
+                  data-target="#newGOSModal"
+                >New GOS</button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-toggle="modal"
+                  data-target="#newLockedModal"
+                >New Locked Fund</button>
+              </div>
+              <div class="col-12 col-md text-md-right">
+                <button
+                  v-show="editDistribution"
+                  type="button"
+                  class="btn btn-danger"
+                  @click="updateSavingsDistribution"
+                >Update Savings Distribution</button>
+                <button
+                  type="button"
+                  class="btn btn-success btn-uniform btn-round"
+                  @click="editDistribution = false"
+                  v-show="editDistribution"
+                >
+                  <span class="icon">
+                    <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <FlashMessage />
+            <template v-if="errors">
+              <div class="d-flex align-items-center justify-content-between flex-column mb-25">
                 <FlashMessage v-for="err in errors" :msg="err[0]" :key="err[0]" />
-              </template>
-            </div>
-            <table class="table table-bordered rui-datatable" data-datatable-order="0:asc">
-              <thead class="thead-dark">
-                <tr>
-                  <th scope="col">
-                    #
-                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
-                  </th>
-                  <th scope="col">
-                    Type
-                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
-                  </th>
-                  <th scope="col">
-                    Name
-                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
-                  </th>
-                  <th scope="col">
-                    Current Balance
-                    <span
-                      data-feather="chevron-down"
-                      class="rui-icon rui-icon-stroke-1_5"
-                    ></span>
-                  </th>
-                  <th scope="col">
-                    Start Date
-                    <span
-                      data-feather="chevron-down"
-                      class="rui-icon rui-icon-stroke-1_5"
-                    ></span>
-                  </th>
-                  <th scope="col">
-                    Maturity Date
-                    <span
-                      data-feather="chevron-down"
-                      class="rui-icon rui-icon-stroke-1_5"
-                    ></span>
-                  </th>
-                  <th scope="col">
-                    Percentage
-                    <span
-                      data-feather="chevron-down"
-                      class="rui-icon rui-icon-stroke-1_5"
-                    ></span>
-                  </th>
-                  <th scope="col">
-                    Action
-                    <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="savings in savings_list" :key="savings.id">
-                  <th scope="row">{{savings.id}}</th>
-                  <td class="text-capitalize">{{savings.type}} Savings</td>
-                  <td class="text-capitalize">{{savings.gos_type.name || 'N/A'}}</td>
-                  <td class="text-capitalize">{{savings.current_balance | currency }}</td>
-                  <td class="text-capitalize">{{moment(savings.funded_at).format('YYYY-MM-DD')}}</td>
-                  <td class="text-capitalize">{{moment(savings.maturity_date).format('YYYY-MM-DD')}}</td>
-                  <td>
-                    <input
-                      v-model="savings.savings_distribution"
-                      v-if="editDistribution"
-                      class="form-control"
-                    />
-                    <span v-else>{{ savings.savings_distribution }}%</span>
-                  </td>
-                  <td>
-                    <a @click.prevent="editDistribution = true" href="#">
-                      <span class="icon">
-                        <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
-                      </span>
-                      Edit
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="row mt-30">
-            <div class="col-sm-7 justify-content-between">
-              <button
-                type="button"
-                class="btn btn-brand"
-                data-toggle="modal"
-                data-target="#newGOSModal"
-              >New GOS</button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-toggle="modal"
-                data-target="#newLockedModal"
-              >New Locked Fund</button>
-            </div>
-            <div class="col text-right">
-              <button
-                type="button"
-                class="btn btn-success btn-uniform btn-round"
-                @click="editDistribution = false"
-                v-if="editDistribution"
-              >
-                <span class="icon">
-                  <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
-                </span>
-              </button>
-              <button
-                v-if="editDistribution"
-                type="button"
-                class="btn btn-danger"
-                @click="updateSavingsDistribution"
-              >Update Savings Distribution</button>
+              </div>
+            </template>
+            <div class="table-responsive">
+              <table class="table table-bordered rui-datatable" data-datatable-order="0:asc">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">
+                      #
+                      <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                    </th>
+                    <th scope="col">
+                      Type
+                      <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                    </th>
+                    <th scope="col">
+                      Name
+                      <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                    </th>
+                    <th scope="col">
+                      Current Balance
+                      <span
+                        data-feather="chevron-down"
+                        class="rui-icon rui-icon-stroke-1_5"
+                      ></span>
+                    </th>
+                    <th scope="col">
+                      Start Date
+                      <span
+                        data-feather="chevron-down"
+                        class="rui-icon rui-icon-stroke-1_5"
+                      ></span>
+                    </th>
+                    <th scope="col">
+                      Maturity Date
+                      <span
+                        data-feather="chevron-down"
+                        class="rui-icon rui-icon-stroke-1_5"
+                      ></span>
+                    </th>
+                    <th scope="col">
+                      Percentage
+                      <span
+                        data-feather="chevron-down"
+                        class="rui-icon rui-icon-stroke-1_5"
+                      ></span>
+                    </th>
+                    <th scope="col">
+                      Action
+                      <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="savings in savings_list" :key="savings.id">
+                    <th scope="row">{{savings.id}}</th>
+                    <td class="text-capitalize">{{savings.type}} Savings</td>
+                    <td class="text-capitalize">{{savings.gos_type.name || 'N/A'}}</td>
+                    <td class="text-capitalize">{{savings.current_balance | currency }}</td>
+                    <td class="text-capitalize">{{moment(savings.funded_at).format('YYYY-MM-DD')}}</td>
+                    <td
+                      class="text-capitalize"
+                    >{{moment(savings.maturity_date).format('YYYY-MM-DD')}}</td>
+                    <td>
+                      <input
+                        v-model="savings.savings_distribution"
+                        v-if="editDistribution"
+                        class="form-control"
+                      />
+                      <span v-else>{{ savings.savings_distribution }}%</span>
+                    </td>
+                    <td>
+                      <a @click.prevent="editDistribution = true" href="#">
+                        <span class="icon">
+                          <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
+                        </span>
+                        Edit
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="newGOSModal" modalTitle="hello World">
+      <modal modalId="newGOSModal" modalTitle="Create New Goal Oriented Savings">
         <form class="#" @submit.prevent="createGOS">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
@@ -342,26 +350,44 @@
               <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
             </div>
             <div class="col-12">
-              <label for="week">Select GOS Plan</label>
-              <select class="custom-select" name="week" v-model="details.gos_type_id">
+              <label for="gos-type">Select GOS Plan</label>
+              <select class="custom-select" name="gos-type" v-model="details.gos_type_id">
                 <option selected>Select</option>
                 <option v-for="gos in gos_types" :key="gos.id" :value="gos.id">{{gos.name}}</option>
               </select>
               <FlashMessage v-if="errors.gos_type_id" :msg="errors.gos_type_id[0]" />
             </div>
-
             <div class="col-12">
               <button type="submit" class="btn btn-success btn-long">
-                <span class="text">Create</span>
+                <span class="text">Initialise</span>
               </button>&nbsp;
             </div>
           </div>
         </form>
       </modal>
-      <modal
-        modalId="newLockedModal"
-        modalTitle="hello World Again"
-      >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur minima ex, veniam animi veritatis iste atque fugiat illum illo enim distinctio quasi reiciendis libero facere consequatur aut in explicabo nemo.</modal>
+      <modal modalId="newLockedModal" modalTitle="Initialise Locked Funds">
+        <form class="#" @submit.prevent="createLockedFunds">
+          <FlashMessage />
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12">
+              <label for="lock-duration">Duration (Months)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="lock-duration"
+                v-model="details.duration"
+                placeholder="Enter duration to lock funds"
+              />
+              <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-success btn-long">
+                <span class="text">Create</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </modal>
     </template>
   </layout>
 </template>
@@ -382,6 +408,13 @@
         details: {}
       };
     },
+    beforeCreate() {
+      console.log(moment.locale());
+
+      moment.updateLocale("en", {
+        invalidDate: "N/A"
+      });
+    },
     computed: {
       savings_distribution() {
         return _.map(this.savings_list, val => {
@@ -394,6 +427,19 @@
         BlockToast.fire({ text: "creating..." });
         this.$inertia
           .post(this.$route("appuser.savings.gos.initialise"), {
+            ...this.details
+          })
+          .then(() => {
+            if (this.flash.success) {
+              this.details = {};
+            }
+            swal.close();
+          });
+      },
+      createLockedFunds() {
+        BlockToast.fire({ text: "creating..." });
+        this.$inertia
+          .post(this.$route("appuser.savings.locked.initialise"), {
             ...this.details
           })
           .then(() => {
