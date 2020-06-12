@@ -9,16 +9,17 @@ import LoadScript from 'vue-plugin-load-script'
 import route from 'ziggy';
 import FlashMessage from '@dashboard-components/partials/FlashMessage'
 import Modal from '@dashboard-components/partials/Modal'
-import moment from 'moment'
+import Dayjs from 'vue-dayjs';
 
-
-Vue.prototype.moment = moment
 Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
 
 Vue.use( Vue2Filters )
 Vue.use( LoadScript )
 Vue.use( InertiaApp )
+Vue.use( Dayjs, {
+    lang: 'en'
+} );
 
 let mediaHandler = () => {
     if ( window.matchMedia( '(max-width: 767px)' ).matches ) {

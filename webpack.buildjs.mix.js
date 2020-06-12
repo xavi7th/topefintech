@@ -55,6 +55,10 @@ mix.webpackConfig( {
   ]
 } );
 
+if ( !mix.inProduction() ) {
+  mix.sourceMaps();
+}
+
 mix
   .extract()
   .mergeManifest()
@@ -92,8 +96,3 @@ mix
     let data = JSON.stringify( newManifestData, null, 2 );
     fs.writeFileSync( './public_html/mix-manifest.json', data );
   } )
-
-
-if ( !mix.inProduction() ) {
-  mix.sourceMaps();
-}

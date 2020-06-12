@@ -18,10 +18,10 @@ class SetAutoSaveSettingsValidation extends FormRequest
   {
     return [
       'amount' => 'required|numeric',
-      'period' => 'required|in:daily,weekly,monthly,quarterly',
-      'date' => ['nullable', Rule::requiredIf($this->period == 'monthly'), 'integer', 'max:' . now()->endOfMonth()->day],
-      'weekday' => ['nullable', 'string', Rule::requiredIf($this->period == 'weekly'), Rule::in(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])],
-      'time' => ['nullable', Rule::requiredIf($this->period == 'daily'), 'date_format:H:i'],
+      'frequency' => 'required|in:daily,weekly,monthly,quarterly',
+      'date' => ['nullable', Rule::requiredIf($this->frequency == 'monthly'), 'integer', 'max:' . now()->endOfMonth()->day],
+      'weekday' => ['nullable', 'string', Rule::requiredIf($this->frequency == 'weekly'), Rule::in(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])],
+      'time' => ['nullable', Rule::requiredIf($this->frequency == 'daily'), 'date_format:H:i'],
       'try_other_cards' => 'filled',
     ];
   }
@@ -46,11 +46,25 @@ class SetAutoSaveSettingsValidation extends FormRequest
   public function messages()
   {
     return [
-      'period.in' => 'The period field must either be daily, weekly, monthly or quarterly',
-      'time.required_if' => 'The time field is required if the period is daily',
+      'frequency.in' => 'The frequency field must either be daily, weekly, monthly or quarterly',
+      'time.required_if' => 'The time field is required if the frequency is daily',
+      'weekday.required' => 'If the frequency is weekly you must select a week day to process deductions',
     ];
   }
 
+  public function validated()
+  {
+    /**
+     * Remove the img key from the validated options so that it does not cause errors with the edit route
+     */
+
+    return array_merge(parent::validated(), [
+      'period' => $this->frequency,
+      'date' => $this->frequency == 'quarterly' ? null : $this->date,
+      'weekday' => $this->frequency == 'quarterly' ? null : $this->weekday,
+      'time' => $this->frequency == 'quarterly' ? null : $this->time,
+    ]);
+  }
 
   /**
    * Configure the validator instance.
@@ -67,7 +81,7 @@ class SetAutoSaveSettingsValidation extends FormRequest
        */
       $total_percentage = $this->user()->savings_list()->sum('savings_distribution');
       if ($total_percentage != 100) {
-        $validator->errors()->add('Savings distribution', 'Your savings distribution is not 100%. Correct it before continuing');
+        $validator->errors()->add('amount', 'Your savings distribution is not 100%. Correct it before continuing');
         return;
       }
     });

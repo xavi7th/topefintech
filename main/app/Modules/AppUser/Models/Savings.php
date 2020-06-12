@@ -368,7 +368,9 @@ class Savings extends Model
 
       Route::post('/savings/fund', 'Savings@distributeFundsToSavings');
 
-      Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings');
+      Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings')->name('appuser.savings.create-autosave');
+
+      Route::delete('/savings/auto-save/{autoSaveSetting}', 'Savings@deleteAutoSaveSettings')->name('appuser.savings.delete-autosave');
 
       Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile')->name('appuser.savings.locked.initialise');
 
@@ -397,7 +399,8 @@ class Savings extends Model
       return $request->user()->savings_list;
     } else {
       return Inertia::render('savings/UserSavings', [
-        'savings_list' => auth()->user()->savings_list->load('gos_type'),
+        'savings_list' => $request->user()->savings_list->load('gos_type'),
+        'auto_save_list' => $request->user()->auto_save_settings,
         'gos_types' => GOSType::all()
       ]);
     }
@@ -452,8 +455,32 @@ class Savings extends Model
 
   public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)
   {
-    return response()->json(['rsp' =>  auth()->user()->auto_save_settings()->create($request->all())], 201);
+    $auto_save_setting = $request->user()->auto_save_settings()->create($request->validated());
+
+    if ($request->isApi()) {
+      return response()->json(['rsp' =>  $auto_save_setting], 201);
+    } else {
+      return back()->withSuccess('Success');
+    }
   }
+
+  public function deleteAutoSaveSettings(Request $request, AutoSaveSetting $autoSaveSetting)
+  {
+    if ($autoSaveSetting->isForUser($request->user())) {
+      $autoSaveSetting->delete();
+    } else {
+      auth()->logout();
+      abort(403, 'Illegal operation');
+    }
+
+    if ($request->isApi()) {
+      return response()->json(['rsp' =>  'deleted'], 201);
+    } else {
+      return back()->withSuccess('Success');
+    }
+  }
+
+
 
   public function distributeFundsToSavings(FundSavingsValidation $request)
   {
