@@ -21,7 +21,7 @@ class EditUserProfileValidation extends FormRequest
   {
     return [
       // 'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::apiuser()->id)],
-      'full_name' => 'required|string|max:50',
+      // 'full_name' => 'required|string|max:50',
       'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/|confirmed|max:20',
       'phone' => ['required_without_all:password,acc_bank,acc_num,acc_type', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', 'max:20', Rule::unique('users')->ignore($this->user()->phone, 'phone')],
       'address' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
