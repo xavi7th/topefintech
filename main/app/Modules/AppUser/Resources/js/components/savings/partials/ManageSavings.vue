@@ -2,10 +2,7 @@
   <div class="col-lg-12 col-xl-12">
     <div class="d-flex align-items-center justify-content-between mb-25">
       <h2 class="mnb-2" id="formBase">Add to Savings</h2>
-      <inertia-link
-        class="btn btn-success btn-long"
-        :href="$route('appuser.savings.distribution')"
-      >Proceed to Payment</inertia-link>
+      <button class="btn btn-success btn-long" @click="fundSavings">Fund Savings</button>
     </div>
     <div class="col-12">
       <!-- <button type="button" class="btn btn-success btn-long">
@@ -38,7 +35,7 @@
               <button
                 type="button"
                 class="btn btn-success btn-uniform btn-round btn-xs"
-                @click="fundSavings(savings)"
+                @click="fundThisSavings(savings)"
               >
                 <span class="icon">
                   <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -77,11 +74,15 @@
     name: "ManageSavings",
     props: ["savings_list"],
     methods: {
-      fundSavings(savings) {
+      fundThisSavings(savings) {
         savings.savings_id = savings.id;
         /** Connect to paystack? */
-        $("#fundSavingsModal").modal("show");
+        $("#fundThisSavingsModal").modal("show");
         this.$emit("fund-savings", savings);
+      },
+      fundSavings() {
+        /** Connect to paystack? */
+        $("#fundSavingsModal").modal("show");
       }
     }
   };

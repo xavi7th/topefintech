@@ -119,10 +119,10 @@
         </form>
       </modal>
       <modal
-        modalId="fundSavingsModal"
+        modalId="fundThisSavingsModal"
         :modalTitle="`Add funds to your ${details.gos_type? details.gos_type.name: '' } Savings`"
       >
-        <form class="#" @submit.prevent="addFundsToSavings">
+        <form class="#" @submit.prevent="addFundsToThisSavings">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -144,12 +144,39 @@
           </div>
         </form>
       </modal>
+      <modal modalId="fundSavingsModal" :modalTitle="`Add distributed funds to your savings`">
+        <form class="#" @submit.prevent="addFundsToSavings">
+          <FlashMessage />
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12">
+              <label for="amount-to-distribute">Amount to fund</label>
+              <input
+                type="number"
+                class="form-control"
+                id="amount-to-distribute"
+                v-model="details.amount"
+                placeholder="Amount to add to funds"
+              />
+              <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-success btn-long mr-25">
+                <span class="text">Create</span>
+              </button>
+              <button type="button" class="btn btn-brand btn-long" @click="getDistributionDetails">
+                <span class="text">View Distribution Details</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </modal>
     </template>
   </layout>
 </template>
 
 <script>
   import { mixins, toOrdinalSuffix } from "@dashboard-assets/js/config";
+  import axios from "axios";
   import Layout from "@dashboard-assets/js/AppComponent";
   import ManageSavings from "@dashboard-assets/js/components/savings/partials/ManageSavings";
   import ManageAutoSaveSettings from "@dashboard-assets/js/components/savings/partials/ManageAutoSaveSettings";
@@ -201,7 +228,7 @@
             swal.close();
           });
       },
-      addFundsToSavings() {
+      addFundsToThisSavings() {
         /** Call paystack? */
         /** Then proceed? */
 
@@ -218,6 +245,77 @@
           )
           .then(() => {
             if (this.flash.success) {
+              $("#fundThisSavingsModal").modal("hide");
+            }
+            swal.close();
+          });
+      },
+      getDistributionDetails() {
+        BlockToast.fire({ text: "Getting distribution details ..." });
+
+        axios
+          .get(this.$route("appuser.savings.distribution"), {
+            params: {
+              amount: this.details.amount
+            }
+          })
+          .then(({ data }) => {
+            let str = "";
+            console.log(data);
+            _.each(data, ($val, $key) => {
+              str =
+                str +
+                "<br><b class='mb-10 d-inline-block'>" +
+                $key +
+                " Savings :</b>" +
+                this.$options.filters.Naira($val);
+            });
+
+            console.log(str);
+
+            swal.fire({
+              title: "<strong>Savings Breakdown</strong>",
+              icon: "info",
+              html: `<div class="card"><div class="card-header">TOTAL: ${this.$options.filters.Naira(
+                this.details.amount
+              )}</div><div class="card-body  p-0"><blockquote class="blockquote mb-0 text-left text-capitalize"><p>${str}</p><footer class="blockquote-footer text-right">Proceed?</footer></blockquote></div></div>`,
+              showCloseButton: false,
+              showCancelButton: true,
+              focusConfirm: true,
+              confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
+              confirmButtonAriaLabel: "Thumbs up, great!"
+            });
+          })
+          .catch(err => {
+            if (err.response) {
+              swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: err.response.data.message[0],
+                showConfirmButton: false,
+                timer: 3500
+              });
+            }
+          });
+      },
+      addFundsToSavings() {
+        /** Call paystack? */
+        /** Then proceed? */
+        BlockToast.fire({ text: "Adding funds to your savings ..." });
+
+        this.$inertia
+          .post(
+            this.$route("appuser.savings.fund"),
+            {
+              ...this.details
+            },
+            {
+              preserveState: true
+            }
+          )
+          .then(() => {
+            if (this.flash.success) {
+              this.details = {};
               $("#fundSavingsModal").modal("hide");
             }
             swal.close();

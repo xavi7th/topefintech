@@ -366,7 +366,7 @@ class Savings extends Model
 
       Route::get('savings/get-distribution-details', [self::class, 'getDistributionDetails'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
 
-      Route::post('/savings/fund', [self::class, 'distributeFundsToSavings']);
+      Route::post('/savings/fund', [self::class, 'distributeFundsToSavings'])->name('appuser.savings.fund');
 
       Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
 
@@ -413,13 +413,7 @@ class Savings extends Model
 
   public function getDistributionDetails(FundSavingsValidation $request)
   {
-    /**
-     * If user has core but no gos or locked update the core
-     * If user has gos or locked use distribution to spread it
-     *
-     * ! UPDATE CORE Update savings and create a transactions record
-     * !
-     */
+
     if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
       return ['core' => $request->amount];
     } else {
@@ -442,14 +436,6 @@ class Savings extends Model
       } else {
         return $savings_distribution;
       }
-    }
-
-    if ($request->isApi()) {
-      return response()->json(['rsp' => $request->user()->savings_list], 201);
-    } else {
-      return Inertia::render('savings/GetSavingsDistribution', [
-        'savings_list' => $request->user()->savings_list
-      ]);
     }
   }
 
@@ -497,7 +483,11 @@ class Savings extends Model
       auth()->user()->distribute_savings($request->amount);
     }
 
-    return response()->json(['rsp' => auth()->user()->savings_list], 201);
+    if ($request->isApi()) {
+      return response()->json(['rsp' => $request->user()->savings_list], 201);
+    } else {
+      return back()->withSuccess('Completed! Funds have been distributed into your savings portfolio');
+    }
   }
 
   public function lockMoreFunds(Request $request)
