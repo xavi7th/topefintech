@@ -360,35 +360,35 @@ class Savings extends Model
 
   static function appUserRoutes()
   {
-    Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+    Route::group([], function () {
 
       Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
 
       Route::get('savings/get-distribution-details', [self::class, 'getDistributionDetails'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
 
-      Route::post('/savings/fund', 'Savings@distributeFundsToSavings');
+      Route::post('/savings/fund', [self::class, 'distributeFundsToSavings']);
 
-      Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings')->name('appuser.savings.create-autosave');
+      Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
 
-      Route::delete('/savings/auto-save/{autoSaveSetting}', 'Savings@deleteAutoSaveSettings')->name('appuser.savings.delete-autosave');
+      Route::delete('/savings/auto-save/{autoSaveSetting}', [self::class, 'deleteAutoSaveSettings'])->name('appuser.savings.delete-autosave');
 
-      Route::post('/savings/locked-funds/create', 'Savings@createNewLockedFundsProfile')->name('appuser.savings.locked.initialise');
+      Route::post('/savings/locked-funds/create', [self::class, 'createNewLockedFundsProfile'])->name('appuser.savings.locked.initialise');
 
-      Route::post('/savings/locked-funds/add', 'Savings@lockMoreFunds');
+      Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds']);
 
-      Route::get('/savings/{savings}/break', 'Savings@breakLockedFunds');
+      Route::get('/savings/{savings}/break', [self::class, 'breakLockedFunds']);
 
-      Route::get('/savings/{savings}/verify', 'Savings@verifySavingsAmount');
+      Route::get('/savings/{savings}/verify', [self::class, 'verifySavingsAmount']);
 
-      Route::get('/savings/{savings}/check-maturity', 'Savings@checkSavingsMaturity');
+      Route::get('/savings/{savings}/check-maturity', [self::class, 'checkSavingsMaturity']);
 
       Route::get('/savings/gos-funds/create', [self::class, 'viewGOSList'])->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
 
-      Route::post('/savings/gos-funds/create', 'Savings@createNewGOSSavingsProfile')->name('appuser.savings.gos.initialise');
+      Route::post('/savings/gos-funds/create', [self::class, 'createNewGOSSavingsProfile'])->name('appuser.savings.gos.initialise');
 
-      Route::get('/savings/distribution', 'Savings@getSavingsDistributionRatio');
+      Route::get('/savings/distribution', [self::class, 'getSavingsDistributionRatio']);
 
-      Route::put('/savings/distribution/update', 'Savings@updateSavingsDistributionRatio')->name('appuser.savings.distribution.update');
+      Route::put('/savings/distribution/update', [self::class, 'updateSavingsDistributionRatio'])->name('appuser.savings.distribution.update');
     });
   }
 
@@ -600,7 +600,7 @@ class Savings extends Model
     return response()->json(['status' => true], 200);
   }
 
-  public function verifySavingsAmount(Request $request, self $savings)
+  public function verifySavingsAmount(Savings $savings)
   {
     return response()->json(['verified' => $savings->is_balance_consistent()], 200);
   }

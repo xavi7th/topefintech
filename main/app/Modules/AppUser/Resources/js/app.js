@@ -21,6 +21,16 @@ Vue.use( Dayjs, {
     lang: 'en'
 } );
 
+/** ADD A NEW CURRENCY FILTER **/
+Vue.filter( 'Naira', function ( value, symbol ) {
+    let currency = Vue.filter( 'currency' )
+    symbol = '₦'
+    return currency( value, symbol, 2, {
+        thousandsSeparator: ',',
+        decimalSeparator: '.'
+    } )
+} )
+
 let mediaHandler = () => {
     if ( window.matchMedia( '(max-width: 767px)' ).matches ) {
         /** Mobile **/
