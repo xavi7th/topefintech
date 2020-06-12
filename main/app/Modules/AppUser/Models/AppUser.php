@@ -449,8 +449,8 @@ class AppUser extends User
 
   public function fund_locked_savings(Savings $locked_savings, float $amount): void
   {
-
     DB::beginTransaction();
+
     $locked_savings->current_balance += $amount;
     /**
      * Specify the first time money was deposited into this profile.
@@ -458,7 +458,7 @@ class AppUser extends User
     $locked_savings->funded_at  = $locked_savings->funded_at ?? now();
     $locked_savings->save();
 
-    $locked_savings->create_deposit_transaction($amount, 'Funding ' . $this->gos_type->name . ' savings');
+    $locked_savings->create_deposit_transaction($amount, 'Funding ' . $locked_savings->gos_type->name . ' savings');
 
     DB::commit();
   }

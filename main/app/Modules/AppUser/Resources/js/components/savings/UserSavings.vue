@@ -43,7 +43,7 @@
           role="tabpanel"
           aria-labelledby="homePillsSliding-tab"
         >
-          <ManageSavings :savings_list="savings_list"></ManageSavings>
+          <ManageSavings :savings_list="savings_list" @fund-savings="details=$event"></ManageSavings>
         </div>
         <div
           class="tab-pane fade"
@@ -118,6 +118,32 @@
           </div>
         </form>
       </modal>
+      <modal
+        modalId="fundSavingsModal"
+        :modalTitle="`Add funds to your ${details.gos_type? details.gos_type.name: '' } Savings`"
+      >
+        <form class="#" @submit.prevent="addFundsToSavings">
+          <FlashMessage />
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12">
+              <label for="fund-amount">Amount to fund</label>
+              <input
+                type="number"
+                class="form-control"
+                id="fund-amount"
+                v-model="details.amount"
+                placeholder="Amount to add to funds"
+              />
+              <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-success btn-long">
+                <span class="text">Create</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </modal>
     </template>
   </layout>
 </template>
@@ -172,6 +198,28 @@
           )
           .then(() => {
             this.details = {};
+            swal.close();
+          });
+      },
+      addFundsToSavings() {
+        /** Call paystack? */
+        /** Then proceed? */
+
+        BlockToast.fire({ text: "Adding funds to your savings ..." });
+        this.$inertia
+          .post(
+            this.$route("appuser.savings.locked.fund"),
+            {
+              ...this.details
+            },
+            {
+              preserveState: true
+            }
+          )
+          .then(() => {
+            if (this.flash.success) {
+              $("#fundSavingsModal").modal("hide");
+            }
             swal.close();
           });
       }

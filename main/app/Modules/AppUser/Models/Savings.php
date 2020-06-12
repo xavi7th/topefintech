@@ -374,7 +374,7 @@ class Savings extends Model
 
       Route::post('/savings/locked-funds/create', [self::class, 'createNewLockedFundsProfile'])->name('appuser.savings.locked.initialise');
 
-      Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds']);
+      Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.locked.fund');
 
       Route::get('/savings/{savings}/break', [self::class, 'breakLockedFunds']);
 
@@ -505,22 +505,29 @@ class Savings extends Model
     if (!$request->savings_id) {
       return generate_422_error('Invalid savings selected');
     }
-    if (!$request->amount) {
-      return generate_422_error('You need to specify the amount to lock');
+    if (!$request->amount || $request->amount <= 0) {
+      return generate_422_error('You need to specify an amount to add to this savings');
     }
+
     $savings = self::find($request->savings_id);
 
     if (is_null($savings)) {
       return generate_422_error('Invalid savings selected');
     }
+
     try {
       if ($savings->type == 'core') {
-        auth()->user()->fund_core_savings($request->amount);
+
+        $request->user()->fund_core_savings($request->amount);
       } else {
-        auth()->user()->fund_locked_savings($savings, $request->amount);
+        $request->user()->fund_locked_savings($savings, $request->amount);
       }
 
-      return response()->json(['rsp' => 'Created'], 201);
+      if ($request->isApi()) {
+        return response()->json(['rsp' => 'Created'], 201);
+      } else {
+        return back()->withSuccess('Congrats! Funds added to savings');
+      }
     } catch (\Throwable $th) {
       if ($th->getCode() == 422) {
         return generate_422_error($th->getMessage());

@@ -38,7 +38,7 @@
               <button
                 type="button"
                 class="btn btn-success btn-uniform btn-round btn-xs"
-                @click="deleteAutoSave(asv)"
+                @click="fundSavings(savings)"
               >
                 <span class="icon">
                   <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -75,7 +75,15 @@
 <script>
   export default {
     name: "ManageSavings",
-    props: ["savings_list"]
+    props: ["savings_list"],
+    methods: {
+      fundSavings(savings) {
+        savings.savings_id = savings.id;
+        /** Connect to paystack? */
+        $("#fundSavingsModal").modal("show");
+        this.$emit("fund-savings", savings);
+      }
+    }
   };
 </script>
 
