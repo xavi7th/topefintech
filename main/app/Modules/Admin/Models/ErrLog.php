@@ -70,7 +70,7 @@ class ErrLog extends Model
     Log::error(get_class($validation_class) . ' validation failed.', ['Data Supplied: ' => $validator->getData(), 'Errors: ' => $validator->errors()->all()]);
   }
 
-  static function apiRoutes()
+  static function routes()
   {
     Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
       Route::get('err-logs', 'ErrLog@getErrorLogs')->middleware('auth:admin_api');

@@ -59,131 +59,141 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class DebitCard extends Model
 {
-	use SoftDeletes;
+  use SoftDeletes;
 
-	protected $fillable = [
-		'pan', 'month', 'year', 'cvv', 'brand', 'sub_brand', 'country', 'card_type', 'bank',
-	];
+  protected $fillable = [
+    'pan', 'month', 'year', 'cvv', 'brand', 'sub_brand', 'country', 'card_type', 'bank',
+  ];
 
-	protected $casts = [
-		'is_default' => 'boolean',
-	];
-
-
-	protected $hidden = ['cvv_hash', 'pan_hash'];
-
-	public function app_user()
-	{
-		return $this->belongsTo(AppUser::class);
-	}
-
-	public function belongs_to(AppUser $user): bool
-	{
-		return $this->app_user_id === $user->id;
-	}
-
-	public function is_default_card(): bool
-	{
-		return $this->is_default;
-	}
-
-	public function setMonthAttribute($value)
-	{
-		$this->attributes['month'] = str_pad($value, 2, "0", STR_PAD_LEFT);
-	}
-
-	public function setPanAttribute($value)
-	{
-		$this->attributes['pan'] = encrypt($value);
-		$this->attributes['pan_hash'] = bcrypt($value);
-	}
-
-	public function getPanAttribute($value)
-	{
-		return 'ending in ' . substr(decrypt($this->attributes['pan']), -4);
-	}
-
-	public function setCvvAttribute($value)
-	{
-		$this->attributes['cvv'] = encrypt($value);
-		$this->attributes['cvv_hash'] = bcrypt($value);
-	}
-
-	public function getCvvAttribute()
-	{
-		return '****'; //decrypt($this->attributes['cvv']);
-	}
+  protected $casts = [
+    'is_default' => 'boolean',
+  ];
 
 
-	static function appUserApiRoutes()
-	{
-		Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+  protected $hidden = ['cvv_hash', 'pan_hash'];
 
-			Route::get('/debit-cards', 'DebitCard@getDebitCards');
+  public function app_user()
+  {
+    return $this->belongsTo(AppUser::class);
+  }
 
-			Route::post('/debit-card/create', 'DebitCard@addNewDebitCard');
+  public function belongs_to(AppUser $user): bool
+  {
+    return $this->app_user_id === $user->id;
+  }
 
-			Route::put('/debit-card/default', 'DebitCard@setDefaultDebitCard');
+  public function is_default_card(): bool
+  {
+    return $this->is_default;
+  }
 
-			Route::delete('/debit-card/{debit_card}', 'DebitCard@deleteDebitCard');
-		});
-	}
+  public function setMonthAttribute($value)
+  {
+    $this->attributes['month'] = str_pad($value, 2, "0", STR_PAD_LEFT);
+  }
 
-	public function getDebitCards()
-	{
-		return auth()->user()->debit_cards;
-	}
+  public function setPanAttribute($value)
+  {
+    $this->attributes['pan'] = encrypt($value);
+    $this->attributes['pan_hash'] = bcrypt($value);
+  }
 
-	public function addNewDebitCard(AddNewDebitCardValidation $request)
-	{
-		return response()->json(['rsp' => auth()->user()->debit_cards()->create($request->validated())], 201);
-	}
+  public function getPanAttribute($value)
+  {
+    return 'ending in ' . substr(decrypt($this->attributes['pan']), -4);
+  }
 
-	public function setDefaultDebitCard()
-	{
-		$debit_card = DebitCard::findOrFail(request('debit_card_id'));
+  public function setCvvAttribute($value)
+  {
+    $this->attributes['cvv'] = encrypt($value);
+    $this->attributes['cvv_hash'] = bcrypt($value);
+  }
 
-		auth()->user()->debit_cards()->update(['is_default' => false]);
+  public function getCvvAttribute()
+  {
+    return '****'; //decrypt($this->attributes['cvv']);
+  }
 
-		$debit_card->is_default = true;
-		$debit_card->save();
 
-		return response()->json(['rsp' => true], 204);
-	}
+  static function appUserRoutes()
+  {
+    Route::group([], function () {
 
-	public function deleteDebitCard(Request $request, self $debit_card)
-	{
-		if ($debit_card->belongs_to(auth()->user())) {
-			/**
-			 * Check if this is his default card
-			 */
-			if ($debit_card->is_default_card()) {
-				return generate_422_error('You cannot delete your default card.');
-			}
+      Route::get('debit-cards', [self::class, 'viewDebitCards'])->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
 
-			/**
-			 * Check if he has autosave
-			 */
-			if ($request->user()->has_auto_save()) {
-				return generate_422_error('You cannot delete your card when you have activated autosave. Contact support if you really need to remove your card.');
-			}
+      Route::post('/debit-card/create', [self::class, 'addNewDebitCard']);
 
-			/**
-			 * Check if he has pending loan
-			 */
-			if ($request->user()->has_pending_loan()) {
-				return generate_422_error('You cannot delete debit cards while you have a pending loan');
-			}
+      Route::put('/debit-card/default', [self::class, 'setDefaultDebitCard']);
 
-			/**
-			 * then delete the card soft delete
-			 */
+      Route::delete('/debit-card/{debit_card}', [self::class, 'deleteDebitCard']);
+    });
+  }
 
-			$debit_card->delete();
 
-			return response()->json([], 204);
-		} else {
-			abort(403, 'invalid operation');
-		}
-	}
+  public function viewDebitCards(Request $request)
+  {
+    if ($request->isApi()) {
+      return $request->user()->debit_cards;
+    } else {
+      return Inertia::render('savings/DebitCards', [
+        'debit_cards' => $request->user()->debit_cards
+      ]);
+    }
+  }
+
+  public function getDebitCards()
+  { }
+
+  public function addNewDebitCard(AddNewDebitCardValidation $request)
+  {
+    return response()->json(['rsp' => auth()->user()->debit_cards()->create($request->validated())], 201);
+  }
+
+  public function setDefaultDebitCard()
+  {
+    $debit_card = DebitCard::findOrFail(request('debit_card_id'));
+
+    auth()->user()->debit_cards()->update(['is_default' => false]);
+
+    $debit_card->is_default = true;
+    $debit_card->save();
+
+    return response()->json(['rsp' => true], 204);
+  }
+
+  public function deleteDebitCard(Request $request, self $debit_card)
+  {
+    if ($debit_card->belongs_to(auth()->user())) {
+      /**
+       * Check if this is his default card
+       */
+      if ($debit_card->is_default_card()) {
+        return generate_422_error('You cannot delete your default card.');
+      }
+
+      /**
+       * Check if he has autosave
+       */
+      if ($request->user()->has_auto_save()) {
+        return generate_422_error('You cannot delete your card when you have activated autosave. Contact support if you really need to remove your card.');
+      }
+
+      /**
+       * Check if he has pending loan
+       */
+      if ($request->user()->has_pending_loan()) {
+        return generate_422_error('You cannot delete debit cards while you have a pending loan');
+      }
+
+      /**
+       * then delete the card soft delete
+       */
+
+      $debit_card->delete();
+
+      return response()->json([], 204);
+    } else {
+      abort(403, 'invalid operation');
+    }
+  }
 }

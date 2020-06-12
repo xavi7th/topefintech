@@ -37,7 +37,7 @@ class GOSType extends Model
     return $this->hasMany(Savings::class);
   }
 
-  static function routes()
+  static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
       Route::get('/gos-types', 'GOSType@getGOSTypes');

@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
@@ -80,6 +81,11 @@ class Savings extends Model
     'gos_type_id' => 'int',
     'savings_distribution' => 'double',
   ];
+
+  public function __construct()
+  {
+    Inertia::setRootView('appuser::app');
+  }
 
   public function service_charges()
   {
@@ -352,15 +358,15 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
-  static function appUserApiRoutes()
+  static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 
-      Route::get('/savings', 'Savings@getListOfUserSavings');
+      Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
+
+      Route::get('savings/get-distribution-details', [self::class, 'getDistributionDetails'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
 
       Route::post('/savings/fund', 'Savings@distributeFundsToSavings');
-
-      Route::get('/savings/get-distribution-details', 'Savings@getDistributionDetails');
 
       Route::post('/savings/auto-save/create', 'Savings@setAutoSaveSettings');
 
@@ -384,9 +390,17 @@ class Savings extends Model
     });
   }
 
-  public function getListOfUserSavings()
+
+  public function viewUserSavings(Request $request)
   {
-    return auth()->user()->savings_list;
+    if ($request->isApi()) {
+      return $request->user()->savings_list;
+    } else {
+      return Inertia::render('savings/UserSavings', [
+        'savings_list' => auth()->user()->savings_list->load('gos_type'),
+        'gos_types' => GOSType::all()
+      ]);
+    }
   }
 
   public function viewGOSList()
@@ -427,7 +441,13 @@ class Savings extends Model
       }
     }
 
-    return response()->json(['rsp' => auth()->user()->savings_list], 201);
+    if ($request->isApi()) {
+      return response()->json(['rsp' => $request->user()->savings_list], 201);
+    } else {
+      return Inertia::render('savings/GetSavingsDistribution', [
+        'savings_list' => $request->user()->savings_list
+      ]);
+    }
   }
 
   public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)

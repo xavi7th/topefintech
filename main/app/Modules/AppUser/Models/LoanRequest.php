@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Inertia\Inertia;
 use DateTimeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -101,6 +102,11 @@ class LoanRequest extends Model
     'is_defaulted', 'stakes_for_default', 'grace_period_expiry',
     'installments', 'total_refunded', 'auto_refund_settings'
   ];
+
+  public function __construct()
+  {
+    Inertia::setRootView('appuser::app');
+  }
 
   public function app_user()
   {
@@ -208,28 +214,47 @@ class LoanRequest extends Model
     }
   }
 
-  static function appUserApiRoutes()
+  static function appUserRoutes()
   {
-    Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
+    Route::group([], function () {
 
-      Route::get('/loan-requests/interest-rate', 'LoanRequest@getInterestRate');
-      Route::get('/loan-requests/check-eligibility', 'LoanRequest@checkLoanEligibility');
-      Route::get('/loan-requests/check-surety-eligibility', 'LoanRequest@checkSuretyEligibility');
-      Route::post('/loan-requests/create', 'LoanRequest@makeLoanRequest');
-      Route::get('/loan-requests', 'LoanRequest@getLoanRequests');
-      Route::get('/loan-requests/{loan_request}/transactions', 'LoanRequest@getLoanRequestTransactions');
-      Route::post('/loan-requests/{loan_request}/make-repayment', 'LoanRequest@repayLoan');
+      Route::get('request-smart-loan', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
+      Route::get('smart-loan-logs', [self::class, 'viewSmartLoans'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
+      Route::get('smart-loan-details', [self::class, 'viewSmartLoanDetails'])->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
+
+      Route::get('/loan-requests/interest-rate', [self::class, 'getInterestRate']);
+      Route::get('/loan-requests/check-eligibility', [self::class, 'checkLoanEligibility']);
+      Route::get('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility']);
+      Route::post('/loan-requests/create', [self::class, 'makeLoanRequest']);
+      Route::get('/loan-requests', [self::class, 'getLoanRequests']);
+      Route::get('/loan-requests/{loan_request}/transactions', [self::class, 'getLoanRequestTransactions']);
+      Route::post('/loan-requests/{loan_request}/make-repayment', [self::class, 'repayLoan']);
     });
   }
 
   static function adminApiRoutes()
   {
-    Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-      Route::get('/loan-requests', 'LoanRequest@adminGetLoanRequests');
-      Route::get('/loan-requests/{loan_request}/transactions', 'LoanRequest@adminGetLoanRequestTransactions');
-      Route::put('/loan-request/{loan_request}/approve', 'LoanRequest@approveLoanRequest');
-      Route::put('/loan-request/{loan_request}/mark-disbursed', 'LoanRequest@markLoanAsDisbursed');
+    Route::group([], function () {
+      Route::get('/loan-requests', [self::class, 'adminGetLoanRequests']);
+      Route::get('/loan-requests/{loan_request}/transactions', [self::class, 'adminGetLoanRequestTransactions']);
+      Route::put('/loan-request/{loan_request}/approve', [self::class, 'approveLoanRequest']);
+      Route::put('/loan-request/{loan_request}/mark-disbursed', [self::class, 'markLoanAsDisbursed']);
     });
+  }
+
+  public function showRequestSmartLoanForm()
+  {
+    return Inertia::render('loans/RequestSmartLoan');
+  }
+
+  public function viewSmartLoans()
+  {
+    return Inertia::render('loans/ViewSmartLoans');
+  }
+
+  public function viewSmartLoanDetails()
+  {
+    return Inertia::render('loans/ViewSmartLoanDetails');
   }
 
 

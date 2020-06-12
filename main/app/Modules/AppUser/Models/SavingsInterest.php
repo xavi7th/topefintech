@@ -42,83 +42,88 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SavingsInterest extends Model
 {
-	use SoftDeletes;
+  use SoftDeletes;
 
-	protected $fillable = ['amount', 'savings_id'];
+  protected $fillable = ['amount', 'savings_id'];
 
-	protected $casts = [
-		'is_cleared' => 'boolean',
-		'amount' => 'double',
-	];
+  protected $casts = [
+    'is_cleared' => 'boolean',
+    'amount' => 'double',
+  ];
 
-	public function savings()
-	{
-		return $this->belongsTo(Savings::class);
-	}
+  public function savings()
+  {
+    return $this->belongsTo(Savings::class);
+  }
 
-	static function appUserApiRoutes()
-	{
-		Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'savings-interests'], function () {
-			Route::get('', 'SavingsInterest@getSavingsInterests');
-			Route::get('{month}', 'SavingsInterest@getSavingsInterestsForMonth');
-		});
-	}
+  static function appUserRoutes()
+  {
+    Route::group(['prefix' => 'savings-interests'], function () {
+      Route::get('', [self::class, 'getSavingsInterests'])->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
+      Route::get('{month}', [self::class, 'getSavingsInterestsForMonth']);
+    });
+  }
 
-	public function getSavingsInterests(Request $request)
-	{
-		$records = $request->user()->savings_interests()->with('savings.gos_type')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
+  public function getSavingsInterests(Request $request)
+  {
+    $records = $request->user()->savings_interests()->with('savings.gos_type')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
 
-		$interests_summary =  transform($records, function ($value) {
-			return $value->groupBy('month')->transform(function ($item, $key) {
-				return $item->groupBy('savings.gos_type.name')->transform(function ($item, $key) {
-					return $item->sum('amount');
-				});
-			})->transform(function ($item) {
-				return collect($item->all())->merge(['total' => $item->sum()]);
-			});
-		});
-		return response()->json($interests_summary, 200);
-	}
+    $interests_summary =  transform($records, function ($value) {
+      return $value->groupBy('month')->transform(function ($item, $key) {
+        return $item->groupBy('savings.gos_type.name')->transform(function ($item, $key) {
+          return $item->sum('amount');
+        });
+      })->transform(function ($item) {
+        return collect($item->all())->merge(['total' => $item->sum()]);
+      });
+    });
 
-	public function getSavingsInterestsForMonth(Request $request, $month)
-	{
-		$records = $request->user()->savings_interests()->with('savings.gos_type')
-			->whereMonth('savings_interests.created_at', Carbon::parse($month)->month)->orderByDesc('created_at')->get();
+    if ($request->isApi()) {
+      return response()->json($interests_summary, 200);
+    } else {
+      return Inertia::render('Savings/ViewInterests');
+    }
+  }
 
-		$interests_summary = $records->groupBy([
-			function ($item) {
-				return $item->created_at->toString();
-			},
-		])->transform(function ($item, $key) {
-			return $item->groupBy('savings.gos_type.name')->transform(function ($item, $key) {
-				return $item->sum('amount');
-			});
-		})->transform(function ($item) {
-			return collect($item->all())->merge(['total' => $item->sum()]);
-		});;
+  public function getSavingsInterestsForMonth(Request $request, $month)
+  {
+    $records = $request->user()->savings_interests()->with('savings.gos_type')
+      ->whereMonth('savings_interests.created_at', Carbon::parse($month)->month)->orderByDesc('created_at')->get();
 
-		return response()->json($interests_summary, 200);
-	}
+    $interests_summary = $records->groupBy([
+      function ($item) {
+        return $item->created_at->toString();
+      },
+    ])->transform(function ($item, $key) {
+      return $item->groupBy('savings.gos_type.name')->transform(function ($item, $key) {
+        return $item->sum('amount');
+      });
+    })->transform(function ($item) {
+      return collect($item->all())->merge(['total' => $item->sum()]);
+    });;
 
-	/**
-	 * Scope a query to only uncleared interests
-	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeUncleared($query)
-	{
-		return $query->where('is_cleared', false);
-	}
+    return response()->json($interests_summary, 200);
+  }
 
-	/**
-	 * Scope a query to only uncleared interests
-	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeCleared($query)
-	{
-		return $query->where('is_cleared', true);
-	}
+  /**
+   * Scope a query to only uncleared interests
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder  $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   */
+  public function scopeUncleared($query)
+  {
+    return $query->where('is_cleared', false);
+  }
+
+  /**
+   * Scope a query to only uncleared interests
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder  $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   */
+  public function scopeCleared($query)
+  {
+    return $query->where('is_cleared', true);
+  }
 }

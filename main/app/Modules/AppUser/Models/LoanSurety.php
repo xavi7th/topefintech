@@ -46,99 +46,99 @@ use App\Modules\AppUser\Http\Requests\SwapSuretyValidation;
  */
 class LoanSurety extends Model
 {
-	use SoftDeletes;
+  use SoftDeletes;
 
-	protected $fillable = [
-		'surety_id', 'loan_request_id',
-	];
+  protected $fillable = [
+    'surety_id', 'loan_request_id',
+  ];
 
-	// protected $casts = [
-	// 	'is_surety_accepted' => 'boolean',
-	// ];
+  // protected $casts = [
+  // 	'is_surety_accepted' => 'boolean',
+  // ];
 
 
-	public function lender()
-	{
-		return $this->belongsTo(AppUser::class, 'lender_id');
-	}
+  public function lender()
+  {
+    return $this->belongsTo(AppUser::class, 'lender_id');
+  }
 
-	public function surety()
-	{
-		return $this->belongsTo(AppUser::class, 'surety_id');
-	}
+  public function surety()
+  {
+    return $this->belongsTo(AppUser::class, 'surety_id');
+  }
 
-	public function loan_request()
-	{
-		return $this->belongsTo(LoanRequest::class);
-	}
+  public function loan_request()
+  {
+    return $this->belongsTo(LoanRequest::class);
+  }
 
-	public function is_surety_accepted(): bool
-	{
-		return filter_var($this->is_surety_accepted, FILTER_VALIDATE_BOOLEAN);
-	}
-	public function is_surety_rejected(): bool
-	{
-		return $this->is_surety_accepted === false;
-	}
-	public function is_surety_pending(): bool
-	{
-		return is_null($this->is_surety_accepted);
-	}
+  public function is_surety_accepted(): bool
+  {
+    return filter_var($this->is_surety_accepted, FILTER_VALIDATE_BOOLEAN);
+  }
+  public function is_surety_rejected(): bool
+  {
+    return $this->is_surety_accepted === false;
+  }
+  public function is_surety_pending(): bool
+  {
+    return is_null($this->is_surety_accepted);
+  }
 
-	static function appUserApiRoutes()
-	{
-		Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'surety-requests'], function () {
-			Route::get('status', 'LoanSurety@getRequestsForSureties');
-			Route::get('', 'LoanSurety@getReceivedSuretyRequests');
-			Route::put('', 'LoanSurety@acceptReceivedSuretyRequest');
-			Route::put('/swap', 'LoanSurety@swapSuretyRequest');
-		});
-	}
+  static function appUserRoutes()
+  {
+    Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'surety-requests'], function () {
+      Route::get('status', 'LoanSurety@getRequestsForSureties');
+      Route::get('', 'LoanSurety@getReceivedSuretyRequests');
+      Route::put('', 'LoanSurety@acceptReceivedSuretyRequest');
+      Route::put('/swap', 'LoanSurety@swapSuretyRequest');
+    });
+  }
 
-	public function getRequestsForSureties()
-	{
-		return response()->json(['request_details' => auth()->user()->request_for_surety->load('surety')], 200);
-	}
+  public function getRequestsForSureties()
+  {
+    return response()->json(['request_details' => auth()->user()->request_for_surety->load('surety')], 200);
+  }
 
-	public function getReceivedSuretyRequests()
-	{
-		return response()->json(['request_details' => optional(auth()->user()->surety_request)->load(['loan_request'])], 200);
-	}
+  public function getReceivedSuretyRequests()
+  {
+    return response()->json(['request_details' => optional(auth()->user()->surety_request)->load(['loan_request'])], 200);
+  }
 
-	public function acceptReceivedSuretyRequest(Request $request)
-	{
+  public function acceptReceivedSuretyRequest(Request $request)
+  {
 
-		if (!$request->accepted) {
-			return generate_422_error('You make make a choice');
-		}
-		$surety_request = Auth::apiuser()->surety_request;
-		if ($surety_request) {
-			$surety_request->is_surety_accepted = filter_var($request->accepted, FILTER_VALIDATE_BOOLEAN);
-			$surety_request->save();
-			return response()->json(['rsp' => true], 204);
-		} else {
-			return generate_422_error('You have no surety request');
-		}
-	}
+    if (!$request->accepted) {
+      return generate_422_error('You make make a choice');
+    }
+    $surety_request = Auth::apiuser()->surety_request;
+    if ($surety_request) {
+      $surety_request->is_surety_accepted = filter_var($request->accepted, FILTER_VALIDATE_BOOLEAN);
+      $surety_request->save();
+      return response()->json(['rsp' => true], 204);
+    } else {
+      return generate_422_error('You have no surety request');
+    }
+  }
 
-	public function swapSuretyRequest(SwapSuretyValidation $request)
-	{
+  public function swapSuretyRequest(SwapSuretyValidation $request)
+  {
 
-		DB::beginTransaction();
-		$surety_request = self::find($request->surety_request_id);
+    DB::beginTransaction();
+    $surety_request = self::find($request->surety_request_id);
 
-		/**
-		 * ? Create a new surety request with this new guy
-		 */
-		$new_surety_request = $request->user()->create_surety_requests($request->new_surety_email, $surety_request->loan_request->id);
+    /**
+     * ? Create a new surety request with this new guy
+     */
+    $new_surety_request = $request->user()->create_surety_requests($request->new_surety_email, $surety_request->loan_request->id);
 
-		/**
-		 * * For simplicity just delete the previous one so that each request will always have only 2 sureties
-		 */
-		$surety_request->delete();
+    /**
+     * * For simplicity just delete the previous one so that each request will always have only 2 sureties
+     */
+    $surety_request->delete();
 
-		DB::commit();
+    DB::commit();
 
-		return response()->json(['rsp' => $new_surety_request], 201);
-	}
+    return response()->json(['rsp' => $new_surety_request], 201);
+  }
 }

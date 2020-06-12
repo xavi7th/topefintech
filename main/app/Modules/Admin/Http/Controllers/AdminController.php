@@ -32,7 +32,7 @@ class AdminController extends Controller
   {
     Route::group(['middleware' => ['api'], 'prefix' =>  Admin::DASHBOARD_ROUTE_PREFIX . '/api/',  'namespace' => '\App\Modules\Admin\Http\Controllers'], function () {
       Route::group(['middleware' => 'auth:admin_api'], function () {
-        ErrLog::apiRoutes();
+        ErrLog::routes();
 
         Admin::adminApiRoutes();
 

@@ -30,28 +30,6 @@ class AppUserController extends Controller
     Inertia::setRootView('appuser::app');
   }
 
-  public static function apiRoutes()
-  {
-    Route::group(['middleware' => ['api', 'throttle:20,1'], 'prefix' => '/api/',  'namespace' => '\App\Modules\AppUser\Http\Controllers'], function () {
-
-      ErrLog::apiRoutes();
-
-      Savings::appUserApiRoutes();
-
-      DebitCard::appUserApiRoutes();
-
-      LoanRequest::appUserApiRoutes();
-
-      LoanSurety::appUserApiRoutes();
-
-      WithdrawalRequest::appUserApiRoutes();
-
-      SavingsInterest::appUserApiRoutes();
-
-      Transaction::appUserApiRoutes();
-    });
-  }
-
   /**
    * @return Response
    */
@@ -66,63 +44,40 @@ class AppUserController extends Controller
       VerificationController::routes();
 
 
-      Route::group(['middleware' => ['auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
-
-        AppUser::routes();
+      Route::group(['middleware' => ['throttle:20,1', 'auth', 'email_verified', 'appusers'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
         Route::redirect('/', '/user/dashboard', 303);
         Route::get('dashboard', [self::class, 'loadDashboard'])->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);
-        Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
-        Route::get('savings/get-distribution-details', [self::class, 'getSavingsDistribution'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
-        Route::get('statement', [self::class, 'loadUserApp'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
-        Route::get('request-smart-loan', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
-        Route::get('smart-loan-logs', [self::class, 'viewSmartLoans'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
-        Route::get('smart-loan-details', [self::class, 'viewSmartLoanDetails'])->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
-        Route::get('make-withdrawals', [self::class, 'loadUserApp'])->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
-        Route::get('smart-interests', [self::class, 'loadUserApp'])->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
-        Route::get('my-cards', [self::class, 'viewDebitCards'])->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
-        Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
 
-        GOSType::routes();
+        AppUser::routes();
+
+        Savings::appUserRoutes();
+
+        LoanRequest::appUserRoutes();
+
+        SavingsInterest::appUserRoutes();
+
+        DebitCard::appUserRoutes();
+
+        WithdrawalRequest::appUserRoutes();
+
+        GOSType::appUserRoutes();
+
+        LoanSurety::appUserRoutes();
+
+        Transaction::appUserRoutes();
+
+        ErrLog::routes();
+
+        Route::get('statement', [self::class, 'loadUserApp'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
+        Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
       });
     });
   }
 
   public function loadDashboard()
   {
+    cache()->flush();
     return Inertia::render('dashboard/UserDashboard');
-  }
-
-  public function viewUserSavings()
-  {
-    return Inertia::render('savings/UserSavings', [
-      'savings_list' => auth()->user()->savings_list->load('gos_type'),
-      'gos_types' => GOSType::all()
-    ]);
-  }
-
-  public function getSavingsDistribution()
-  {
-    return Inertia::render('savings/GetSavingsDistribution');
-  }
-
-  public function viewDebitCards()
-  {
-    return Inertia::render('savings/DebitCards');
-  }
-
-  public function showRequestSmartLoanForm()
-  {
-    return Inertia::render('loans/RequestSmartLoan');
-  }
-
-  public function viewSmartLoans()
-  {
-    return Inertia::render('loans/ViewSmartLoans');
-  }
-
-  public function viewSmartLoanDetails()
-  {
-    return Inertia::render('loans/ViewSmartLoanDetails');
   }
 }
