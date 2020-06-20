@@ -67,6 +67,7 @@
       details: {},
       formSubmitted: false
     }),
+
     methods: {
       loginUser() {
         BlockToast.fire({

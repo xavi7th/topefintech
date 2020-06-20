@@ -79,7 +79,7 @@
         a( "html" ).addClass( o ? "is-mobile" : "is-desktop" );
         var r = a( window ),
             s = a( document ),
-            l = a( "body" ),
+            l = a( ".body-wrap" ),
             u = 0,
             c = 0,
             d = 0;
@@ -301,18 +301,18 @@
 
         function R() {
             var t = this,
-                e = a( "html" );
+                e = a( "link.rui-nightmode-link" );
             t.isNightMode = function () {
-                return e.hasClass( 'rui-nightmode' )
+                return "(night)" !== e.attr( "media" )
             }, t.toggleNightMode = function () {
                 var n = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ],
                     i = a( "input.rui-nightmode-toggle" );
                 switch ( n || ( n = t.isNightMode() ? "day" : "night" ), n ) {
                     case "night":
-                        e.addClass( "rui-nightmode" ), i.prop( "checked", !0 );
+                        e.attr( "media", "all" ), i.prop( "checked", !0 );
                         break;
                     case "day":
-                        e.removeClass( "rui-nightmode" ), i.prop( "checked", !1 )
+                        e.attr( "media", "(night)" ), i.prop( "checked", !1 )
                 }
                 a( "[data-src-".concat( n, "]" ) ).each( ( function () {
                     var t = a( this );
@@ -717,8 +717,7 @@
                         n = String( e.attr( "data-datetimepicker-format" ) ),
                         i = String( e.attr( "data-datetimepicker-date" ) ),
                         o = String( e.attr( "data-datetimepicker-time" ) ),
-                        r = {}
-
+                        r = {};
 
                     function s( t ) {
                         u < 576 && !t.parent( ".rui-datetimepicker-wrap" ).length && t.wrap( '<div class="rui-datetimepicker-wrap"></div>' ), u > 576 && t.parent( ".rui-datetimepicker-wrap" ).length && t.unwrap()
@@ -740,7 +739,6 @@
         }
 
         function J() {
-
             void 0 !== a.fn.dataTable && a( ".rui-datatable:not(.rui-datatable-ready)" ).addClass( "rui-datatable-ready" ).each( ( function () {
                 var t = a( this ),
                     e = t.attr( "data-datatable-order" ),

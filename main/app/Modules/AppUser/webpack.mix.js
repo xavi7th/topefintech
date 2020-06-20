@@ -25,7 +25,6 @@ if ( [ 'buildcss' ].includes( process.env.npm_config_section ) ) {
         __dirname + '/Resources/js/vendor/bootstrap.min.js',
         __dirname + '/Resources/js/vendor/feather.min.js',
         __dirname + '/Resources/js/vendor/jquery.overlayScrollbars.min.js',
-        __dirname + '/Resources/js/vendor/yaybar.js',
         __dirname + '/Resources/js/vendor/ofi.min.js',
         __dirname + '/Resources/js/vendor/jquery.fancybox.min.js',
         __dirname + '/Resources/js/vendor/emojione.min.js',
@@ -41,6 +40,7 @@ if ( [ 'buildcss' ].includes( process.env.npm_config_section ) ) {
     ], 'public_html/js/dashboard-app-vendor.js' );
 
     mix.scripts( [
+        __dirname + '/Resources/js/vendor/yaybar.js',
         __dirname + '/Resources/js/vendor/rootui.js',
         __dirname + '/Resources/js/vendor/rootui-init.js',
     ], 'public_html/js/user-dashboard-init.js' );

@@ -20,11 +20,11 @@ export const mixins = {
 
     },
     mounted() {
-        setTimeout( () => {
-            this.$loadScript( '/js/user-dashboard-init.js' ).then( () => {
-                $( '.preloader' ).delay( 600 ).fadeOut( 300 );
-            } )
-        }, 2000 );
+        // setTimeout( () => {
+        this.$loadScript( '/js/user-dashboard-init.js' ).then( () => {
+            $( '.preloader' ).delay( 600 ).fadeOut( 300 );
+        } )
+        // }, 2000 );
     },
 }
 
