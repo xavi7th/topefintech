@@ -70,7 +70,7 @@ class AppUserController extends Controller
         ErrLog::routes();
 
         Route::get('statement', [self::class, 'loadUserApp'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
-        Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages.')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
+        Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
       });
     });
   }

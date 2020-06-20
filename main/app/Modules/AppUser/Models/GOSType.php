@@ -42,7 +42,7 @@ class GOSType extends Model
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
       Route::get('/gos-types', 'GOSType@getGOSTypes');
 
-      Route::post('/gos-types/create', 'GOSType@userCreateGOSType')->name('appuser.gos.initialise');
+      Route::post('/gos-types/create', 'GOSType@userCreateGOSType')->name('appuser.gos_type.create');
     });
   }
 
@@ -62,7 +62,7 @@ class GOSType extends Model
   {
 
     if (!$request->name) {
-      return generate_422_error(['name' => 'name is requitred']);
+      return generate_422_error(['name' => 'A name is required for the GOS Plan']);
     }
 
     if (self::where('name', $request->name)->exists()) {
@@ -98,15 +98,21 @@ class GOSType extends Model
   public function userCreateGOSType(Request $request)
   {
     if (!$request->name) {
-      return generate_422_error(['name' => 'name is requitred']);
+      return generate_422_error(['name' => 'A name is required for the GOS Plan']);
     }
 
     if (self::where('name', $request->name)->exists()) {
       return generate_422_error('This GOS exists already');
     }
 
+    $gosType = GOSType::create(request()->all());
+
     try {
-      return response()->json(['gos_type' => GOSType::create(request()->all())], 201);
+      if ($request->isApi()) {
+        return response()->json(['gos_type' => $gosType], 201);
+      }
+
+      return back()->withSuccess('GOS has been created. You can now add a plan to it');
     } catch (\Throwable $th) {
       return response()->json(['rsp' => $th->getMessage()], 500);
     }

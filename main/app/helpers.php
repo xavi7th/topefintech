@@ -428,7 +428,7 @@ if (!function_exists('get_related_routes')) {
         'nav_skip' => $route->defaults['extras']['nav_skip'] ?? false,
         'icon' => $route->defaults['extras']['icon'] ?? null,
         'method' => \Str::of(implode('|', $route->methods())),
-        'menu_name' => \Str::of($route->getName())->replaceMatches('/[^A-Za-z0-9]++/', ' ')->trim($namespace)->title()->trim()->__toString()
+        'menu_name' => \Str::of($route->getName())->afterLast('.')->replaceMatches('/[^A-Za-z0-9]++/', ' ')->after($namespace)->title()->trim()->__toString()
       ];
     })->filter(function ($value, $key) use ($methods, $namespace) {
       return \Str::startsWith($value->name, $namespace) && $value->method->contains($methods);
