@@ -2,12 +2,14 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
-use App\Modules\AppUser\Http\Requests\AddNewDebitCardValidation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Modules\AppUser\Http\Requests\AddNewDebitCardValidation;
+use App\Modules\AppUser\Transformers\DebitCardTransformer;
 
 /**
  * App\Modules\AppUser\Models\DebitCard
@@ -69,8 +71,12 @@ class DebitCard extends Model
     'is_default' => 'boolean',
   ];
 
-
   protected $hidden = ['cvv_hash', 'pan_hash'];
+
+  public function __construct()
+  {
+    Inertia::setRootView('appuser::app');
+  }
 
   public function app_user()
   {
@@ -103,6 +109,11 @@ class DebitCard extends Model
     return 'ending in ' . substr(decrypt($this->attributes['pan']), -4);
   }
 
+  public function getXedPanAttribute($value)
+  {
+    return 'XXXX XXXX XXXX ' . substr(decrypt($this->attributes['pan']), -4);
+  }
+
   public function setCvvAttribute($value)
   {
     $this->attributes['cvv'] = encrypt($value);
@@ -123,7 +134,7 @@ class DebitCard extends Model
 
       Route::post('/debit-card/create', [self::class, 'addNewDebitCard']);
 
-      Route::put('/debit-card/default', [self::class, 'setDefaultDebitCard']);
+      Route::put('/debit-card/default', [self::class, 'setDefaultDebitCard'])->name('appuser.cards.default');
 
       Route::delete('/debit-card/{debit_card}', [self::class, 'deleteDebitCard']);
     });
@@ -136,7 +147,7 @@ class DebitCard extends Model
       return $request->user()->debit_cards;
     } else {
       return Inertia::render('savings/DebitCards', [
-        'debit_cards' => $request->user()->debit_cards
+        'debit_cards' => (new DebitCardTransformer)->collectionTransformer($request->user()->debit_cards, 'transformWithX')
       ]);
     }
   }
@@ -149,7 +160,7 @@ class DebitCard extends Model
     return response()->json(['rsp' => auth()->user()->debit_cards()->create($request->validated())], 201);
   }
 
-  public function setDefaultDebitCard()
+  public function setDefaultDebitCard(Request $request)
   {
     $debit_card = DebitCard::findOrFail(request('debit_card_id'));
 
@@ -158,7 +169,10 @@ class DebitCard extends Model
     $debit_card->is_default = true;
     $debit_card->save();
 
-    return response()->json(['rsp' => true], 204);
+    if ($request->isApi()) {
+      return response()->json(['rsp' => true], 204);
+    }
+    return back()->withSuccess('Card ' . $debit_card->pan . ' has been made default card');
   }
 
   public function deleteDebitCard(Request $request, self $debit_card)
