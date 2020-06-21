@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Models;
 
 use Carbon\Carbon;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,12 @@ class SavingsInterest extends Model
     'amount' => 'double',
   ];
 
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    Inertia::setRootView('appuser::app');
+  }
+
   public function savings()
   {
     return $this->belongsTo(Savings::class);
@@ -60,7 +67,7 @@ class SavingsInterest extends Model
   {
     Route::group(['prefix' => 'savings-interests'], function () {
       Route::get('', [self::class, 'getSavingsInterests'])->name('appuser.smart-interest')->defaults('extras', ['icon' => 'fas fa-money-check-alt']);
-      Route::get('{month}', [self::class, 'getSavingsInterestsForMonth']);
+      Route::get('{month}', [self::class, 'getSavingsInterestsForMonth'])->name('appuser.smart-interest.details')->defaults('extras', ['nav_skip' => true]);
     });
   }
 
@@ -81,7 +88,9 @@ class SavingsInterest extends Model
     if ($request->isApi()) {
       return response()->json($interests_summary, 200);
     } else {
-      return Inertia::render('Savings/ViewInterests');
+      return Inertia::render('savings/ViewInterests', [
+        'interests_summary' => $interests_summary
+      ]);
     }
   }
 
@@ -92,7 +101,7 @@ class SavingsInterest extends Model
 
     $interests_summary = $records->groupBy([
       function ($item) {
-        return $item->created_at->toString();
+        return $item->created_at->toDateString();
       },
     ])->transform(function ($item, $key) {
       return $item->groupBy('savings.gos_type.name')->transform(function ($item, $key) {
@@ -102,7 +111,14 @@ class SavingsInterest extends Model
       return collect($item->all())->merge(['total' => $item->sum()]);
     });;
 
-    return response()->json($interests_summary, 200);
+    if ($request->isApi()) {
+      return response()->json($interests_summary, 200);
+    }
+
+    return Inertia::render('savings/ViewInterestBreakdown', [
+      'interests_summary' => $interests_summary,
+      'month' => $month
+    ]);
   }
 
   /**
