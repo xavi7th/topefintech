@@ -23,31 +23,19 @@ class AddNewDebitCardValidation extends FormRequest
   public function rules()
   {
     return [
-      'pan' => ['required', new CardNumber],
-      'year' => ['required', new CardExpirationYear($this->get('month'))],
-      'month' => ['required', new CardExpirationMonth($this->get('year'))],
-      'cvv' => ['required', new CardCvc($this->get('pan'))]
+      'pan' => ['required', new CardNumberOveride],
+      'year' => ['required', new CardExpirationYearOveride($this->get('month'))],
+      'month' => ['required', new CardExpirationMonthOveride($this->get('year'))],
+      'cvv' => ['required', new CardCvcOveride($this->get('pan'))]
 
     ];
   }
 
-  /**
-   * Determine if the user is authorized to make this request.
-   *
-   * @return bool
-   */
   public function authorize()
   {
     return true;
   }
 
-
-
-  /**
-   * Configure the error messages for the defined validation rules.
-   *
-   * @return array
-   */
   public function messages()
   {
     return [];
@@ -68,8 +56,13 @@ class AddNewDebitCardValidation extends FormRequest
        */
       $this->details = resolve_debit_card_bin(substr($this->pan, 0, 6));
 
+      if (isset($this->details->code)) {
+        $validator->errors()->add('pan', 'Error verifying PAN');
+        return;
+      }
+
       if ($this->details->country_name !== 'Nigeria') {
-        $validator->errors()->add('Invalid Card', 'Only Cards issued by Nigerian financial institutions allowed');
+        $validator->errors()->add('pan', 'Only Cards issued by Nigerian financial institutions allowed');
         return;
       }
     });
@@ -107,5 +100,72 @@ class AddNewDebitCardValidation extends FormRequest
      */
 
     throw new AxiosValidationExceptionBuilder($validator, $this);
+  }
+}
+
+class CardNumberOveride extends CardNumber
+{
+
+  const MSG_CARD_INVALID = 'validation.credit_card.card_invalid';
+  const MSG_CARD_PATTER_INVALID = 'validation.credit_card.card_pattern_invalid';
+  const MSG_CARD_LENGTH_INVALID = 'validation.credit_card.card_length_invalid';
+  const MSG_CARD_CHECKSUM_INVALID = 'validation.credit_card.card_checksum_invalid';
+
+  /**
+   * Get the validation error message.
+   *
+   * @return string
+   */
+  public function message()
+  {
+
+    switch ($this->message) {
+      case self::MSG_CARD_INVALID:
+        return 'The PAN is invalid';
+        break;
+      case self::MSG_CARD_PATTER_INVALID:
+        return 'The PAN is pattern invalid';
+        break;
+      case self::MSG_CARD_LENGTH_INVALID:
+        return 'The PAN has an invalid length';
+        break;
+      case self::MSG_CARD_CHECKSUM_INVALID:
+        return 'Not a valid Credit/Debit Card';
+        break;
+      default:
+        'There was an unknown error while trying to validate the Card';
+        break;
+    }
+  }
+}
+
+class CardExpirationYearOveride extends CardExpirationYear
+{
+  const MSG_CARD_EXPIRATION_YEAR_INVALID = 'validation.credit_card.card_expiration_year_invalid';
+
+  /**
+   * Get the validation error message.
+   *
+   * @return string
+   */
+  public function message()
+  {
+    return 'The Card expiration year is invalid';
+  }
+}
+
+class CardExpirationMonthOveride extends CardExpirationMonth
+{
+  public function message()
+  {
+    return 'The Card expiration month is invalid';
+  }
+}
+
+class CardCvcOveride extends CardCvc
+{
+  public function message()
+  {
+    return 'The Card CVV number is incorrect';
   }
 }

@@ -11,54 +11,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Http\Requests\AddNewDebitCardValidation;
 use App\Modules\AppUser\Transformers\DebitCardTransformer;
 
-/**
- * App\Modules\AppUser\Models\DebitCard
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $pan
- * @property string $pan_hash
- * @property string|null $month
- * @property string|null $year
- * @property string|null $cvv
- * @property string|null $cvv_hash
- * @property bool $is_default
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\AppUser $app_user
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCvv($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCvvHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereIsDefault($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard wherePan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard wherePanHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereYear($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withoutTrashed()
- * @mixin \Eloquent
- * @property string|null $brand
- * @property string|null $sub_brand
- * @property string|null $country
- * @property string|null $card_type
- * @property string|null $bank
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereBank($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereBrand($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCardType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereCountry($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereSubBrand($value)
- */
 class DebitCard extends Model
 {
   use SoftDeletes;
@@ -73,8 +25,9 @@ class DebitCard extends Model
 
   protected $hidden = ['cvv_hash', 'pan_hash'];
 
-  public function __construct()
+  public function __construct(array $attributes = [])
   {
+    parent::__construct($attributes);
     Inertia::setRootView('appuser::app');
   }
 
@@ -132,11 +85,11 @@ class DebitCard extends Model
 
       Route::get('debit-cards', [self::class, 'viewDebitCards'])->name('appuser.my-cards')->defaults('extras', ['icon' => 'far fa-credit-card']);
 
-      Route::post('/debit-card/create', [self::class, 'addNewDebitCard']);
+      Route::post('/debit-card/create', [self::class, 'addNewDebitCard'])->name('appuser.cards.add');
 
       Route::put('/debit-card/default', [self::class, 'setDefaultDebitCard'])->name('appuser.cards.default');
 
-      Route::delete('/debit-card/{debit_card}', [self::class, 'deleteDebitCard']);
+      Route::delete('/debit-card/{debit_card}', [self::class, 'deleteDebitCard'])->name('appuser.cards.delete');
     });
   }
 
@@ -152,12 +105,14 @@ class DebitCard extends Model
     }
   }
 
-  public function getDebitCards()
-  { }
-
   public function addNewDebitCard(AddNewDebitCardValidation $request)
   {
-    return response()->json(['rsp' => auth()->user()->debit_cards()->create($request->validated())], 201);
+    $debitCard = $request->user()->debit_cards()->create($request->validated());
+
+    if ($request->isApi()) {
+      return response()->json($debitCard, 201);
+    }
+    return back()->withSuccess('Card successfully added to your account');
   }
 
   public function setDefaultDebitCard(Request $request)
@@ -172,12 +127,12 @@ class DebitCard extends Model
     if ($request->isApi()) {
       return response()->json(['rsp' => true], 204);
     }
-    return back()->withSuccess('Card ' . $debit_card->pan . ' has been made default card');
+    return back()->withSuccess('Card ' . $debit_card->pan . ' has been made the default card');
   }
 
   public function deleteDebitCard(Request $request, self $debit_card)
   {
-    if ($debit_card->belongs_to(auth()->user())) {
+    if ($debit_card->belongs_to($request->user())) {
       /**
        * Check if this is his default card
        */
@@ -205,7 +160,10 @@ class DebitCard extends Model
 
       $debit_card->delete();
 
-      return response()->json([], 204);
+      if ($request->isApi()) {
+        return response()->json([], 204);
+      }
+      return back()->withSuccess('Deleted');
     } else {
       abort(403, 'invalid operation');
     }

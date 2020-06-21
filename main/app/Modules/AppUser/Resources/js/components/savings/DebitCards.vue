@@ -2,20 +2,32 @@
   <layout title="Debit Cards" :isAuth="false">
     <div class="container-fluid">
       <div class="row vertical-gap">
-        <div class="col-3">
-          <button type="button" class="btn btn-success btn-long">
-            <span class="text">Add Card</span>
-          </button>&nbsp;
+        <div class="col-12">
+          <button
+            type="button"
+            class="btn btn-brand"
+            data-toggle="modal"
+            data-target="#createDebitCardModal"
+          >Add Card</button>
         </div>
       </div>
       <div class="rui-gap-2"></div>
       <div class="row vertical-gap">
         <div
-          class="col-md-3"
+          class="col-md-4"
           v-for="(debit_card,idx) in $page.debit_cards.data"
           :key="debit_card.id"
         >
           <div class="card">
+            <button
+              type="button"
+              class="btn btn-outline-dark btn-uniform btn-delete"
+              @click="deleteCard(debit_card)"
+            >
+              <span class="icon">
+                <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+            </button>
             <div :class="`card-body card${(idx % 5) + 1}`">
               <h6 class="card-subtitle h4 text-muted mt-60 text-white" style="font-size: 1.8rem;">
                 <strong>{{debit_card.pan}}</strong>
@@ -23,9 +35,12 @@
               <a class="card-link">Expiry</a>
               <br />
               <span style="font-size: 1.5rem;">{{debit_card.month}} / {{debit_card.year}}</span>
-              <span class="default-card" v-if="debit_card.is_default">Default</span>
               <button
-                class="default-card btn btn-dark"
+                class="btn btn-light default-card btn-sm"
+                v-if="debit_card.is_default"
+              >Default Card</button>
+              <button
+                class="default-card btn btn-dark btn-sm"
                 @click="markDefaultCard(debit_card)"
                 v-else
               >Mark Default</button>
@@ -37,12 +52,75 @@
       <div class="rui-gap-2"></div>
       <div class="rui-gap-3"></div>
     </div>
+    <template v-slot:modals>
+      <modal modalId="createDebitCardModal" modalTitle="Add New Debit Card">
+        <form class="#" @submit.prevent="addCard">
+          <FlashMessage />
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12">
+              <label for="card-pan">Card PAN</label>
+              <input
+                type="number"
+                class="form-control"
+                id="card-pan"
+                v-model="details.pan"
+                placeholder="Card Number"
+              />
+              <FlashMessage v-if="errors.pan" :msg="errors.pan[0]" />
+            </div>
+            <div class="col-md-4 col-6">
+              <label for="card-expiry-month">Expiry Month</label>
+              <select id="card-expiry-month" v-model="details.month" class="form-control">
+                <option :value="null">Choose</option>
+                <option v-for="n in 12" :key="n">{{n}}</option>
+              </select>
+            </div>
+            <div class="col-md-4 col-6">
+              <label for="card-expiry-year">Expiry Year</label>
+              <select id="card-expiry-year" v-model="details.year" class="form-control">
+                <option :value="null">Choose</option>
+                <option
+                  v-for="n in 80"
+                  :key="n -1 +(new Date().getFullYear())"
+                >{{ n - 1 + (new Date().getFullYear()) }}</option>
+              </select>
+            </div>
+            <div class="col-md-4 col-6">
+              <label for="card-cvv">CVV</label>
+              <input
+                type="number"
+                class="form-control"
+                id="card-cvv"
+                v-model="details.cvv"
+                placeholder="Enter CVV"
+              />
+            </div>
+            <div class="col-12 d-none d-md-block">
+              <FlashMessage v-if="errors.cvv" :msg="errors.cvv[0]" />
+              <FlashMessage v-if="errors.year" :msg="errors.year[0]" />
+              <FlashMessage v-if="errors.month" :msg="errors.month[0]" />
+            </div>
+            <div class="col-md-12 mt-30 mt-md-0 col-6 text-center">
+              <button type="submit" class="btn btn-success btn-long">
+                <span class="text">Add</span>
+              </button>
+            </div>
+            <div class="col-12 d-md-none">
+              <FlashMessage v-if="errors.cvv" :msg="errors.cvv[0]" />
+              <FlashMessage v-if="errors.year" :msg="errors.year[0]" />
+              <FlashMessage v-if="errors.month" :msg="errors.month[0]" />
+            </div>
+          </div>
+        </form>
+      </modal>
+    </template>
   </layout>
 </template>
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
   import Layout from "@dashboard-assets/js/AppComponent";
+  import axios from "axios";
   export default {
     name: "DebitCards",
     mixins: [mixins],
@@ -51,7 +129,11 @@
     },
     data: function() {
       return {
-        debit_cards: this.$page.debit_cards
+        debit_cards: this.$page.debit_cards,
+        details: {
+          month: null,
+          year: null
+        }
       };
     },
     methods: {
@@ -73,6 +155,35 @@
           )
           .then(() => {
             if (this.flash.success) {
+              ToastLarge.fire({
+                title: "Success",
+                html: this.flash.success,
+                position: "bottom",
+                icon: "success",
+                timer: 10000
+              });
+            } else {
+              swal.close();
+            }
+          });
+      },
+      addCard() {
+        BlockToast.fire({
+          text: "Adding card to your account. Please wait..."
+        });
+
+        this.$inertia
+          .post(
+            this.$route("appuser.cards.add"),
+            { ...this.details },
+            {
+              preserveState: true,
+              preserveScroll: false
+            }
+          )
+          .then(() => {
+            if (this.flash.success) {
+              this.details = {};
               Toast.fire({
                 title: "Success",
                 text: this.flash.success,
@@ -80,6 +191,53 @@
               });
             } else {
               swal.close();
+            }
+          });
+      },
+      deleteCard(debitCard) {
+        swalPreconfirm
+          .fire({
+            confirmButtonText: "Carry on!",
+            text: "This will permanently delete this card from your account",
+            preConfirm: () => {
+              return axios
+                .delete(this.$route("appuser.cards.delete", debitCard))
+                .then(rsp => {
+                  return true;
+                })
+                .catch(error => {
+                  if (error.response) {
+                    swal.showValidationMessage(
+                      `Request failed: ${error.response.data.message}`
+                    );
+                  } else {
+                    swal.showValidationMessage(`Request failed: ${error}`);
+                  }
+                });
+            }
+          })
+          .then(val => {
+            if (val.isDismissed) {
+              Toast.fire({
+                title: "Canceled",
+                icon: "info",
+                position: "center"
+              });
+            } else if (val.value) {
+              this.$inertia.reload({
+                method: "get",
+                data: {},
+                preserveState: false,
+                preserveScroll: true,
+                only: ["debit_cards"]
+              });
+              ToastLarge.fire({
+                title: "Success",
+                html: `Debit Card <b>${debitCard.pan}</b> has been deleted from your account`,
+                position: "bottom",
+                icon: "success",
+                timer: 10000
+              });
             }
           });
       }
@@ -115,6 +273,20 @@
       .default-card {
         float: right;
       }
+    }
+
+    .btn-delete {
+      background-color: #fff;
+      position: absolute;
+      padding: 5px;
+      right: 0;
+      font-size: 9px;
+    }
+  }
+
+  .mt-md-0 {
+    @media (min-width: 768px) {
+      margin-top: 0 !important;
     }
   }
 </style>
