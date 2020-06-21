@@ -1,7 +1,7 @@
 const mix = require( 'laravel-mix' );
 
 let fs = require( 'fs-extra' )
-let modules = fs.readdirSync( './main/app/Modules' ) // Make sure the path of your modules are correct
+let modules = fs.readdirSync( './main/app/Modules' )
 
 if ( modules && modules.length > 0 ) {
   modules.forEach( module => {
@@ -14,19 +14,8 @@ if ( modules && modules.length > 0 ) {
 
 mix.setPublicPath( './public_html' )
 
-// mix.webpackConfig( {
-//   entry: {
-//     main: [
-//       './main/app/Modules/BasicSite/Resources/sass/app.scss',
-//       './main/app/Modules/AppUser/Resources/sass/app.scss',
-//       './main/app/Modules/Admin/Resources/sass/app.scss'
-//     ]
-//   },
-// } );
-
 mix
   .options( {
-    // processCssUrls: false,
     fileLoaderDirs: {
       images: 'img',
     },
@@ -37,9 +26,31 @@ mix
       } ),
     ],
   } )
-  .version()
-  .mergeManifest();
+  .mergeManifest()
+  .then( () => {
+    const _ = require( 'lodash' );
+    var crypto = require( "crypto" );
+    const saltCssId = crypto.randomBytes( 7 )
+      .toString( 'hex' );
+    console.log(
+      '\x1b[41m%s\x1b[0m',
+      saltCssId
+    )
+    let oldManifestData = JSON.parse( fs.readFileSync( './public_html/mix-manifest.json', 'utf-8' ) )
+    let newManifestData = {};
 
-// if ( !mix.inProduction() ) {
-//   mix.sourceMaps();
-// }
+    _.map( oldManifestData, ( actualFilename, mixKeyName ) => {
+      if ( _.startsWith( mixKeyName, '/css' ) ) {
+        newManifestData[ mixKeyName ] = actualFilename + '?' + saltCssId;
+      } else {
+        newManifestData[ mixKeyName ] = actualFilename;
+      }
+    } );
+
+    let data = JSON.stringify( newManifestData, null, 2 );
+    fs.writeFileSync( './public_html/mix-manifest.json', data );
+  } )
+
+if ( !mix.inProduction() ) {
+  mix.sourceMaps();
+}

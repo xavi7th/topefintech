@@ -64,16 +64,22 @@ mix
   .mergeManifest()
   .then( () => {
     const _ = require( 'lodash' )
-    // let manifestData = require( './public_html/mix-manifest' )
-    let oldManifestData = JSON.parse( fs.readFileSync( './public_html/mix-manifest.json', 'utf-8' ) )
 
+    // var crypto = require( "crypto" );
+    // const saltCssId = crypto.randomBytes( 7 )
+    //   .toString( 'hex' );
+    // console.log(
+    //   '\x1b[41m%s\x1b[0m',
+    //   saltCssId
+    // )
+
+    let oldManifestData = JSON.parse( fs.readFileSync( './public_html/mix-manifest.json', 'utf-8' ) )
     let newManifestData = {};
 
     _.map( oldManifestData, ( actualFilename, mixKeyName ) => {
 
       if ( _.startsWith( mixKeyName, '/css' ) ) {
-        /** Exclude CSS files from renaming for now till we start cache busting them */
-        newManifestData[ mixKeyName ] = actualFilename;
+        newManifestData[ mixKeyName ] = actualFilename; // + '?' + saltCssId;
       } else {
 
         /**
@@ -87,7 +93,6 @@ mix
 
         /** If the js extension has been stripped we add it back */
         newMixKeyName = _.endsWith( newMixKeyName, '.js' ) ? newMixKeyName : newMixKeyName + '.js'
-
         newManifestData[ newMixKeyName ] = actualFilename;
       }
 
