@@ -155,149 +155,150 @@
             this.options = a.extend( {}, this.options, t ), this.options.templates = e, this.options.events = n
         }
 
-        function D() {
-            var t = this,
-                e = a( ".rui-page-preloader" ),
-                n = null;
-            if ( t.setLoadingAnimation = function () {
-                    var t = !( arguments.length > 0 && void 0 !== arguments[ 0 ] ) || arguments[ 0 ];
-                    clearTimeout( n ), t ? ( l.addClass( "rui-page-loading-state" ), e.addClass( "rui-page-preloader-active" ) ) : ( l.removeClass( "rui-page-loading-state" ), n = setTimeout( ( function () {
-                        e.removeClass( "rui-page-preloader-active" )
-                    } ), 300 ) )
-                }, t.options.ajax && void 0 !== window.history && u( s ) ) {
-                var i = window.location.href,
-                    o = {};
-                s.on( "click", 'a:not(.no-ajax):not([target="_blank"]):not([href^="#"]):not([href^="mailto"]):not([href^="javascript:"])', ( function ( e ) {
-                    var n = e.currentTarget;
-                    e.which > 1 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || window.location.protocol === n.protocol && window.location.hostname === n.hostname && ( n.href.indexOf( "#" ) > -1 && c( n.href ) === c( i ) || "file:" !== window.location.protocol && ( e.isDefaultPrevented() || void 0 !== t.options.events.onBeforeAjax && t.options.events.onBeforeAjax( e ) || ( e.preventDefault(), g( n.href ) ) ) )
-                } ) ), window.onpopstate = function () {
-                    g( window.location.href, !0 )
-                }
-            }
+        // function D() {
+        // var t = this,
+        //     e = a( ".rui-page-preloader" ),
+        //     n = null;
+        // if ( t.setLoadingAnimation = function () {
+        //         var t = !( arguments.length > 0 && void 0 !== arguments[ 0 ] ) || arguments[ 0 ];
+        //         clearTimeout( n ), t ? ( l.addClass( "rui-page-loading-state" ), e.addClass( "rui-page-preloader-active" ) ) : ( l.removeClass( "rui-page-loading-state" ), n = setTimeout( ( function () {
+        //             e.removeClass( "rui-page-preloader-active" )
+        //         } ), 300 ) )
+        //     }, t.options.ajax && void 0 !== window.history && u( s ) ) {
+        //     var i = window.location.href,
+        //         o = {};
+        //     s.on( "click", 'a:not(.no-ajax):not([target="_blank"]):not([href^="#"]):not([href^="mailto"]):not([href^="javascript:"])', ( function ( e ) {
+        //         var n = e.currentTarget;
+        //         e.which > 1 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || window.location.protocol === n.protocol && window.location.hostname === n.hostname && ( n.href.indexOf( "#" ) > -1 && c( n.href ) === c( i ) || "file:" !== window.location.protocol && ( e.isDefaultPrevented() || void 0 !== t.options.events.onBeforeAjax && t.options.events.onBeforeAjax( e ) || ( e.preventDefault(), g( n.href ) ) ) )
+        //     } ) ), window.onpopstate = function () {
+        //         g( window.location.href, !0 )
+        //     }
+        // }
 
-            function u( t ) {
-                return t.find( ".yaybar" ).length && t.find( ".rui-page" ).length
-            }
+        // function u( t ) {
+        //     return t.find( ".yaybar" ).length && t.find( ".rui-page" ).length
+        // }
 
-            function c( t ) {
-                return t.replace( /#.*/, "" )
-            }
+        // function c( t ) {
+        //     return t.replace( /#.*/, "" )
+        // }
 
-            function d() {
-                var t = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ];
-                return !( !t || !o[ t ] ) && o[ t ]
-            }
+        // function d() {
+        //     var t = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ];
+        //     return !( !t || !o[ t ] ) && o[ t ]
+        // }
 
-            function h( t, e ) {
-                ! function n() {
-                    t.length ? function ( t, e ) {
-                        switch ( t.type ) {
-                            case "style":
-                                var n = document.createElement( "link" );
-                                n.setAttribute( "rel", "stylesheet" ), n.setAttribute( "href", t.src );
-                                var i = !!t.afterCSS && a( 'link[href="'.concat( t.afterCSS, '"]' ) );
-                                i && i.length ? i.after( n ) : a( "head" ).append( n ), e();
-                                break;
-                            case "script":
-                                var o = document.createElement( "script" );
-                                o.onload = o.onreadystatechange = function () {
-                                    o.onload = o.onreadystatechange = null, e()
-                                }, o.setAttribute( "src", t.src ), document.body.appendChild( o )
-                        }
-                    }( t.shift(), n ) : e && e()
-                }()
-            }
+        // function h( t, e ) {
+        //     ! function n() {
+        //         t.length ? function ( t, e ) {
+        //             switch ( t.type ) {
+        //                 case "style":
+        //                     var n = document.createElement( "link" );
+        //                     n.setAttribute( "rel", "stylesheet" ), n.setAttribute( "href", t.src );
+        //                     var i = !!t.afterCSS && a( 'link[href="'.concat( t.afterCSS, '"]' ) );
+        //                     i && i.length ? i.after( n ) : a( "head" ).append( n ), e();
+        //                     break;
+        //                 case "script":
+        //                     var o = document.createElement( "script" );
+        //                     o.onload = o.onreadystatechange = function () {
+        //                         o.onload = o.onreadystatechange = null, e()
+        //                     }, o.setAttribute( "src", t.src ), document.body.appendChild( o )
+        //             }
+        //         }( t.shift(), n ) : e && e()
+        //     }()
+        // }
 
-            function p( e, n, o ) {
-                if ( n ) {
-                    i = e, n = n.replace( "<body", "<div data-ajax-body" ).replace( "</body>", "</div>" );
-                    var s = a( "<div>" ).html( n ),
-                        l = s.find( "title:eq(0)" ).text() || document.title;
-                    u( s ) ? ( o ? window.history.replaceState( null, l, e ) : window.history.pushState( null, l, e ), function () {
-                        var e = arguments.length > 0 && void 0 !== arguments[ 0 ] ? arguments[ 0 ] : "",
-                            n = arguments.length > 1 ? arguments[ 1 ] : void 0,
-                            i = arguments.length > 2 ? arguments[ 2 ] : void 0,
-                            o = a( ".rui-page" ),
-                            s = n.find( ".rui-page" ),
-                            l = n.find( ".rui-page-additional-js" ),
-                            u = a( ".yaybar-wrap > ul" ),
-                            c = a( ".rui-navbar-top, .rui-navbar-mobile, .rui-navbar-side-icons" ),
-                            d = [];
-                        n.find( 'link[rel="stylesheet"]' ).each( ( function () {
-                            var t = a( this ),
-                                e = t.attr( "href" );
-                            a( 'link[href="'.concat( e, '"]' ) ).length || d.push( {
-                                src: e,
-                                afterCSS: t.prev( "link" ).attr( "href" ),
-                                type: "style"
-                            } )
-                        } ) ), n.find( "script[src]" ).each( ( function () {
-                            var t = a( this ).attr( "src" );
-                            a( 'script[src="'.concat( t, '"]' ) ).length || d.push( {
-                                src: t,
-                                type: "script"
-                            } )
-                        } ) ), h( d, ( function () {
-                            var d = n.find( "title:eq(0)" ).text() || document.title;
-                            a( "title" ).html( d ), u.find( ".yay-item-active, .yay-submenu-open" ).each( ( function () {
-                                var t = a( this ),
-                                    e = "yay-item-active";
-                                t.children( ".yay-submenu" ).length || ( e += " yay-submenu-open" ), t.removeClass( e )
-                            } ) ), u.find( "li > a" ).each( ( function () {
-                                var t = a( this );
-                                this.href && this.href === e && t.add( t.closest( ".yay-submenu" ) ).parent( "li" ).addClass( "yay-item-active yay-submenu-open" )
-                            } ) ), c.find( ".nav-link, .dropdown-item" ).each( ( function () {
-                                var t = a( this ),
-                                    e = "active";
-                                t.children( ".yay-submenu" ).length || ( e += " yay-submenu-open" ), t.removeClass( e )
-                            } ) ), c.find( ".nav-link, .dropdown-item" ).each( ( function () {
-                                var t = a( this );
-                                this.href && this.href === e && t.addClass( "active" )
-                            } ) ), o.html( s.html() ), a( ".rui-page-additional-js-ajax" ).remove(), l.each( ( function () {
-                                var t = a( this ).clone();
-                                t.addClass( "rui-page-additional-js-ajax" ), t.appendTo( "body" )
-                            } ) ), void 0 !== t.options.events.onAfterAjax && t.options.events.onAfterAjax( e, n ), r.trigger( "rui-ajax-loaded", e, n ), window.scrollTo( {
-                                top: 0,
-                                behavior: "smooth"
-                            } ), i()
-                        } ) )
-                    }( e, s, ( function () {
-                        s.remove(), s = null, t.setLoadingAnimation( !1 )
-                    } ) ) ) : window.location = e
-                } else window.location = e
-            }
+        // function p( e, n, o ) {
+        //     if ( n ) {
+        //         i = e, n = n.replace( "<body", "<div data-ajax-body" ).replace( "</body>", "</div>" );
+        //         var s = a( "<div>" ).html( n ),
+        //             l = s.find( "title:eq(0)" ).text() || document.title;
+        //         u( s ) ? ( o ? window.history.replaceState( null, l, e ) : window.history.pushState( null, l, e ), function () {
+        //             var e = arguments.length > 0 && void 0 !== arguments[ 0 ] ? arguments[ 0 ] : "",
+        //                 n = arguments.length > 1 ? arguments[ 1 ] : void 0,
+        //                 i = arguments.length > 2 ? arguments[ 2 ] : void 0,
+        //                 o = a( ".rui-page" ),
+        //                 s = n.find( ".rui-page" ),
+        //                 l = n.find( ".rui-page-additional-js" ),
+        //                 u = a( ".yaybar-wrap > ul" ),
+        //                 c = a( ".rui-navbar-top, .rui-navbar-mobile, .rui-navbar-side-icons" ),
+        //                 d = [];
+        //             n.find( 'link[rel="stylesheet"]' ).each( ( function () {
+        //                 var t = a( this ),
+        //                     e = t.attr( "href" );
+        //                 a( 'link[href="'.concat( e, '"]' ) ).length || d.push( {
+        //                     src: e,
+        //                     afterCSS: t.prev( "link" ).attr( "href" ),
+        //                     type: "style"
+        //                 } )
+        //             } ) ), n.find( "script[src]" ).each( ( function () {
+        //                 var t = a( this ).attr( "src" );
+        //                 a( 'script[src="'.concat( t, '"]' ) ).length || d.push( {
+        //                     src: t,
+        //                     type: "script"
+        //                 } )
+        //             } ) ), h( d, ( function () {
+        //                 var d = n.find( "title:eq(0)" ).text() || document.title;
+        //                 a( "title" ).html( d ), u.find( ".yay-item-active, .yay-submenu-open" ).each( ( function () {
+        //                     var t = a( this ),
+        //                         e = "yay-item-active";
+        //                     t.children( ".yay-submenu" ).length || ( e += " yay-submenu-open" ), t.removeClass( e )
+        //                 } ) ), u.find( "li > a" ).each( ( function () {
+        //                     var t = a( this );
+        //                     this.href && this.href === e && t.add( t.closest( ".yay-submenu" ) ).parent( "li" ).addClass( "yay-item-active yay-submenu-open" )
+        //                 } ) ), c.find( ".nav-link, .dropdown-item" ).each( ( function () {
+        //                     var t = a( this ),
+        //                         e = "active";
+        //                     t.children( ".yay-submenu" ).length || ( e += " yay-submenu-open" ), t.removeClass( e )
+        //                 } ) ), c.find( ".nav-link, .dropdown-item" ).each( ( function () {
+        //                     var t = a( this );
+        //                     this.href && this.href === e && t.addClass( "active" )
+        //                 } ) ), o.html( s.html() ), a( ".rui-page-additional-js-ajax" ).remove(), l.each( ( function () {
+        //                     var t = a( this ).clone();
+        //                     t.addClass( "rui-page-additional-js-ajax" ), t.appendTo( "body" )
+        //                 } ) ), void 0 !== t.options.events.onAfterAjax && t.options.events.onAfterAjax( e, n ), r.trigger( "rui-ajax-loaded", e, n ), window.scrollTo( {
+        //                     top: 0,
+        //                     behavior: "smooth"
+        //                 } ), i()
+        //             } ) )
+        //         }( e, s, ( function () {
+        //             s.remove(), s = null, t.setLoadingAnimation( !1 )
+        //         } ) ) ) : window.location = e
+        //     } else window.location = e
+        // }
 
-            function f( e, n ) {
-                0 !== n.status ? ( console.log( "error", n ), t.setLoadingAnimation( !1 ) ) : window.location = e
-            }
+        // function f( e, n ) {
+        //   debugger;
+        //     0 !== n.status ? ( console.log( "error", n ), t.setLoadingAnimation( !1 ) ) : window.location = e
+        // }
 
-            function g() {
-                var e = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ],
-                    n = arguments.length > 1 && void 0 !== arguments[ 1 ] && arguments[ 1 ];
-                e && c( e ) !== c( i ) && a.ajax( {
-                    url: e,
-                    beforeSend: function () {
-                        var i = d( e );
-                        return i ? ( i.then( ( function ( t ) {
-                            p( e, t, n )
-                        } ), ( function ( t ) {
-                            f( e, t )
-                        } ) ), !1 ) : ( t.setLoadingAnimation( !0 ), function () {
-                            var t = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ],
-                                e = arguments.length > 1 && void 0 !== arguments[ 1 ] && arguments[ 1 ];
-                            t && e && !o[ t ] && ( o[ t ] = e )
-                        }( e, a.Deferred() ), !0 )
-                    },
-                    success: function ( t ) {
-                        var i = d( e );
-                        i && i.resolve( t ), p( e, t, n )
-                    },
-                    error: function ( t ) {
-                        f( e, t )
-                    }
-                } )
-            }
-        }
+        // function g() {
+        //     var e = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ],
+        //         n = arguments.length > 1 && void 0 !== arguments[ 1 ] && arguments[ 1 ];
+        //     e && c( e ) !== c( i ) && a.ajax( {
+        //         url: e,
+        //         beforeSend: function () {
+        //             var i = d( e );
+        //             return i ? ( i.then( ( function ( t ) {
+        //                 p( e, t, n )
+        //             } ), ( function ( t ) {
+        //                 f( e, t )
+        //             } ) ), !1 ) : ( t.setLoadingAnimation( !0 ), function () {
+        //                 var t = arguments.length > 0 && void 0 !== arguments[ 0 ] && arguments[ 0 ],
+        //                     e = arguments.length > 1 && void 0 !== arguments[ 1 ] && arguments[ 1 ];
+        //                 t && e && !o[ t ] && ( o[ t ] = e )
+        //             }( e, a.Deferred() ), !0 )
+        //         },
+        //         success: function ( t ) {
+        //             var i = d( e );
+        //             i && i.resolve( t ), p( e, t, n )
+        //         },
+        //         error: function ( t ) {
+        //             f( e, t )
+        //         }
+        //     } )
+        // }
+        // }
 
         function R() {
             var t = this,
@@ -1116,7 +1117,7 @@
             return e = t, ( n = [ {
                 key: "init",
                 value: function () {
-                    return this.initAjax(), this.initNightMode(), this.initNavbar(), this.initDropdown(), this.initMessenger(), this.initMailbox(), this.initTabsSliding(), this.initSpotlightMode(), this.initSectionLines(), this.initToasts(), this.initPluginIonRangeslider(), this.initPluginTouchSpin(), this.initPluginDateRangePicker(), this.initPluginDateTimePicker(), this.initPluginDataTable(), this.initPluginJstree(), this.initPluginPickr(), this.initPluginPopover(), this.initPluginYaybar(), this.initPluginOverlayScrollbars(), this.initPluginScrollspy(), this.initPluginFeather(), this.initPluginHightlight(), this.initPluginEmojioneArea(), this.initPluginSortable(), this.initPluginEasymde(), this.initPluginSweetalert(), this.initPluginSwiper(), this.initPluginInputmask(), this.initPluginSelectize(), this.initPluginQuill(), this.initPluginDropzone(), this.initTransitionFix(), this
+                    return this.initNightMode(), this.initNavbar(), this.initDropdown(), this.initMessenger(), this.initMailbox(), this.initTabsSliding(), this.initSpotlightMode(), this.initSectionLines(), this.initToasts(), this.initPluginIonRangeslider(), this.initPluginTouchSpin(), this.initPluginDateRangePicker(), this.initPluginDateTimePicker(), this.initPluginDataTable(), this.initPluginJstree(), this.initPluginPickr(), this.initPluginPopover(), this.initPluginYaybar(), this.initPluginOverlayScrollbars(), this.initPluginScrollspy(), this.initPluginFeather(), this.initPluginHightlight(), this.initPluginEmojioneArea(), this.initPluginSortable(), this.initPluginEasymde(), this.initPluginSweetalert(), this.initPluginSwiper(), this.initPluginInputmask(), this.initPluginSelectize(), this.initPluginQuill(), this.initPluginDropzone(), this.initTransitionFix(), this
                 }
             }, {
                 key: "setOptions",
@@ -1142,11 +1143,6 @@
                 key: "isInViewport",
                 value: function ( t, e ) {
                     return z.call( this, t, e )
-                }
-            }, {
-                key: "initAjax",
-                value: function () {
-                    return D.call( this )
                 }
             }, {
                 key: "initNavbar",
