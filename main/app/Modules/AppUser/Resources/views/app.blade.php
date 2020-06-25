@@ -244,7 +244,7 @@
       opacity: 0;
     }
   </style>
-  @routes('appuser')
+  @routes(['appuser', 'basic'])
   <script src="{{ mix('js/dashboard-app-vendor.js') }}" defer></script>
   <script src="{{ mix('js/manifest.js') }}" defer></script>
   <script src="{{ mix('js/vendor.js') }}" defer></script>

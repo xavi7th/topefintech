@@ -2,7 +2,7 @@
   <layout title="My Profile" :isAuth="false">
     <div class="container-fluid" v-if="!is_eligible">
       <div class="row">
-        <div class="col-lg-6 col-xl-5 text-center">
+        <div class="col-lg-6 col-xl-5 text-center mb-35 mb-lg-0">
           <div class="align-items-center justify-content-between mb-25">
             <h1 class="display-1">Sorry</h1>
             <p class="lead">You are not eligible for Smartloans at this time.</p>
@@ -19,6 +19,7 @@
             </inertia-link>
           </div>
         </div>
+
         <div class="col-xl-7 col-lg-6">
           <div class="card">
             <div class="card-body p-0">
@@ -29,7 +30,7 @@
                   >Ineligibility Reasons</h2>
                 </li>
                 <li
-                  class="list-group-item"
+                  class="list-group-item p-0 px-sm-4"
                   v-for="(reason, idx) in eligibility_failures"
                   :key="idx"
                 >
@@ -53,23 +54,19 @@
       <div class="row vertical-gap">
         <div class="col-lg-8 col-xl-6">
           <div class="d-flex align-items-center justify-content-between mb-25">
-            <h2 class="mnb-2" id="formBase">You are eligible for SmartLoan</h2>
+            <h2 class="mnb-2" id="formBase">You may be eligible for a SmartLoan</h2>
           </div>
           <form class="#">
             <div class="row vertical-gap sm-gap">
               <div class="col-8">
-                <label for="exampleBase1">Enter Amount</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="exampleBase1"
-                  placeholder="Enter Amount"
-                />
+                <label for="loanAmount">Enter an amount to check</label>
+                <input type="text" class="form-control" id="loanAmount" placeholder="Loan Amount" />
                 <br />
                 <p class="text-danger">
                   <em>
-                    <strong>10% interest rate</strong> would be deducted from
-                    the specified amount.
+                    <strong>{{interest_rate}}% interest rate</strong> would be deducted from
+                    the loan amount. See our
+                    <a :href="$route('app.faqs')">FAQs</a> for more information
                   </em>
                 </p>
               </div>
@@ -290,3 +287,11 @@
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  .display-4 {
+    @media (max-width: 991px) {
+      font-size: 1.4rem !important;
+    }
+  }
+</style>

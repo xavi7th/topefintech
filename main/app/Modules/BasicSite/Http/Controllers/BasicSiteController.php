@@ -23,7 +23,7 @@ class BasicSiteController extends Controller
   public function __construct()
   {
     Inertia::setRootView('basicsite::app');
-    $this->middleware('guest')->except('app.contact_us');
+    $this->middleware('guest')->except(['showContactForm', 'sendContactMessage', 'faqs']);
   }
   /**
    * The basic site routes that don't require authentication
