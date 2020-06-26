@@ -223,10 +223,8 @@ class LoanRequest extends Model
       Route::post('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility'])->name('appuser.surety.verify')->defaults('extras', ['nav_skip' => true]);
       Route::post('/loan-requests/create', [self::class, 'makeLoanRequest'])->name('appuser.smart-loan.make-request');
 
-      Route::get('smart-loan-logs', [self::class, 'viewSmartLoans'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
-      Route::get('smart-loan-details', [self::class, 'viewSmartLoanDetails'])->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/loan-requests', [self::class, 'getLoanRequests'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
 
-      Route::get('/loan-requests', [self::class, 'getLoanRequests']);
       Route::get('/loan-requests/{loan_request}/transactions', [self::class, 'getLoanRequestTransactions']);
       Route::post('/loan-requests/{loan_request}/make-repayment', [self::class, 'repayLoan']);
     });
@@ -348,14 +346,13 @@ class LoanRequest extends Model
     return Inertia::render('loans/ViewSmartLoans');
   }
 
-  public function viewSmartLoanDetails()
+  public function getLoanRequests(Request $request)
   {
-    return Inertia::render('loans/ViewSmartLoanDetails');
-  }
-
-  public function getLoanRequests()
-  {
-    return response()->json(auth()->user()->loan_requests->load(['loan_sureties.surety']), 200);
+    $loan_request = $request->user()->active_loan_request->load(['loan_sureties.surety']);
+    if ($request->isApi()) {
+      return response()->json($loan_request, 200);
+    }
+    return Inertia::render('loans/ViewSmartLoanDetails', compact('loan_request'));
   }
 
   public function getLoanRequestTransactions(LoanRequest $loan_request)

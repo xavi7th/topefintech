@@ -169,6 +169,11 @@ class AppUser extends User
     return $this->hasMany(LoanRequest::class);
   }
 
+  public function active_loan_request()
+  {
+    return $this->hasOne(LoanRequest::class)->latest();
+  }
+
   public function loan_transactions()
   {
     return $this->hasManyThrough(LoanTransaction::class, LoanRequest::class);

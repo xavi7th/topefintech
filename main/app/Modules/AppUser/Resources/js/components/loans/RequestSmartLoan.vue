@@ -1,7 +1,7 @@
 <template>
   <layout title="My Profile" :isAuth="false">
     <div class="container-fluid" v-if="is_eligible && is_surety_verified && is_loan_requested">
-      <div class="col-lg-4 col-xl-4">
+      <div class="col-lg-6 offset-lg-3 col-xl-4 offset-xl-2">
         <div class="rui-widget rui-widget-actions">
           <div class="rui-widget-head">
             <h4 class="rui-widget-title">SmartLoan Request</h4>
@@ -148,7 +148,7 @@
 
     <div class="container-fluid" v-else-if="is_eligible">
       <div class="row vertical-gap">
-        <div class="col-lg-8 col-xl-6">
+        <div class="col-lg-7 col-xl-6">
           <div class="d-flex align-items-center justify-content-between mb-25">
             <h2 class="mnb-2" id="formBase">You may be eligible for a SmartLoan</h2>
           </div>
@@ -254,7 +254,7 @@
             </div>
           </form>
         </div>
-        <div class="col-lg-4 col-xl-4">
+        <div class="col-lg-5 col-xl-4">
           <div class="rui-widget rui-widget-actions">
             <div class="rui-widget-head">
               <h4 class="rui-widget-title">Note</h4>
