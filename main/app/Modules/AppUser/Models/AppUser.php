@@ -137,8 +137,9 @@ class AppUser extends User
 
   const DASHBOARD_ROUTE_PREFIX = "user";
 
-  public function __construct()
+  public function __construct(array $attributes = [])
   {
+    parent::__construct($attributes);
     Inertia::setRootView('appuser::app');
   }
 
@@ -384,7 +385,7 @@ class AppUser extends User
       return false;
     }
     /**
-     * If the loan amount is more than 2 times the user's balance return false
+     * ? If the loan amount is more than 2 times the user's balance return false
      */
     elseif ($amount > $this->total_balance()) {
       return false;

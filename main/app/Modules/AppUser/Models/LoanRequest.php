@@ -218,11 +218,11 @@ class LoanRequest extends Model
   static function appUserRoutes()
   {
     Route::group([], function () {
-      Route::get('/loan-requests/check-eligibility', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
+      Route::match(['get', 'post'], '/loan-requests/check-eligibility', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
+      Route::post('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility'])->name('appuser.surety.verify')->defaults('extras', ['nav_skip' => true]);
       Route::get('smart-loan-logs', [self::class, 'viewSmartLoans'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
       Route::get('smart-loan-details', [self::class, 'viewSmartLoanDetails'])->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
 
-      Route::get('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility']);
       Route::post('/loan-requests/create', [self::class, 'makeLoanRequest']);
       Route::get('/loan-requests', [self::class, 'getLoanRequests']);
       Route::get('/loan-requests/{loan_request}/transactions', [self::class, 'getLoanRequestTransactions']);
@@ -242,74 +242,72 @@ class LoanRequest extends Model
 
   public function showRequestSmartLoanForm(CheckLoanEligibilityValidation $request)
   {
-    if ($request->isApi()) {
-      try {
-        return response()->json([
-          'is_eligible' => $request->user()->is_eligible_for_loan($request->amount),
-          'interest_rate' => (float)config('app.smart_loan_interest_rate')
-        ], 200);
-      } catch (\Throwable $th) {
-        return generate_422_error('There was an error processing this request');
+    if ($request->isMethod('GET')) {
+      if ($request->isApi()) {
+        try {
+          return response()->json([
+            'is_eligible' => $request->user()->is_eligible_for_loan($request->amount),
+            'interest_rate' => (float)config('app.smart_loan_interest_rate')
+          ], 200);
+        } catch (\Throwable $th) {
+          return generate_422_error('There was an error processing this request');
+        }
       }
+
+      return Inertia::render('loans/RequestSmartLoan', [
+        'is_eligible' => $request->is_eligible,
+        'eligibility_failures' => $request->eligibility_failures,
+        // 'is_eligible_for_amount' => function () use ($request) {
+        //   return $request->amount ? $request->user()->is_eligible_for_loan($request->amount) : false;
+        // },
+        'interest_rate' => function () {
+          return (float)config('app.smart_loan_interest_rate');
+        },
+        'is_surety_verified' => function () {
+          return (bool)session()->has('statistics.is_surety_verified');
+        },
+        'loan_statistics' => function () {
+          return session('statistics');
+        },
+        'is_loan_requested' => function () {
+          return (bool)session()->has('loan_requested');
+        },
+      ]);
+    } elseif ($request->isMethod('POST')) {
+      // dd($request->all());
+      /**
+       * ! Get the breakdown of this amount (how much will the user get less the interest)
+       * ! Get the monthly and weekly repayment schedules
+       * ! Return with am is_surety-verified prop
+       * ! Return with interest rate
+       * ! Return back with all these flashed to session
+       * ! Return with surety emails
+       * ! Return with loan expiration date. (4 months from now)
+       * !
+       */
+      $statistics = [
+        'weekly_installment_amount' => ceil($request->amount / (now()->addMonthsWithNoOverflow(config('app.smart_loan_duration'))->diffInWeeks(now()))),
+        'monthly_installment_amount' => ceil($request->amount / (now()->addMonthsWithNoOverflow(config('app.smart_loan_duration'))->diffInMonths(now()))),
+        'amount_requested' => $request->amount,
+        'amount_expected' => $request->amount - ($request->amount * config('app.smart_loan_interest_rate') / 100),
+        'is_surety_verified' => true,
+        'interest_rate' => config('app.smart_loan_interest_rate'),
+        'surety1' => $request->surety1,
+        'surety2' => $request->surety2,
+        'loan_expiration_date' => now()->addMonthsWithNoOverflow(config('app.smart_loan_interest_rate'))->addDays(config('app.smart_loan_grace_period')),
+      ];
+
+      // $request->session()->flash('statistics', $statistics);
+      return back()->withStatistics($statistics);
     }
-
-    return Inertia::render('loans/RequestSmartLoan', [
-      'is_eligible' => $request->is_eligible,
-      'eligibility_failures' => $request->eligibility_failures,
-      'is_eligible_for_amount' => function () use ($request) {
-        return $request->amount ? $request->user()->is_eligible_for_loan($request->amount) : false;
-      },
-      'interest_rate' => function () {
-        return (float)config('app.smart_loan_interest_rate');
-      },
-      'is_surety_verified' => function () {
-        return (bool)session()->has('surety_verified');
-      },
-      'is_loan_requested' => function () {
-        return (bool)session()->has('loan_requested');
-      },
-    ]);
-  }
-
-  public function viewSmartLoans()
-  {
-    return Inertia::render('loans/ViewSmartLoans');
-  }
-
-  public function viewSmartLoanDetails()
-  {
-    return Inertia::render('loans/ViewSmartLoanDetails');
-  }
-
-  public function getLoanRequests()
-  {
-    return response()->json(auth()->user()->loan_requests->load(['loan_sureties.surety']), 200);
-  }
-
-  public function getLoanRequestTransactions(LoanRequest $loan_request)
-  {
-    return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
   }
 
   public function checkSuretyEligibility(CheckSuretyValidation $request)
   {
-    $surety = AppUser::where('email', $request->email)->first();
-
-    if (!$surety->is_bvn_verified) {
-      return generate_422_error('Surety\'s bvn is not verified to be eligible for smart loans');
-    } elseif (!$surety->default_debit_card()->exists()) {
-      return generate_422_error('User does not have any valid Debit Card set as default in their profile');
-    } elseif ($surety->has_pending_loan()) {
-      return generate_422_error('This user is not eligible for to surety for another user');
-    } elseif ($surety->is_loan_surety()) {
-      return generate_422_error('User is already suretying for another user. They are not eligible for another');
-    }
-
-    try {
-      return response()->json(['is_eligible' => $surety->is_eligible_for_loan_surety($request->amount)], 200);
-    } catch (\Throwable $th) {
-      dd($th->getMessage());
-      return generate_422_error('There was an error processing this request');
+    if ($request->isApi()) {
+      return response()->json(['is_eligible' => true], 200);
+    } else {
+      return back()->withSuccess($request->surety_details->email . ' is eligible');
     }
   }
 
@@ -337,6 +335,27 @@ class LoanRequest extends Model
 
     return response()->json($loan_request, 201);
   }
+
+  public function viewSmartLoans()
+  {
+    return Inertia::render('loans/ViewSmartLoans');
+  }
+
+  public function viewSmartLoanDetails()
+  {
+    return Inertia::render('loans/ViewSmartLoanDetails');
+  }
+
+  public function getLoanRequests()
+  {
+    return response()->json(auth()->user()->loan_requests->load(['loan_sureties.surety']), 200);
+  }
+
+  public function getLoanRequestTransactions(LoanRequest $loan_request)
+  {
+    return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
+  }
+
 
   public function repayLoan(LoanRepaymentValidation $request, LoanRequest $loan_request)
   {
