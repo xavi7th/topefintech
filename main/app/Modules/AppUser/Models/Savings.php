@@ -82,8 +82,9 @@ class Savings extends Model
     'savings_distribution' => 'double',
   ];
 
-  public function __construct()
+  public function __construct(array $attributes = [])
   {
+    parent::__construct($attributes);
     Inertia::setRootView('appuser::app');
   }
 

@@ -7,9 +7,13 @@ use \Illuminate\Contracts\Validation\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 use App\Modules\AppUser\Models\AppUser;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MakeLoanRequestValidation extends FormRequest
 {
+
+  public $surety1Details;
+  public $surety2Details;
   /**
    * Get the validation rules that apply to the request.
    *
@@ -19,10 +23,10 @@ class MakeLoanRequestValidation extends FormRequest
   {
     return [
       'amount' => 'required|numeric',
-      'first_surety' => 'required|email|exists:users,email',
-      'second_surety' => 'required|email|exists:users,email',
+      'surety1' => 'required|email',
+      'surety2' => 'required|email',
       'repayment_installation_duration' => 'required|in:weekly,monthly',
-      'expiration_date' => 'required|date'
+      'auto_debit' => 'sometimes|boolean'
     ];
   }
 
@@ -36,19 +40,6 @@ class MakeLoanRequestValidation extends FormRequest
     return auth()->user()->is_eligible_for_loan($this->amount);
   }
 
-
-
-  /**
-   * Configure the error messages for the defined validation rules.
-   *
-   * @return array
-   */
-  public function messages()
-  {
-    return [];
-  }
-
-
   /**
    * Configure the validator instance.
    *
@@ -59,15 +50,26 @@ class MakeLoanRequestValidation extends FormRequest
   {
     $validator->after(function ($validator) {
 
-      $first_surety = AppUser::where('email', $this->first_surety)->first();
-      if (!$first_surety->is_eligible_for_loan_surety($this->amount)) {
-        $validator->errors()->add('Ineligible surety', $this->first_surety . ' is not an eligible surety for your loan request.');
+      try {
+        $this->surety1Details = AppUser::where('email', $this->surety1)->firstOrFail();
+        if (!$this->surety1Details->is_eligible_for_loan_surety($this->amount)) {
+          $validator->errors()->add('amount', $this->surety1Details->email . ' is not an eligible surety for your loan request.');
+        }
+
+        $this->surety2Details = AppUser::where('email', $this->surety2)->firstOrFail();
+        if (!$this->surety2Details->is_eligible_for_loan_surety($this->amount)) {
+          $validator->errors()->add('amount', $this->surety2Details->email . ' is not an eligible surety for your loan request.');
+        }
+      } catch (\Throwable $th) {
+        if ($th instanceof ModelNotFoundException) {
+          $validator->errors()->add('surety1', 'One of your surety emails is invalid');
+        }
       }
 
-      $second_surety = AppUser::where('email', $this->second_surety)->first();
-      if (!$second_surety->is_eligible_for_loan_surety($this->amount)) {
-        $validator->errors()->add('Ineligible surety', $this->second_surety . ' is not an eligible surety for your loan request.');
-      }
+      // if ($this->surety1Details->is($this->surety2Details)) {
+      //   $validator->errors()->add('surety2', 'You need two unique sureties');
+      //   return;
+      // }
     });
   }
 
@@ -92,6 +94,6 @@ class MakeLoanRequestValidation extends FormRequest
 
   protected function failedAuthorization()
   {
-    throw new AuthorizationException('You are not yet due for smartloan facility');
+    throw new AuthorizationException('You are not yet due for this amount of smartloan facility');
   }
 }

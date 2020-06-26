@@ -104,8 +104,9 @@ class LoanRequest extends Model
     'installments', 'total_refunded', 'auto_refund_settings'
   ];
 
-  public function __construct()
+  public function __construct(array $attributes = [])
   {
+    parent::__construct($attributes);
     Inertia::setRootView('appuser::app');
   }
 
@@ -220,10 +221,11 @@ class LoanRequest extends Model
     Route::group([], function () {
       Route::match(['get', 'post'], '/loan-requests/check-eligibility', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
       Route::post('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility'])->name('appuser.surety.verify')->defaults('extras', ['nav_skip' => true]);
+      Route::post('/loan-requests/create', [self::class, 'makeLoanRequest'])->name('appuser.smart-loan.make-request');
+
       Route::get('smart-loan-logs', [self::class, 'viewSmartLoans'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
       Route::get('smart-loan-details', [self::class, 'viewSmartLoanDetails'])->name('appuser.smart-loan.details')->defaults('extras', ['nav_skip' => true]);
 
-      Route::post('/loan-requests/create', [self::class, 'makeLoanRequest']);
       Route::get('/loan-requests', [self::class, 'getLoanRequests']);
       Route::get('/loan-requests/{loan_request}/transactions', [self::class, 'getLoanRequestTransactions']);
       Route::post('/loan-requests/{loan_request}/make-repayment', [self::class, 'repayLoan']);
@@ -243,6 +245,7 @@ class LoanRequest extends Model
   public function showRequestSmartLoanForm(CheckLoanEligibilityValidation $request)
   {
     if ($request->isMethod('GET')) {
+
       if ($request->isApi()) {
         try {
           return response()->json([
@@ -286,15 +289,15 @@ class LoanRequest extends Model
        * !
        */
       $statistics = [
-        'weekly_installment_amount' => ceil($request->amount / (now()->addMonthsWithNoOverflow(config('app.smart_loan_duration'))->diffInWeeks(now()))),
-        'monthly_installment_amount' => ceil($request->amount / (now()->addMonthsWithNoOverflow(config('app.smart_loan_duration'))->diffInMonths(now()))),
-        'amount_requested' => $request->amount,
-        'amount_expected' => $request->amount - ($request->amount * config('app.smart_loan_interest_rate') / 100),
-        'is_surety_verified' => true,
-        'interest_rate' => config('app.smart_loan_interest_rate'),
-        'surety1' => $request->surety1,
-        'surety2' => $request->surety2,
-        'loan_expiration_date' => now()->addMonthsWithNoOverflow(config('app.smart_loan_interest_rate'))->addDays(config('app.smart_loan_grace_period')),
+        'weekly_installment_amount' => (float)ceil($request->amount / (now()->addMonthsWithNoOverflow(config('app.smart_loan_duration'))->diffInWeeks(now()))),
+        'monthly_installment_amount' => (float)ceil($request->amount / (now()->addMonthsWithNoOverflow(config('app.smart_loan_duration'))->diffInMonths(now()))),
+        'amount_requested' => (float)$request->amount,
+        'amount_expected' => (float)$request->amount - ($request->amount * config('app.smart_loan_interest_rate') / 100),
+        'is_surety_verified' => (bool)true,
+        'interest_rate' => (float)config('app.smart_loan_interest_rate'),
+        'surety1' => (string)$request->surety1,
+        'surety2' => (string)$request->surety2,
+        'loan_expiration_date' => (string)now()->addMonthsWithNoOverflow(config('app.smart_loan_interest_rate'))->addDays(config('app.smart_loan_grace_period')),
       ];
 
       // $request->session()->flash('statistics', $statistics);
@@ -326,14 +329,18 @@ class LoanRequest extends Model
     /**
      * ! Create a surety request
      */
-    $rsp = $request->user()->create_surety_requests($request->first_surety, $loan_request->id, $request->second_surety);
+    $rsp = $request->user()->create_surety_requests($request->surety1, $loan_request->id, $request->surety2);
 
     if (is_null($rsp)) {
       return generate_422_error('Loan Request failed. Try again');
     }
+
     DB::commit();
 
-    return response()->json($loan_request, 201);
+    if ($request->isApi()) {
+      return response()->json($loan_request, 201);
+    }
+    return back()->withLoanRequested(true);
   }
 
   public function viewSmartLoans()

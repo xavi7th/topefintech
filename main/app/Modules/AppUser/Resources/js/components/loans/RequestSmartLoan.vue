@@ -32,97 +32,113 @@
       <div class="row vertical-gap">
         <div class="col-lg-8 col-xl-6">
           <div class="d-flex align-items-center justify-content-between mb-25">
-            <h2 class="mnb-2" id="formBase">Your SmartLoan Request was verified successfully</h2>
+            <h2 class="mnb-2" id="formBase">Your Smartloan sureties were verified successfully</h2>
           </div>
           <div class="row vertical-gap sm-gap">
-            <div class="col-6">
+            <div class="col-12 col-lg-6">
+              <FlashMessage />
               <div class="col-12">
+                <h3>Smartloan Details:</h3>
                 <p>
-                  <strong>Total Amount:</strong> ₦50,000
+                  <strong>Requested Amount:</strong>
+                  {{loan_statistics.amount_requested | Naira }}
                 </p>
                 <p>
-                  <strong>Interest Rate:</strong> 10%
+                  <strong>Interest Rate:</strong>
+                  {{loan_statistics.interest_rate }}%
                 </p>
                 <p>
-                  <strong>Requested Amount:</strong> ₦45,000
+                  <strong>Amount to receive:</strong>
+                  {{loan_statistics.amount_expected | Naira }}
                 </p>
+
+                <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
               </div>
               <div class="col-12">
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <div class="input-group-text verified">
-                      <span data-feather="check" class="rui-icon rui-icon-stroke-1_5"></span>
+                      <span class="fas fa-check"></span>
                     </div>
                   </div>
                   <input
                     type="email"
                     disabled
                     class="form-control"
-                    id="exampleBase2"
-                    placeholder="Hannah@vibes.com"
+                    id="surety1"
+                    :placeholder="loan_statistics.surety1"
                   />
+                  <FlashMessage v-if="errors.surety1" :msg="errors.surety1[0]" />
                 </div>
                 <br />
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <div class="input-group-text verified">
-                      <span data-feather="check" class="rui-icon rui-icon-stroke-1_5"></span>
+                      <span class="fas fa-check"></span>
                     </div>
                   </div>
                   <input
                     type="email"
                     disabled
                     class="form-control"
-                    id="exampleBase2"
-                    placeholder="itse@sagay.com"
+                    id="surety2"
+                    :placeholder="loan_statistics.surety2"
                   />
+                  <FlashMessage v-if="errors.surety2" :msg="errors.surety2[0]" />
                 </div>
               </div>
               <br />
               <div class="col-12">
-                <label for="exampleBase1">Refund Installation Methods</label>
-                <select class="custom-select">
-                  <option selected>Select</option>
-                  <option value="1">₦5,000 / Month (6 Months)</option>
-                  <option value="1">₦834 / Week</option>
+                <label for="repaymentInstallationDuration">Refund Installation Methods</label>
+                <select
+                  class="custom-select"
+                  id="repaymentInstallationDuration"
+                  v-model="details.repayment_installation_duration"
+                >
+                  <option selected :value="null">Select</option>
+                  <option
+                    value="monthly"
+                  >{{loan_statistics.monthly_installment_amount | Naira }} / Month</option>
+                  <option
+                    value="weekly"
+                  >{{loan_statistics.weekly_installment_amount | Naira }} / Week</option>
                 </select>
+                <FlashMessage
+                  v-if="errors.repayment_installation_duration"
+                  :msg="errors.repayment_installation_duration[0]"
+                />
               </div>
               <br />
               <div class="col-12">
                 <div class="custom-control custom-switch">
-                  <input type="checkbox" class="custom-control-input" id="customSwitch1" />
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="customSwitch1"
+                    v-model="details.auto_debit"
+                  />
                   <label class="custom-control-label" for="customSwitch1">
-                    <strong>AutoDebit</strong>
-                    <span class="text-danger">
-                      (Always ensure you have sufficient funds on your
-                      card)
-                    </span>
+                    <strong class="d-block">AutoDebit</strong>
                   </label>
+                  <FlashMessage v-if="errors.auto_debit" :msg="errors.auto_debit[0]" />
                 </div>
+                <span class="text-danger">(Always ensure you have sufficient funds on your card)</span>
               </div>
               <br />
-              <div class="col-12">
-                <label for="exampleBase1">Select Date</label>
-                <input
-                  class="rui-datetimepicker form-control w-auto"
-                  type="text"
-                  placeholder="Select a date"
-                  data-datetimepicker-format="m.d.Y"
-                  data-datetimepicker-time="false"
-                />
-                <br />
-                <p>
-                  <strong>Valid till:</strong> 09/05/2020 10:57:43 PM
-                  <span class="text-danger">(Including 30 day grace period)</span>
+              <div class="col-12 mb-30">
+                <p class="mb-0">
+                  <strong>Valid till:</strong>
+                  {{loan_statistics.loan_expiration_date}}
                 </p>
+                <span class="text-danger">(Including 30 day grace period)</span>
               </div>
-              <div class="col-12">
-                <button type="button" class="btn btn-success btn-long">
-                  <span class="text">Submit Request</span>
+              <div class="col-12 text-center text-lg-right">
+                <button type="button" class="btn btn-success btn-long" @click="makeLoanRequest">
+                  <span class="text">Request Loan</span>
                   <span class="icon">
-                    <span data-feather="check-square" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span class="fas fa-chevron-circle-right"></span>
                   </span>
-                </button>&nbsp;
+                </button>
               </div>
             </div>
           </div>
@@ -226,7 +242,7 @@
                 <button
                   type="button"
                   class="btn btn-primary btn-long"
-                  :class="{'disabled' : !details.surety1.isVerified || !details.surety2.isVerified}"
+                  v-show="details.surety1.isVerified && details.surety2.isVerified"
                   @click="proceedToMakeLoanRequest"
                 >
                   <span class="text">Proceed</span>
@@ -333,6 +349,7 @@
       is_surety_verified: Boolean,
       is_loan_requested: Boolean,
       eligibility_failures: Array,
+      loan_statistics: Object,
       interest_rate: Number
     },
     components: {
@@ -365,6 +382,9 @@
             icon: "error"
           });
         } else {
+          BlockToast.fire({
+            text: `Verifying ${suretyDetails.email}'s eligibility...`
+          });
           this.$inertia
             .post(
               this.$route("appuser.surety.verify"),
@@ -387,6 +407,7 @@
                   this.details.surety2.isVerified = true;
                 }
               }
+              swal.close();
             });
         }
       },
@@ -394,19 +415,71 @@
         /**
          * ! Check if surety1 and surety2 are same email and not empty
          */
-        this.$inertia.post(
-          this.$route("appuser.smart-loan"),
-          {
-            surety1: this.details.surety1.email,
-            surety2: this.details.surety2.email,
-            amount: this.details.amount
-          },
-          {
-            preserveState: true,
-            preserveScroll: true,
-            only: ["is_surety_verified", "loan_statistics", "flash", "errors"]
-          }
-        );
+        if (false) {
+          ToastLarge.fire({
+            title: "Error",
+            html:
+              "Enter an <b>amount</b> and a surety's <b>email address</b> to verify",
+            position: "center",
+            icon: "error"
+          });
+        } else {
+          BlockToast.fire({
+            text: `Computing smartloan statistics...`
+          });
+          this.$inertia
+            .post(
+              this.$route("appuser.smart-loan"),
+              {
+                surety1: this.details.surety1.email,
+                surety2: this.details.surety2.email,
+                amount: this.details.amount
+              },
+              {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["is_surety_verified", "loan_statistics", "flash", "errors"]
+              }
+            )
+            .then(() => {
+              swal.close();
+            });
+        }
+      },
+      makeLoanRequest() {
+        if (false) {
+          ToastLarge.fire({
+            title: "Error",
+            html:
+              "Enter an <b>amount</b> and a surety's <b>email address</b> to verify",
+            position: "center",
+            icon: "error"
+          });
+        } else {
+          BlockToast.fire({
+            text: `Submitting loan request...`
+          });
+          this.$inertia
+            .post(
+              this.$route("appuser.smart-loan.make-request"),
+              {
+                surety1: this.details.surety1.email,
+                surety2: this.details.surety2.email,
+                amount: this.details.amount,
+                auto_debit: this.details.auto_debit,
+                repayment_installation_duration: this.details
+                  .repayment_installation_duration
+              },
+              {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["flash", "errors", "is_loan_requested"]
+              }
+            )
+            .then(() => {
+              swal.close();
+            });
+        }
       }
     }
   };

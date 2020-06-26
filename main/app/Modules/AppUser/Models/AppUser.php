@@ -547,6 +547,7 @@ class AppUser extends User
 
   public function create_loan_request(float $amount, string $repayment_installation_duration, $auto_debit = false): ?object
   {
+
     try {
       return $this->loan_requests()->create([
         'amount' => $amount,
