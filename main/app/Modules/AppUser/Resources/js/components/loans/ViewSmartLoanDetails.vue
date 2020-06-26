@@ -42,7 +42,21 @@
               </td>
               <td scope="row">
                 <strong>{{ item.surety.full_name }}</strong>
-                <span class="badge badge-success surties">{{ item.surety.email }}</span>
+                <span
+                  class="badge badge-warning surties"
+                  v-if="item.is_surety_accepted == null"
+                >Request Pending</span>
+                <span
+                  class="badge badge-danger surties"
+                  v-else-if="!item.is_surety_accepted"
+                >Request Declined</span>
+
+                <button class="btn btn-brand btn-sm" v-if="!item.is_surety_accepted">Change Surety</button>
+
+                <span
+                  class="badge badge-success surties"
+                  v-if="item.is_surety_accepted"
+                >Request Accepted</span>
               </td>
             </tr>
             <tr>
@@ -50,7 +64,7 @@
                 <strong>Loan Status</strong>
               </td>
               <td scope="row">
-                <strong>{{ loan_request.status }}</strong>
+                <strong>{{ loan_request.loan_request_status }}</strong>
               </td>
             </tr>
             <tr>
@@ -129,7 +143,12 @@
             </tr>
             <tr>
               <td class="text-primary text-center" colspan="2">
-                <button type="button" class="btn btn-primary btn-long">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-long"
+                  data-toggle="modal"
+                  data-target="#loanTransactions"
+                >
                   <span class="text">Breakdown</span>
                   <span class="icon">
                     <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -153,6 +172,42 @@
         </table>
       </div>
     </div>
+    <template v-slot:modals>
+      <modal
+        modalId="loanTransactions"
+        modalTitle="Smartloan Transaction Details"
+        class="transaction-container"
+      >
+        <div class="rui-timeline rui-timeline-right-lg mt-30">
+          <div class="rui-timeline-line"></div>
+
+          <div
+            class="rui-timeline-item"
+            v-for="(trans, idx) in loan_request.loan_transactions"
+            :key="idx"
+            :class="{'rui-timeline-item-swap' : !!(counter++%2), ' mt-sm-4 mt-15 mt-lg-0': counter > 1}"
+          >
+            <div class="rui-timeline-icon">
+              <span data-feather="clock" class="rui-icon rui-icon-stroke-1_5"></span>
+            </div>
+            <div class="rui-timeline-content p-0 border-0">
+              <div class="list-group">
+                <a
+                  href="#home"
+                  class="list-group-item list-group-item-action"
+                  v-bind:class="[ trans.trans_type =='loan' ? 'list-group-item-brand': trans.trans_type=='repayment' ? 'list-group-item-success':  'list-group-item-danger' ]"
+                >
+                  <b class="text-capitalize mr-15">{{trans.trans_type}}:</b>
+                  {{ trans.amount | Naira }}
+                </a>
+                <div class="rui-gap-3 d-none d-lg-block"></div>
+              </div>
+            </div>
+            <div class="rui-timeline-date mt-0">{{ new Date(trans.created_at).toDateString() }}</div>
+          </div>
+        </div>
+      </modal>
+    </template>
   </layout>
 </template>
 
@@ -169,15 +224,40 @@
       Layout
     },
     data: () => {
-      return {};
+      return {
+        counter: 0
+      };
     }
   };
 </script>
 
-<style lang="scss" scoped>
-  .card {
-    &.rounded {
-      border-radius: 5px;
+<style lang="scss" >
+  .transaction-container {
+    @media (min-width: 576px) {
+      .modal-dialog {
+        max-width: 90%;
+      }
+    }
+    .modal-body {
+      max-height: 70vh;
+      overflow-y: scroll;
+    }
+    .rui-timeline .rui-timeline-icon {
+      top: 0;
+    }
+
+    @media (min-width: 576px) and (max-width: 991px) {
+      .rui-timeline .rui-timeline-line {
+        left: 24%;
+      }
+
+      .rui-timeline .rui-timeline-icon {
+        left: 20%;
+      }
+
+      .rui-timeline-date {
+        width: 25% !important;
+      }
     }
   }
 </style>

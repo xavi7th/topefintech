@@ -101,7 +101,7 @@ class LoanRequest extends Model
 
   protected $appends = [
     'is_defaulted', 'stakes_for_default', 'grace_period_expiry',
-    'installments', 'total_refunded', 'auto_refund_settings'
+    'installments', 'total_refunded', 'auto_refund_settings', 'loan_request_status'
   ];
 
   public function __construct(array $attributes = [])
@@ -216,16 +216,28 @@ class LoanRequest extends Model
     }
   }
 
+  public function getLoanRequestStatusAttribute()
+  {
+    if ($this->loan_sureties()->where(function ($query) {
+      return $query->where('is_surety_accepted', false)->orWhere('is_surety_accepted', null);
+    })->exists()) {
+      return 'Waiting for surties';
+    } elseif (!$this->is_approved) {
+      return 'Waiting for admin';
+    } elseif (!$this->loaf_ref === 'DECLINED') {
+      return 'Declined';
+    } elseif ($this->is_approved) {
+      return 'Approved';
+    }
+  }
+
   static function appUserRoutes()
   {
     Route::group([], function () {
       Route::match(['get', 'post'], '/loan-requests/check-eligibility', [self::class, 'showRequestSmartLoanForm'])->name('appuser.smart-loan')->defaults('extras', ['icon' => 'fas fa-dollar-sign']);
       Route::post('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility'])->name('appuser.surety.verify')->defaults('extras', ['nav_skip' => true]);
-      Route::post('/loan-requests/create', [self::class, 'makeLoanRequest'])->name('appuser.smart-loan.make-request');
-
       Route::get('/loan-requests', [self::class, 'getLoanRequests'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
-
-      Route::get('/loan-requests/{loan_request}/transactions', [self::class, 'getLoanRequestTransactions']);
+      Route::post('/loan-requests/create', [self::class, 'makeLoanRequest'])->name('appuser.smart-loan.make-request');
       Route::post('/loan-requests/{loan_request}/make-repayment', [self::class, 'repayLoan']);
     });
   }
@@ -348,21 +360,19 @@ class LoanRequest extends Model
 
   public function getLoanRequests(Request $request)
   {
-    $loan_request = $request->user()->active_loan_request->load(['loan_sureties.surety']);
+    $loan_request = $request->user()->active_loan_request;
+    $loan_request = collect($loan_request->load(['loan_sureties.surety', 'loan_transactions']))->merge($loan_request->loan_statistics());
     if ($request->isApi()) {
       return response()->json($loan_request, 200);
     }
     return Inertia::render('loans/ViewSmartLoanDetails', compact('loan_request'));
   }
 
-  public function getLoanRequestTransactions(LoanRequest $loan_request)
-  {
-    return response()->json(collect($loan_request->load('loan_transactions'))->merge($loan_request->loan_statistics()), 200);
-  }
-
-
   public function repayLoan(LoanRepaymentValidation $request, LoanRequest $loan_request)
   {
+    /**
+     * ! Clear cache
+     */
     $loan_request->loan_transactions()->create([
       'amount' => $request->amount,
       'trans_type' => 'repayment'
@@ -419,7 +429,7 @@ class LoanRequest extends Model
     $loan_request->save();
     DB::commit();
 
-    return response()->json(['rsp' => true], 403);
+    return response()->json(['rsp' => true], 204);
   }
 
   public function adminGetLoanRequestTransactions(LoanRequest $loan_request)
