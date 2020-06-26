@@ -404,7 +404,7 @@
           {
             preserveState: true,
             preserveScroll: true,
-            only: ["is_surety_verified", "loan_statistics"]
+            only: ["is_surety_verified", "loan_statistics", "flash", "errors"]
           }
         );
       }

@@ -82,7 +82,7 @@ class CheckLoanEligibilityValidation extends FormRequest
           $surety2 = AppUser::where('email', $this->surety2)->firstOrFail();
         } catch (\Throwable $th) {
           if ($th instanceof ModelNotFoundException) {
-            $validator->errors()->add('amount', 'One of the surety emails is invalid');
+            $validator->errors()->add('surety1', 'One of the surety emails is invalid');
             return;
           } else {
             /** Log a marker at this point */
@@ -93,6 +93,9 @@ class CheckLoanEligibilityValidation extends FormRequest
 
         if (!$surety1->is_eligible_for_loan_surety($this->amount) || !$surety2->is_eligible_for_loan_surety($this->amount)) {
           $validator->errors()->add('amount', 'One of the surety is ineligible to surety for the amount requested');
+          return;
+        } elseif ($surety1->is($surety2)) {
+          $validator->errors()->add('surety2', 'You need two unique sureties');
           return;
         }
       }

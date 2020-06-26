@@ -3,6 +3,12 @@
     name: "FlashMessage",
     props: {
       msg: String
+    },
+    mounted() {
+      setTimeout(() => {
+        this.$page.flash.error = null;
+        this.$page.flash.success = null;
+      }, 3000);
     }
   };
 </script>
@@ -31,7 +37,9 @@
   </div>
 
   <div v-else>
-    <div class="alert alert-danger" v-if="$page.flash.error">{{$page.flash.error}}</div>
-    <div class="alert alert-success" v-if="$page.flash.success">{{$page.flash.success}}</div>
+    <transition name="slide-left">
+      <div class="alert alert-danger" v-if="$page.flash.error">{{$page.flash.error}}</div>
+      <div class="alert alert-success" v-else-if="$page.flash.success">{{$page.flash.success}}</div>
+    </transition>
   </div>
 </template>
