@@ -51,7 +51,13 @@
                   v-else-if="!item.is_surety_accepted"
                 >Request Declined</span>
 
-                <button class="btn btn-brand btn-sm" v-if="!item.is_surety_accepted">Change Surety</button>
+                <button
+                  class="btn btn-brand btn-xs"
+                  v-if="!item.is_surety_accepted"
+                  @click="suretyRequest = item"
+                  data-toggle="modal"
+                  data-target="#swapSurety"
+                >Change Surety</button>
 
                 <span
                   class="badge badge-success surties"
@@ -207,6 +213,61 @@
           </div>
         </div>
       </modal>
+      <modal modalId="swapSurety" modalTitle="Swap Surety">
+        <form class="#">
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12 col-lg-6">
+              <FlashMessage />
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text text-dark">Old Surety</div>
+                </div>
+                <input
+                  type="email"
+                  class="form-control"
+                  readonly
+                  v-model="suretyRequest.surety.email"
+                />
+              </div>
+              <hr />
+              <label for="suretyRequest" class="text-uppercase">Provide Sureties Email Address</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div
+                    class="input-group-text text-success"
+                    v-if="suretyRequest.isVerified"
+                  >Verified</div>
+                  <div class="input-group-text text-danger" v-else>Swap</div>
+                </div>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="suretyRequest"
+                  :readonly="suretyRequest.isVerified"
+                  placeholder="New Surety Email"
+                  v-model="suretyRequest.new_surety_email"
+                />
+                <FlashMessage v-if="errors.new_surety_email" :msg="errors.new_surety_email[0]" />
+                <FlashMessage v-if="errors.email" :msg="errors.email[0]" />
+              </div>
+            </div>
+
+            <div class="col-12 text-center text-md-right">
+              <button
+                type="button"
+                class="btn btn-primary btn-long"
+                v-show="!suretyRequest.isVerified"
+                @click="replaceLoanSurety"
+              >
+                <span class="text">Replace Surety</span>
+                <span class="icon">
+                  <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </modal>
     </template>
   </layout>
 </template>
@@ -220,13 +281,60 @@
     props: {
       loan_request: Object
     },
+    remember: ["suretyRequest"],
     components: {
       Layout
     },
     data: () => {
       return {
-        counter: 0
+        counter: 0,
+        suretyRequest: {
+          surety: {},
+          isVerified: false
+        }
       };
+    },
+    methods: {
+      replaceLoanSurety() {
+        if (!this.suretyRequest.new_surety_email) {
+          ToastLarge.fire({
+            title: "Error",
+            html: "Enter a new surety's <b>email address</b> to swap",
+            position: "center",
+            icon: "error"
+          });
+        } else {
+          BlockToast.fire({
+            text: `Attempting to swap ${this.suretyRequest.email} with ${this.suretyRequest.new_surety_email} as your surety...`
+          });
+          this.$inertia
+            .put(
+              this.$route("appuser.surety.swap"),
+              {
+                new_surety_email: this.suretyRequest.new_surety_email,
+                surety_request_id: this.suretyRequest.id
+              },
+              {
+                preserveState: true,
+                preserveScroll: true,
+                only: []
+              }
+            )
+            .then(() => {
+              if (this.flash.success) {
+                this.suretyRequest.isVerified = true;
+                ToastLarge.fire({
+                  title: "Success",
+                  html: this.flash.success,
+                  timer: 5000
+                });
+                this.flash.success = null;
+              } else {
+                swal.close();
+              }
+            });
+        }
+      }
     }
   };
 </script>
@@ -259,5 +367,9 @@
         width: 25% !important;
       }
     }
+  }
+  .btn-xs {
+    padding: 4px 6px;
+    font-size: 9px;
   }
 </style>

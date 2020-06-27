@@ -267,6 +267,8 @@ namespace App\Modules\AppUser\Models{
  * @mixin \Eloquent
  * @property string|null $date_of_birth
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDateOfBirth($value)
+ * @property-read \App\Modules\AppUser\Models\LoanRequest|null $active_loan_request
+ * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_requests
  */
 	class AppUser extends \Eloquent {}
 }
@@ -437,6 +439,9 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $approved_or_declined_at
+ * @property-read mixed $loan_request_status
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereApprovedOrDeclinedAt($value)
  */
 	class LoanRequest extends \Eloquent {}
 }

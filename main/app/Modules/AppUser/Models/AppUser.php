@@ -120,6 +120,8 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @mixin \Eloquent
  * @property string|null $date_of_birth
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDateOfBirth($value)
+ * @property-read \App\Modules\AppUser\Models\LoanRequest|null $active_loan_request
+ * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_requests
  */
 class AppUser extends User
 {
@@ -169,6 +171,12 @@ class AppUser extends User
     return $this->hasMany(LoanRequest::class);
   }
 
+
+  public function pending_loan_request()
+  {
+    return $this->hasOne(LoanRequest::class)->where('is_approved', null);
+  }
+
   public function active_loan_request()
   {
     return $this->hasOne(LoanRequest::class)->latest();
@@ -186,7 +194,19 @@ class AppUser extends User
 
   public function surety_request()
   {
+    return $this->hasOne(LoanSurety::class, 'surety_id')->latest();
+  }
+
+  public function pending_surety_request()
+  {
     return $this->hasOne(LoanSurety::class, 'surety_id')->where('is_surety_accepted', null);
+  }
+
+  public function suretied_loan()
+  {
+    return $this->surety_request()->where(function ($query) {
+      return $query->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true);
+    });
   }
 
   public function auto_save_settings()
@@ -418,12 +438,12 @@ class AppUser extends User
 
   public function is_loan_surety(): bool
   {
-    return  !is_null($this->surety_request) && $this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->exists();
+    return $this->suretied_loan()->exists();
   }
 
   public function loan_surety_amount(): float
   {
-    return ($this->surety_request()->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true)->get()->load('loan_requests'))->sum('loan_request.amount');
+    return $this->suretied_loan->loan_request->amount;
   }
 
   public function activeDays(): int

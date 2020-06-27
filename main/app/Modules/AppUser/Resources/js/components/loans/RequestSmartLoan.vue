@@ -302,6 +302,16 @@
                 <span data-feather="arrow-right-circle" class="rui-icon rui-icon-stroke-1_5"></span>
               </span>
             </inertia-link>
+            <inertia-link
+              v-if="auth.user.is_loan_surety"
+              :href="$route('appuser.surety.requests')"
+              class="btn btn-brand btn-long mt-25 mt-md-0"
+            >
+              <span class="text">View Surtied Loans</span>
+              <span class="icon">
+                <span data-feather="arrow-right-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+              </span>
+            </inertia-link>
           </div>
         </div>
 

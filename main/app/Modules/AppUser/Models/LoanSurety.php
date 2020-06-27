@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -52,10 +53,11 @@ class LoanSurety extends Model
     'surety_id', 'loan_request_id',
   ];
 
-  // protected $casts = [
-  // 	'is_surety_accepted' => 'boolean',
-  // ];
-
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    Inertia::setRootView('appuser::app');
+  }
 
   public function lender()
   {
@@ -88,36 +90,38 @@ class LoanSurety extends Model
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'surety-requests'], function () {
-      Route::get('status', 'LoanSurety@getRequestsForSureties');
-      Route::get('', 'LoanSurety@getReceivedSuretyRequests');
-      Route::put('', 'LoanSurety@acceptReceivedSuretyRequest');
-      Route::put('/swap', 'LoanSurety@swapSuretyRequest');
+      Route::get('', 'LoanSurety@getReceivedSuretyRequests')->name('appuser.surety.requests');
+      Route::put('', 'LoanSurety@acceptReceivedSuretyRequest')->name('appuser.surety.requests.respond');
+      Route::put('/swap', 'LoanSurety@swapSuretyRequest')->name('appuser.surety.swap');
     });
   }
 
-  public function getRequestsForSureties()
+  public function getReceivedSuretyRequests(Request $request)
   {
-    return response()->json(['request_details' => auth()->user()->request_for_surety->load('surety')], 200);
-  }
-
-  public function getReceivedSuretyRequests()
-  {
-    return response()->json(['request_details' => optional(auth()->user()->surety_request)->load(['loan_request'])], 200);
+    $suretied_loan = optional($request->user()->surety_request)->load(['loan_request']);
+    if ($request->isApi()) {
+      return response()->json(['suretied_loan' => $suretied_loan], 200);
+    }
+    return Inertia::render('loans/ViewSuretiedLoanDetails', [
+      'suretied_loan' => $suretied_loan
+    ]);
   }
 
   public function acceptReceivedSuretyRequest(Request $request)
   {
-
-    if (!$request->accepted) {
-      return generate_422_error('You make make a choice');
+    if (!$request->has('accepted')) {
+      return generate_422_error('You must make a choice');
     }
-    $surety_request = Auth::apiuser()->surety_request;
-    if ($surety_request) {
-      $surety_request->is_surety_accepted = filter_var($request->accepted, FILTER_VALIDATE_BOOLEAN);
-      $surety_request->save();
-      return response()->json(['rsp' => true], 204);
+    $suretied_loan = $request->user()->suretied_loan;
+    if ($suretied_loan) {
+      $suretied_loan->is_surety_accepted = filter_var($request->accepted, FILTER_VALIDATE_BOOLEAN);
+      $suretied_loan->save();
+      if ($request->isApi()) {
+        return response()->json(['rsp' => true], 204);
+      }
+      return back()->withSuccess('Applicant has been notified on your response');
     } else {
-      return generate_422_error('You have no surety request');
+      return generate_422_error('You have no pending surety request');
     }
   }
 
@@ -139,6 +143,10 @@ class LoanSurety extends Model
 
     DB::commit();
 
-    return response()->json(['rsp' => $new_surety_request], 201);
+    if ($request->isApi()) {
+      return response()->json(['rsp' => $new_surety_request], 201);
+    }
+
+    return back()->withSuccess('Surety Replaced! Talk to ' . $request->newSurety->full_name . ' to quickly accept your surety request.');
   }
 }

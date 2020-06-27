@@ -74,6 +74,9 @@ use App\Modules\AppUser\Http\Requests\CheckLoanEligibilityValidation;
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\LoanRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $approved_or_declined_at
+ * @property-read mixed $loan_request_status
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanRequest whereApprovedOrDeclinedAt($value)
  */
 class LoanRequest extends Model
 {
@@ -149,16 +152,14 @@ class LoanRequest extends Model
     if ($lender_stake > $this->amount) {
       return [
         'lender_stake' => ceil($this->amount - $this->total_refunded),
-        'first_surety_stake' => 0,
-        'second_surety_stake' => 0,
+        'surety_stake' => 0,
       ];
     } else {
       $loan_balance = ceil(($this->amount - $this->total_refunded) - $lender_stake);
-      $first_surety_stake = $second_surety_stake = ceil($loan_balance / 2);
+      $surety_stake = ceil($loan_balance / 2);
       return [
         'lender_stake' => $lender_stake,
-        'first_surety_stake' => $first_surety_stake,
-        'second_surety_stake' => $second_surety_stake,
+        'surety_stake' => $surety_stake,
       ];
     }
   }
