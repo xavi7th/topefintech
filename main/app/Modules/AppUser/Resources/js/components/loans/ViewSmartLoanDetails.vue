@@ -70,7 +70,9 @@
                 <strong>Loan Status</strong>
               </td>
               <td scope="row">
-                <strong>{{ loan_request.loan_request_status }}</strong>
+                <strong
+                  :class="{'text-danger text-uppercase text-bold':loan_request.is_approved == false}"
+                >{{ loan_request.loan_request_status }}</strong>
               </td>
             </tr>
             <tr>
@@ -88,8 +90,11 @@
               <td scope="row" v-if="loan_request.is_approved">
                 <strong>{{ new Date(loan_request.approved_at).toDateString() + ' ' + new Date(loan_request.approved_at).toLocaleTimeString() }}</strong>
               </td>
-              <td v-else>
+              <td v-else-if="loan_request.is_approved == null">
                 <strong>Approval Pending</strong>
+              </td>
+              <td v-else>
+                <strong class="text-danger text-capitalize text-bold">Loan Request Declined</strong>
               </td>
             </tr>
             <tr>
@@ -147,7 +152,7 @@
                 <strong>{{loan_request.total_refunded / loan_request.amount * 100}}% complete</strong>
               </td>
             </tr>
-            <tr>
+            <tr v-if="loan_request.is_approved">
               <td class="text-primary text-center" colspan="2">
                 <button
                   type="button"
@@ -160,13 +165,24 @@
                     <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
                   </span>
                 </button>
-                <button type="button" class="btn btn-danger btn-long">
-                  <span class="text">Refund</span>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-long"
+                  data-toggle="modal"
+                  data-target="#repayLoan"
+                  @click="amount=loan_request.balance_left"
+                >
+                  <span class="text">Refund All</span>
                   <span class="icon">
                     <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
                   </span>
                 </button>
-                <button type="button" class="btn btn-success btn-long">
+                <button
+                  type="button"
+                  class="btn btn-success btn-long"
+                  data-toggle="modal"
+                  data-target="#repayLoan"
+                >
                   <span class="text">Pay More</span>
                   <span class="icon">
                     <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -191,7 +207,7 @@
             class="rui-timeline-item"
             v-for="(trans, idx) in loan_request.loan_transactions"
             :key="idx"
-            :class="{'rui-timeline-item-swap' : !!(counter++%2), ' mt-sm-4 mt-15 mt-lg-0': counter > 1}"
+            :class="{'rui-timeline-item-swap' : !!(idx%2), ' mt-sm-4 mt-15 mt-lg-0': idx > 1}"
           >
             <div class="rui-timeline-icon">
               <span data-feather="clock" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -268,6 +284,31 @@
           </div>
         </form>
       </modal>
+      <modal modalId="repayLoan" modalTitle="Make Loan Repayment">
+        <form class="#">
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12 col-lg-6">
+              <FlashMessage />
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text text-dark">Amount</div>
+                </div>
+                <input type="text" class="form-control" v-model="amount" />
+                <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
+              </div>
+            </div>
+
+            <div class="col-12 text-center text-md-right">
+              <button type="button" class="btn btn-primary btn-long" @click="makePaystackPayment">
+                <span class="text">Proceed</span>
+                <span class="icon">
+                  <span data-feather="check-circle" class="rui-icon rui-icon-stroke-1_5"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </modal>
     </template>
   </layout>
 </template>
@@ -287,11 +328,11 @@
     },
     data: () => {
       return {
-        counter: 0,
         suretyRequest: {
           surety: {},
           isVerified: false
-        }
+        },
+        amount: 0
       };
     },
     methods: {
@@ -334,6 +375,53 @@
               }
             });
         }
+      },
+      makePaystackPayment() {
+        if (!this.amount) {
+          ToastLarge.fire({
+            title: "Error",
+            html: "Enter an amount to repay",
+            position: "center",
+            icon: "error"
+          });
+        } else {
+          // swal
+          //   .fire({
+          //     title: "Effecting payment..."
+          //   })
+          // .then(() => {
+          this.deductAmountFromLoan(this.amount);
+          // });
+        }
+      },
+      deductAmountFromLoan(amount) {
+        BlockToast.fire({
+          text: "processing ..."
+        });
+        this.$inertia
+          .post(
+            this.$route("appuser.smart-loan.make-payment", this.loan_request.id),
+            {
+              amount: amount
+            },
+            {
+              preserveState: true,
+              preserveScroll: true,
+              only: []
+            }
+          )
+          .then(() => {
+            if (this.flash.success) {
+              ToastLarge.fire({
+                title: "Success",
+                html: this.flash.success,
+                timer: 5000
+              });
+              this.flash.success = null;
+            } else {
+              swal.close();
+            }
+          });
       }
     }
   };

@@ -94,11 +94,10 @@ class CheckLoanEligibilityValidation extends FormRequest
         if (!$surety1->is_eligible_for_loan_surety($this->amount) || !$surety2->is_eligible_for_loan_surety($this->amount)) {
           $validator->errors()->add('amount', 'One of the surety is ineligible to surety for the amount requested');
           return;
+        } elseif ($surety1->is($surety2)) {
+          $validator->errors()->add('surety2', 'You need two unique sureties');
+          return;
         }
-        // elseif ($surety1->is($surety2)) {
-        //   $validator->errors()->add('surety2', 'You need two unique sureties');
-        //   return;
-        // }
       }
     });
   }

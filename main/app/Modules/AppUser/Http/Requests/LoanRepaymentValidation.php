@@ -55,7 +55,7 @@ class LoanRepaymentValidation extends FormRequest
   {
     $validator->after(function ($validator) {
       if ($this->route('loan_request')->loan_statistics()->balance_left < $this->amount) {
-        $validator->errors()->add('Excess Amount', 'The balance left to pay for this loan is ' . $this->route('loan_request')->loan_statistics()->balance_left);
+        $validator->errors()->add('amount', 'The balance left to pay for this loan is ' . $this->route('loan_request')->loan_statistics()->balance_left);
       }
     });
   }

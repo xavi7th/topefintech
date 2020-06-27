@@ -433,7 +433,9 @@ class AppUser extends User
 
   public function has_pending_loan(): bool
   {
-    return $this->loan_requests()->where('is_paid', false)->exists();
+    return $this->loan_requests()->where('is_paid', false)->where(function ($q) {
+      $q->where('is_approved', null)->orWhere('is_approved', true);
+    })->exists();
   }
 
   public function is_loan_surety(): bool

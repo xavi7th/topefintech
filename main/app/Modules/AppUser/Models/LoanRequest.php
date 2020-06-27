@@ -223,9 +223,9 @@ class LoanRequest extends Model
       return $query->where('is_surety_accepted', false)->orWhere('is_surety_accepted', null);
     })->exists()) {
       return 'Waiting for surties';
-    } elseif (!$this->is_approved) {
+    } elseif (is_null($this->is_approved)) {
       return 'Waiting for admin';
-    } elseif (!$this->loaf_ref === 'DECLINED') {
+    } elseif (!$this->is_approved) {
       return 'Declined';
     } elseif ($this->is_approved) {
       return 'Approved';
@@ -239,7 +239,7 @@ class LoanRequest extends Model
       Route::post('/loan-requests/check-surety-eligibility', [self::class, 'checkSuretyEligibility'])->name('appuser.surety.verify')->defaults('extras', ['nav_skip' => true]);
       Route::get('/loan-requests', [self::class, 'getLoanRequests'])->name('appuser.smart-loan.logs')->defaults('extras', ['nav_skip' => true]);
       Route::post('/loan-requests/create', [self::class, 'makeLoanRequest'])->name('appuser.smart-loan.make-request');
-      Route::post('/loan-requests/{loan_request}/make-repayment', [self::class, 'repayLoan']);
+      Route::post('/loan-requests/{loan_request}/make-repayment', [self::class, 'repayLoan'])->name('appuser.smart-loan.make-payment');
     });
   }
 
@@ -379,7 +379,10 @@ class LoanRequest extends Model
       'trans_type' => 'repayment'
     ]);
 
-    return response()->json(['rsp' => true], 201);
+    if ($request->isApi()) {
+      return response()->json(['rsp' => true], 201);
+    }
+    return back()->withSuccess($request->amount . ' paid from loan');
   }
 
   /**
