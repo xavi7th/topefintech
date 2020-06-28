@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\AppUser\Models\LoanRequest;
 
@@ -30,17 +31,23 @@ use App\Modules\AppUser\Models\LoanRequest;
  */
 class LoanTransaction extends Model
 {
-	protected $fillable = [
-		'amount',
-		'trans_type'
-	];
+  protected $fillable = [
+    'amount',
+    'trans_type'
+  ];
 
-	protected $casts = [
-		'amount' => 'double',
-	];
+  protected $casts = [
+    'amount' => 'double',
+  ];
 
-	public function loan_request()
-	{
-		return $this->belongsTo(LoanRequest::class);
-	}
+  public function loan_request()
+  {
+    return $this->belongsTo(LoanRequest::class);
+  }
+
+  public function getDescriptionAttribute()
+  {
+    return $this->trans_type == 'loan' ?  'Deposit transaction on ' . to_naira($this->loan_request->amount) . ' loan'
+      : Str::title($this->loan_request->repayment_installation_duration) . ' loan repayment on ' . to_naira($this->loan_request->amount) . ' loan';
+  }
 }

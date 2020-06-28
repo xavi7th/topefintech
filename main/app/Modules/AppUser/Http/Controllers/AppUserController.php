@@ -49,11 +49,7 @@ class AppUserController extends Controller
         Route::redirect('/', '/user/dashboard', 303);
         Route::get('dashboard', [self::class, 'loadDashboard'])->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);
 
-        AppUser::routes();
-
         Savings::appUserRoutes();
-
-        LoanRequest::appUserRoutes();
 
         SavingsInterest::appUserRoutes();
 
@@ -65,11 +61,14 @@ class AppUserController extends Controller
 
         LoanSurety::appUserRoutes();
 
+        LoanRequest::appUserRoutes();
+
         Transaction::appUserRoutes();
+
+        AppUser::routes();
 
         ErrLog::routes();
 
-        Route::get('statement', [self::class, 'loadUserApp'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
         // Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
       });
     });

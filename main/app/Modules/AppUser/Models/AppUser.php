@@ -151,27 +151,15 @@ class AppUser extends User
     return Auth::user() instanceof AppUser;
   }
 
-  public function is_verified(): bool
-  {
-    return $this->verified_at !== null;
-  }
-
-  public function is_email_verified(): bool
-  {
-    return $this->email_verified_at !== null;
-  }
-
   public function service_charges()
   {
-    return $this->hasManyThrough(ServiceCharge::class, Savings::class);
+    return $this->hasManyThrough(ServiceCharge::class, Savings::class)->latest('service_charges.created_at');
   }
-
 
   public function loan_requests()
   {
-    return $this->hasMany(LoanRequest::class);
+    return $this->hasMany(LoanRequest::class)->latest();
   }
-
 
   public function pending_loan_request()
   {
@@ -185,12 +173,12 @@ class AppUser extends User
 
   public function loan_transactions()
   {
-    return $this->hasManyThrough(LoanTransaction::class, LoanRequest::class);
+    return $this->hasManyThrough(LoanTransaction::class, LoanRequest::class)->latest('loan_transactions.created_at');
   }
 
   public function request_for_surety()
   {
-    return $this->hasMany(LoanSurety::class, 'lender_id');
+    return $this->hasMany(LoanSurety::class, 'lender_id')->latest();
   }
 
   public function surety_request()
@@ -212,17 +200,12 @@ class AppUser extends User
 
   public function auto_save_settings()
   {
-    return $this->hasMany(AutoSaveSetting::class);
-  }
-
-  public function has_auto_save(): bool
-  {
-    return $this->auto_save_settings()->exists();
+    return $this->hasMany(AutoSaveSetting::class)->latest();
   }
 
   public function debit_cards()
   {
-    return $this->hasMany(DebitCard::class);
+    return $this->hasMany(DebitCard::class)->latest();
   }
 
   public function other_debit_cards()
@@ -237,7 +220,7 @@ class AppUser extends User
 
   public function savings_list()
   {
-    return $this->hasMany(Savings::class);
+    return $this->hasMany(Savings::class)->latest();
   }
 
   public function core_savings()
@@ -247,22 +230,90 @@ class AppUser extends User
 
   public function core_savings_interests()
   {
-    return optional($this->core_savings)->savings_interests();
+    return optional($this->core_savings)->savings_interests()->latest();
   }
 
-  public function total_withdrawable_amount(): float
+  public function savings_interests()
   {
-    return optional($this->core_savings)->current_balance;
+    return $this->hasManyThrough(SavingsInterest::class, Savings::class)->latest('savings_interests.created_at');
   }
 
   public function gos_savings()
   {
-    return $this->hasMany(Savings::class)->where('type', 'gos');
+    return $this->hasMany(Savings::class)->where('type', 'gos')->latest();
   }
 
   public function locked_savings()
   {
-    return $this->hasMany(Savings::class)->where('type', 'locked');
+    return $this->hasMany(Savings::class)->where('type', 'locked')->latest();
+  }
+
+  public function withdrawal_requests()
+  {
+    return $this->hasMany(WithdrawalRequest::class)->latest();
+  }
+
+  public function previous_withdrawal_requests()
+  {
+    return $this->withdrawal_requests()->where('is_processed', true)->latest();
+  }
+
+  public function withdrawal_request()
+  {
+    return $this->hasOne(WithdrawalRequest::class)->where('is_processed', false);
+  }
+
+  public function transactions()
+  {
+    return $this->hasManyThrough(Transaction::class, Savings::class)->latest('transactions.created_at');
+  }
+
+  public function withdrawal_transactions()
+  {
+    return $this->transactions()->where('trans_type', 'withdrawal')->latest();
+  }
+
+  public function deposit_transactions()
+  {
+    return $this->transactions()->where('trans_type', 'deposit')->latest();
+  }
+
+  public function interestable_deposit_transactions()
+  {
+    return $this->deposit_transactions()->latest()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
+  }
+
+  public function get_currency(): string
+  {
+    switch ($this->currency) {
+      case 'USD':
+        return '$';
+        break;
+      case 'GBP':
+        return '£';
+        break;
+      case 'EUR':
+        return '€';
+        break;
+      default:
+        return $this->currency;
+        break;
+    }
+  }
+
+  public function is_verified(): bool
+  {
+    return $this->verified_at !== null;
+  }
+
+  public function is_email_verified(): bool
+  {
+    return $this->email_verified_at !== null;
+  }
+
+  public function has_auto_save(): bool
+  {
+    return $this->auto_save_settings()->exists();
   }
 
   public function has_core_savings(): bool
@@ -285,39 +336,9 @@ class AppUser extends User
     return $this->savings_list()->sum('savings_distribution');
   }
 
-  public function withdrawal_requests()
-  {
-    return $this->hasMany(WithdrawalRequest::class)->latest();
-  }
-
-  public function previous_withdrawal_requests()
-  {
-    return $this->withdrawal_requests()->where('is_processed', true);
-  }
-
-  public function withdrawal_request()
-  {
-    return $this->hasOne(WithdrawalRequest::class)->where('is_processed', false);
-  }
-
   public function has_pending_withdrawal_request(): bool
   {
     return $this->withdrawal_request()->exists();
-  }
-
-  public function transactions()
-  {
-    return $this->hasManyThrough(Transaction::class, Savings::class);
-  }
-
-  public function withdrawal_transactions()
-  {
-    return $this->transactions()->where('trans_type', 'withdrawal');
-  }
-
-  public function total_withdrawal_amount()
-  {
-    return $this->withdrawal_transactions()->sum('amount');
   }
 
   public function is_due_for_withdrawal(): bool
@@ -336,24 +357,19 @@ class AppUser extends User
     return true;
   }
 
-  public function deposit_transactions()
+  public function total_withdrawable_amount(): float
   {
-    return $this->transactions()->where('trans_type', 'deposit');
+    return optional($this->core_savings)->current_balance;
+  }
+
+  public function total_withdrawal_amount(): float
+  {
+    return $this->withdrawal_transactions()->sum('amount');
   }
 
   public function total_deposit_amount(): float
   {
     return $this->deposit_transactions()->sum('amount');
-  }
-
-  public function interestable_deposit_transactions()
-  {
-    return $this->deposit_transactions()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
-  }
-
-  public function savings_interests()
-  {
-    return $this->hasManyThrough(SavingsInterest::class, Savings::class);
   }
 
   public function total_interests_amount(): float
@@ -733,42 +749,25 @@ class AppUser extends User
     dd($data);
   }
 
-  public function get_currency()
-  {
-    switch ($this->currency) {
-      case 'USD':
-        return '$';
-        break;
-      case 'GBP':
-        return '£';
-        break;
-      case 'EUR':
-        return '€';
-        break;
-      default:
-        return $this->currency;
-        break;
-    }
-  }
-
   static function adminApiRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-      Route::get('users', 'AppUser@getListOfUsers');
+      Route::get('users', [self::class, 'getListOfUsers']);
 
-      Route::delete('user/{user}/delete', 'AppUser@deleteUser');
+      Route::delete('user/{user}/delete', [self::class, 'deleteUser']);
 
-      Route::get('user/{user}/transactions', 'AppUser@getUserTransactions');
+      Route::get('user/{user}/transactions', [self::class, 'getUserTransactions']);
     });
   }
 
   static function routes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-      Route::get('/auth/verify', 'AppUser@verifyAuth');
-      Route::get('profile', 'AppUser@getUserProfile')->name('appuser.profile')->defaults('extras', ['icon' => 'fa fa-user']);
-      Route::put('/profile/edit', 'AppUser@editUserProfile')->name('appuser.profile.edit');
-      Route::get('/profile/notifications', 'AppUser@getUserNotifications')->name('appuser.profile.notifications')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/auth/verify', [self::class, 'verifyAuth']);
+      Route::get('profile', [self::class, 'getUserProfile'])->name('appuser.profile')->defaults('extras', ['nav_skip' => true]);
+      Route::put('/profile/edit', [self::class, 'editUserProfile'])->name('appuser.profile.edit');
+      Route::get('/notifications', [self::class, 'getUserNotifications'])->name('appuser.notifications')->defaults('extras', ['nav_skip' => true]);
+      Route::get('statement', [self::class, 'getUserAccountStatement'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);
     });
   }
 
@@ -849,6 +848,31 @@ class AppUser extends User
       'notifications' => $request->user()->notifications
     ]);
   }
+
+  public function getUserAccountStatement(Request $request)
+  {
+    $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($request) {
+      return $request->user()->load([
+        'loan_transactions.loan_request',
+        'savings_interests.savings.gos_type',
+        'service_charges',
+        'transactions'
+      ]);
+    });
+
+    $account_statement = collect($userStatement->loan_transactions->each->setAppends(['description']))
+      ->merge($userStatement->savings_interests)
+      ->merge($userStatement->service_charges)
+      ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
+
+    if ($request->isApi()) {
+      return $account_statement;
+    }
+
+    return Inertia::render('UserTransactionHistory', compact('account_statement'));
+  }
+
+
   public function getListOfUsers()
   {
     return (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');

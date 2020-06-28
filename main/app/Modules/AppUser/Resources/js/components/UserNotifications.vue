@@ -17,7 +17,7 @@
                       <span class="fa fa-history"></span>
                     </div>
                     <div class="rui-task-content">
-                      <a class="rui-task-title" href="#home">{{ notif.data.action }}</a>
+                      <b class="rui-task-title">{{ notif.data.action }}</b>
                       <small
                         class="rui-task-subtitle"
                       >Sent on {{ new Date(notif.created_at).toDateString() }} {{ new Date(notif.created_at).toLocaleTimeString() }}</small>

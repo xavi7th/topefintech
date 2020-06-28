@@ -52,6 +52,8 @@ class SavingsInterest extends Model
     'amount' => 'double',
   ];
 
+  protected $appends = ['description'];
+
   public function __construct(array $attributes = [])
   {
     parent::__construct($attributes);
@@ -61,6 +63,11 @@ class SavingsInterest extends Model
   public function savings()
   {
     return $this->belongsTo(Savings::class);
+  }
+
+  public function getDescriptionAttribute()
+  {
+    return str_ordinal($this->created_at->quarter) . ' quarter´s interest on ' . $this->savings->gos_type->name . ' savings';
   }
 
   static function appUserRoutes()

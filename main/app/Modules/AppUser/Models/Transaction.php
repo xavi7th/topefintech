@@ -73,7 +73,7 @@ class Transaction extends Model
 
   public function getTransactions(Request $request)
   {
-    $records = $request->user()->transactions()->with('savings.gos_type')->addSelect(DB::raw('*, MONTHNAME(transactions.created_at) as month'))->get();
+    return $records = $request->user()->transactions()->with('savings.gos_type')->addSelect(DB::raw('*, MONTHNAME(transactions.created_at) as month'))->get();
 
     $transactions_summary =  transform($records, function ($value) {
       return $value->groupBy('month')->transform(function ($item, $key) {
@@ -89,7 +89,7 @@ class Transaction extends Model
 
   public function getTransactionsForMonth(Request $request, $month)
   {
-    $records = $request->user()->transactions()->with('savings.gos_type')
+    return $records = $request->user()->transactions()->with('savings.gos_type')
       ->whereMonth('transactions.created_at', Carbon::parse($month)->month)->orderByDesc('created_at')->get();
 
     $transactions_summary = $records->groupBy([

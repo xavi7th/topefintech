@@ -29,17 +29,21 @@
         </a>
         <ul class="dropdown-menu nav">
           <li>
-            <inertia-link
-              class="dropdown-item nav-link"
-              :href="$route('appuser.profile.notifications')"
-            >
+            <inertia-link class="nav-link" :href="$route('appuser.notifications')">
               <span data-feather="bell" class="rui-icon rui-icon-stroke-1_5"></span>
               <span>Notifications</span>
               <span
                 class="badge badge-circle badge-brand"
                 v-if="$page.auth.notification_count"
               >{{ $page.auth.notification_count }}</span>
-              <span class="rui-dropdown-circle"></span>
+              <span class="rui-nav-circle"></span>
+            </inertia-link>
+          </li>
+          <li>
+            <inertia-link class="nav-link" :href="$route('appuser.profile')">
+              <span data-feather="user" class="rui-icon rui-icon-stroke-1_5"></span>
+              <span>Profile</span>
+              <span class="rui-nav-circle"></span>
             </inertia-link>
           </li>
           <!-- <li>
