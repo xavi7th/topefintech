@@ -90,7 +90,7 @@ class LoanSurety extends Model
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'surety-requests'], function () {
-      Route::get('', 'LoanSurety@getReceivedSuretyRequests')->name('appuser.surety.requests');
+      Route::get('', 'LoanSurety@getReceivedSuretyRequests')->name('appuser.surety.requests')->defaults('extras', ['nav_skip' => true]);
       Route::put('', 'LoanSurety@acceptReceivedSuretyRequest')->name('appuser.surety.requests.respond');
       Route::put('/swap', 'LoanSurety@swapSuretyRequest')->name('appuser.surety.swap');
     });
