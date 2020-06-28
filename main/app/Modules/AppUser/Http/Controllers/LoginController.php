@@ -28,6 +28,8 @@ class LoginController extends Controller
   use AuthenticatesUsers;
 
   private $apiToken;
+  protected $decayMinutes = 1440;
+  protected $maxAttempts = 5;
 
 
 
