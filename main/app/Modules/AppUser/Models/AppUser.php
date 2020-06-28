@@ -284,9 +284,14 @@ class AppUser extends User
     return $this->savings_list()->sum('savings_distribution');
   }
 
+  public function withdrawal_requests()
+  {
+    return $this->hasMany(WithdrawalRequest::class)->latest();
+  }
+
   public function previous_withdrawal_requests()
   {
-    return $this->hasMany(WithdrawalRequest::class)->where('is_processed', true);
+    return $this->withdrawal_requests()->where('is_processed', true);
   }
 
   public function withdrawal_request()

@@ -19,7 +19,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
   public function rules()
   {
     return [
-      'amount' => 'required|numeric|gte:2000|lte:' . $this->user()->total_withdrawable_amount(),
+      'amount' => 'bail|required|numeric|gte:2000|lte:' . $this->user()->total_withdrawable_amount(),
     ];
   }
 
@@ -41,7 +41,8 @@ class CreateWithdrawalRequestValidation extends FormRequest
   public function messages()
   {
     return [
-      'amount.gte' => 'Minimum amount withdrawable is ' . to_naira(2000)
+      'amount.gte' => 'Minimum amount withdrawable is ' . to_naira(2000),
+      'amount.lte' => 'Maximum amount withdrawable is ' . to_naira($this->user()->total_withdrawable_amount())
     ];
   }
 
@@ -59,14 +60,14 @@ class CreateWithdrawalRequestValidation extends FormRequest
        * Check if bank and bvn are validated
        */
       if (!($this->user()->is_bvn_verified && $this->user()->is_bank_verified)) {
-        $validator->errors()->add('Unverified', 'BVN and bank account number must be verified before withdrawal');
+        $validator->errors()->add('amount', 'BVN and bank account number must be verified before withdrawal');
       }
 
       /**
        * Check if has pending loan
        */
       if ($this->user()->has_pending_loan()) {
-        $validator->errors()->add('Loan restrictions', 'Those with pending loans cannot withdraw funds');
+        $validator->errors()->add('amount', 'Those with pending loans cannot withdraw funds');
         return;
       }
 
@@ -74,7 +75,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
        * Check if surety and how much
        */
       if ($this->user()->is_loan_surety() && ($this->amount >= ($this->user()->total_withdrawable_amount() - $this->user()->loan_surety_amount()))) {
-        $validator->errors()->add('Loan restrictions', 'Loan sureties can only withdraw funds above the surety amount');
+        $validator->errors()->add('amount', 'Loan sureties can only withdraw funds above the surety amount');
         return;
       }
 
@@ -82,7 +83,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
        * check if pending withdrawal request
        */
       if ($this->user()->has_pending_withdrawal_request()) {
-        $validator->errors()->add('Pemding Request', 'You already have a pending request.');
+        $validator->errors()->add('amount', 'You already have a pending request.');
         return;
       }
     });

@@ -2,6 +2,8 @@
 
 namespace App\Modules\AppUser\Models;
 
+use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +15,6 @@ use App\Modules\AppUser\Http\Requests\CreateWithdrawalRequestValidation;
 use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
 use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
-use Illuminate\Http\Request;
 
 /**
  * App\Modules\AppUser\Models\WithdrawalRequest
@@ -64,6 +65,11 @@ class WithdrawalRequest extends Model
     'amount' => 'double',
   ];
 
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    Inertia::setRootView('appuser::app');
+  }
 
   public function processor()
   {
@@ -77,9 +83,10 @@ class WithdrawalRequest extends Model
 
   static function appUserRoutes()
   {
-    Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-request'], function () {
-      Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
-      Route::post('create', [self::class, 'createWithdrawalRequest']);
+    Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
+      Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
+      Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['nav_skip' => true]);
+      Route::post('create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
     });
   }
 
@@ -96,9 +103,24 @@ class WithdrawalRequest extends Model
    * App User Routes
    */
 
+  public function showWithdrawalForm(Request $request)
+  {
+    return Inertia::render('withdraw/MakeWithdrawalRequest');
+  }
+
   public function getWithdrawalRequests(Request $request)
   {
-    return response()->json($request->user()->withdrawal_request, 200);
+    $withdrawal_requests = $request->user()->withdrawal_requests()->withTrashed()->get();
+    $statistics = [
+      'total_pending' => $request->user()->withdrawal_requests()->where('is_processed', false)->count(),
+      'total_processed' => $request->user()->withdrawal_requests()->where('is_processed', true)->count(),
+      'total_declined' => $request->user()->withdrawal_requests()->onlyTrashed()->count(),
+    ];
+    if ($request->isApi()) {
+      return response()->json($withdrawal_requests, 200);
+    }
+
+    return Inertia::render('withdraw/ViewWithdrawalRequests', compact('withdrawal_requests', 'statistics'));
   }
 
   public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request)
@@ -129,7 +151,11 @@ class WithdrawalRequest extends Model
       }
 
       DB::commit();
-      return response()->json($withdrawal_request, 201);
+
+      if ($request->isApi()) {
+        return response()->json($withdrawal_request, 201);
+      }
+      return back()->withSuccess('Withdrawal request sent. We will update you on the status of your request');
     } catch (\Throwable $th) {
       ErrLog::notifyAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
       return response()->json(['err' => 'Withdrawal request not created'], 500);

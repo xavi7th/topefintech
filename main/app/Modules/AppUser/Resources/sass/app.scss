@@ -40,3 +40,10 @@ html.rui-nightmode {
 .swal2-actions.swal2-loading .swal2-styled.swal2-confirm {
     min-width: 37px;
 }
+
+.dataTables_filter {
+    @media (max-width: 365px) {
+        position: relative;
+        margin-bottom: 25px;
+    }
+}

@@ -18,7 +18,7 @@ class LoanRepaymentValidation extends FormRequest
   public function rules()
   {
     return [
-      'amount' => 'required|numeric',
+      'amount' => 'required|numeric|gte:500',
     ];
   }
 
@@ -41,7 +41,9 @@ class LoanRepaymentValidation extends FormRequest
    */
   public function messages()
   {
-    return [];
+    return [
+      'amount.gte' => 'The minimum amount you can repay is ' . to_naira(500)
+    ];
   }
 
 
@@ -55,7 +57,7 @@ class LoanRepaymentValidation extends FormRequest
   {
     $validator->after(function ($validator) {
       if ($this->route('loan_request')->loan_statistics()->balance_left < $this->amount) {
-        $validator->errors()->add('amount', 'The balance left to pay for this loan is ' . $this->route('loan_request')->loan_statistics()->balance_left);
+        $validator->errors()->add('amount', 'The balance left to pay for this loan is ' . to_naira($this->route('loan_request')->loan_statistics()->balance_left));
       }
     });
   }
