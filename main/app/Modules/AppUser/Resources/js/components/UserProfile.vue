@@ -479,7 +479,7 @@
             },
 
             replace: false,
-            preserveState: true,
+            preserveState: false,
             preserveScroll: true
           })
           .then(rsp => {

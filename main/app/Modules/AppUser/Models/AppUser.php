@@ -5,6 +5,7 @@ namespace App\Modules\AppUser\Models;
 use App\User;
 use Inertia\Inertia;
 use Paystack\Bank\GetBVN;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Paystack\Bank\ListBanks;
@@ -798,9 +799,20 @@ class AppUser extends User
         $request->user()->id_card = $request->user()->store_id_card($request);
       }
 
-      foreach (collect($request->validated())->except('id_card') as $key => $value) {
-        $request->user()->$key = $value;
+      /**
+       * ? Disable updating phone number if bvn is already verified
+       */
+
+      if ($request->user()->is_bvn_verified) {
+        foreach (collect($request->validated())->except(['id_card', 'phone']) as $key => $value) {
+          $request->user()->$key = $value;
+        }
+      } else {
+        foreach (collect($request->validated())->except('id_card') as $key => $value) {
+          $request->user()->$key = $value;
+        }
       }
+
 
       $request->user()->save();
 
@@ -817,7 +829,7 @@ class AppUser extends User
       if ($request->isApi()) {
         return response()->json(['err' => 'Account details NOT updated'], 500);
       } else {
-        back()->withError('Account details NOT updated');
+        return back()->withError('Account details NOT updated');
       }
     }
 
