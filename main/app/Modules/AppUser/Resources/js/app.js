@@ -56,6 +56,8 @@ new Vue( {
                 .then( module => module.default ).catch( err => {
                     if ( err.code == "MODULE_NOT_FOUND" ) {
                         location.href = '/'
+                    } else {
+                        console.error( err );
                     }
 
                 } ),

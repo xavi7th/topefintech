@@ -94,7 +94,7 @@
     mixins: [mixins],
     props: {
       withdrawal_requests: Array,
-      statistics: Array
+      statistics: Object
     },
     components: {
       Layout

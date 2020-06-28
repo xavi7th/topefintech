@@ -1,15 +1,15 @@
 <template>
   <nav class="rui-navbar rui-navbar-top rui-navbar-sticky">
     <div class="rui-navbar-brand">
-      <a href="dashboard.html" class="rui-navbar-logo">
+      <inertia-link :href="$route('appuser.dashboard')" class="rui-navbar-logo">
         <img
-          src="/img/logo.svg"
-          data-src-night="/img/logo-white.svg"
-          data-src-day="/img/logo.svg"
-          alt
-          width="45"
+          src="/img/logo.png"
+          data-src-night="/img/logo.png"
+          data-src-day="/img/logo.png"
+          alt="site logo"
+          width="80%"
         />
-      </a>
+      </inertia-link>
       <button class="yay-toggle rui-yaybar-toggle" type="button">
         <span></span>
       </button>
@@ -26,10 +26,10 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img src="/img/avatar-1.png" alt />
+              <img :src="$page.auth.user.id_card" alt />
             </a>
             <ul class="nav dropdown-menu">
-              <li>
+              <!-- <li>
                 <a href="profile.html" class="nav-link">
                   <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Create new Post</span>
@@ -49,7 +49,7 @@
                   <span>Check Updates</span>
                   <span class="rui-nav-circle"></span>
                 </a>
-              </li>
+              </li>-->
               <li>
                 <inertia-link method="post" :href="$route('appuser.logout')" class="nav-link">
                   <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>

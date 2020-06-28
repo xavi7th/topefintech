@@ -8,15 +8,15 @@
       >
         <span></span>
       </button>
-      <a class="rui-navbar-logo mr-auto" href="dashboard.html">
+      <inertia-link :href="$route('appuser.dashboard')" class="rui-navbar-logo d-block text-center">
         <img
-          src="/img/logo.svg"
-          data-src-night="/img/logo-white.svg"
-          data-src-day="/img/logo.svg"
+          src="/img/logo.png"
+          data-src-night="/img/logo.png"
+          data-src-day="/img/logo.png"
           alt
-          width="45"
+          width="60%"
         />
-      </a>
+      </inertia-link>
       <div class="dropdown dropdown-triangle">
         <a
           class="dropdown-item rui-navbar-avatar"
@@ -25,10 +25,10 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <img src="/img/avatar-1.png" alt />
+          <img :src="$page.auth.user.id_card" alt />
         </a>
         <ul class="dropdown-menu nav">
-          <li>
+          <!-- <li>
             <a href="profile.html" class="nav-link">
               <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
               <span>Create new Post</span>
@@ -48,7 +48,7 @@
               <span>Check Updates</span>
               <span class="rui-nav-circle"></span>
             </a>
-          </li>
+          </li>-->
           <li>
             <inertia-link method="post" :href="$route('appuser.logout')" class="nav-link">
               <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
