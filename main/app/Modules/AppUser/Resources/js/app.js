@@ -53,7 +53,12 @@ new Vue( {
         props: {
             initialPage: JSON.parse( app.dataset.page ),
             resolveComponent: name => import( /* webpackChunkName: "js/user-" */ `./components/${name}.vue` )
-                .then( module => module.default ),
+                .then( module => module.default ).catch( err => {
+                    if ( err.code == "MODULE_NOT_FOUND" ) {
+                        location.href = '/'
+                    }
+
+                } ),
         },
 
     } )
