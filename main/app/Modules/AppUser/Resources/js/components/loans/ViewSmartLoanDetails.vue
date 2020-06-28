@@ -88,7 +88,7 @@
                 <strong>Time of Approval</strong>
               </td>
               <td scope="row" v-if="loan_request.is_approved">
-                <strong>{{ new Date(loan_request.approved_at).toDateString() + ' ' + new Date(loan_request.approved_at).toLocaleTimeString() }}</strong>
+                <strong>{{ new Date(loan_request.approved_or_declined_at).toDateString() + ' ' + new Date(loan_request.approved_or_declined_at).toLocaleTimeString() }}</strong>
               </td>
               <td v-else-if="loan_request.is_approved == null">
                 <strong>Approval Pending</strong>
@@ -171,6 +171,7 @@
                   data-toggle="modal"
                   data-target="#repayLoan"
                   @click="amount=loan_request.balance_left"
+                  v-if="!loan_request.is_paid"
                 >
                   <span class="text">Refund All</span>
                   <span class="icon">
@@ -182,6 +183,7 @@
                   class="btn btn-success btn-long"
                   data-toggle="modal"
                   data-target="#repayLoan"
+                  v-if="!loan_request.is_paid"
                 >
                   <span class="text">Pay More</span>
                   <span class="icon">

@@ -374,15 +374,22 @@ class LoanRequest extends Model
     /**
      * ! Clear cache
      */
+
+    if (floatval($loan_request->loan_statistics()->balance_left) === floatval($request->amount)) {
+      $loan_request->is_paid = true;
+      $loan_request->save();
+    }
+
     $loan_request->loan_transactions()->create([
       'amount' => $request->amount,
       'trans_type' => 'repayment'
     ]);
 
+
     if ($request->isApi()) {
       return response()->json(['rsp' => true], 201);
     }
-    return back()->withSuccess($request->amount . ' paid from loan');
+    return back()->withSuccess(to_naira($request->amount) . ' paid from loan');
   }
 
   /**
