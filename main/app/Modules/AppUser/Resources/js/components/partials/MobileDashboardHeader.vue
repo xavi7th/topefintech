@@ -28,6 +28,20 @@
           <img :src="$page.auth.user.id_card" alt />
         </a>
         <ul class="dropdown-menu nav">
+          <li>
+            <inertia-link
+              class="dropdown-item nav-link"
+              :href="$route('appuser.profile.notifications')"
+            >
+              <span data-feather="bell" class="rui-icon rui-icon-stroke-1_5"></span>
+              <span>Notifications</span>
+              <span
+                class="badge badge-circle badge-brand"
+                v-if="$page.auth.notification_count"
+              >{{ $page.auth.notification_count }}</span>
+              <span class="rui-dropdown-circle"></span>
+            </inertia-link>
+          </li>
           <!-- <li>
             <a href="profile.html" class="nav-link">
               <span data-feather="plus-circle" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -70,4 +84,9 @@
 </script>
 
 <style lang="scss" scoped>
+  .rui-navbar-logo {
+    img {
+      max-width: 300px;
+    }
+  }
 </style>

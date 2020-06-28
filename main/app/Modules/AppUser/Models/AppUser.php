@@ -768,6 +768,7 @@ class AppUser extends User
       Route::get('/auth/verify', 'AppUser@verifyAuth');
       Route::get('profile', 'AppUser@getUserProfile')->name('appuser.profile')->defaults('extras', ['icon' => 'fa fa-user']);
       Route::put('/profile/edit', 'AppUser@editUserProfile')->name('appuser.profile.edit');
+      Route::get('/profile/notifications', 'AppUser@getUserNotifications')->name('appuser.profile.notifications')->defaults('extras', ['nav_skip' => true]);
     });
   }
 
@@ -837,6 +838,17 @@ class AppUser extends User
     return response()->json(['updated' => true], 205);
   }
 
+  public function getUserNotifications(Request $request)
+  {
+    $request->user()->unreadNotifications->markAsRead();
+
+    if ($request->isApi()) {
+      return $request->user()->notifications;
+    }
+    return Inertia::render('UserNotifications', [
+      'notifications' => $request->user()->notifications
+    ]);
+  }
   public function getListOfUsers()
   {
     return (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');

@@ -61,6 +61,7 @@ class BasicSiteServiceProvider extends ServiceProvider
       'auth' => function (Request $request) {
         return [
           'user' => Auth::user() ? (new AppUserTransformer)->detailed($request->user()) : (object)[],
+          'notification_count' => $request->user()->unreadNotifications()->count()
         ];
       },
       'flash' => function () {

@@ -47,3 +47,10 @@ html.rui-nightmode {
         margin-bottom: 25px;
     }
 }
+
+.dataTables_paginate {
+    @media (max-width: 365px) {
+        position: relative;
+        margin-bottom: 25px;
+    }
+}
