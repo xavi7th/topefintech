@@ -1,5 +1,5 @@
 <template>
-  <layout title="User Dashboard" :isAuth="false">
+  <layout title="My Dashboard" :isAuth="false">
     <div class="container-fluid">
       <div class="row vertical-gap">
         <div class="col-lg-4 col-md-4">

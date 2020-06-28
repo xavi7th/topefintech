@@ -391,7 +391,7 @@
                     </div>
 
                     <div class="col-12">
-                      <label for="bvn">Enter BVN</label>
+                      <label for="bvn">Enter BVN for verification</label>
                       <input
                         type="text"
                         class="form-control"

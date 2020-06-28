@@ -11,7 +11,7 @@ import FlashMessage from '@dashboard-components/partials/FlashMessage'
 import Modal from '@dashboard-components/partials/Modal'
 import Dayjs from 'vue-dayjs';
 
-Vue.prototype.$route = ( ...args ) => route( ...args, [], false ).url()
+Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
 
 Vue.use( Vue2Filters )

@@ -161,7 +161,7 @@
             </div>
             <div class="col-12">
               <button type="submit" class="btn btn-success btn-long mr-25">
-                <span class="text">Create</span>
+                <span class="text">Pay</span>
               </button>
               <button type="button" class="btn btn-brand btn-long" @click="getDistributionDetails">
                 <span class="text">View Distribution Details</span>

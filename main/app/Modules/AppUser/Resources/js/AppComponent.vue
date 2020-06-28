@@ -42,7 +42,6 @@
 </template>
 
 <script>
-  import PreLoader from "@dashboard-components/PreLoader";
   import DashboardHeader from "@dashboard-components/partials/DashboardHeader";
   import MobileDashboardHeader from "@dashboard-components/partials/MobileDashboardHeader";
   import DashboardFooter from "@dashboard-components/partials/DashboardFooter";
@@ -55,7 +54,6 @@
       DashboardHeader,
       DashboardFooter,
       DashboardNav,
-      PreLoader,
       MobileDashboardHeader,
       PageTitle
     },

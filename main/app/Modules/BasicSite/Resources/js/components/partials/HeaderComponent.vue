@@ -5,7 +5,7 @@
         <div class="col-md-2">
           <div class="logo">
             <inertia-link :href="$route('app.home')">
-              <img src="/img/logo.png" alt />
+              <img src="/img/logo.png" alt width="120" />
             </inertia-link>
           </div>
         </div>

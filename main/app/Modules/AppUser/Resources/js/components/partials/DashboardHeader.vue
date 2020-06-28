@@ -41,7 +41,7 @@
                 </inertia-link>
               </li>
               <li>
-                <inertia-link class="nav-link" :href="$route('appuser.profile')">
+                <inertia-link class="nav-link" :href="$route('appuser.my_profile')">
                   <span data-feather="user" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Profile</span>
                   <span class="rui-nav-circle"></span>

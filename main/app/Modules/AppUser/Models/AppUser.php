@@ -764,7 +764,7 @@ class AppUser extends User
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
       Route::get('/auth/verify', [self::class, 'verifyAuth']);
-      Route::get('profile', [self::class, 'getUserProfile'])->name('appuser.profile')->defaults('extras', ['nav_skip' => true]);
+      Route::get('profile', [self::class, 'getUserProfile'])->name('appuser.my_profile')->defaults('extras', ['nav_skip' => true]);
       Route::put('/profile/edit', [self::class, 'editUserProfile'])->name('appuser.profile.edit');
       Route::get('/notifications', [self::class, 'getUserNotifications'])->name('appuser.notifications')->defaults('extras', ['nav_skip' => true]);
       Route::get('statement', [self::class, 'getUserAccountStatement'])->name('appuser.statement')->defaults('extras', ['icon' => 'far fa-file-alt']);

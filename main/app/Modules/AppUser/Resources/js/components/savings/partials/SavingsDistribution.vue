@@ -132,15 +132,13 @@
 
         this.$inertia
           .put(
-            this.$route(
-              "appuser.savings.distribution.update",
-              {
-                ...this.savings_distribution
-              },
-              {
-                preserveState: true
-              }
-            )
+            this.$route("appuser.savings.distribution.update"),
+            {
+              ...this.savings_distribution
+            },
+            {
+              preserveState: true
+            }
           )
           .then(() => {
             if (this.$page.flash.success) {
@@ -175,5 +173,9 @@
 <style scoped>
   .table thead th {
     padding: 10px !important;
+  }
+
+  input {
+    min-width: 60px;
   }
 </style>

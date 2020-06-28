@@ -253,7 +253,7 @@
 
 <body>
   <div class="preloader text-center">
-    <img src="/img/logo-white.png" alt="">
+    <img src="/img/logo-white.png" alt="" width="200">
     <div class="la-ball-circus la-2x">
       <div></div>
       <div></div>
