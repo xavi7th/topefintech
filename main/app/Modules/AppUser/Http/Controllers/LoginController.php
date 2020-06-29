@@ -56,7 +56,7 @@ class LoginController extends Controller
 
   static function routes()
   {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('nav_skip', true);
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', 'LoginController@login')->middleware('guest')->name('appuser.login');
     Route::post('logout', 'LoginController@logout')->name('appuser.logout')->middleware('auth');
   }
