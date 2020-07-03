@@ -75,3 +75,8 @@
     }
   };
 </script>
+
+
+<style lang="scss">
+  @import "~@dashboard-assets/sass/app";
+</style>

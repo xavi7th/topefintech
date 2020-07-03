@@ -1,23 +1,113 @@
-if ( [ 'buildcss', 'buildjs' ].includes( process.env.npm_config_section ) ) {
-  require( `${__dirname}/webpack.${process.env.npm_config_section}.mix.js` )
-} else {
+const mix = require( 'laravel-mix' );
+const {
+  CleanWebpackPlugin
+} = require( 'clean-webpack-plugin' );
+const path = require( 'path' );
+let fs = require( 'fs-extra' )
+let modules = fs.readdirSync( './main/app/Modules' )
 
-  console.log(
-    '\x1b[41m%s\x1b[0m',
-    'Provide correct --section argument to build command: buildcss, buildjs. For example npm --section=buildjs run dev '
-  )
-
-  function createError( msg, status ) {
-    var err = new Error( msg );
-    err.status = status;
-
-    // uncomment this next line to get a clean stack trace in node.js
-    // Error.captureStackTrace( err, createError );
-    Error.captureStackTrace( err, function () {} );
-    return err;
-  }
-
-  var err = createError( 'Provide correct --section argument to build command!', 500 );
-  throw err;
-  // throw new Error(  )
+if ( modules && modules.length > 0 ) {
+  modules.forEach( module => {
+    let path = `./main/app/Modules/${module}/webpack.mix.js`
+    if ( fs.existsSync( path ) ) {
+      require( path )
+    }
+  } )
 }
+
+mix.setPublicPath( './public_html' )
+mix.babelConfig( {
+  plugins: [
+    '@babel/plugin-syntax-dynamic-import'
+  ],
+} );
+
+mix.webpackConfig( {
+  output: {
+    //   chunkFilename: '[name].js?id=[chunkhash]',
+    filename: "[name].[chunkhash].js",
+    chunkFilename: "[name].[chunkhash].js",
+  },
+  resolve: {
+    alias: {
+      ziggy: path.resolve( './main/vendor/tightenco/ziggy/src/js/route.js' ),
+    },
+  },
+  plugins: [
+
+    /**
+     * All files inside webpack's output.path directory will be removed once, but the
+     * directory itself will not be. If using webpack 4+'s default configuration,
+     * everything under <PROJECT_DIR>/dist/ will be removed.
+     * Use cleanOnceBeforeBuildPatterns to override this behavior.
+     *
+     * During rebuilds, all webpack assets that are not used anymore
+     * will be removed automatically.
+     *
+     * See `Options and Defaults` for information
+     */
+
+    new CleanWebpackPlugin( {
+      dry: false,
+      cleanOnceBeforeBuildPatterns: [ 'js/*', 'css/*', '/img/*', 'fonts/*', 'robots.txt', 'mix-manifest.json' ]
+
+    } ),
+  ]
+} );
+
+if ( !mix.inProduction() ) {
+  mix.sourceMaps();
+}
+
+mix
+  .options( {
+    fileLoaderDirs: {
+      images: 'img',
+    },
+    postCss: [
+      require( 'postcss-fixes' )(),
+      require( 'cssnano' )( {
+        'calc': false
+      } ),
+    ],
+  } )
+  .extract()
+  .then( () => {
+    const _ = require( 'lodash' )
+
+    var crypto = require( "crypto" );
+    const saltCssId = crypto.randomBytes( 7 )
+      .toString( 'hex' );
+    console.log(
+      '\x1b[41m%s\x1b[0m',
+      saltCssId
+    )
+
+    let oldManifestData = JSON.parse( fs.readFileSync( './public_html/mix-manifest.json', 'utf-8' ) )
+    let newManifestData = {};
+
+    _.map( oldManifestData, ( actualFilename, mixKeyName ) => {
+
+      if ( _.startsWith( mixKeyName, '/css' ) ) {
+        newManifestData[ mixKeyName ] = actualFilename + '?' + saltCssId;
+      } else {
+
+        /**
+         * Remove the hash from the mix key name so that we can reference the files
+         * by their base name in our codes and mix will automatically replace that
+         * with a call to the hashed actual file name
+         */
+        let newMixKeyName = _.split( mixKeyName, '.' ).tap( o => {
+          _.pullAt( o, 1 );
+        } ).join( '.' )
+
+        /** If the js extension has been stripped we add it back */
+        newMixKeyName = _.endsWith( newMixKeyName, '.js' ) ? newMixKeyName : newMixKeyName + '.js'
+        newManifestData[ newMixKeyName ] = actualFilename;
+      }
+
+    } );
+
+    let data = JSON.stringify( newManifestData, null, 2 );
+    fs.writeFileSync( './public_html/mix-manifest.json', data );
+  } )

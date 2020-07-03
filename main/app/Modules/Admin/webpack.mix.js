@@ -10,6 +10,4 @@ mix.webpackConfig( {
     },
 } )
 
-if ( [ 'buildjs' ].includes( process.env.npm_config_section ) ) {
-    mix.js( __dirname + '/Resources/js/app.js', 'js/admin-app.js' )
-}
+mix.js( __dirname + '/Resources/js/app.js', 'js/admin-app.js' )

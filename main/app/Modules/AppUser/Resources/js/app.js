@@ -59,7 +59,6 @@ new Vue( {
                     } else {
                         console.error( err );
                     }
-
                 } ),
         },
 

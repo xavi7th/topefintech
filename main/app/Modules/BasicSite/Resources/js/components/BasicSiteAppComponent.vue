@@ -34,3 +34,7 @@
     }
   };
 </script>
+
+<style lang="scss">
+  @import "~@basicsite-assets/sass/app";
+</style>
