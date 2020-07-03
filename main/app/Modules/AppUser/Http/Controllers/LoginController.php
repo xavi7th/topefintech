@@ -134,7 +134,7 @@ class LoginController extends Controller
   {
     if ($user->isAppUser()) {
       if (Auth::appuser()->is_email_verified()) {
-        config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
+        // config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
         if ($request->isApi()) {
           return response()->json($this->respondWithToken($this->apiToken), 202);
         }
