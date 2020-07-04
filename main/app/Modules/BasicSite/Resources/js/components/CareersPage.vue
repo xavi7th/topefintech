@@ -1,5 +1,5 @@
 <template>
-  <layout title="Our Blog">
+  <layout title="Work With Us">
     <div class="full-page">
       <!-- Page Banner -->
       <section class="pagebanner">
@@ -7,11 +7,8 @@
           <div class="row">
             <div class="col-sm-12">
               <div class="bannerTitle text-left">
-                <h2>Service Details</h2>
-                <p>
-                  We are here to help you when you need your
-                  <br />financial support, then we are help you.
-                </p>
+                <h2>Work With Us</h2>
+                <!-- <p>We are constantly looking for young talented tech oriented men and women in the following areas to join of our team to enable us provide a more efficient and reliable service for our members;</p> -->
               </div>
             </div>
           </div>
@@ -20,102 +17,49 @@
       <!-- Page Banner -->
 
       <!-- Common Section -->
-      <section class="commonSection serviceDetails">
+      <section class="commonSection serviceDetails pb-0">
         <div class="container">
           <div class="row">
-            <div class="col-lg-6 col-md-12">
-              <div class="tw-stretch-element-inside-column">
+            <div class="col-lg-6 col-md-12 pl-lg-5">
+              <div class="tw-stretch-element-inside-column m-0">
                 <div class="serDetailThumb">
                   <img src="img/s1.png" alt />
                 </div>
               </div>
             </div>
             <div class="col-lg-6 col-md-12">
-              <div class="serDetailContent">
-                <h3>You can know personal loan details here.</h3>
-                <p>We are here to help you when you need your financial support, then we are help you.</p>
+              <div class="serDetailContent mt-0">
+                <h3>We value excellence.</h3>
+                <p>We are constantly looking for young talented tech oriented men and women in the following areas to join of our team to enable us provide a more efficient and reliable service for our members;</p>
                 <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  site. Simply import the sample files we ship with the theme
-                  and the core structure for your site is already built mind
-                  that even if you don’t use the demo content,.
-                </p>
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content.
-                </p>
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  site. Simply import the sample files we ship with the theme
-                  and the core structure for your site is already built mind
-                  that even if you don’t use the demo content,.
+                  <br />1. Agents
+                  <br />2. Online/Offline marketers
+                  <br />3. Website developers
+                  <br />4. Graphic designers
+                  <br />5. Social media influencers
+                  <br />6. Business developers
+                  <br />7. Creative experts
+                  <br />8. Mobile Application Developers
                 </p>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col-lg-6 col-md-6">
+            <div class="col-12">
               <div class="serDetailContent noMar">
-                <h3>Stay turned into the world financial business.</h3>
-                <p>We are here to help you when you need your financial support, then we are help you.</p>
+                <p>To apply, kindly send a copy of your curriculum vitae (CV) to jobs@smartcoophq.com. State your job title of interest.</p>
+                <h5>NB</h5>
                 <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  site. Simply import the sample files we ship with the theme
-                  and the core structure for your site is already built mind
-                  that even if you don’t use the demo content,.
-                </p>
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content.
-                </p>
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  site. Simply import the sample files we ship with the theme
-                  and the core structure for your site is already built mind
-                  that even if you don’t use the demo content,.
-                </p>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-6 mt_63">
-              <div class="serDetailContent">
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  site. Simply import the sample files we ship with the theme
-                  and the core structure for your site is already built mind
-                  that even if you don’t use the demo content,.
-                </p>
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content.
-                </p>
-                <p>
-                  We all know how hard it can be to make a site look like the
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  site. Simply import the sample files we ship with the theme
-                  and the core structure for your site is already built mind
-                  that even if you don’t use the demo content hard it can be
-                  demo, so to make your start into the world of as easy as
-                  possible have included the demo content from showcase
-                  and the core structure don’t use.
+                  <br />* We are an equal opportunity employer.
+                  <br />*Graduates and Non-Graduates can apply.
+                  <br />*Please, do not send your application repeatedly as applications will be treated on a first come, first serve bases.
+                  <br />*Only qualified candidates will be contacted.
+                  <br />*Salaries and commissions are negotiable.
                 </p>
               </div>
             </div>
           </div>
-          <div class="row mt26">
+          <!-- <div class="row mt26">
             <div class="col-lg-4 col-md-4">
               <a class="serviceRelated" href="#">
                 Start into the world of easy possible
@@ -137,7 +81,7 @@
                 showcase site.
               </a>
             </div>
-          </div>
+          </div>-->
         </div>
       </section>
       <!-- Common Section -->
