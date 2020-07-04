@@ -197,10 +197,7 @@
   export default {
     name: "BlogPage",
     mixins: [mixins],
-    components: { Layout },
-    mounted() {
-      // this.$emit("page-loaded");
-    }
+    components: { Layout }
   };
 </script>
 

@@ -300,12 +300,7 @@
     name: "TermsPage",
     components: { Layout },
     mixins: [mixins],
-    mounted() {
-      this.$emit("page-loaded");
-    },
-    beforeDestroy() {
-      this.$unloadScript("/js/main.js");
-    }
+
   };
 </script>
 

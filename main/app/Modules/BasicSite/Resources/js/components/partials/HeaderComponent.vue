@@ -19,10 +19,7 @@
             </a>
             <ul>
               <li v-for="(item, index) in routes" :key="index">
-                <inertia-link
-                  :href="$route(item.name)"
-                  :only="['isInertiaRequest']"
-                >{{item.menu_name}}</inertia-link>
+                <inertia-link :href="$route(item.name)">{{item.menu_name}}</inertia-link>
               </li>
               <li>
                 <a href="/login">Login</a>
@@ -79,6 +76,7 @@
   }
 
   .animated.flipInX {
+    padding-bottom: 0 !important;
     img.d-block {
       display: none !important;
     }

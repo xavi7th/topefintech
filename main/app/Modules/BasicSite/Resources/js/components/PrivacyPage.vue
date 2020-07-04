@@ -118,13 +118,7 @@
   export default {
     name: "PrivacyPage",
     components: { Layout },
-    mixins: [mixins],
-    mounted() {
-      this.$emit("page-loaded");
-    },
-    beforeDestroy() {
-      this.$unloadScript("/js/main.js");
-    }
+    mixins: [mixins]
   };
 </script>
 
@@ -138,8 +132,8 @@
       margin-top: 1rem;
     }
 
-    a{
-      color:#27b3ff;
+    a {
+      color: #27b3ff;
     }
   }
 </style>

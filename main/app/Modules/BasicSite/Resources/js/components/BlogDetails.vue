@@ -230,13 +230,7 @@
   export default {
     name: "BlogDetailsPage",
     components: { Layout },
-    mixins: [mixins],
-    mounted() {
-      this.$emit("page-loaded");
-    },
-    beforeDestroy() {
-      this.$unloadScript("/js/main.js");
-    }
+    mixins: [mixins]
   };
 </script>
 

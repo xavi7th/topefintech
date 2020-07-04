@@ -250,7 +250,7 @@
   <script src="{{ mix('js/site-app.js') }}" defer></script>
 </head>
 
-<body>
+<body class="bg_right">
   <div class="preloader text-center">
     <img src="/img/logo-white.png" alt="" width="200">
     <div class="la-ball-circus la-2x">

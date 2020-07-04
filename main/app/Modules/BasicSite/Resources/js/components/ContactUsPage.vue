@@ -139,13 +139,7 @@
   export default {
     name: "ContactsPage",
     mixins: [mixins],
-    components: { Layout },
-    mounted() {
-      this.$emit("page-loaded");
-    },
-    beforeDestroy() {
-      this.$unloadScript("/js/main.js");
-    }
+    components: { Layout }
   };
 </script>
 

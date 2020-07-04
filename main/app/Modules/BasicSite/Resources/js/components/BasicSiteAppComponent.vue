@@ -24,6 +24,12 @@
       title: String,
       app: Object
     },
+    created() {
+      if (this.$isCurrentUrl("app.home")) {
+        let bodyElem = document.querySelector("body");
+        bodyElem.classList.remove("bg_right");
+      }
+    },
     watch: {
       title: {
         immediate: true,

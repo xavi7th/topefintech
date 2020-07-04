@@ -95,13 +95,7 @@
   export default {
     name: "CareersPage",
     mixins: [mixins],
-    components: { Layout },
-    mounted() {
-      this.$emit("page-loaded");
-    },
-    beforeDestroy() {
-      this.$unloadScript("/js/main.js");
-    }
+    components: { Layout }
   };
 </script>
 
