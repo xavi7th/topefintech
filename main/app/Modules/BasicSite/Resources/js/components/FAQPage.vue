@@ -200,10 +200,4 @@
   .faqPage {
     padding-bottom: 0 !important;
   }
-
-  .bannerTitle {
-    @media (max-width: 575px) {
-      color: #000;
-    }
-  }
 </style>

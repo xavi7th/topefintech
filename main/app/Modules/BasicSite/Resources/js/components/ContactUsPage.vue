@@ -104,6 +104,27 @@
                 </div>
               </div>
             </div>
+            <div class="col-12">
+              <div class="helpingPost rounded-0 m-0 pt-4">
+                <h3 class="text-left mx-0">Our contact details are:</h3>
+                <div class="row ml-5">
+                  <div class="col-12 ml-5">
+                    <div class="loanDesc">
+                      <h5>Email</h5>:
+                      <p>{{ $page.app.email }}</p>
+                    </div>
+                    <div class="loanDesc">
+                      <h5>WhatsApp</h5>:
+                      <p>{{ $page.app.whatsapp }}</p>
+                    </div>
+                    <div class="loanDesc">
+                      <h5>Call Center:</h5>:
+                      <p>{{ $page.app.phone }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -114,11 +135,11 @@
 
 <script>
   import { mixins } from "@basicsite-assets/js/misc";
-    import Layout from "@basicsite-components/BasicSiteAppComponent";
+  import Layout from "@basicsite-components/BasicSiteAppComponent";
   export default {
     name: "ContactsPage",
     mixins: [mixins],
-        components: { Layout },
+    components: { Layout },
     mounted() {
       this.$emit("page-loaded");
     },
