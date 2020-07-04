@@ -55,7 +55,7 @@ class BasicSiteServiceProvider extends ServiceProvider
         'email' => config('app.email'),
       ],
       'routes' => function (Request $request) {
-        return Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? [];
+        return $request->route() ? Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? [] : (object)[];
       },
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
       'auth' => function (Request $request) {

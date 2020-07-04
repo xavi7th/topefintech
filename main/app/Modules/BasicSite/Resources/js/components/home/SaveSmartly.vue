@@ -92,11 +92,11 @@
     <section class="commonSection callToAction_3">
       <div class="container">
         <div class="row">
-          <div class="col-lg-7 col-md-8">
-            <h3 class="sec_title">Create account for free</h3>
+          <div class="col-lg-8 col-md-9">
+            <h3 class="text-white">Invest specific Projects and the your returns in 6 to 12 months</h3>
           </div>
-          <div class="col-lg-5 col-md-4 text-center">
-            <a class="common_btn" href="#">Contact Now</a>
+          <div class="col-lg-4 col-md-3 text-center">
+            <a class="common_btn" href="#">Visit Investment Shop</a>
           </div>
         </div>
       </div>

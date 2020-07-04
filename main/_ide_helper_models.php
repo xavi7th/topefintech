@@ -269,6 +269,10 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDateOfBirth($value)
  * @property-read \App\Modules\AppUser\Models\LoanRequest|null $active_loan_request
  * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_requests
+ * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_request
+ * @property-read \App\Modules\AppUser\Models\LoanSurety|null $pending_surety_request
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $withdrawal_requests
+ * @property-read int|null $withdrawal_requests_count
  */
 	class AppUser extends \Eloquent {}
 }
@@ -505,6 +509,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanTransaction whereTransType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanTransaction whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read mixed $description
  */
 	class LoanTransaction extends \Eloquent {}
 }
@@ -588,6 +593,8 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $description
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereDescription($value)
  */
 	class SavingsInterest extends \Eloquent {}
 }

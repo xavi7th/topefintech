@@ -3,7 +3,8 @@
     <Hero />
     <Highlights />
     <!-- <InterestCalculator /> -->
-    <LatestNews />
+    <LoanAdverts />
+    <SaveSmartly />
     <!-- <RegistrationSteps /> -->
     <!-- <SaverOfTheMonth /> -->
     <!-- <StoriesSummary /> -->
@@ -15,7 +16,8 @@
   import Hero from "@basicsite-components/home/Hero";
   import Highlights from "@basicsite-components/home/Highlights";
   import InterestCalculator from "@basicsite-components/home/InterestCalculator";
-  import LatestNews from "@basicsite-components/home/LatestNews";
+  import LoanAdverts from "@basicsite-components/home/LoanAdverts";
+  import SaveSmartly from "@basicsite-components/home/SaveSmartly";
   import RegistrationSteps from "@basicsite-components/home/RegistrationSteps";
   import SaverOfTheMonth from "@basicsite-components/home/SaverOfTheMonth";
   import StoriesSummary from "@basicsite-components/home/StoriesSummary";
@@ -32,7 +34,8 @@
       Hero,
       Highlights,
       InterestCalculator,
-      LatestNews,
+      LoanAdverts,
+      SaveSmartly,
       RegistrationSteps,
       SaverOfTheMonth,
       StoriesSummary,
@@ -41,6 +44,3 @@
     }
   };
 </script>
-
-<style lang="scss" scoped>
-</style>

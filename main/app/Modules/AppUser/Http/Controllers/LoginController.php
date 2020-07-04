@@ -145,7 +145,7 @@ class LoginController extends Controller
         if ($request->isApi()) {
           return response()->json(['message' => 'Unverified user'], 416);
         }
-        return back()->withError('Unverified');
+        return back()->withError('Your account has not been verified. Check your email for a verification mail.');
       }
     } else {
       Auth::logout();

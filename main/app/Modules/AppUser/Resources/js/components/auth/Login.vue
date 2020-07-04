@@ -3,10 +3,14 @@
     <form @submit.prevent="loginUser" :class="{'was-validated': formSubmitted}" novalidate>
       <div class="row vertical-gap sm-gap justify-content-center">
         <div class="header-logo logo-type no-margin col-12 display-3 text-center">
-          <a :href="$route('app.home')">SmartCoop</a>
+          <a :href="$route('app.home')">
+            <img src="/img/logo.png" :alt="`${$page.app.name} logo`" width="50%" />
+          </a>
         </div>
         <div class="col-12">
-          <h2 class="display-4 mb-10 text-center">Sign In</h2>
+          <h2 class="display-4 mb-10 text-center">Create Account</h2>
+          <p>Login to your dashboard to access your smartcoop features</p>
+          <FlashMessage></FlashMessage>
         </div>
         <div class="col-12">
           <input
@@ -51,7 +55,7 @@
         <div class="col-12">
           <button type="submit" class="btn btn-brand btn-block text-center">Sign in</button>
         </div>
-        <div class="col-12">
+        <!-- <div class="col-12">
           <div class="rui-sign-or mt-2 mb-5">or</div>
         </div>
         <div class="col-12">
@@ -72,11 +76,11 @@
               </a>
             </li>
           </ul>
-        </div>
+        </div>-->
       </div>
       <div class="mt-20 text-grey-5 text-center">
-        Don't you have an account?
-        <inertia-link :href="$route('app.register')" class="text-2">Sign Up</inertia-link>
+        Don't have an account?
+        <inertia-link :href="$route('app.register')" class="text-2">Get one fast</inertia-link>
       </div>
     </form>
   </layout>
@@ -87,6 +91,7 @@
   import Layout from "@dashboard-assets/js/AppComponent";
   export default {
     name: "LoginPage",
+    remember: ["details"],
     data: () => ({
       details: {},
       formSubmitted: false

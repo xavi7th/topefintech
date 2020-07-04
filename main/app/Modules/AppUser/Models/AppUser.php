@@ -123,6 +123,10 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDateOfBirth($value)
  * @property-read \App\Modules\AppUser\Models\LoanRequest|null $active_loan_request
  * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_requests
+ * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_request
+ * @property-read \App\Modules\AppUser\Models\LoanSurety|null $pending_surety_request
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $withdrawal_requests
+ * @property-read int|null $withdrawal_requests_count
  */
 class AppUser extends User
 {

@@ -88,9 +88,9 @@ class RegisterController extends Controller
     event(new Registered($user = $this->create($request)));
 
     // dd($user);
-    $this->guard()->login($user);
+    // $this->guard()->login($user);
 
-    $this->apiToken = $this->apiGuard()->login($user);
+    // $this->apiToken = $this->apiGuard()->login($user);
 
     return $this->registered($request, $user)
       ?: redirect($this->redirectPath());

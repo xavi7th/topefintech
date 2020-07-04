@@ -28,6 +28,7 @@ use App\Modules\AppUser\Models\LoanRequest;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanTransaction whereTransType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\LoanTransaction whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read mixed $description
  */
 class LoanTransaction extends Model
 {
