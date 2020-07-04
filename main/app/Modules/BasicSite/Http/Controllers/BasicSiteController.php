@@ -36,8 +36,8 @@ class BasicSiteController extends Controller
       Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog')->defaults('extras', ['nav_skip' => true]);
       Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
       Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.career');
-      Route::get('/privacy', [BasicSiteController::class, 'showContactForm'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/terms-and-conditions', [BasicSiteController::class, 'showContactForm'])->name('app.terms')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/privacy', [BasicSiteController::class, 'showPrivacyPage'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/terms-and-conditions', [BasicSiteController::class, 'showTermsPage'])->name('app.terms')->defaults('extras', ['nav_skip' => true]);
       Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us');
       Route::post('/contact', [BasicSiteController::class, 'sendContactMessage'])->name('app.contact');
     });
@@ -64,6 +64,16 @@ class BasicSiteController extends Controller
   public function careers()
   {
     return Inertia::render('CareersPage');
+  }
+
+  public function showPrivacyPage()
+  {
+    return Inertia::render('PrivacyPage');
+  }
+
+  public function showTermsPage()
+  {
+    return Inertia::render('TermsPage');
   }
 
   public function showContactForm()
