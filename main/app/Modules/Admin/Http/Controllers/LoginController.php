@@ -99,6 +99,26 @@ class LoginController extends Controller
     return $this->sendFailedLoginResponse($request);
   }
 
+
+  public function newAdminSetPassword()
+  {
+    $admin = Admin::where('email', request('email'))->firstOrFail();
+    if ($admin && !$admin->is_verified()) {
+      Db::beginTransaction();
+
+      $admin->password = request('pw');
+      $admin->verified_at = now();
+      $admin->save();
+
+      DB::commit();
+
+      $this->guard()->login($admin);
+
+      return redirect()->route(Admin::dashboardRoute())->withSuccess('Password set');
+    }
+    return back()->withError('Unauthorised');
+  }
+
   /**
    * Log the user out of the application.
    *
@@ -120,26 +140,6 @@ class LoginController extends Controller
 
 
 
-
-  public function newAdminSetPassword()
-  {
-    $admin = Admin::where('email', request('email'))->firstOrFail();
-    if ($admin && !$admin->is_verified()) {
-      Db::beginTransaction();
-
-      $admin->password = request('pw');
-      $admin->verified_at = now();
-      $admin->save();
-
-      DB::commit();
-
-      $this->guard()->login($admin);
-
-      return redirect()->route('admin.dashboard')->withSuccess('Password set');
-    }
-    return back()->withError('Unauthorised');
-  }
-
   protected function validateLogin(Request $request)
   {
     $this->validate($request, [
@@ -159,16 +159,24 @@ class LoginController extends Controller
   {
     if ($user->isAdmin()) {
       if ($user->is_verified()) {
-        return response()->json($this->respondWithToken(), 202);
+        if ($request->isApi())
+          return response()->json($this->respondWithToken(), 202);
+
+        return redirect()->route(Admin::dashboardRoute());
       } else {
         $this->logout($request);
+        if ($request->isApi())
+          return response()->json(['unverified' => 'Unverified user'], 416);
+
         return back()->withError(['unverified' => 'Unverified user']);
       }
     } else {
       $this->logout($request);
-      return response()->json(['message' => 'Access Denied'], 401);
+      if ($request->isApi())
+        return response()->json(['message' => 'Access Denied'], 401);
+
+      abort(401, 'Access Denied');
     }
-    return redirect()->route(Admin::dashboardRoute());
   }
 
   /**

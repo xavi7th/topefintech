@@ -60,7 +60,7 @@ class BasicSiteServiceProvider extends ServiceProvider
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
       'auth' => function (Request $request) {
         return [
-          'user' => Auth::user() ? (new AppUserTransformer)->detailed($request->user()) : (object)[],
+          'user' => Auth::user() ? $request->user()->getDetails() : (object)[],
           'notification_count' => Auth::user() ? $request->user()->unreadNotifications()->count() : null
         ];
       },

@@ -68,11 +68,6 @@ class Admin extends User
   protected $dates = ['dob', 'verified_at'];
   const DASHBOARD_ROUTE_PREFIX = 'admin-panel';
 
-  static function canAccess()
-  {
-    return auth()->user()->isAdmin();
-  }
-
   public function is_verified()
   {
     return $this->verified_at !== null;

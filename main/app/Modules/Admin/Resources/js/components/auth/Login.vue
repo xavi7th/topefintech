@@ -3,10 +3,13 @@
     <form @submit.prevent="loginUser" :class="{'was-validated': formSubmitted}" novalidate>
       <div class="row vertical-gap sm-gap justify-content-center">
         <div class="header-logo logo-type no-margin col-12 display-3 text-center">
-          <a :href="$route('app.home')">SmartCoop</a>
+          <a :href="$route('app.home')">
+            <img src="/img/logo.png" :alt="`${$page.app.name} logo`" width="50%" />
+          </a>
         </div>
         <div class="col-12">
           <h2 class="display-4 mb-10 text-center">Sign In</h2>
+          <FlashMessage />
         </div>
         <div class="col-12">
           <input
@@ -18,7 +21,7 @@
             name="email"
             placeholder="Email"
           />
-          <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
+          <FlashMessage v-if="errors.email" :msg="errors.email[0]" />
         </div>
         <div class="col-12">
           <input
@@ -30,7 +33,7 @@
             name="password"
             placeholder="Password"
           />
-          <div class="invalid-feedback" v-if="errors.password">{{errors.password[0]}}</div>
+          <FlashMessage v-if="errors.password" :msg="errors.password[0]" />
         </div>
         <div class="col-sm-6">
           <div class="custom-control custom-checkbox d-flex justify-content-start">
@@ -43,13 +46,8 @@
             <label class="custom-control-label fs-13" for="rememberMe">Remember me</label>
           </div>
         </div>
-        <div class="col-sm-6">
-          <div class="d-flex justify-content-end">
-            <a href="#" class="fs-13">Forgot password?</a>
-          </div>
-        </div>
         <div class="col-12">
-          <button type="submit" class="btn btn-brand btn-block text-center">Sign in</button>
+          <button type="submit" class="btn btn-brand btn-block text-center">Access Admin Panel</button>
         </div>
       </div>
     </form>
@@ -61,7 +59,7 @@
   import { mixins } from "@dashboard-assets/js/config";
   export default {
     mixins: [mixins],
-    props: ["errors", "flash"],
+    // props: ["errors", "flash"],
     components: { Layout },
     data: () => ({
       details: {},
@@ -71,7 +69,7 @@
     methods: {
       loginUser() {
         BlockToast.fire({
-          text: "Accessing your dashboard..."
+          text: "Unlocking admin dashboard..."
         });
 
         this.$inertia
@@ -79,10 +77,11 @@
           .then(rsp => {
             if (_.size(this.errors)) {
               this.formSubmitted = true;
+              swal.close();
             } else if (this.flash.error.suspended) {
               swal.fire({
                 title: "Suspended Account",
-                text: rsp.data.msg,
+                text: this.flash.error.suspended,
                 icon: "warning"
               });
             } else if (this.flash.error.unverified) {
@@ -134,8 +133,9 @@
                       }
                     });
                 });
+            } else {
+              swal.close();
             }
-            swal.close();
           });
       }
     }

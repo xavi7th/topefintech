@@ -31,18 +31,6 @@ Vue.filter( 'Naira', function ( value, symbol ) {
     } )
 } )
 
-let mediaHandler = () => {
-    if ( window.matchMedia( '(max-width: 767px)' ).matches ) {
-        /** Mobile **/
-    } else {
-        /** Desktop **/
-    }
-    /** To set up a watcher **/
-    // window.matchMedia( '(min-width: 992px)' ).addEventListener( "change", () => {
-    // 	console.log( 'changed' )
-    // } )
-}
-
 const app = document.getElementById( 'app' )
 
 Vue.component( 'FlashMessage', FlashMessage );

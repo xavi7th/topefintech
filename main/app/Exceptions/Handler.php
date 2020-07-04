@@ -58,7 +58,7 @@ class Handler extends ExceptionHandler
   {
     $response = parent::render($request, $exception);
 
-    if (in_array($response->status(), [500, 503, 404, 403])) {
+    if (in_array($response->status(), [500, 503, 404, 403, 429])) {
       if ($this->is404($exception)) {
         $this->log404($request);
       }

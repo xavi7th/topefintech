@@ -18,7 +18,6 @@ use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Http\Controllers\LoginController;
 use App\Modules\Transformers\AdminTestimonialTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
-use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -141,14 +140,14 @@ class AdminController extends Controller
       LoginController::routes();
 
       Route::group(['middleware' => ['auth:admin', 'admins']], function () {
-        Route::get('/', [AdminController::class, 'loadAdminApp'])->name('admin.home');
+        Route::get('/', [AdminController::class, 'loadAdminApp'])->name('admin.dashboard');
       });
     });
   }
 
   public function loadAdminApp()
   {
-    // Auth::logout();
+    \Auth::logout();
     return Inertia::render('dashboard/AdminDashboard');;
   }
 }

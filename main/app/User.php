@@ -4,6 +4,7 @@ namespace App;
 
 use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\Auth;
+use App\Modules\AppUser\Models\AppUser;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use App\Modules\Admin\Models\ActivityLog;
@@ -11,7 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Modules\AppUser\Models\AppUser;
+use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\AppUser\Transformers\AppUserTransformer;
 
 /**
  * App\User
@@ -136,6 +138,15 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
   public function isAppUser(): bool
   {
     return $this instanceof AppUser;
+  }
+
+  public function getDetails()
+  {
+    if ($this->isAppUser()) {
+      return (new AppUserTransformer)->detailed($this);
+    } elseif ($this->isAdmin()) {
+      return (new AdminUserTransformer)->transformForAdminViewAdmins($this);
+    }
   }
 
   public function setPasswordAttribute($value): void

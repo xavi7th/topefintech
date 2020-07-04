@@ -33,7 +33,8 @@
           503: "503",
           500: "500",
           404: "404",
-          403: "403"
+          403: "403",
+          429: "429"
         }[this.status];
       },
       summary() {
@@ -41,7 +42,8 @@
           503: "Service Unavailable",
           500: "Server Error",
           404: "Page Not Found",
-          403: "Forbidden"
+          403: "Forbidden",
+          429: "Too Many Requests"
         }[this.status];
       },
       description() {
@@ -49,7 +51,8 @@
           503: "Sorry, we are doing some maintenance. Please check back soon.",
           500: "Whoops, something went wrong on our servers.",
           404: "Sorry, the page you are looking for could not be found. You may have mis-typed a url. Go back home and try again",
-          403: "Sorry, you are forbidden from accessing this page."
+          403: "Sorry, you are forbidden from accessing this page.",
+          429: "You have tried to access this request too many times too quicky. Try again later."
         }[this.status];
       }
     }
