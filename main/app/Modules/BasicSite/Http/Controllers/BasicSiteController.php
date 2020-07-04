@@ -32,8 +32,8 @@ class BasicSiteController extends Controller
   public static function routes()
   {
     Route::group(['middleware' => 'web', 'namespace' => 'App\\Modules\BasicSite\Http\Controllers'], function () {
-      Route::get('/', [BasicSiteController::class, 'index'])->name('app.home')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog');
+      Route::get('/', [BasicSiteController::class, 'index'])->name('app.home');
+      Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog')->defaults('extras', ['nav_skip' => true]);
       Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
       Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.career');
       Route::get('/privacy', [BasicSiteController::class, 'showContactForm'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);

@@ -5,7 +5,8 @@
         <div class="col-md-2">
           <div class="logo">
             <inertia-link :href="$route('app.home')">
-              <img src="/img/logo.png" alt width="120" />
+              <img class="hidden-xs" src="/img/logo.png" alt width="120" />
+              <img class="d-block d-sm-none" src="/img/logo-white.png" alt width="120" />
             </inertia-link>
           </div>
         </div>
@@ -18,10 +19,16 @@
             </a>
             <ul>
               <li v-for="(item, index) in routes" :key="index">
-                <inertia-link :href="$route(item.name)">{{item.menu_name}}</inertia-link>
+                <inertia-link
+                  :href="$route(item.name)"
+                  :only="['isInertiaRequest']"
+                >{{item.menu_name}}</inertia-link>
               </li>
               <li>
                 <a href="/login">Login</a>
+              </li>
+              <li class="d-block d-sm-none">
+                <a href="/register">Register</a>
               </li>
             </ul>
           </nav>
@@ -47,7 +54,7 @@
   };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .mainmenu.MenuInRight.text-right {
     li {
       @media (max-width: 1100px) {
@@ -55,8 +62,29 @@
       }
       @media (max-width: 768px) {
         font-size: 0.6rem;
-        padding: 15px 10px;
       }
+    }
+  }
+
+  .mainmenu > ul {
+    @media (max-width: 767px) and (min-width: 320px) {
+      height: auto;
+    }
+  }
+
+  .navigator_btn a {
+    @media (max-width: 991px) and (min-width: 768px) {
+      font-size: 13px;
+    }
+  }
+
+  .animated.flipInX {
+    img.d-block {
+      display: none !important;
+    }
+
+    img.hidden-xs {
+      display: block !important;
     }
   }
 </style>

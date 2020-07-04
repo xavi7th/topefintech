@@ -3,7 +3,7 @@
     <footer class="footer">
       <div class="container">
         <div class="row">
-          <div class="col-lg-5 col-md-6">
+          <div class="col-12 col-lg col-md">
             <aside class="widget about_widgets">
               <img src="/img/logo.png" alt class="footer-logo" />
               <h4>Reach us via</h4>
@@ -30,24 +30,22 @@
                 <li>
                   <inertia-link :href="$route('app.career')">Careers</inertia-link>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                  >Click here to get Instant Website &amp; Mobile Apps for your cooperative Society</a>
-                </li>
               </ul>
             </aside>
           </div>
-          <div class="col-lg-3 col-md-6">
+          <div class="col-12 col-lg-5 col-md">
             <aside class="widget links">
               <h4>We are available:</h4>
               <p>
                 Monday - Friday:
                 <br />08:00 AM - 08:00 PM CAT
               </p>
+              <p>
+                <a href="#">Click here</a> &nbsp; to get Instant Website &amp; Mobile Apps for your cooperative Society
+              </p>
             </aside>
           </div>
-          <div class="col-lg-4 col-md-6">
+          <div class="col-12 col-lg col-md">
             <aside class="widget subscribe_widgets">
               <h4>Find us at:</h4>
               <p class="text-black">{{$page.app.address}}</p>
