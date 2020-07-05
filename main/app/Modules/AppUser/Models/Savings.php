@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Models;
 
+use App\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ use App\Modules\AppUser\Notifications\SmartLockBroken;
 use App\Modules\AppUser\Notifications\SmartLockMature;
 use App\Modules\AppUser\Notifications\GOSSavingsMatured;
 use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
+use App\Modules\Admin\Http\Requests\FundUserSavingsValidation;
 use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
@@ -85,7 +87,11 @@ class Savings extends Model
   public function __construct(array $attributes = [])
   {
     parent::__construct($attributes);
-    Inertia::setRootView('appuser::app');
+    if (User::hasRouteNamespace('appuser.')) {
+      Inertia::setRootView('appuser::app');
+    } elseif (User::hasRouteNamespace('admin.')) {
+      Inertia::setRootView('admin::app');
+    }
   }
 
   public function service_charges()
@@ -359,40 +365,44 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
-  static function appUserRoutes()
+  static function adminRoutes()
   {
-    Route::group([], function () {
-
-      Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
-
-      Route::get('savings/get-distribution-details', [self::class, 'getDistributionDetails'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
-
-      Route::post('/savings/fund', [self::class, 'distributeFundsToSavings'])->name('appuser.savings.fund');
-
-      Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
-
-      Route::delete('/savings/auto-save/{autoSaveSetting}', [self::class, 'deleteAutoSaveSettings'])->name('appuser.savings.delete-autosave');
-
-      Route::post('/savings/locked-funds/create', [self::class, 'createNewLockedFundsProfile'])->name('appuser.savings.locked.initialise');
-
-      Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.locked.fund');
-
-      Route::get('/savings/{savings}/break', [self::class, 'breakLockedFunds']);
-
-      Route::get('/savings/{savings}/verify', [self::class, 'verifySavingsAmount']);
-
-      Route::get('/savings/{savings}/check-maturity', [self::class, 'checkSavingsMaturity']);
-
-      Route::get('/savings/gos-funds/create', [self::class, 'viewGOSList'])->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
-
-      Route::post('/savings/gos-funds/create', [self::class, 'createNewGOSSavingsProfile'])->name('appuser.savings.gos.initialise');
-
-      Route::get('/savings/distribution', [self::class, 'getSavingsDistributionRatio']);
-
-      Route::put('/savings/distribution/update', [self::class, 'updateSavingsDistributionRatio'])->name('appuser.savings.distribution.update');
-    });
+    Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('admin.user_savings')->defaults('extras', ['nav_skip' => true]);
+    Route::post('{appUser}/savings/fund', [self::class, 'distributeFundsToUserSavings'])->name('admin.user_savings.fund')->defaults('extras', ['nav_skip' => true]);
+    Route::post('{appUser}/savings/locked-funds/add', [self::class, 'lockMoreUserFunds'])->name('admin.user_savings.locked.fund');
+    Route::post('{appUser}/savings/locked-funds/deduct', [self::class, 'deductUserFunds'])->name('admin.user_savings.locked.defund');
   }
 
+  static function appUserRoutes()
+  {
+    Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
+
+    Route::get('savings/get-distribution-details', [self::class, 'getDistributionDetails'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
+
+    Route::post('/savings/fund', [self::class, 'distributeFundsToSavings'])->name('appuser.savings.fund');
+
+    Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
+
+    Route::delete('/savings/auto-save/{autoSaveSetting}', [self::class, 'deleteAutoSaveSettings'])->name('appuser.savings.delete-autosave');
+
+    Route::post('/savings/locked-funds/create', [self::class, 'createNewLockedFundsProfile'])->name('appuser.savings.locked.initialise');
+
+    Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.locked.fund');
+
+    Route::get('/savings/{savings}/break', [self::class, 'breakLockedFunds']);
+
+    Route::get('/savings/{savings}/verify', [self::class, 'verifySavingsAmount']);
+
+    Route::get('/savings/{savings}/check-maturity', [self::class, 'checkSavingsMaturity']);
+
+    Route::get('/savings/gos-funds/create', [self::class, 'viewGOSList'])->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
+
+    Route::post('/savings/gos-funds/create', [self::class, 'createNewGOSSavingsProfile'])->name('appuser.savings.gos.initialise');
+
+    Route::get('/savings/distribution', [self::class, 'getSavingsDistributionRatio']);
+
+    Route::put('/savings/distribution/update', [self::class, 'updateSavingsDistributionRatio'])->name('appuser.savings.distribution.update');
+  }
 
   public function viewUserSavings(Request $request)
   {
@@ -466,8 +476,6 @@ class Savings extends Model
       return back()->withSuccess('Success');
     }
   }
-
-
 
   public function distributeFundsToSavings(FundSavingsValidation $request)
   {
@@ -683,6 +691,110 @@ class Savings extends Model
     return back()->withSuccess('Updated');
   }
 
+  public function adminViewUserSavings(Request $request, AppUser $user)
+  {
+    $savings_list = $user->savings_list->load('gos_type');
+    $auto_save_list = $user->auto_save_settings;
+    // $gos_types = GOSType::all();
+
+    return Inertia::render('savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+  }
+
+
+  public function distributeFundsToUserSavings(FundUserSavingsValidation $request, AppUser $appUser)
+  {
+    // dd($appUser);
+    /**
+     * If user has core but no gos or locked update the core
+     * If user has gos or locked use distribution to spread it
+     *
+     * ! UPDATE CORE Update savings and create a transactions record
+     *
+     */
+    if (!$appUser->has_gos_savings() && !$appUser->has_locked_savings()) {
+      $appUser->fund_core_savings($request->amount);
+    } else {
+      $appUser->distribute_savings($request->amount);
+    }
+
+    if ($request->isApi()) return response()->json(['rsp' => $appUser->savings_list], 201);
+
+    return back()->withSuccess('Completed! Funds have been distributed into user´s savings portfolio');
+  }
+
+  public function lockMoreUserFunds(Request $request, AppUser $appUser)
+  {
+    if (!$request->savings_id) {
+      return generate_422_error('Invalid savings selected');
+    }
+    if (!$request->amount || $request->amount <= 0) {
+      return generate_422_error('You need to specify an amount to add to this savings');
+    }
+
+    $savings = self::find($request->savings_id);
+
+    if (is_null($savings)) {
+      return generate_422_error('Invalid savings selected');
+    }
+
+    try {
+      if ($savings->type == 'core') {
+
+        $appUser->fund_core_savings($request->amount);
+      } else {
+        $appUser->fund_locked_savings($savings, $request->amount);
+      }
+
+      if ($request->isApi()) {
+        return response()->json(['rsp' => 'Created'], 201);
+      } else {
+        return back()->withSuccess('Congrats! Funds added to user´s savings');
+      }
+    } catch (\Throwable $th) {
+      if ($th->getCode() == 422) {
+        return generate_422_error($th->getMessage());
+      } else {
+        ErrLog::notifyAdmin(auth()->user(), $th, 'Add more funds to savings failed');
+      }
+    };
+  }
+
+  public function deductUserFunds(Request $request, AppUser $appUser)
+  {
+    if (!$request->savings_id) {
+      return generate_422_error('Invalid savings selected');
+    }
+    if (!$request->amount || $request->amount <= 0) {
+      return generate_422_error('You need to specify an amount to remove from this savings');
+    }
+
+    $savings = self::find($request->savings_id);
+
+    if (is_null($savings)) {
+      return generate_422_error('Invalid savings selected');
+    }
+
+    try {
+      if ($savings->type == 'core') {
+
+        $appUser->defund_core_savings($request->amount);
+      } else {
+        $appUser->defund_locked_savings($savings, $request->amount);
+      }
+
+      if ($request->isApi()) {
+        return response()->json(['rsp' => 'Deducted'], 201);
+      } else {
+        return back()->withSuccess('Congrats! Funds removed user´s savings');
+      }
+    } catch (\Throwable $th) {
+      if ($th->getCode() == 422) {
+        return generate_422_error($th->getMessage());
+      } else {
+        ErrLog::notifyAdmin(auth()->user(), $th, 'Deduct funds from savings failed');
+      }
+    };
+  }
 
   /**
    * Scope a query to only include matured savings

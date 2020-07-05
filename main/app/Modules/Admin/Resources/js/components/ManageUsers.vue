@@ -101,13 +101,17 @@
                         </div>
                       </li>
                     </ul>
-                    <div class="col-12 text-right" v-if="!user.is_email_verified">
-                      <button class="btn btn-sm btn-warning" @click="veryfyUser(user.id)">Verify</button>
+                    <div class="col-12 text-right">
                       <button
-                        class="btn btn-success btn-lg"
-                        data-toggle="modal"
-                        data-target="#savingsPlans"
-                      >View Savings</button>
+                        class="btn btn-sm btn-warning"
+                        @click="veryfyUser(user.id)"
+                        v-if="!user.is_email_verified"
+                      >Verify</button>
+                      <inertia-link
+                        v-else
+                        :href="$route('admin.user_savings', user.id)"
+                        class="btn btn-success btn-sm"
+                      >Savings Details</inertia-link>
                     </div>
                   </td>
                 </tr>

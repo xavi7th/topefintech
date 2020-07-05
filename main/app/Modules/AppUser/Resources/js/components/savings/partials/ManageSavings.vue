@@ -2,7 +2,12 @@
   <div class="col-lg-12 col-xl-12">
     <div class="d-flex align-items-center justify-content-between mb-25">
       <h2 class="mnb-2" id="formBase">Add to Savings</h2>
-      <button class="btn btn-success btn-long" @click="fundSavings">Fund Savings</button>
+      <button
+        class="btn btn-success btn-long"
+        @click="fundSavings"
+        v-if="!$page.auth.user.isAdmin"
+      >Fund Savings</button>
+      <button class="btn btn-success btn-long" @click="fundSavings" v-else>Fund User's Savings</button>
     </div>
     <div class="col-12">
       <!-- <button type="button" class="btn btn-success btn-long">
@@ -41,8 +46,18 @@
                   <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
                 </span>
               </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-uniform btn-round btn-xs"
+                @click="defundThisSavings(savings)"
+                v-if="$page.auth.user.isAdmin"
+              >
+                <span class="icon">
+                  <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
+                </span>
+              </button>
             </td>
-            <td class="text-capitalize">{{savings.current_balance | currency }}</td>
+            <td class="text-capitalize">{{savings.current_balance | Naira }}</td>
             <td class="text-capitalize">{{savings.funded_at | dayjs('YYYY-MM-DD') }}</td>
             <td class="text-capitalize">{{ savings.maturity_date | dayjs('YYYY-MM-DD') }}</td>
             <!-- <td>
@@ -79,6 +94,12 @@
         /** Connect to paystack? */
         $("#fundThisSavingsModal").modal("show");
         this.$emit("fund-savings", savings);
+      },
+      defundThisSavings(savings) {
+        savings.savings_id = savings.id;
+        /** Connect to paystack? */
+        $("#defundThisSavingsModal").modal("show");
+        this.$emit("defund-savings", savings);
       },
       fundSavings() {
         /** Connect to paystack? */

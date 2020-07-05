@@ -13,7 +13,7 @@
   };
 </script>
 
-<style>
+<style scoped>
   .alert-danger {
     color: #7c2a34;
     background-color: #fcdce0;

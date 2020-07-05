@@ -66,8 +66,9 @@ class AdminUserTransformer
       'full_name' => (string)$user->full_name,
       'created_at' => (string)$user->created_at,
       'email' => (string)$user->email,
-      'user_passport' => (string)$user->user_passport,
+      'id_card' => (string)$user->id_card,
       'is_verified' => (boolean)$user->is_verified(),
+      'isAdmin' => (boolean)$user->isAdmin(),
     ];
   }
 }

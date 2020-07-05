@@ -516,6 +516,31 @@ class AppUser extends User
     DB::commit();
   }
 
+  public function defund_core_savings(float $amount, string $desc = null): void
+  {
+    DB::beginTransaction();
+    $core_savings = $this->core_savings;
+    $core_savings->current_balance -= $amount;
+    $core_savings->save();
+
+    $desc = $desc ?? 'Automatic deduction from core savings';
+    $core_savings->create_withdrawal_transaction($amount, $desc);
+
+    DB::commit();
+  }
+
+  public function defund_locked_savings(Savings $locked_savings, float $amount): void
+  {
+    DB::beginTransaction();
+
+    $locked_savings->current_balance -= $amount;
+    $locked_savings->save();
+
+    $locked_savings->create_withdrawal_transaction($amount, 'Automatic deduction from ' . $locked_savings->gos_type->name . ' savings');
+
+    DB::commit();
+  }
+
   public function distribute_savings(float $amount, string $description = null): void
   {
     /**

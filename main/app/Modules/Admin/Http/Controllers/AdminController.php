@@ -18,6 +18,7 @@ use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Http\Controllers\LoginController;
 use App\Modules\Transformers\AdminTestimonialTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
+use App\Modules\AppUser\Models\Savings;
 
 class AdminController extends Controller
 {
@@ -143,6 +144,7 @@ class AdminController extends Controller
         Admin::adminRoutes();
         AppUser::adminRoutes();
         GOSType::adminRoutes();
+        Savings::adminRoutes();
       });
     });
   }
