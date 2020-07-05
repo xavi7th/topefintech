@@ -149,7 +149,6 @@ class AdminController extends Controller
 
   public function loadAdminApp()
   {
-    // \Auth::logout();
-    return Inertia::render('dashboard/AdminDashboard');;
+    return Inertia::render('AdminDashboard');
   }
 }

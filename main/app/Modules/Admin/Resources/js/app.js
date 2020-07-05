@@ -37,6 +37,7 @@ new Vue( {
             initialPage: JSON.parse( app.dataset.page ),
             resolveComponent: name => import( /* webpackChunkName: "js/admin-" */ `./components/${name}.vue` )
                 .then( module => module.default ).catch( err => {
+                    debugger
                     if ( err.code == "MODULE_NOT_FOUND" ) {
                         location.href = route( 'admin.dashboard' ).url()
                     } else {

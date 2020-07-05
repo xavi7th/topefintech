@@ -3,12 +3,15 @@
 namespace App\Modules\Admin\Models;
 
 use App\User;
+use Inertia\Inertia;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\BasicSite\Models\Message;
+use Illuminate\Support\Facades\Validator;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
@@ -68,6 +71,12 @@ class Admin extends User
   protected $dates = ['dob', 'verified_at'];
   const DASHBOARD_ROUTE_PREFIX = 'admin-panel';
 
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    Inertia::setRootView('admin::app');
+  }
+
   public function is_verified()
   {
     return $this->verified_at !== null;
@@ -81,22 +90,22 @@ class Admin extends User
   static function adminRoutes()
   {
     Route::group([], function () {
-      Route::get('/notifications', [self::class, 'getAdminNotifications'])->name('admin.notifications')->defaults('extras', ['nav_skip' => true]);
+      Route::get('notifications', [self::class, 'getAdminNotifications'])->name('admin.notifications')->defaults('extras', ['nav_skip' => true]);
+      Route::get('admins', [self::class, 'getAdmins'])->name('admin.view_admins');
+      Route::post('admin/create', [self::class, 'createAdmin'])->name('admin.create');
     });
   }
 
   static function adminApiRoutes()
   {
     Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
-      Route::get('dashboard/statistics', 'Admin@getDashboardStatistics');
+      Route::get('dashboard/statistics', [self::class, 'getDashboardStatistics']);
 
-      Route::get('/savings', 'Admin@getListOfUserSavings');
+      Route::get('/savings', [self::class, 'getListOfUserSavings']);
 
-      Route::get('admins', 'Admin@getAdmins');
 
-      Route::post('admin/create', 'Admin@createAdmin');
 
-      Route::get('admin/notifications/matured-savings', 'Admin@getMaturedSavingsNotifications');
+      Route::get('admin/notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications']);
     });
   }
 
@@ -110,30 +119,51 @@ class Admin extends User
     ];
   }
 
-  public function getAdmins()
+  public function getAdmins(Request $request)
   {
-    return (new AdminUserTransformer)->collectionTransformer(self::all(), 'transformForAdminViewAdmins');
+
+    $admins = (new AdminUserTransformer)->collectionTransformer(self::all(), 'transformForAdminViewAdmins');
+    if ($request->isApi())
+      return $admins;
+    return Inertia::render('ManageAdmins', compact('admins'));
   }
 
-  public function createAdmin()
+  public function createAdmin(Request $request)
   {
+    $validator = Validator::make($request->all(), [
+      'full_name' => 'required|max:255',
+      'phone' => 'required|max:20|unique:admins,email',
+      'email' => 'required|email',
+    ]);
 
+    if ($validator->fails()) {
+      return back()
+        ->withErrors($validator)
+        ->withError('There are errors in your form');
+    }
     try {
       DB::beginTransaction();
       $admin = self::create(Arr::collapse([
-        request()->all(),
+        $validator->validated(),
         [
-          'password' => bcrypt('amju@admin'),
-          'role_id' => self::getAdminId()
+          'password' => bcrypt('amju@admin')
         ]
       ]));
+
       DB::commit();
-      return response()->json(['rsp' => $admin], 201);
+
+      if ($request->isApi())
+        return response()->json(['rsp' => $admin], 201);
+
+      return back()->withSuccess('Admin account created. They will be required to set a password om their first login');
     } catch (\Throwable $e) {
-      if (app()->environment() == 'local') {
-        return response()->json(['error' => $e->getMessage()], 500);
-      }
-      return response()->json(['rsp' => 'error occurred'], 500);
+
+      ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating admin account');
+
+      if ($request->isApi())
+        return response()->json(['rsp' => 'error occurred'], 500);
+
+      return back()->withError('An error occurred. Check the error logs');
     }
   }
 

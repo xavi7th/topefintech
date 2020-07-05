@@ -52,7 +52,6 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <pre-loader v-if="sectionLoading" class="section-loader"></pre-loader>
                   <form class="m-25">
                     <div class="form-group mb-5" :class="{'has-error': errors.has('name')}">
                       <div class="form-group">
@@ -161,7 +160,6 @@
     adminCreateTestimonial,
     adminDeleteTestimonial
   } from "@admin-assets/js/config";
-  import PreLoader from "@admin-components/misc/PageLoader";
   export default {
     name: "ManageTestimonials",
     data: () => ({
@@ -171,9 +169,6 @@
       details: {},
       fileUploadName: "Upload user's passport"
     }),
-    components: {
-      PreLoader
-    },
     created() {
       axios.get(adminViewTestimonials).then(({ data: { testimonials } }) => {
         this.testimonials = testimonials;
