@@ -5,8 +5,8 @@
         <div class="container-fluid">
           <div
             class="rui-swiper"
-            data-swiper-initialslide="2"
-            data-swiper-loop="false"
+            data-swiper-initialslide="1"
+            data-swiper-loop="true"
             data-swiper-grabcursor="true"
             data-swiper-center="true"
             data-swiper-slides="auto"
@@ -18,14 +18,14 @@
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">25%</div>
-                      <small class="rui-widget-subtitle">Bounce Rate</small>
+                      <div class="rui-widget-title h2">{{total_savings_amount | Naira}}</div>
+                      <small class="rui-widget-subtitle">Total Savings</small>
                     </div>
                     <div class="rui-chartjs-container">
                       <div
                         class="rui-chartist rui-chartist-donut"
-                        data-width="150"
-                        data-height="150"
+                        data-width="200"
+                        data-height="200"
                         data-chartist-series="5,2"
                         data-chartist-width="4"
                         data-chartist-gradient="#8e9fff;#2bb7ef"
@@ -36,22 +36,42 @@
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">-12%</div>
-                      <small class="rui-widget-subtitle">Sales Today</small>
+                      <div
+                        class="rui-widget-title h2"
+                      >{{ total_uncleared_interests_amount | Naira }}</div>
+                      <small class="rui-widget-subtitle">Total Uncleared Interests</small>
                     </div>
                     <div class="rui-chartjs-container">
                       <div
                         class="rui-chartist rui-chartist-donut"
-                        data-width="150"
-                        data-height="150"
-                        data-chartist-series="2,8"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_uncleared_interests_amount},${total_cleared_interests_amount}`"
                         data-chartist-width="4"
                         data-chartist-gradient="#8e9fff;#2bb7ef"
                       ></div>
                     </div>
                   </div>
                 </div>
-                <div class="swiper-slide rui-swiper-slide-total">
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ total_cleared_interests_amount | Naira }}</div>
+                      <small class="rui-widget-subtitle">Total Cleared Interests</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_cleared_interests_amount},${total_uncleared_interests_amount}`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="swiper-slide rui-swiper-slide-total">
                   <div class="rui-widget rui-widget-chart rui-widget-total">
                     <div class="rui-widget-chart-info">
                       <div class="rui-widget-title h1">$1371.24</div>
@@ -102,7 +122,7 @@
                       ></div>
                     </div>
                   </div>
-                </div>
+                </div>-->
               </div>
             </div>
             <div class="swiper-button-next">
@@ -112,7 +132,7 @@
               <span data-feather="chevron-left" class="rui-icon rui-icon-stroke-1_5"></span>
             </div>
           </div>
-          <div class="rui-gap-2"></div>
+          <!-- <div class="rui-gap-2"></div>
           <div class="row vertical-gap">
             <div class="col-lg-4">
               <div class="rui-widget rui-widget-actions">
@@ -573,7 +593,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
@@ -586,7 +606,11 @@
 
   export default {
     name: "AdminDashboard",
-    props: ["app"],
+    props: {
+      total_savings_amount: Number,
+      total_uncleared_interests_amount: Number,
+      total_cleared_interests_amount: Number
+    },
     mixins: [mixins],
     components: { Layout },
     mounted() {
