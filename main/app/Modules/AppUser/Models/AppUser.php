@@ -760,8 +760,6 @@ class AppUser extends User
 
   static function adminApiRoutes()
   {
-    // Inertia::setRootView('admin::app');
-
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
 
       Route::delete('user/{user}/delete', [self::class, 'deleteUser']);
@@ -772,8 +770,6 @@ class AppUser extends User
 
   static function routes()
   {
-    // Inertia::setRootView('appuser::app');
-
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
       Route::get('/auth/verify', [self::class, 'verifyAuth']);
       Route::get('profile', [self::class, 'getUserProfile'])->name('appuser.my_profile')->defaults('extras', ['nav_skip' => true]);

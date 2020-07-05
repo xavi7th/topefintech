@@ -37,8 +37,6 @@ class AdminController extends Controller
 
         AppUser::adminApiRoutes();
 
-        GOSType::adminApiRoutes();
-
         LoanRequest::adminApiRoutes();
 
         WithdrawalRequest::adminApiRoutes();
@@ -144,6 +142,7 @@ class AdminController extends Controller
 
         Admin::adminRoutes();
         AppUser::adminRoutes();
+        GOSType::adminRoutes();
       });
     });
   }

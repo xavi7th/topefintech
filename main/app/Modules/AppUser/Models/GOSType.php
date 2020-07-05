@@ -3,11 +3,13 @@
 namespace App\Modules\AppUser\Models;
 
 
+use App\User;
+use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use App\Modules\Admin\Models\ErrLog;
 
 /**
  * App\Modules\AppUser\Models\GOSType
@@ -32,9 +34,19 @@ class GOSType extends Model
   protected $fillable = ['name'];
   protected $table = 'gos_types';
 
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    if (User::hasRouteNamespace('appuser.')) {
+      Inertia::setRootView('appuser::app');
+    } elseif (User::hasRouteNamespace('admin.')) {
+      Inertia::setRootView('admin::app');
+    }
+  }
+
   public function savings()
   {
-    return $this->hasMany(Savings::class);
+    return $this->hasMany(Savings::class, 'gos_type_id');
   }
 
   static function appUserRoutes()
@@ -47,13 +59,11 @@ class GOSType extends Model
   }
 
 
-  static function adminApiRoutes()
+  static function adminRoutes()
   {
-    Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-      Route::get('gos-types', 'GOSType@getGOSTypes');
-      Route::post('gos-type/create', 'GOSType@adminCreateGOSType');
-      Route::delete('gos-type/{gos_type_id}/delete', 'GOSType@adminDeleteGOSType');
-    });
+    Route::get('view-gos-types', [self::class, 'adminGetGOSTypes'])->name('admin.manage_gos_plans')->defaults('extras', ['icon' => 'far fa-save']);
+    Route::post('gos-type/create', [self::class, 'adminCreateGOSType'])->name('admin.gos.create');
+    Route::delete('gos-type/{gos_type}/delete', [self::class, 'adminDeleteGOSType'])->name('admin.gos.delete');
   }
 
 
@@ -62,7 +72,7 @@ class GOSType extends Model
   {
 
     if (!$request->name) {
-      return generate_422_error(['name' => 'A name is required for the GOS Plan']);
+      return generate_422_error('A name is required for the GOS Plan');
     }
 
     if (self::where('name', $request->name)->exists()) {
@@ -76,24 +86,46 @@ class GOSType extends Model
       $gos_type = GOSType::create([
         'name' => request('name'),
       ]);
-      return response()->json($gos_type, 201);
+      if ($request->isApi()) return response()->json($gos_type, 201);
+
+      return back()->withSuccess('GOS Plan created');
     } catch (\Throwable $e) {
       ErrLog::notifyAdmin($request->user(), $e, 'GOS not created');
-      return response()->json(['rsp' => $e->getMessage()], 500);
+      if ($request->isApi())  return response()->json(['rsp' => $e->getMessage()], 500);
+
+      return back()->withError('GOS not created. Check error logs');
     }
   }
 
-  public function getGOSTypes()
+  public function adminGetGOSTypes(Request $request)
+  {
+    if ($request->isApi()) return GOSType::all();
+
+    return Inertia::render('ManageGOSPlans', [
+      'gos_list' => function () {
+        return GOSType::withCount('savings')->get();
+      }
+    ]);
+  }
+
+  public function adminDeleteGOSType(Request $request, self $gos_type)
+  {
+    if ($gos_type->savings()->exists()) {
+      if ($request->isApi())  return response()->json('GOS Plan has active savings and cannot be deleted', 403);
+      return back()->withError('GOS Plan has active savings and cannot be deleted');
+    }
+
+    $gos_type->delete();
+
+    if ($request->isApi())  return response()->json([], 204);
+    return back()->withSuccess('GOS Plan deleted');
+  }
+
+
+  public function getGOSTypes(Request $request)
   {
     return GOSType::all();
   }
-
-  public function adminDeleteGOSType($gos_type_id)
-  {
-    return response()->json(['rsp' => GOSType::destroy($gos_type_id)], 204);
-  }
-
-
 
   public function userCreateGOSType(Request $request)
   {

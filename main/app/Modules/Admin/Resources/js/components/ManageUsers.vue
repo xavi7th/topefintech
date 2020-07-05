@@ -201,7 +201,7 @@
               ToastLarge.fire({
                 title: "Success",
                 html: this.flash.success,
-                type: "success",
+                icon: "success",
                 timer: 5000
               });
             } else {
