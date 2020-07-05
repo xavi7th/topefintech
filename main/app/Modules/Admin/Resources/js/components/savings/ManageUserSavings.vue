@@ -217,7 +217,7 @@
   import ManageAutoSaveSettings from "@dashboard-assets/js/components/savings/partials/ManageAutoSaveSettings";
   import SavingsDistribution from "@dashboard-assets/js/components/savings/partials/SavingsDistribution";
   export default {
-    name: "UserSavings",
+    name: "AdminManageUserSavings",
     mixins: [mixins],
     props: ["gos_types", "savings_list", "auto_save_list", "user"],
     components: {

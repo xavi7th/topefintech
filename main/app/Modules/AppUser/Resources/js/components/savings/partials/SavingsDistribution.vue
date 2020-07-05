@@ -1,7 +1,7 @@
 <template>
   <div class="col-12">
     <div class="d-flex align-items-center justify-content-between mb-25 flex-wrap flex-md-nowrap">
-      <h2 class="mb-0 mr-md-5" id="formBase">My Savings Distribution (%)</h2>
+      <h2 class="mb-0 mr-md-5" id="formBase">Savings Distribution (%)</h2>
 
       <div class="col-12 col-md justify-content-between">
         <button
@@ -9,12 +9,14 @@
           class="btn btn-brand"
           data-toggle="modal"
           data-target="#newGOSModal"
+          v-if="!$page.auth.user.isAdmin"
         >New GOS</button>
         <button
           type="button"
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#newLockedModal"
+          v-if="!$page.auth.user.isAdmin"
         >New Locked Fund</button>
       </div>
       <div class="col-12 col-md text-md-right">
@@ -73,7 +75,7 @@
               Percentage
               <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
             </th>
-            <th scope="col">
+            <th scope="col" v-if="!$page.auth.user.isAdmin">
               Action
               <span data-feather="chevron-down" class="rui-icon rui-icon-stroke-1_5"></span>
             </th>
@@ -94,7 +96,7 @@
               />
               <span v-else>{{ savings.savings_distribution }}%</span>
             </td>
-            <td>
+            <td v-if="!$page.auth.user.isAdmin">
               <a @click.prevent="editDistribution = true" href="#">
                 <span class="icon">
                   <span data-feather="edit" class="rui-icon rui-icon-stroke-1_5"></span>
