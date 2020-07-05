@@ -117,6 +117,11 @@
                         :href="$route('admin.user.smart-interest', user.id)"
                         class="btn btn-brand btn-sm"
                       >Interest Logs</inertia-link>
+                      <inertia-link
+                        v-if="user.is_email_verified"
+                        :href="$route('admin.user.statement', user.id)"
+                        class="btn btn-dark btn-sm"
+                      >Transaction History</inertia-link>
                     </div>
                   </td>
                 </tr>

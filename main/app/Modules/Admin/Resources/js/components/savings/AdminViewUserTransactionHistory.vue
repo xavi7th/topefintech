@@ -1,5 +1,5 @@
 <template>
-  <layout title="My Account Statement" :isAuth="false">
+  <layout :title="`${appUser.full_name}'s Account Statement`">
     <div class="container-fluid">
       <div class="row vertical-gap">
         <div class="col-12 col-lg-8 offset-lg-2">
@@ -51,12 +51,13 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@dashboard-assets/js/AppComponent";
+  import Layout from "@admin-assets/js/AdminAppComponent";
   export default {
-    name: "AccountStatement",
+    name: "UserAccountStatement",
     mixins: [mixins],
     props: {
-      account_statement: Array
+      account_statement: Array,
+      appUser: Object
     },
     components: {
       Layout

@@ -781,6 +781,7 @@ class AppUser extends User
   {
     Route::get('users', [self::class, 'getListOfUsers'])->name('admin.manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
     Route::put('user/{user}/verify', [self::class, 'verifyUser'])->name('admin.user.verify');
+    Route::get('user/{appUser}/statement', [self::class, 'adminGetUserAccountStatement'])->name('admin.user.statement')->defaults('extras', ['nav_skip' => true]);
   }
 
   static function adminApiRoutes()
@@ -932,6 +933,29 @@ class AppUser extends User
     return response()->json(['rsp' => $user->delete()], 204);
   }
 
+  public function adminGetUserAccountStatement(Request $request, AppUser $appUser)
+  {
+    $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($appUser) {
+      return $appUser->load([
+        'loan_transactions.loan_request',
+        'savings_interests.savings.gos_type',
+        'service_charges',
+        'transactions'
+      ]);
+    });
+
+    $account_statement = collect($userStatement->loan_transactions->each->setAppends(['description']))
+      ->merge($userStatement->savings_interests)
+      ->merge($userStatement->service_charges)
+      ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
+
+    if ($request->isApi()) {
+      return $account_statement;
+    }
+
+    return Inertia::render('savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
+  }
+
   public function getUserTransactions(AppUser $user)
   {
     $transactions = $user->transactions()->when(
@@ -953,6 +977,7 @@ class AppUser extends User
           $query->where('amount', 'LIKE',  "%$filter%")->orWhere('trans_type', 'LIKE', "%$filter%");
         });
       })->paginate(request('per_page'));
+
 
     return (new AdminTransactionTransformer)->collectionTransformer($transactions, 'transformForAdminViewTransactions');
   }
