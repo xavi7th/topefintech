@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-lg-4 col-xl-4">
+    <div class="col-lg-4 col-xl-4" v-if="!$page.auth.user.isAdmin">
       <div class="d-flex align-items-center justify-content-between mb-25">
         <h2 class="mnb-2" id="formBase">My AutoSave Settings</h2>
       </div>
@@ -176,6 +176,7 @@
                   type="button"
                   class="btn btn-danger btn-uniform btn-round btn-xs"
                   @click="deleteAutoSave(asv)"
+                  v-if="!$page.auth.user.isAdmin"
                 >
                   <span class="icon">
                     <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
