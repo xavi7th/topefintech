@@ -96,25 +96,6 @@ class Admin extends User
     });
   }
 
-  static function adminApiRoutes()
-  {
-    Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
-      Route::get('dashboard/statistics', [self::class, 'getDashboardStatistics']);
-
-      Route::get('/savings', [self::class, 'getListOfUserSavings']);
-    });
-  }
-
-  public function getDashboardStatistics()
-  {
-    return [
-      'total_users' => AppUser::count(),
-      'total_transactions' => Transaction::where('trans_type', '<>', 'withdrawal')->count(),
-      'total_withdrawals' => Transaction::where('trans_type', 'withdrawal')->count(),
-      'total_messages' => Message::count(),
-    ];
-  }
-
   public function getAdmins(Request $request)
   {
 

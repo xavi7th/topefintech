@@ -6,13 +6,15 @@ use Error;
 use App\User;
 use Throwable;
 use TypeError;
+use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
-use App\Modules\Admin\Transformers\ErrLogTransformer;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use App\Modules\Admin\Transformers\ErrLogTransformer;
 
 /**
  * App\Modules\Admin\Models\ErrLog
@@ -48,6 +50,16 @@ class ErrLog extends Model
 {
   protected $fillable = [];
 
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    if (User::hasRouteNamespace('appuser.')) {
+      Inertia::setRootView('appuser::app');
+    } elseif (User::hasRouteNamespace('admin.')) {
+      Inertia::setRootView('admin::app');
+    }
+  }
+
   static function notifyAdmin(User $user, Throwable $exception, string $message = null)
   {
     // Log::error(json_encode(['userId' => $user->id, 'userType' => get_class($user), 'msg' => $exception->getMessage(), 'context' => $exception]));
@@ -72,15 +84,17 @@ class ErrLog extends Model
 
   static function routes()
   {
-    Route::group(['namespace' => '\App\Modules\Admin\Models'], function () {
-      Route::get('err-logs', 'ErrLog@getErrorLogs')->middleware('auth:admin_api');
-    });
+    Route::get('error-logs', [self::class, 'getErrorLogs'])->name('admin.view_errors')->defaults('extras', ['icon' => 'fas fa-code']);
   }
 
-  public function getErrorLogs()
+  public function getErrorLogs(Request $request)
   {
-    if (auth('admin_api')->check()) {
-      return (new ErrLogTransformer)->collectionTransformer(ErrLog::latest()->get(), 'basicTransform');
+    if (auth('admin')->check()) {
+      $errors = (new ErrLogTransformer)->collectionTransformer(ErrLog::latest()->get(), 'basicTransform')['error_logs'];
+      if ($request->isApi())
+        return $errors;
+
+      return Inertia::render('ErrorLogs', compact('errors'));
     }
   }
 }
