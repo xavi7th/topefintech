@@ -19,6 +19,7 @@ use App\Modules\Admin\Http\Controllers\LoginController;
 use App\Modules\Transformers\AdminTestimonialTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Models\Savings;
+use App\Modules\AppUser\Models\SavingsInterest;
 
 class AdminController extends Controller
 {
@@ -145,6 +146,7 @@ class AdminController extends Controller
         AppUser::adminRoutes();
         GOSType::adminRoutes();
         Savings::adminRoutes();
+        SavingsInterest::adminRoutes();
       });
     });
   }

@@ -1,5 +1,5 @@
 <template>
-  <layout title="User Savings" :isAuth="false">
+  <layout title="My Savings" :isAuth="false">
     <div class="container-fluid">
       <ul class="nav nav-pills rui-tabs-sliding" role="tablist">
         <li class="nav-item">

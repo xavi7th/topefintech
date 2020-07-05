@@ -918,6 +918,7 @@ class AppUser extends User
   public function verifyUser(Request $request, AppUser $user)
   {
     $user->email_verified_at = now();
+    $user->save();
 
     if ($request->isApi())
       return response()->json([], 204);

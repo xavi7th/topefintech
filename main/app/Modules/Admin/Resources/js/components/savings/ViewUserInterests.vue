@@ -1,5 +1,5 @@
 <template>
-  <layout :title="`Interest Records for ${month}`" :isAuth="false">
+  <layout :title="`${user.full_name}'s Savings Interests`" :isAuth="false">
     <div class="container-fluid">
       <div class="row vertical-gap">
         <div class="rui-timeline rui-timeline-right-lg mt-30">
@@ -26,8 +26,11 @@
                   <b class="text-capitalize mr-15">{{savings_type}} savings:</b>
                   {{ interest | Naira }}
                 </a>
-                <div class="rui-gap-3 d-none d-lg-block"></div>
               </div>
+              <inertia-link
+                :href="$route('admin.user.smart-interest.details', [user.id, month])"
+                class="btn btn-info mt-10 mr-0 ml-auto d-block w-30"
+              >Details</inertia-link>
             </div>
             <div class="rui-timeline-date">{{ month }}</div>
           </div>
@@ -40,9 +43,9 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@dashboard-assets/js/AppComponent";
+  import Layout from "@admin-assets/js/AdminAppComponent";
   export default {
-    name: "SmartInterestBreakdown",
+    name: "UserSmartInterests",
     mixins: [mixins],
     components: {
       Layout
@@ -50,7 +53,7 @@
     data: function() {
       return {
         interestSummary: this.$page.interests_summary,
-        month: this.$page.month
+        user: this.$page.user
       };
     }
   };

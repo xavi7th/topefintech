@@ -108,10 +108,15 @@
                         v-if="!user.is_email_verified"
                       >Verify</button>
                       <inertia-link
-                        v-else
+                        v-if="user.is_email_verified"
                         :href="$route('admin.user_savings', user.id)"
                         class="btn btn-success btn-sm"
                       >Savings Details</inertia-link>
+                      <inertia-link
+                        v-if="user.is_email_verified"
+                        :href="$route('admin.user.smart-interest', user.id)"
+                        class="btn btn-brand btn-sm"
+                      >Interest Logs</inertia-link>
                     </div>
                   </td>
                 </tr>
@@ -198,7 +203,7 @@
           .put(this.$route("admin.user.verify", id), null, {
             preserveState: false,
             preserveScroll: true,
-            only: ["errors", "flash"]
+            only: ["errors", "flash", "users"]
           })
           .then(() => {
             if (this.flash.success) {

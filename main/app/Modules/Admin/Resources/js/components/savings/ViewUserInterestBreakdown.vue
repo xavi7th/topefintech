@@ -1,5 +1,5 @@
 <template>
-  <layout :title="`Interest Records for ${month}`" :isAuth="false">
+  <layout :title="`${user.full_name} Records for ${month}`" :isAuth="false">
     <div class="container-fluid">
       <div class="row vertical-gap">
         <div class="rui-timeline rui-timeline-right-lg mt-30">
@@ -40,9 +40,9 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@dashboard-assets/js/AppComponent";
+  import Layout from "@admin-assets/js/AdminAppComponent";
   export default {
-    name: "SmartInterestBreakdown",
+    name: "UserSmartInterestBreakdown",
     mixins: [mixins],
     components: {
       Layout
@@ -50,7 +50,8 @@
     data: function() {
       return {
         interestSummary: this.$page.interests_summary,
-        month: this.$page.month
+        month: this.$page.month,
+        user: this.$page.user
       };
     }
   };

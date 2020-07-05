@@ -7,9 +7,9 @@
 
           <div
             class="rui-timeline-item"
-            v-for="(interest_summary, month) in interestSummary"
-            :key="month"
-            :class="{'rui-timeline-item-swap' : !!(counter++%2)}"
+            v-for="(interest_summary, month, idx) in interestSummary"
+            :key="idx"
+            :class="{'rui-timeline-item-swap' : !!(idx%2)}"
           >
             <div class="rui-timeline-icon">
               <span data-feather="clock" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -52,7 +52,6 @@
     },
     data: function() {
       return {
-        counter: 0,
         interestSummary: this.$page.interests_summary
       };
     }
