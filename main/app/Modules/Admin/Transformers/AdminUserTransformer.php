@@ -45,15 +45,17 @@ class AdminUserTransformer
       'full_name' => (string)$user->full_name,
       'email' => (string)$user->email,
       'phone' => (string)$user->phone,
-      'bvn' => (string)$user->bvn,
-      'user_passport' => (string)$user->user_passport,
       'gender' => (string)$user->gender,
       'acc_type' => (string)$user->acc_type,
       'acc_num' => (string)$user->acc_num,
       'address' => (string)$user->address,
-      'dob' => (string)$user->dob,
+      'date_of_birth' => (string)$user->date_of_birth,
+      'id_card' => (string)$user->id_card,
       'is_verified' => (boolean)$user->is_verified(),
-      'is_processed' => (boolean)$user->is_processed,
+      'is_email_verified' => (boolean)$user->is_email_verified(),
+      'email_verified_at' => (string)$user->email_verified_at,
+      'is_bvn_verified' => (boolean)$user->is_bvn_verified,
+      'is_bank_verified' => (boolean)$user->is_bank_verified,
     ];
   }
 

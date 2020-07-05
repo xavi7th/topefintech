@@ -62,6 +62,14 @@ class Handler extends ExceptionHandler
       if ($this->is404($exception)) {
         $this->log404($request);
       }
+
+      /**
+       * ! Handle API request errors
+       */
+      if ($request->isApi()) {
+        return $response;
+      }
+
       try {
         Inertia::setRootView('basicsite::app');
         return Inertia::render('DisplayError', ['status' => $response->status()])

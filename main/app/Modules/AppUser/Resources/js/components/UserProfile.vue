@@ -504,6 +504,10 @@
     height: auto;
   }
 
+  .invalid-feedback {
+    display: block;
+  }
+
   .rui-profile .rui-profile-img img {
     object-fit: cover;
     display: block;

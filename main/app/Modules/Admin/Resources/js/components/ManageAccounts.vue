@@ -113,34 +113,12 @@
 </template>
 
 <script>
-  import { adminViewUsers } from "@admin-assets/js/config";
   export default {
     name: "ManageAdmins",
     data: () => ({
       users: {},
       userDetails: {}
     }),
-    created() {
-      axios.get(adminViewUsers).then(({ data: { users } }) => {
-        this.users = users;
-
-        this.$nextTick(() => {
-          $(function() {
-            $("#datatable1").DataTable({
-              responsive: true,
-              order: [[0, "desc"]],
-              language: {
-                searchPlaceholder: "Search...",
-                sSearch: ""
-              }
-            });
-          });
-        });
-      });
-    },
-    mounted() {
-      this.$emit("page-loaded");
-    },
     methods: {
       testIt(userDetails) {
         this.userDetails = userDetails;

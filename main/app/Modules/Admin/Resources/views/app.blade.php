@@ -250,7 +250,7 @@
   <script src="{{ mix('js/admin-app.js') }}" defer></script>
 </head>
 
-<body data-spy="scroll" data-target=".rui-page-sidebar" data-offset="140" class="rui-no-transition rui-navbar-autohide rui-section-lines">
+<body>
   <div class="preloader text-center">
     <img src="/img/logo-white.png" alt="">
     <div class="la-ball-circus la-2x">

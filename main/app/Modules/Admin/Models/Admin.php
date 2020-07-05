@@ -91,7 +91,7 @@ class Admin extends User
   {
     Route::group([], function () {
       Route::get('notifications', [self::class, 'getAdminNotifications'])->name('admin.notifications')->defaults('extras', ['nav_skip' => true]);
-      Route::get('admins', [self::class, 'getAdmins'])->name('admin.view_admins');
+      Route::get('admins', [self::class, 'getAdmins'])->name('admin.view_admins')->defaults('extras', ['icon' => 'fas fa-user-tie']);
       Route::post('admin/create', [self::class, 'createAdmin'])->name('admin.create');
     });
   }

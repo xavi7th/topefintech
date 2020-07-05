@@ -48,7 +48,7 @@ mix.webpackConfig( {
      */
 
     new CleanWebpackPlugin( {
-      dry: false,
+      dry: !mix.inProduction(),
       cleanOnceBeforeBuildPatterns: [ 'js/*', 'css/*', '/img/*', 'fonts/*', 'robots.txt', 'mix-manifest.json' ]
 
     } ),

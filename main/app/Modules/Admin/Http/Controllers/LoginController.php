@@ -44,7 +44,8 @@ class LoginController extends Controller
   {
     Inertia::setRootView('admin::app');
     $this->middleware('throttle:5,1')->except(['admin.login.show']);
-    $this->middleware('guest')->only(['admin.login.show', 'admin.password.new']);
+    $this->middleware('guest:admin')->only(['showLoginForm', 'login']);
+    $this->middleware('auth:admin')->only(['logout', 'newAdminSetPassword']);
   }
 
   static function routes()

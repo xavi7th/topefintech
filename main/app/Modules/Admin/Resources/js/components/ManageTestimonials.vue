@@ -155,11 +155,7 @@
 </template>
 
 <script>
-  import {
-    adminViewTestimonials,
-    adminCreateTestimonial,
-    adminDeleteTestimonial
-  } from "@admin-assets/js/config";
+
   export default {
     name: "ManageTestimonials",
     data: () => ({
@@ -169,26 +165,6 @@
       details: {},
       fileUploadName: "Upload user's passport"
     }),
-    created() {
-      axios.get(adminViewTestimonials).then(({ data: { testimonials } }) => {
-        this.testimonials = testimonials;
-
-        this.$nextTick(() => {
-          $(function() {
-            $("#testimonialTable").DataTable({
-              responsive: true,
-              language: {
-                searchPlaceholder: "Search...",
-                sSearch: ""
-              }
-            });
-          });
-        });
-      });
-    },
-    mounted() {
-      this.$emit("page-loaded");
-    },
     methods: {
       attachFile() {
         this.fileUploadName = this.$refs.img.files[0].name;

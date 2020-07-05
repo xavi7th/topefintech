@@ -10,25 +10,25 @@ use Illuminate\Support\Facades\Session;
 
 class OnlyAppUsers
 {
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Closure  $next
-	 * @return mixed
-	 */
-	public function handle(Request $request, Closure $next)
-	{
-		if (!AppUser::canAccess()) {
-			Session::flush();
-			Auth::logout();
+  /**
+   * Handle an incoming request.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \Closure  $next
+   * @return mixed
+   */
+  public function handle(Request $request, Closure $next)
+  {
+    if (!$request->user()->isAppUser()) {
+      Session::flush();
+      Auth::logout();
 
-			if (request()->ajax()) {
-				return response()->json(['status' => 'Unauthorised request'], 423);
-			}
-			return redirect()->route('login')->withErrors('Unauthorised Action');
-		}
+      if (request()->ajax()) {
+        return response()->json(['status' => 'Unauthorised request'], 423);
+      }
+      return redirect()->route('login')->withErrors('Unauthorised Action');
+    }
 
-		return $next($request);
-	}
+    return $next($request);
+  }
 }

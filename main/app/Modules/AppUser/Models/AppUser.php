@@ -147,12 +147,11 @@ class AppUser extends User
   public function __construct(array $attributes = [])
   {
     parent::__construct($attributes);
-    Inertia::setRootView('appuser::app');
-  }
-
-  static function canAccess()
-  {
-    return Auth::user() instanceof AppUser;
+    if (self::hasRouteNamespace('appuser.')) {
+      Inertia::setRootView('appuser::app');
+    } elseif (self::hasRouteNamespace('admin.')) {
+      Inertia::setRootView('admin::app');
+    }
   }
 
   public function service_charges()
@@ -753,10 +752,17 @@ class AppUser extends User
     dd($data);
   }
 
+  static function adminRoutes()
+  {
+    Route::get('users', [self::class, 'getListOfUsers'])->name('admin.manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
+    Route::put('user/{user}/verify', [self::class, 'verifyUser'])->name('admin.user.verify');
+  }
+
   static function adminApiRoutes()
   {
+    // Inertia::setRootView('admin::app');
+
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
-      Route::get('users', [self::class, 'getListOfUsers']);
 
       Route::delete('user/{user}/delete', [self::class, 'deleteUser']);
 
@@ -766,6 +772,8 @@ class AppUser extends User
 
   static function routes()
   {
+    // Inertia::setRootView('appuser::app');
+
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
       Route::get('/auth/verify', [self::class, 'verifyAuth']);
       Route::get('profile', [self::class, 'getUserProfile'])->name('appuser.my_profile')->defaults('extras', ['nav_skip' => true]);
@@ -877,9 +885,23 @@ class AppUser extends User
   }
 
 
-  public function getListOfUsers()
+  public function getListOfUsers(Request $request)
   {
-    return (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');
+    $users = (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');
+    if ($request->isApi())
+      return $users;
+
+    return Inertia::render('ManageUsers', compact('users'));
+  }
+
+  public function verifyUser(Request $request, AppUser $user)
+  {
+    $user->email_verified_at = now();
+
+    if ($request->isApi())
+      return response()->json([], 204);
+
+    return back()->withSuccess('User verified. They will be able to access their dashboard now');
   }
 
   public function deleteUser(AppUser $user)

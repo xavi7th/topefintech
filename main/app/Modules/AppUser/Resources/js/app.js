@@ -9,7 +9,7 @@ import LoadScript from 'vue-plugin-load-script'
 import route from 'ziggy';
 import FlashMessage from '@dashboard-components/partials/FlashMessage'
 import Modal from '@dashboard-components/partials/Modal'
-import Dayjs from 'vue-dayjs';
+import Dayjs from '@dashboard-assets/js/timeFormat';
 
 Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
@@ -17,9 +17,7 @@ Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
 Vue.use( Vue2Filters )
 Vue.use( LoadScript )
 Vue.use( InertiaApp )
-Vue.use( Dayjs, {
-    lang: 'en'
-} );
+Vue.use( Dayjs );
 
 /** ADD A NEW CURRENCY FILTER **/
 Vue.filter( 'Naira', function ( value, symbol ) {
@@ -43,6 +41,7 @@ new Vue( {
             resolveComponent: name => import( /* webpackChunkName: "js/user-" */ `./components/${name}.vue` )
                 .then( module => module.default ).catch( err => {
                     if ( err.code == "MODULE_NOT_FOUND" ) {
+                        debugger
                         location.href = '/'
                     } else {
                         console.error( err );

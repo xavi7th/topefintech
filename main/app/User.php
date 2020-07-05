@@ -2,8 +2,10 @@
 
 namespace App;
 
+use Illuminate\Support\Str;
 use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -134,6 +136,11 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     } else {
       return route('home');
     }
+  }
+
+  static function hasRouteNamespace($namespace = 'app.'): bool
+  {
+    return Str::startsWith(Route::currentRouteName(), $namespace);
   }
 
   public function isAdmin(): bool
