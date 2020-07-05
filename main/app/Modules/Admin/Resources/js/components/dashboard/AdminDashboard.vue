@@ -1,18 +1,6 @@
 <template>
-  <layout title="Admin Dashboard" :isHome="true">
+  <layout title="Admin Dashboard" :isAuth="false">
     <div class="rui-page content-wrap">
-      <div class="rui-page-title">
-        <div class="container-fluid">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <a href="dashboard.html">Home</a>
-              </li>
-            </ol>
-          </nav>
-          <h1>Dashboard</h1>
-        </div>
-      </div>
       <div class="rui-page-content">
         <div class="container-fluid">
           <div
@@ -588,11 +576,6 @@
           </div>
         </div>
       </div>
-      <footer class="rui-footer">
-        <div class="container-fluid">
-          <p class="mb-0">2019 &copy; Design by Dexad and nK.</p>
-        </div>
-      </footer>
     </div>
   </layout>
 </template>
@@ -815,6 +798,3 @@
     }
   };
 </script>
-
-<style lang="scss" scoped>
-</style>

@@ -31,8 +31,6 @@ class LoginController extends Controller
   protected $decayMinutes = 1440;
   protected $maxAttempts = 5;
 
-
-
   /**
    * Where to redirect users after login.
    *
@@ -172,8 +170,6 @@ class LoginController extends Controller
     }
     return redirect()->route('app.login');
   }
-
-
 
   /**
    * Get the login username to be used by the controller.

@@ -116,7 +116,13 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
 
   public function get_navigation_routes(): object
   {
-    return $this->isAdmin() ? get_related_routes('admin.', ['GET']) : $this->isAppUser() ? get_related_routes('appuser.', ['GET']) : get_related_routes('app.', ['GET']);
+    if ($this->isAdmin()) {
+      return get_related_routes('admin.', ['GET']);
+    } elseif ($this->isAppUser()) {
+      return get_related_routes('appuser.', ['GET']);
+    } else {
+      return get_related_routes('app.', ['GET']);
+    }
   }
 
   static function dashboardRoute(): string

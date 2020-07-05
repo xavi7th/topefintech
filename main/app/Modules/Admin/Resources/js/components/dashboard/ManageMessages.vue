@@ -9,12 +9,8 @@
   </main>
 </template>
 <script>
-  import PageHeader from "@admin-components/partials/PageHeaderComponent";
   export default {
-    name: "ManageMessages",
-    mounted() {
-      this.$emit("page-loaded");
-    }
+    name: "ManageMessages"
   };
 </script>
 

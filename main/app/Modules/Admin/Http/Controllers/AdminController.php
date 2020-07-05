@@ -141,13 +141,15 @@ class AdminController extends Controller
 
       Route::group(['middleware' => ['auth:admin', 'admins']], function () {
         Route::get('/', [AdminController::class, 'loadAdminApp'])->name('admin.dashboard');
+
+        Admin::adminRoutes();
       });
     });
   }
 
   public function loadAdminApp()
   {
-    \Auth::logout();
+    // \Auth::logout();
     return Inertia::render('dashboard/AdminDashboard');;
   }
 }
