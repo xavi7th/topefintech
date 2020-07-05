@@ -102,10 +102,6 @@ class Admin extends User
       Route::get('dashboard/statistics', [self::class, 'getDashboardStatistics']);
 
       Route::get('/savings', [self::class, 'getListOfUserSavings']);
-
-
-
-      Route::get('admin/notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications']);
     });
   }
 
@@ -167,12 +163,6 @@ class Admin extends User
     }
   }
 
-  public function getMaturedSavingsNotifications()
-  {
-    return  self::find(1)->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
-  }
-
-
   public function getAdminNotifications(Request $request)
   {
     $request->user()->unreadNotifications->markAsRead();
@@ -180,7 +170,7 @@ class Admin extends User
     if ($request->isApi()) {
       return $request->user()->notifications;
     }
-    return Inertia::render('UserNotifications', [
+    return Inertia::render('AdminNotifications', [
       'notifications' => $request->user()->notifications
     ]);
   }

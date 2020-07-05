@@ -6,6 +6,7 @@ use App\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
@@ -21,6 +22,7 @@ use App\Modules\AppUser\Notifications\GOSSavingsMatured;
 use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
 use App\Modules\Admin\Http\Requests\FundUserSavingsValidation;
 use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
+use App\Modules\Admin\Notifications\SavingsMaturedNotification;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\UpdateSavingsDistributionValidation;
@@ -371,6 +373,7 @@ class Savings extends Model
     Route::post('{appUser}/savings/fund', [self::class, 'distributeFundsToUserSavings'])->name('admin.user_savings.fund')->defaults('extras', ['nav_skip' => true]);
     Route::post('{appUser}/savings/locked-funds/add', [self::class, 'lockMoreUserFunds'])->name('admin.user_savings.locked.fund');
     Route::post('{appUser}/savings/locked-funds/deduct', [self::class, 'deductUserFunds'])->name('admin.user_savings.locked.defund');
+    Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('admin.view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
   }
 
   static function appUserRoutes()
@@ -794,6 +797,18 @@ class Savings extends Model
         ErrLog::notifyAdmin(auth()->user(), $th, 'Deduct funds from savings failed');
       }
     };
+  }
+
+  public function getMaturedSavingsNotifications(Request $request)
+  {
+    $notifications = Admin::find(1)->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
+
+    if ($request->isApi()) {
+      return $notifications;
+    }
+    return Inertia::render('AdminNotifications', [
+      'notifications' => $notifications
+    ]);
   }
 
   /**
