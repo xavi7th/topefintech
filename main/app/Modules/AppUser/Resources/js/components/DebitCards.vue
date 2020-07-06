@@ -43,7 +43,7 @@
                 class="default-card btn btn-dark btn-sm"
                 @click="markDefaultCard(debit_card)"
                 v-else
-              >Mark Default</button>
+              >Mark As Default</button>
             </div>
           </div>
         </div>

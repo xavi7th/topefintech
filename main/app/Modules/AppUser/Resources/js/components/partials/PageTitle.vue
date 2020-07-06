@@ -4,7 +4,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <inertia-link :href="$route('appuser.dashboard')">Smartcoop</inertia-link>
+            <inertia-link :href="$route('appuser.dashboard')">Welcome {{$page.auth.user.full_name}}</inertia-link>
           </li>
         </ol>
       </nav>

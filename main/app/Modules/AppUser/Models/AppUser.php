@@ -154,6 +154,11 @@ class AppUser extends User
     }
   }
 
+  public function paystack_transactions()
+  {
+    return $this->hasMany(PaystackTransaction::class);
+  }
+
   public function service_charges()
   {
     return $this->hasManyThrough(ServiceCharge::class, Savings::class)->latest('service_charges.created_at');
@@ -373,6 +378,11 @@ class AppUser extends User
   public function total_deposit_amount(): float
   {
     return $this->deposit_transactions()->sum('amount');
+  }
+
+  public function daily_interest(): float
+  {
+    return $this->savings_interests()->whereDate('savings_interests.created_at', today())->sum('amount');
   }
 
   public function total_interests_amount(): float

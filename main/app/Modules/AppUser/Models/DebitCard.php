@@ -68,6 +68,7 @@ class DebitCard extends Model
 
   protected $casts = [
     'is_default' => 'boolean',
+    'app_user_id' => 'integer'
   ];
 
   protected $hidden = ['cvv_hash', 'pan_hash'];
