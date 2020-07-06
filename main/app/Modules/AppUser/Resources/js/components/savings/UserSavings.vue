@@ -229,9 +229,6 @@
           });
       },
       addFundsToThisSavings() {
-        /** Call paystack? */
-        /** Then proceed? */
-
         BlockToast.fire({ text: "Adding funds to your savings ..." });
         this.$inertia
           .post(
@@ -299,10 +296,7 @@
           });
       },
       addFundsToSavings() {
-        /** Call paystack? */
-        /** Then proceed? */
         BlockToast.fire({ text: "Adding funds to your savings ..." });
-
         this.$inertia
           .post(
             this.$route("appuser.savings.fund"),

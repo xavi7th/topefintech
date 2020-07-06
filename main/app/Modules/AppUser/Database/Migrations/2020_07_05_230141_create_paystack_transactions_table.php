@@ -20,6 +20,7 @@ class CreatePaystackTransactionsTable extends Migration
       $table->string('description');
       $table->string('transaction_reference');
       $table->longText('paystack_response')->nullable();
+      $table->boolean('is_processed')->default(false);
 
       $table->timestamps();
       $table->softDeletes();

@@ -189,7 +189,9 @@
                 class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-primary btn-w-sm"
               >Enter Amount</button>
             </div>
+            <!--
             <div class="card-footer text-muted">Last Savings: 2 days ago</div>
+            -->
           </div>
         </div>
       </div>
@@ -452,6 +454,12 @@
                 title: "Error",
                 html: this.$page.flash.error,
                 icon: "error"
+              });
+            } else if (this.$page.flash.success) {
+              ToastLarge.fire({
+                title: "Success",
+                html: this.$page.flash.success,
+                icon: "success"
               });
             } else {
               swal.close();

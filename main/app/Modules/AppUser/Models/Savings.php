@@ -16,6 +16,7 @@ use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\SavingsInterest;
+use App\Modules\AppUser\Models\PaystackTransaction;
 use App\Modules\AppUser\Notifications\SmartLockBroken;
 use App\Modules\AppUser\Notifications\SmartLockMature;
 use App\Modules\AppUser\Notifications\GOSSavingsMatured;
@@ -384,6 +385,8 @@ class Savings extends Model
 
     Route::post('/savings/fund', [self::class, 'distributeFundsToSavings'])->name('appuser.savings.fund');
 
+    Route::get('/savings/fund/verify', [self::class, 'verifyDistributeFundsToSavings'])->name('appuser.savings.fund.verify')->defaults('extras', ['nav_skip' => true]);
+
     Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
 
     Route::delete('/savings/auto-save/{autoSaveSetting}', [self::class, 'deleteAutoSaveSettings'])->name('appuser.savings.delete-autosave');
@@ -391,6 +394,8 @@ class Savings extends Model
     Route::post('/savings/locked-funds/create', [self::class, 'createNewLockedFundsProfile'])->name('appuser.savings.locked.initialise');
 
     Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.locked.fund');
+
+    Route::get('/savings/{savings}/locked-funds/add', [self::class, 'verifyLockMoreFunds'])->name('appuser.savings.locked.fund.verify')->defaults('extras', ['nav_skip' => true]);
 
     Route::get('/savings/{savings}/break', [self::class, 'breakLockedFunds']);
 
@@ -405,6 +410,10 @@ class Savings extends Model
     Route::get('/savings/distribution', [self::class, 'getSavingsDistributionRatio']);
 
     Route::put('/savings/distribution/update', [self::class, 'updateSavingsDistributionRatio'])->name('appuser.savings.distribution.update');
+
+    Route::get('savings/initialise', [self::class, 'makeDistributedPayment'])->name('appuser.paystack.initialise')->defaults('extras', ['nav_skip' => true]);
+
+    Route::get('savings/verify', [self::class, 'verifyDistributedPayment'])->name('appuser.paystack.verify')->defaults('extras', ['nav_skip' => true]);
   }
 
   public function viewUserSavings(Request $request)
@@ -482,23 +491,36 @@ class Savings extends Model
 
   public function distributeFundsToSavings(FundSavingsValidation $request)
   {
-    /**
-     * If user has core but no gos or locked update the core
-     * If user has gos or locked use distribution to spread it
-     *
-     * ! UPDATE CORE Update savings and create a transactions record
-     * !
-     */
-    if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
-      auth()->user()->fund_core_savings($request->amount);
-    } else {
-      auth()->user()->distribute_savings($request->amount);
-    }
+    return PaystackTransaction::initializeTransaction($request, $request->amount,  "Distributed savings into account of " . to_naira($request->amount), route('appuser.savings.fund.verify'));
+  }
 
-    if ($request->isApi()) {
-      return response()->json(['rsp' => $request->user()->savings_list], 201);
+  public function verifyDistributeFundsToSavings(Request $request)
+  {
+
+    if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user()))) {
+      return back()->withError('An error occured');
     } else {
-      return back()->withSuccess('Completed! Funds have been distributed into your savings portfolio');
+
+      /**
+       * If user has core but no gos or locked update the core
+       * If user has gos or locked use distribution to spread it
+       *
+       * ! UPDATE CORE Update savings and create a transactions record
+       * !
+       */
+
+
+      if (!$request->user()->has_gos_savings() && !$request->user()->has_locked_savings()) {
+        $request->user()->fund_core_savings($rsp['amount']);
+      } else {
+        $request->user()->distribute_savings($rsp['amount'], $rsp['description']);
+      }
+
+      if ($request->isApi()) {
+        return response()->json(['rsp' => $request->user()->savings_list], 201);
+      } else {
+        return back()->withSuccess('Completed! Funds have been distributed into your savings portfolio');
+      }
     }
   }
 
@@ -517,26 +539,36 @@ class Savings extends Model
       return generate_422_error('Invalid savings selected');
     }
 
-    try {
-      if ($savings->type == 'core') {
+    return PaystackTransaction::initializeTransaction($request, $request->amount, 'Fund ' . $savings->type . ' savings', route('appuser.savings.locked.fund.verify', $savings->id));
+  }
 
-        $request->user()->fund_core_savings($request->amount);
-      } else {
-        $request->user()->fund_locked_savings($savings, $request->amount);
-      }
+  public function verifyLockMoreFunds(Request $request, self $savings)
+  {
+    if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user()))) {
+      return back()->withError('An error occured');
+    } else {
 
-      if ($request->isApi()) {
-        return response()->json(['rsp' => 'Created'], 201);
-      } else {
-        return back()->withSuccess('Congrats! Funds added to savings');
-      }
-    } catch (\Throwable $th) {
-      if ($th->getCode() == 422) {
-        return generate_422_error($th->getMessage());
-      } else {
-        ErrLog::notifyAdmin(auth()->user(), $th, 'Add more funds to savings failed');
-      }
-    };
+      try {
+
+        if ($savings->type == 'core') {
+          $request->user()->fund_core_savings($rsp['amount']);
+        } else {
+          $request->user()->fund_locked_savings($savings, $rsp['amount']);
+        }
+
+        if ($request->isApi()) {
+          return response()->json(['rsp' => 'Created'], 201);
+        } else {
+          return back()->withSuccess('Congrats! Funds added to savings');
+        }
+      } catch (\Throwable $th) {
+        if ($th->getCode() == 422) {
+          return generate_422_error($th->getMessage());
+        } else {
+          ErrLog::notifyAdmin(auth()->user(), $th, 'Add more funds to savings failed');
+        }
+      };
+    }
   }
 
   public function breakLockedFunds(Request $request, self $savings)
@@ -694,6 +726,31 @@ class Savings extends Model
     return back()->withSuccess('Updated');
   }
 
+  public function makeDistributedPayment(Request $request)
+  {
+    if (!$request->amount || $request->amount < 100) {
+      return generate_422_error('An amount is required and must be greater than ' . to_naira(100));
+    }
+    if (!$request->description) {
+      return generate_422_error('A description was not supplied for this transaction');
+    }
+
+    return PaystackTransaction::initializeTransaction($request, $request->amount, $request->description, route('appuser.paystack.verify'));
+  }
+
+  public function verifyDistributedPayment(Request $request)
+  {
+    if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user()))) {
+      return back()->withError('An error occured');
+    } else {
+      /**
+       * Give the user value
+       */
+      $request->user()->distribute_savings($rsp['amount'], $rsp['description']);
+      return back()->withSuccess('Done');
+    }
+  }
+
   public function adminViewUserSavings(Request $request, AppUser $user)
   {
     $savings_list = $user->savings_list->load('gos_type');
@@ -702,7 +759,6 @@ class Savings extends Model
 
     return Inertia::render('savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
   }
-
 
   public function distributeFundsToUserSavings(FundUserSavingsValidation $request, AppUser $appUser)
   {
