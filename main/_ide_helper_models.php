@@ -273,6 +273,8 @@ namespace App\Modules\AppUser\Models{
  * @property-read \App\Modules\AppUser\Models\LoanSurety|null $pending_surety_request
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $withdrawal_requests
  * @property-read int|null $withdrawal_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\PaystackTransaction[] $paystack_transactions
+ * @property-read int|null $paystack_transactions_count
  */
 	class AppUser extends \Eloquent {}
 }
@@ -359,6 +361,14 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withoutTrashed()
  * @mixin \Eloquent
+ * @property int $is_authorised
+ * @property string|null $authorization_code
+ * @property string|null $authorization_object
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereAuthorizationCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereAuthorizationObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereIsAuthorised($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereUuid($value)
  */
 	class DebitCard extends \Eloquent {}
 }
@@ -535,6 +545,14 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction wherePaystackResponse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereTransactionReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereUpdatedAt($value)
+ * @mixin \Eloquent
+ * @property float $amount
+ * @property string $description
+ * @property int $is_processed
+ * @property-read \App\Modules\AppUser\Models\AppUser $app_user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereIsProcessed($value)
  */
 	class PaystackTransaction extends \Eloquent {}
 }

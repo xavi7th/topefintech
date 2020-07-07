@@ -36,7 +36,7 @@
               <br />
               <span style="font-size: 1.5rem;">{{debit_card.month}} / {{debit_card.year}}</span>
               <button
-                class="btn btn-light default-card btn-sm"
+                class="btn btn-dark default-card btn-sm disabled"
                 v-if="debit_card.is_default"
               >Default Card</button>
               <button
@@ -44,6 +44,12 @@
                 @click="markDefaultCard(debit_card)"
                 v-else
               >Mark As Default</button>
+              <button
+                class="default-card btn btn-light btn-sm"
+                @click="authorizeCard(debit_card)"
+                v-if="!debit_card.is_authorised"
+              >Authorize Card</button>
+              <button class="default-card btn btn-light btn-sm" disabled v-else>Card Authorized</button>
             </div>
           </div>
         </div>
@@ -137,6 +143,41 @@
       };
     },
     methods: {
+      authorizeCard(debitCard) {
+        BlockToast.fire({
+          text: "Processing ..."
+        });
+
+        this.$inertia
+          .visit(this.$route("appuser.cards.authorize", debitCard.id), {
+            method: "get",
+            data: {},
+            replace: false,
+            preserveState: false,
+            preserveScroll: false
+          })
+          .then(() => {
+            if (this.flash.success) {
+              ToastLarge.fire({
+                title: "Success",
+                html: this.flash.success,
+                position: "bottom",
+                icon: "success",
+                timer: 5000
+              });
+            } else if (this.flash.error) {
+              ToastLarge.fire({
+                title: "Error",
+                html: this.flash.error,
+                position: "bottom",
+                icon: "error",
+                timer: 10000
+              });
+            } else {
+              swal.close();
+            }
+          });
+      },
       markDefaultCard(debitCard) {
         BlockToast.fire({
           text: "Updating default card..."

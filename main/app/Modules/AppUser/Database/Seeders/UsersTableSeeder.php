@@ -63,7 +63,6 @@ class UsersTableSeeder extends Seeder
         'bvn' => NULL,
         'is_bvn_verified' => 1,
         'is_bank_verified' => 1,
-        'id_card' => NULL,
         'verified_at' => NULL,
         'can_withdraw' => 0,
         'is_active' => 1,

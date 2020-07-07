@@ -29,6 +29,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereTransactionReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property float $amount
+ * @property string $description
+ * @property int $is_processed
+ * @property-read \App\Modules\AppUser\Models\AppUser $app_user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereIsProcessed($value)
  */
 class PaystackTransaction extends Model
 {
@@ -96,10 +103,11 @@ class PaystackTransaction extends Model
    *
    * @param string $trxrf
    * @param \App\Modules\AppUser\Models\AppUser $appUser
+   * @param bool $returnResponse Specify if the paystack response should be returned
    *
    * @return bool|object
    */
-  static function verifyPaystackTransaction(string $trxrf, AppUser $appUser)
+  static function verifyPaystackTransaction(string $trxrf, AppUser $appUser, $returnResponse = false)
   {
     $suspiciousTransaction = false;
     /**
@@ -140,11 +148,20 @@ class PaystackTransaction extends Model
         $savedTransaction->is_processed = true;
         $savedTransaction->save();
 
-        return [
-          'status' => true,
-          'amount' => $paystackRsp['data']['amount'] / 100,
-          'description' => $savedTransaction->description
-        ];
+        if ($returnResponse) {
+          return [
+            'status' => true,
+            'amount' => $paystackRsp['data']['amount'] / 100,
+            'description' => $savedTransaction->description,
+            'paystackRsp' => $paystackRsp
+          ];
+        } else {
+          return [
+            'status' => true,
+            'amount' => $paystackRsp['data']['amount'] / 100,
+            'description' => $savedTransaction->description
+          ];
+        }
       }
     } else {
       return false;

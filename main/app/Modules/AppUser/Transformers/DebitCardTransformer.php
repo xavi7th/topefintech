@@ -42,7 +42,8 @@ class DebitCardTransformer
       'pan' => $debitCard->xed_pan,
       'month' => $debitCard->month,
       'year' => $debitCard->year,
-      'is_default' => $debitCard->is_default
+      'is_default' => $debitCard->is_default,
+      'is_authorised' => $debitCard->is_authorised,
     ];
   }
 }

@@ -127,6 +127,8 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @property-read \App\Modules\AppUser\Models\LoanSurety|null $pending_surety_request
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $withdrawal_requests
  * @property-read int|null $withdrawal_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\PaystackTransaction[] $paystack_transactions
+ * @property-read int|null $paystack_transactions_count
  */
 class AppUser extends User
 {
@@ -319,6 +321,11 @@ class AppUser extends User
     return $this->email_verified_at !== null;
   }
 
+  public function has_authorised_card()
+  {
+    return $this->debit_cards()->where('is_authorised', true)->exists();
+  }
+
   public function has_auto_save(): bool
   {
     return $this->auto_save_settings()->exists();
@@ -490,7 +497,11 @@ class AppUser extends User
 
   public function deduct_debit_card(DebitCard $debit_card_to_deduct, float $amount): bool
   {
-    return (bool)mt_rand(0, 1);
+    if (!$debit_card_to_deduct->is_authorised) {
+      return false;
+    }
+
+    return $debit_card_to_deduct->perform_recurrent_debit($amount);
   }
 
   public function fund_core_savings(float $amount, string $desc = null): void

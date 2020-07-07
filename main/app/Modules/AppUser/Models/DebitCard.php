@@ -3,13 +3,17 @@
 namespace App\Modules\AppUser\Models;
 
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Modules\AppUser\Http\Requests\AddNewDebitCardValidation;
+use App\Modules\AppUser\Models\PaystackTransaction;
 use App\Modules\AppUser\Transformers\DebitCardTransformer;
+use App\Modules\AppUser\Http\Requests\AddNewDebitCardValidation;
 
 /**
  * App\Modules\AppUser\Models\DebitCard
@@ -57,6 +61,14 @@ use App\Modules\AppUser\Transformers\DebitCardTransformer;
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withoutTrashed()
  * @mixin \Eloquent
+ * @property int $is_authorised
+ * @property string|null $authorization_code
+ * @property string|null $authorization_object
+ * @property string $uuid
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereAuthorizationCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereAuthorizationObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereIsAuthorised($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereUuid($value)
  */
 class DebitCard extends Model
 {
@@ -68,7 +80,8 @@ class DebitCard extends Model
 
   protected $casts = [
     'is_default' => 'boolean',
-    'app_user_id' => 'integer'
+    'app_user_id' => 'integer',
+    'authorization_object' => 'object'
   ];
 
   protected $hidden = ['cvv_hash', 'pan_hash'];
@@ -92,6 +105,55 @@ class DebitCard extends Model
   public function is_default_card(): bool
   {
     return $this->is_default;
+  }
+
+  public function perform_recurrent_debit(float $amount): bool
+  {
+    $url = config('services.paystack.charge_authorization_url');
+    $key = config('services.paystack.secret_key');
+    $trxrf = unique_random('paystack_transactions', 'transaction_reference', 'AUT-', 26);
+    $data = [
+      "authorization_code" => $this->authorization_code,
+      "email" => $this->app_user->email,
+      "amount" => $amount * 100,
+      'reference' => $trxrf,
+      'customer_name' => $this->app_user->full_name,
+      'metadata' => [
+        'userName' => $this->app_user->full_name,
+        'userPhone' => $this->app_user->phone
+      ]
+    ];
+
+    $response = Http::withToken($key)->post($url, $data);
+
+    if ($response->failed()) {
+      logger('Paystack Auto Debit Failed for ' . $this->app_user->email, ['paystackRsp' => $response->json(), 'amount' => $amount, 'affectedUser' => $this->app_user]);
+      return false;
+    }
+
+    $paystackRsp = $response->json();
+    dump($paystackRsp);
+    dump($this->app_user->id);
+
+    if ($paystackRsp['status']) {
+      // Model::unguard();
+      // $this->app_user->paystack_transactions()->create(['transaction_reference' => $paystackRsp['data'][ 'reference'], 'amount' => $amount, 'description' => 'Autosave deduction', 'paystack_response' => $paystackRsp, 'is_processed' => true]);
+      // Model::reguard();
+
+
+      $paystackTrx = new PaystackTransaction;
+      $paystackTrx->app_user_id = $this->app_user->id;
+      $paystackTrx->transaction_reference = $paystackRsp['data']['reference'];
+      $paystackTrx->amount = $amount;
+      $paystackTrx->description = 'Autosave deduction';
+      $paystackTrx->paystack_response = json_encode($paystackRsp);
+      $paystackTrx->is_processed = true;
+      $paystackTrx->save();
+
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public function setMonthAttribute($value)
@@ -138,9 +200,12 @@ class DebitCard extends Model
       Route::put('/debit-card/default', [self::class, 'setDefaultDebitCard'])->name('appuser.cards.default');
 
       Route::delete('/debit-card/{debit_card}', [self::class, 'deleteDebitCard'])->name('appuser.cards.delete');
+
+      Route::get('/debit-card/{debitCard}/authorize', [self::class, 'authorizeDebitCard'])->name('appuser.cards.authorize')->defaults('extras', ['nav_skip' => true]);
+
+      Route::get('/debit-card/{debitCard:uuid}/verify', [self::class, 'verifyAuthorizeDebitCard'])->name('appuser.debit_card.verify')->defaults('extras', ['nav_skip' => true]);
     });
   }
-
 
   public function viewDebitCards(Request $request)
   {
@@ -165,7 +230,7 @@ class DebitCard extends Model
 
   public function setDefaultDebitCard(Request $request)
   {
-    $debit_card = DebitCard::findOrFail(request('debit_card_id'));
+    $debit_card = self::findOrFail(request('debit_card_id'));
 
     auth()->user()->debit_cards()->update(['is_default' => false]);
 
@@ -215,5 +280,41 @@ class DebitCard extends Model
     } else {
       abort(403, 'invalid operation');
     }
+  }
+
+  public function authorizeDebitCard(Request $request, self $debitCard)
+  {
+    return PaystackTransaction::initializeTransaction($request, 50, 'Debit card authorization', route('appuser.debit_card.verify', $debitCard->uuid));
+  }
+
+  public function verifyAuthorizeDebitCard(Request $request, self $debitCard)
+  {
+    // dd($debitCard);
+
+    if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user(), $returnResponse = true))) {
+      return back()->withError('An error occured');
+    } else {
+      DB::beginTransaction();
+      /** Give the user value */
+      $request->user()->fund_core_savings($rsp['amount'], $rsp['description']);
+
+      $debitCard->is_authorised = true;
+      $debitCard->authorization_code = $rsp['paystackRsp']['data']['authorization']['authorization_code'];
+      $debitCard->authorization_object = $rsp['paystackRsp']['data']['authorization'];
+      $debitCard->save();
+
+      DB::commit();
+
+      return back()->withSuccess('Done');
+    }
+  }
+
+  public static function boot()
+  {
+    parent::boot();
+
+    static::creating(function ($debitCard) {
+      $debitCard->uuid = Str::uuid();
+    });
   }
 }
