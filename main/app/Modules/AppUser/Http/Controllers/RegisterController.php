@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Http\Requests\RegistrationValidation;
 use App\Modules\AppUser\Notifications\CoreSavingsInitialised;
+use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 
 class RegisterController extends Controller
 {
@@ -68,6 +69,7 @@ class RegisterController extends Controller
     Route::group(['middleware' => 'guest'], function () {
       Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('app.register')->defaults('extras', ['nav_skip' => true]);
       Route::post('register', 'RegisterController@register')->name('appuser.register');
+      Route::get('verify-email/{token}', 'RegisterController@verifyUserToken')->name('appuser.email.verify')->defaults('extras', ['nav_skip' => true]);
     });
   }
 
@@ -85,15 +87,36 @@ class RegisterController extends Controller
   public function register(RegistrationValidation $request)
   {
     DB::beginTransaction();
+
     event(new Registered($user = $this->create($request)));
-
-    // dd($user);
-    // $this->guard()->login($user);
-
-    // $this->apiToken = $this->apiGuard()->login($user);
 
     return $this->registered($request, $user)
       ?: redirect($this->redirectPath());
+  }
+
+
+  public function verifyUserToken(Request $request, string $token)
+  {
+    $tokenRecord = DB::table('password_resets')->where('token', $token)->first();
+
+    if (!$tokenRecord) {
+      return redirect()->route('app.login')->withError('Email could not be verified. Invalid token!');
+    } else {
+      DB::beginTransaction();
+
+      $user = AppUser::where('email', $tokenRecord->email)->first();
+
+      $user->verified_at = now();
+      $user->email_verified_at = now();
+      $user->save();
+
+      DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
+
+      $user->notify(new SendAccountVerificationMessage('database'));
+      DB::commit();
+
+      return redirect()->route('app.login')->withSuccess('Email verified successfully. Login to begin your session');
+    }
   }
 
   /**
@@ -128,7 +151,7 @@ class RegisterController extends Controller
    * @param  mixed  $user
    * @return mixed
    */
-  protected function registered(Request $request, $user)
+  protected function registered(Request $request, AppUser $user)
   {
     //
     ActivityLog::notifyAdmins($user->email   . ' registered an account on the site.');
@@ -143,8 +166,11 @@ class RegisterController extends Controller
     /**
      * Notify the user that a core savings account prifile was initialised for him. He can start saving right away
      */
-
     $user->notify(new CoreSavingsInitialised($user));
+
+    $token = $user->createVerificationToken();
+    $user->notify(new SendAccountVerificationMessage('mail', $token));
+
 
     /**
      * TODO Notify the referrer if any
@@ -153,6 +179,7 @@ class RegisterController extends Controller
 
     DB::commit();
     return redirect()->route('app.login')->withSuccess('Account Created');
+
     return $this->respondWithToken();
   }
 

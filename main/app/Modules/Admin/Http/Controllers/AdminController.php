@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Http\Controllers;
 
 use Carbon\Carbon;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\Log;
@@ -12,14 +13,16 @@ use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\GOSType;
+use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\BasicSite\Models\Testimonial;
+use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Http\Controllers\LoginController;
 use App\Modules\Transformers\AdminTestimonialTransformer;
+use App\Modules\Admin\Notifications\GenericAdminNotification;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
-use App\Modules\AppUser\Models\Savings;
-use App\Modules\AppUser\Models\SavingsInterest;
+use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 
 class AdminController extends Controller
 {
@@ -149,8 +152,10 @@ class AdminController extends Controller
     });
   }
 
-  public function loadAdminApp()
+  public function loadAdminApp(Request $request)
   {
+    // $request->user()->notify(new GenericAdminNotification('test subj', 'test notif'));
+    $request->user()->notify(new SendAccountVerificationMessage('4546576898098tycvbnm,vxsretyuioghfgxvcbvnbn'));
     return Inertia::render('AdminDashboard', [
       'total_savings_amount' => Savings::sum('current_balance'),
       'total_uncleared_interests_amount' => SavingsInterest::uncleared()->sum('amount'),

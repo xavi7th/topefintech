@@ -7,6 +7,7 @@ use App\Modules\Admin\Models\Admin;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\HtmlString;
 
 class GenericAdminNotification extends Notification
 {
@@ -48,8 +49,9 @@ class GenericAdminNotification extends Notification
 
     return (new MailMessage)
       ->subject($this->subject)
-      ->greeting('Hello ' . $admin->first_name . ',')
-      ->line($this->notification);
+      ->greeting('Hello ' . $admin->full_name . ',')
+      ->line($this->notification)
+      ->salutation(new HtmlString('Cheers, <br>' . config('app.name')));
   }
 
   /**

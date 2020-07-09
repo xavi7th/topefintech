@@ -798,6 +798,25 @@ class AppUser extends User
     dd($data);
   }
 
+  /**
+   * Create a new OTP for the user
+   *
+   * Deletes all previous OTP codes, creates a new unique one and then returns it
+   * @return string
+   **/
+  public function createVerificationToken(): string
+  {
+    $token = unique_random('password_resets', 'token', null, 100);
+
+    // DB::table('password_resets')->where('email', $this->email)->delete();
+
+    DB::table('password_resets')->insert(
+      ['email' => $this->email, 'token' => $token, 'created_at' => now()]
+    );
+
+    return $token;
+  }
+
   static function adminRoutes()
   {
     Route::get('users', [self::class, 'getListOfUsers'])->name('admin.manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
