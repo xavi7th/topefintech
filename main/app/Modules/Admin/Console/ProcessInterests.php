@@ -4,9 +4,11 @@ namespace App\Modules\Admin\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Modules\Admin\Models\Admin;
 use App\Modules\AppUser\Models\Savings;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use App\Modules\Admin\Notifications\GenericAdminNotification;
 
 class ProcessInterests extends Command
 {
@@ -23,6 +25,7 @@ class ProcessInterests extends Command
    * @var string
    */
   protected $description = 'Give every user the interests that are due to their portfolio per the interest rates.';
+  protected $notification = [];
 
   /**
    * Create a new command instance.
@@ -56,6 +59,7 @@ class ProcessInterests extends Command
 
         dump($savings_record->app_user->full_name . ' ' . $savings_record->gos_type->name . ' savings intrested with ' . $interest_amount);
 
+        $this->notification[] = $savings_record->app_user->full_name . ' ' . $savings_record->gos_type->name . ' savings intrested with ' . $interest_amount;
         DB::beginTransaction();
         $savings_record->create_interest_record($interest_amount);
 
@@ -66,5 +70,7 @@ class ProcessInterests extends Command
         DB::commit();
       }
     }
+
+    Admin::find(1)->notify(new GenericAdminNotification('Smart Interest Logs', collect($this->notification)->implode(', ')));
   }
 }

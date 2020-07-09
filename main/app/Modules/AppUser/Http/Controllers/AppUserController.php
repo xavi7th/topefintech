@@ -67,8 +67,6 @@ class AppUserController extends Controller
 
         AppUser::routes();
 
-        ErrLog::routes();
-
         // Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
       });
     });

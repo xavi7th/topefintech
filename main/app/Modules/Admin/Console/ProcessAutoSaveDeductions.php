@@ -11,6 +11,7 @@ use App\Modules\AppUser\Models\DebitCard;
 use App\Modules\AppUser\Models\AutoSaveSetting;
 use App\Modules\AppUser\Notifications\CardDebitFailure;
 use App\Modules\AppUser\Notifications\CardDebitSuccess;
+use App\Modules\Admin\Notifications\GenericAdminNotification;
 use App\Modules\AppUser\Notifications\AutoSaveSavingsFailure;
 use App\Modules\AppUser\Notifications\AutoSaveSavingsSuccess;
 use App\Modules\AppUser\Notifications\DefaultDebitCardNotFound;
@@ -144,7 +145,7 @@ class ProcessAutoSaveDeductions extends Command
     if ($app_user->total_distribution_percentage() != 100) {
       try {
         $app_user->notify(new InvalidSavingsDistributionValue);
-        Admin::find(1)->notify($app_user->full_name . ' has an invalid savings distribution value of ' . $app_user->total_distribution_percentage());
+        Admin::find(1)->notify(new GenericAdminNotification('Invalid Savings', $app_user->full_name . ' has an invalid savings distribution value of ' . $app_user->total_distribution_percentage()));
         logger()->notice($app_user->full_name . ' has an invalid savings distribution value of ' . $app_user->total_distribution_percentage());
       } catch (\Throwable $th) {
         ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of invalid savings distribution value of ' . $app_user->total_distribution_percentage());
@@ -176,7 +177,7 @@ class ProcessAutoSaveDeductions extends Command
     if (is_null($debit_card_to_deduct)) {
       try {
         $app_user->notify(new DefaultDebitCardNotFound());
-        Admin::find(1)->notify($app_user->full_name . ' has no default card to auto deduct');
+        Admin::find(1)->notify(new GenericAdminNotification('Auto Deduct Failure', $app_user->full_name . ' has no default card to auto deduct'));
         logger()->notice($app_user->full_name . ' has no default card to auto deduct');
       } catch (\Throwable $th) {
         ErrLog::notifyAdmin($app_user, $th, 'failure to notify user that default card not found');
@@ -257,7 +258,7 @@ class ProcessAutoSaveDeductions extends Command
      */
     try {
       $app_user->notify(new CardDebitSuccess($deducted_debit_card, $amount));
-      Admin::find(1)->notify("Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan");
+      Admin::find(1)->notify(new GenericAdminNotification('Successful Auto Debit', "Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan"));
       logger()->notice("Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan");
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of card debit success');
@@ -272,8 +273,8 @@ class ProcessAutoSaveDeductions extends Command
 
     try {
       $app_user->notify(new AutoSaveSavingsSuccess($amount));
-      Admin::find(1)->notify("Autosave successful for $app_user->full_name. Amount: $amount");
-      logger()->notice("Autosave successful for $app_user->full_name. Amount: $amount");
+      Admin::find(1)->notify(new GenericAdminNotification('Autosave Successful', "Autosave successful for $app_user->full_name. Amount: " . $amount));
+      logger()->notice("Autosave successful for $app_user->full_name. Amount: " . $amount);
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of autosave success');
     }
@@ -295,7 +296,7 @@ class ProcessAutoSaveDeductions extends Command
      */
     try {
       $app_user->notify(new CardDebitFailure($failed_debit_card, $amount));
-      Admin::find(1)->notify("There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan");
+      Admin::find(1)->notify(new GenericAdminNotification('Failed AutoDebit', "There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan"));
       logger()->notice("There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan");
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of card debit failure');
@@ -320,7 +321,7 @@ class ProcessAutoSaveDeductions extends Command
      */
     try {
       $app_user->notify(new AutoSaveSavingsFailure($amount, $reason));
-      Admin::find(1)->notify($app_user->full_name . ' autosave failed. Reason: ' . $reason);
+      Admin::find(1)->notify(new GenericAdminNotification($app_user->full_name . ' autosave failed.', $reason));
       logger()->notice($app_user->full_name . ' autosave failed. Reason: ' . $reason);
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of auto save failure');

@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-07-07 06:23:12.
+    * Generated on 2020-07-09 08:01:06.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -152,7 +152,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -330,7 +329,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -508,7 +506,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -686,7 +683,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -864,7 +860,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -1042,7 +1037,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -1220,7 +1214,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,
@@ -1398,7 +1391,6 @@ namespace PHPSTORM_META {
         'laravel-log-to-db' => \danielme85\LaravelLogToDB\LogToDB::class,
         'log' => \Illuminate\Log\LogManager::class,
         'mail.manager' => \Illuminate\Mail\MailManager::class,
-        'mailer' => \Illuminate\Mail\Mailer::class,
         'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
         'migration.creator' => \Illuminate\Database\Migrations\MigrationCreator::class,
         'migration.repository' => \Illuminate\Database\Migrations\DatabaseMigrationRepository::class,

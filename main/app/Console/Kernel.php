@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use Nwidart\Modules\Facades\Module;
-use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Modules\Admin\Jobs\SendLoginNotification;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -28,10 +27,8 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
-
     $schedule->command('savings:process-interest')
-      // ->daily()
-      ->dailyAt('06:40')
+      ->daily()
       ->withoutOverlapping(10)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-interests-' . now()->toDateString() . '.cson')
       ->emailOutputTo('xavi7th@gmail.com')
