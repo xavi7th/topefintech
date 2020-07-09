@@ -58,6 +58,7 @@ class AppUserTransformer
       'bank' => (string)$user->acc_bank,
       'account_number' => (string)$user->acc_num,
       'is_bvn_verified' => (bool)$user->is_bvn_verified,
+      'is_bank_verified' => (bool)$user->is_bank_verified,
       'phone' => (string)$user->phone,
       'id_card' => (string)$user->id_card,
       'is_email_verified' => (boolean)$user->is_email_verified(),

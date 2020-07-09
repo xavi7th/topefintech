@@ -27,6 +27,7 @@ use App\Modules\Admin\Notifications\SavingsMaturedNotification;
 use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\UpdateSavingsDistributionValidation;
+use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 
 /**
  * App\Modules\AppUser\Models\Savings
@@ -516,6 +517,8 @@ class Savings extends Model
         $request->user()->distribute_savings($rsp['amount'], $rsp['description']);
       }
 
+      $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
+
       if ($request->isApi()) {
         return response()->json(['rsp' => $request->user()->savings_list], 201);
       } else {
@@ -555,6 +558,8 @@ class Savings extends Model
         } else {
           $request->user()->fund_locked_savings($savings, $rsp['amount']);
         }
+
+        $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
 
         if ($request->isApi()) {
           return response()->json(['rsp' => 'Created'], 201);
@@ -747,6 +752,9 @@ class Savings extends Model
        * Give the user value
        */
       $request->user()->distribute_savings($rsp['amount'], $rsp['description']);
+
+      $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
+
       return back()->withSuccess('Done');
     }
   }
@@ -776,6 +784,8 @@ class Savings extends Model
       $appUser->distribute_savings($request->amount);
     }
 
+    $appUser->notify(new NewSavingsSuccess($request->amount));
+
     if ($request->isApi()) return response()->json(['rsp' => $appUser->savings_list], 201);
 
     return back()->withSuccess('Completed! Funds have been distributed into user´s savings portfolio');
@@ -803,6 +813,8 @@ class Savings extends Model
       } else {
         $appUser->fund_locked_savings($savings, $request->amount);
       }
+
+      $appUser->notify(new NewSavingsSuccess($request->amount));
 
       if ($request->isApi()) {
         return response()->json(['rsp' => 'Created'], 201);

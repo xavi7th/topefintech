@@ -18,6 +18,9 @@ return [
   'email' => env('APP_EMAIL', null),
   'address' => env('APP_ADDRESS', null),
   'whatsapp' => env('APP_WHATSAPP', null),
+  'facebook' => env('APP_FACEBOOK', null),
+  'instagram' => env('APP_INSTAGRAM', null),
+  'twitter' => env('APP_TWITTER', null),
 
   /*
     |--------------------------------------------------------------------------

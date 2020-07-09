@@ -75,7 +75,7 @@
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-widget-chart-info">
                   <div class="rui-widget-title h2">{{ total_interests_amount | Naira }}</div>
-                  <small class="rui-widget-subtitle">All Time Interests</small>
+                  <small class="rui-widget-subtitle">Total Accrued Interests</small>
                 </div>
                 <div class="rui-chartjs-container">
                   <div

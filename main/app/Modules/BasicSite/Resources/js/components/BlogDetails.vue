@@ -8,10 +8,10 @@
             <div class="col-sm-12">
               <div class="bannerTitle text-left">
                 <h2>Blog Details</h2>
-                <p>
+                <!-- <p>
                   We are here to help you when you need your
                   <br />financial support, then we are help you.
-                </p>
+                </p>-->
               </div>
             </div>
           </div>

@@ -32,13 +32,14 @@ class BasicSiteController extends Controller
   public static function routes()
   {
     Route::group(['middleware' => 'web', 'namespace' => 'App\\Modules\BasicSite\Http\Controllers'], function () {
-      Route::get('/', [BasicSiteController::class, 'index'])->name('app.home');
-      Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/', [BasicSiteController::class, 'index'])->name('app.home')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/investment-shop', [BasicSiteController::class, 'investmentShop'])->name('app.investment_shop');
       Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
-      Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.career');
+      Route::get('/blog', [BasicSiteController::class, 'blog'])->name('app.blog');
+      Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.career')->defaults('extras', ['nav_skip' => true]);
       Route::get('/privacy', [BasicSiteController::class, 'showPrivacyPage'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
       Route::get('/terms-and-conditions', [BasicSiteController::class, 'showTermsPage'])->name('app.terms')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us');
+      Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us')->defaults('extras', ['nav_skip' => true]);
       Route::post('/contact', [BasicSiteController::class, 'sendContactMessage'])->name('app.contact');
     });
   }
@@ -53,7 +54,12 @@ class BasicSiteController extends Controller
 
   public function blog()
   {
-    return Inertia::render('OurBlogPage');
+    return response('', 409)->header('X-Inertia-Location', 'https://blog.smartcoophq.org');
+  }
+
+  public function investmentShop()
+  {
+    return response('', 409)->header('X-Inertia-Location', 'https://shop.smartcoophq.org');
   }
 
   public function faqs()

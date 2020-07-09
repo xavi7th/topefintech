@@ -30,6 +30,12 @@
                 <li>
                   <inertia-link :href="$route('app.career')">Careers</inertia-link>
                 </li>
+                <li>
+                  <inertia-link
+                    class="hidden-sm hidden-lg hidden-md hidden-xl"
+                    :href="$route('app.contact_us')"
+                  >Contact Us</inertia-link>
+                </li>
               </ul>
             </aside>
           </div>
@@ -52,18 +58,18 @@
 
               <h5 class="mt-5">Our Community</h5>
               <ul class="social">
-                <li>
-                  <a href="#">
+                <li v-if="$page.app.facebook">
+                  <a target="_blank" :href="$page.app.facebook">
                     <i class="fa fa-facebook"></i>
                   </a>
                 </li>
-                <li>
-                  <a href="#">
+                <li v-if="$page.app.instagram">
+                  <a target="_blank" :href="$page.app.instagram">
                     <i class="fa fa-twitter"></i>
                   </a>
                 </li>
-                <li>
-                  <a href="#">
+                <li v-if="$page.app.twitter">
+                  <a target="_blank" :href="$page.app.twitter">
                     <i class="fa fa-instagram"></i>
                   </a>
                 </li>

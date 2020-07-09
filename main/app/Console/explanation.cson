@@ -1,0 +1,42 @@
+The first line: I'm using "queue:restart" to shut down (it doesn't actually restart) all queue:work instances that are running for the Laravel installation, including any that might be running from the console. It runs once an hour. It also stops them "gracefully", which means they finish processing the current job before stopping, unlike using a "kill -9" command.
+
+The second line: I'm using "queue:work" to start running the queue again. I'm using it instead of "queue:listen", because "queue:restart" doesn't shut down "queue:listen" instances (I will explain why this is problem when I explain "withoutOverlapping"). It can be nicer to use "queue:listen", as it reloads completely for each job it processes, and you don't have to worry about memory leaks. However, for that same reason, "queue:work" is more efficient and runs faster.
+
+I'm using "--sleep 3" to tell the "queue:work" instance to check every 3 seconds (once the queue is empty) for new jobs. It's an arbitrary number, and if a mail job (for example) is added to an empty queue, it will take up to 3 seconds before it processes, and sends.
+
+I'm using "--timeout=900" to tell the queue to let jobs run up to 15 minutes before stopping the job, and retrying it again. I have some jobs that can several minutes, so this is a reasonable number for me. Note: it's important to write long running jobs like this in such a way that they can be safely stopped and restarted.
+
+I'm using "--queue=high,default,low" to set the priority at which jobs will be handled. All "high" jobs will be processed first, then "default", then "low". Under config/queue.php the default queue name is "default", (and I didn't change anything there) so when jobs are "dispatch"ed without "onQueue" method, they will go into the default queue. I add my longer running jobs using: "Job::dispatch()->onQueue('low')".
+
+I could probably duplicate the second line a few times, and add multiple "queue:work" instances to focus on specific queues or sets of queues (e.g. a queue:work with only "--queue:high"). That would be more robust, as long running "low" priority job could start right before a "high" priority job is added, and it could be 15 minutes before the job finishes, and "queue:work" checks and finds the "high" priority job.
+
+I'm using "runInBackground" because the "queue:work" will continue running indefinitely, and unless it's the last line of the scheduler, I believe it will block further scheduling for that interval. I specifically do not use "runInBackground" for the "queue:restart", as I want it to complete before the "queue:work" starts, although I'm not 100% sure it won't stop the "queue:work" that is started immediately after.
+
+I'm using "withoutOverlapping" to prevent more than one instance of the "queue:work" from running (as my scheduler is called from cron every minute, and I don't want another "queue:work" to start again. I don't know exactly what would happen if I had two duplicate "queue:work" lines, if it would still only limit it to one instance, or each line would be treated as a separate instance (my guess is only one would run). I also don't know what happens if there are two separate "queue:work" lines with different parameters, (my guess is both would run). Now, as I mentioned before, because you can't shut down "queue:listen" with "queue:restart" (at least with the database driver), this would be a problem (and is why I'm using "queue:work" instead). According to the documentation, "withoutOverlapping" locks expire after 24 hours. That means, if the "queue:listen" instances never crash, or stop, a new one will be added every day (I assume, unless the lock expiring causes the instance to stop running).
+
+I'm using "everyMinute" to check every minute, and make sure the "queue:work" instance is still running, and if not, start it again. In my experience, queue worker instances will randomly get shut down or crash every few hours or days (I assume that a crash / shutdown will immediately expire the "withoutOverlapping" lock, but I haven't actually verified that).
+
+In my case, I often have jobs added right after the hour mark (when all "queue:work" instances are shut down). This allows me to spawn additional "queue:work" instances that I call using "--stop-when-empty" (so they terminate once the job queue is empty). Because they start right after the hour mark, they will run up to ~59 minutes before the scheduler "queue:restart" shuts them down.
+
+This system has worked for me so far, but I'm not an expert, I'm just basing this off what I've read and observed.
+
+This is my updated code inside Kernel.php (Laravel 5.8):
+
+$schedule->command('queue:restart')->hourly();
+$schedule->command('queue:work --sleep=3 --timeout=900 --tries=254 --delay=600 --queue=high,default,low')->runInBackground()->withoutOverlapping()->everyMinute();
+
+I added "--tries=254", as the table limit for the field is 255, and it will generate an error if a job reaches 255 failed attempts, and stop the rest of the queue from processing. I also added the Laravel support for failed_jobs table, so if a job fails 254 times it will be stored there instead of deleted.
+
+I added "--delay=600" as my email sending jobs would sometimes have trouble connecting, and it was causing the jobs to fail until smtp/etc. started working again. This way, the jobs retry every 10 minutes (for a little under 2 days) before they are moved out of queue to failed_jobs (instead of failing almost immediately if email services are temporarily down / restarting).
+
+
+Another solution is:
+
+$schedule->command('queue:restart')
+    ->everyFiveMinutes();
+
+$schedule->command('queue:work --daemon')
+    ->everyMinute()
+    ->withoutOverlapping();
+Currently it is working.
+Will try a few days to see if there's any issues.

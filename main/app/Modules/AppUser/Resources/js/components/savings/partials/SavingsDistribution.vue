@@ -19,31 +19,7 @@
           v-if="!$page.auth.user.isAdmin"
         >New Locked Fund</button>
       </div>
-      <div class="col-12 col-md text-md-right">
-        <button
-          v-show="editDistribution"
-          type="button"
-          class="btn btn-danger"
-          @click="updateSavingsDistribution"
-        >Update Savings Distribution</button>
-        <button
-          type="button"
-          class="btn btn-success btn-uniform btn-round"
-          @click="editDistribution = false"
-          v-show="editDistribution"
-        >
-          <span class="icon">
-            <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
-          </span>
-        </button>
-      </div>
     </div>
-    <FlashMessage />
-    <template v-if="$page.errors">
-      <div class="d-flex align-items-center justify-content-between flex-column mb-25">
-        <FlashMessage v-for="err in $page.errors" :msg="err[0]" :key="err[0]" />
-      </div>
-    </template>
     <div class="table-responsive">
       <table class="table table-bordered rui-datatable" data-datatable-order="0:asc">
         <thead class="thead-dark">
@@ -107,6 +83,30 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="col-12 col-md text-md-right">
+      <button
+        v-show="editDistribution"
+        type="button"
+        class="btn btn-danger"
+        @click="updateSavingsDistribution"
+      >Update Savings Distribution</button>
+      <button
+        type="button"
+        class="btn btn-success btn-uniform btn-round"
+        @click="editDistribution = false"
+        v-show="editDistribution"
+      >
+        <span class="icon">
+          <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+        </span>
+      </button>
+      <FlashMessage />
+      <template v-if="$page.errors">
+        <div class="d-flex align-items-center justify-content-between flex-column mb-25">
+          <FlashMessage v-for="err in $page.errors" :msg="err[0]" :key="err[0]" />
+        </div>
+      </template>
     </div>
   </div>
 </template>

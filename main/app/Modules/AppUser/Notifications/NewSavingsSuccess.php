@@ -8,21 +8,24 @@ use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class AutoSaveSavingsSuccess extends Notification
+class NewSavingsSuccess extends Notification
 {
   use Queueable;
 
   /** @var float $amount The amount that we successfully deducted from the user's card */
   private $amount;
 
+  private $type;
+
   /**
    * Create a new notification instance.
    *
    * @return void
    */
-  public function __construct(float $amount)
+  public function __construct(float $amount, string $type = null)
   {
     $this->amount = $amount;
+    $this->type = $type;
   }
 
   /**
@@ -41,7 +44,7 @@ class AutoSaveSavingsSuccess extends Notification
       ->success()
       ->subject('Payment received ')
       ->greeting('Hello ' . $appUser->full_name . ',')
-      ->line('We just received your autosave payment of ' . to_naira($this->amount))
+      ->line('We just received your payment of ' . to_naira($this->amount))
       ->line('To see your new balance login to your account.')
       ->line('Your interest on this deposit has been booked and will start accruing at ' . now()->addDays(config('app.days_before_interest_starts_counting'))->toDateString())
       ->action('View Balance', route('appuser.savings'))
@@ -57,7 +60,7 @@ class AutoSaveSavingsSuccess extends Notification
   public function toDatabase($user)
   {
     return [
-      'action' => 'Congratulations! Based on your auto save setting, you have automatically saved ' . to_naira($this->amount) . " according to your savings distribution."
+      'action' => 'Congratulations! You just saved ' . to_naira($this->amount) . " according to your savings distribution."
     ];
   }
 }

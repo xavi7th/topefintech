@@ -116,6 +116,13 @@
               <FlashMessage v-if="errors.year" :msg="errors.year[0]" />
               <FlashMessage v-if="errors.month" :msg="errors.month[0]" />
             </div>
+            <div class="col-12">
+              <img
+                src="/img/paystack_preview.png"
+                alt="secured with paystack logo"
+                class="img-fluid"
+              />
+            </div>
           </div>
         </form>
       </modal>

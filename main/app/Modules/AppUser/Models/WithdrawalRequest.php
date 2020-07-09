@@ -188,7 +188,7 @@ class WithdrawalRequest extends Model
      * Notify user that his request was declined
      */
     try {
-      $request_details->app_user->notify(new DeclinedWithdrawalRequestNotification);
+      $request_details->app_user->notify(new DeclinedWithdrawalRequestNotification($request_details->amount));
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin($request_details->app_user, $th, 'Declined withdrawal notification failed');
     }

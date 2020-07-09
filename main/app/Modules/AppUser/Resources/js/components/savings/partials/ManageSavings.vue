@@ -43,7 +43,7 @@
                 @click="fundThisSavings(savings)"
               >
                 <span class="icon">
-                  <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
+                  <span data-feather="plus" class="rui-icon rui-icon-stroke-1_5"></span>
                 </span>
               </button>
               <button

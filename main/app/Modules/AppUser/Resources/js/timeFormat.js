@@ -4,7 +4,7 @@
 
 import dayjs from 'dayjs';
 
-const InvalidReturn = '';
+const InvalidReturn = 'N/A';
 const LangSet = {
     en: {
         Y: ' year',

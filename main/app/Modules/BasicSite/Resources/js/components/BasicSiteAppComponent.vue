@@ -28,6 +28,9 @@
       if (this.$isCurrentUrl("app.home")) {
         let bodyElem = document.querySelector("body");
         bodyElem.classList.remove("bg_right");
+      } else {
+        let bodyElem = document.querySelector("body");
+        bodyElem.classList.add("bg_right");
       }
     },
     watch: {

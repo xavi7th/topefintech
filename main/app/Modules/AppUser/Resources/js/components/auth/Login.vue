@@ -49,7 +49,10 @@
         </div>
         <div class="col-sm-6">
           <div class="d-flex justify-content-end">
-            <a href="#" class="fs-13">Forgot password?</a>
+            <inertia-link
+              :href="$route('appuser.password_reset.request')"
+              class="fs-13"
+            >Forgot password?</inertia-link>
           </div>
         </div>
         <div class="col-12">
@@ -80,7 +83,7 @@
       </div>
       <div class="mt-20 text-grey-5 text-center">
         Don't have an account?
-        <inertia-link :href="$route('app.register')" class="text-2">Get one fast</inertia-link>
+        <inertia-link :href="$route('app.create_account')" class="text-2">Get one fast</inertia-link>
       </div>
     </form>
   </layout>
@@ -111,7 +114,19 @@
             if (_.size(this.errors)) {
               this.formSubmitted = true;
             }
-            swal.close();
+
+            if (this.$page.flash.error) {
+              ToastLarge.fire({
+                title: "Oops!",
+                html: this.$page.flash.error,
+                icon: "error",
+                timer: 10000,
+                footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartcoophq.org">hello@smartcoophq.org</a>`
+              }).then(() => {});
+            } else {
+              swal.close();
+            }
+            this.$page.flash.error = null;
           });
       }
     }

@@ -5,13 +5,18 @@ namespace App\Modules\AppUser\Http\Controllers;
 use App\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\Admin\Models\ActivityLog;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Modules\AppUser\Notifications\SendPasswordResetLink;
 
 /**
  *
@@ -55,8 +60,11 @@ class LoginController extends Controller
   static function routes()
   {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('extras', ['nav_skip' => true]);
-    Route::post('login', 'LoginController@login')->middleware('guest')->name('appuser.login');
-    Route::post('logout', 'LoginController@logout')->name('appuser.logout')->middleware('auth');
+    Route::post('login', [self::class, 'login'])->middleware('guest')->name('appuser.login');
+    Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
+    Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
+    Route::get('reset-password/{token}', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
+    Route::put('reset-password/', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
   }
 
   public function showLoginForm(Request $request)
@@ -107,6 +115,77 @@ class LoginController extends Controller
     return $this->sendFailedLoginResponse($request);
   }
 
+  public function logout(Request $request)
+  {
+    $this->guard()->logout();
+    $request->session()->invalidate();
+
+    try {
+      $this->apiGuard()->logout();
+    } catch (\Throwable $th) { }
+
+    if ($request->isApi()) {
+      return response()->json(['logged_out' => true], 200);
+    }
+    return redirect()->route('app.login');
+  }
+
+  public function showRequestPasswordForm(Request $request)
+  {
+    if ($request->isMethod('GET')) {
+      return Inertia::render('auth/RequestPasswordReset');
+    } else if ($request->isMethod('POST')) {
+      if (!$request->email) {
+        return generate_422_error('An email is required to reset your password');
+      }
+      try {
+        $user = AppUser::where('email', $request->email)->firstOrFail();
+
+        $token = $user->createVerificationToken();
+        $user->notify(new SendPasswordResetLink($token));
+      } catch (ModelNotFoundException $th) { }
+
+      return back()->withSuccess('If the email is valid, a password reset link will be sent to your email. Follow the instructions to reset your password');
+    }
+  }
+
+  public function showResetPasswordForm(Request $request, string $token)
+  {
+    $tokenRecord = DB::table('password_resets')->where('token', $token)->first();
+
+    if (!$tokenRecord) {
+      return redirect()->route('appuser.password_reset.request')->withError('Password reset token could not be verified. Invalid token!');
+    }
+    if (now()->subHours(6)->gte(Carbon::parse($tokenRecord->created_at))) {
+      DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
+      return redirect()->route('appuser.password_reset.request')->withError('Password reset token could completed. This link has expired. Try again!');
+    } else {
+      return Inertia::render('auth/ResetPassword', compact('token'));
+    }
+  }
+
+  public function resetUserPassword(Request $request)
+  {
+    $validated = Validator::make($request->all(), [
+      'password' => 'required|max:50|confirmed',
+      'token' => 'required|exists:password_resets,token'
+    ])->validate();
+
+    DB::beginTransaction();
+
+    $tokenRecord = DB::table('password_resets')->where('token', $validated['token'])->first();
+    $user = AppUser::where('email', $tokenRecord->email)->first();
+
+    $user->password = $request->password;
+    $user->save();
+
+    DB::table('password_resets')->where('token', $validated['token'])->delete();
+
+    DB::commit();
+
+    return redirect()->route('app.login')->withSuccess('Password reset successfully. Login to access your dashboard');
+  }
+
   /**
    * Validate the user login request.
    *
@@ -143,7 +222,7 @@ class LoginController extends Controller
         if ($request->isApi()) {
           return response()->json(['message' => 'Unverified user'], 416);
         }
-        return back()->withError('Your account has not been verified. Check your email for a verification mail.');
+        return back()->withError('Sorry buddy, <br> Your email address has not been verified. <br> Please check your email for a verification mail or send us a message.');
       }
     } else {
       Auth::logout();
@@ -152,21 +231,6 @@ class LoginController extends Controller
         return response()->json(['message' => 'Access Denied'], 401);
       }
       abort(401, 'Access Denied');
-    }
-    return redirect()->route('app.login');
-  }
-
-  public function logout(Request $request)
-  {
-    $this->guard()->logout();
-    $request->session()->invalidate();
-
-    try {
-      $this->apiGuard()->logout();
-    } catch (\Throwable $th) { }
-
-    if ($request->isApi()) {
-      return response()->json(['logged_out' => true], 200);
     }
     return redirect()->route('app.login');
   }

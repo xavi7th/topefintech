@@ -53,6 +53,9 @@ class BasicSiteServiceProvider extends ServiceProvider
         'address' => config('app.address'),
         'phone' => config('app.phone'),
         'email' => config('app.email'),
+        'facebook' => config('app.facebook'),
+        'instagram' => config('app.instagram'),
+        'twitter' => config('app.twitter'),
       ],
       'routes' => function (Request $request) {
         return $request->route() ? Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? [] : (object)[];

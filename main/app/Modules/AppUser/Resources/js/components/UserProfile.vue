@@ -208,7 +208,7 @@
                     </div>
 
                     <div class="col-6">
-                      <label for="id_card">{{fileUploadName || 'ID Card'}}</label>
+                      <label for="id_card">{{fileUploadName || 'Profile Picture'}}</label>
                       <input
                         type="file"
                         class="form-control"
@@ -252,38 +252,43 @@
                     </div>
 
                     <div class="col-12">
+                      <label for="acc_num">Account Name</label>
+                      <input
+                        class="form-control"
+                        :value="auth.user.full_name"
+                        id="acc_num"
+                        disabled
+                      />
+                    </div>
+
+                    <div class="col-12">
                       <label for="acc_num">Account Number</label>
                       <input
                         class="form-control"
+                        v-if="!auth.user.is_bank_verified"
                         :class="{'is-invalid': errors.acc_num, 'is-valid': !errors.acc_num}"
                         v-model="details.acc_num"
                         id="acc_num"
                         placeholder="Account Number"
                       />
+                      <span v-else class="d-block form-control">{{ auth.user.account_number }}</span>
+
                       <FlashMessage v-if="errors.acc_num" :msg="errors.acc_num[0]" />
                     </div>
 
-                    <div class="col-6">
-                      <label for="acc_type">Account Type</label>
-                      <input
-                        class="form-control"
-                        :class="{'is-invalid': errors.acc_type, 'is-valid': !errors.acc_type}"
-                        v-model="details.acc_type"
-                        id="acc_type"
-                        placeholder="Your Account Type"
-                      />
-                      <FlashMessage v-if="errors.acc_type" :msg="errors.acc_type[0]" />
-                    </div>
-
-                    <div class="col-6">
+                    <div class="col-12">
                       <label for="acc_bank">Bank Name</label>
-                      <input
+                      <select
+                        v-if="!auth.user.is_bank_verified"
                         class="form-control"
                         v-model="details.acc_bank"
                         id="acc_bank"
-                        placeholder="Your Bank Name"
                         :class="{'is-invalid': errors.acc_bank, 'is-valid': !errors.acc_bank}"
-                      />
+                      >
+                        <option :value="null">Select</option>
+                        <option v-for="(bank, idx) in banks" :key="idx">{{ bank }}</option>
+                      </select>
+                      <span v-else class="d-block form-control">{{ auth.user.bank }}</span>
                       <FlashMessage v-if="errors.acc_bank" :msg="errors.acc_bank[0]" />
                     </div>
 
@@ -293,7 +298,8 @@
                         type="button"
                         @click="updateUserProfile"
                         :disabled="!details.acc_num"
-                      >Verify</button>
+                        v-if="!auth.user.is_bank_verified"
+                      >Update</button>
                     </div>
                   </div>
                 </div>
@@ -385,13 +391,14 @@
                   <div
                     class="row vertical-gap sm-gap justify-content-end"
                     :class="{'was-validated': formSubmitted}"
+                    v-if="!auth.user.is_bvn_verified"
                   >
                     <div class="col-12">
                       <FlashMessage />
                     </div>
 
                     <div class="col-12">
-                      <label for="bvn">Enter BVN for verification</label>
+                      <label for="bvn">Enter BVN for Verification</label>
                       <input
                         type="text"
                         class="form-control"
@@ -401,6 +408,15 @@
                         placeholder="Enter your BVN Number"
                       />
                       <FlashMessage v-if="errors.bvn" :msg="errors.bvn[0]" />
+                      <img
+                        src="/img/paystack_preview.png"
+                        alt="secured by paystack"
+                        class="paystack-logo"
+                      />
+
+                      <p class="bvn-msg">
+                        <b>NOTE:</b> We do not store your BVN on our servers. We only use it for verification purposes vis secure channels.
+                      </p>
                     </div>
 
                     <div class="col-auto">
@@ -411,6 +427,13 @@
                         :disabled="!details.bvn"
                       >Verify</button>
                     </div>
+                  </div>
+                  <div class="bvn-verified" v-else>
+                    <img
+                      src="/img/bvn-verified.png"
+                      alt="user's bvn verified"
+                      class="img-responsive"
+                    />
                   </div>
                 </div>
               </div>
@@ -428,12 +451,15 @@
   export default {
     name: "UserProfile",
     mixins: [mixins],
+    props: {
+      banks: Array
+    },
     components: {
       Layout
     },
     data() {
       return {
-        details: _.omit(this.auth.user, ["id_card"]),
+        details: { ..._.omit(this.auth.user, ["id_card"]), acc_type: "savings" },
         formSubmitted: false,
         fileUploadName: null,
         datePick: {
@@ -513,5 +539,19 @@
     display: block;
     height: 100px;
     width: 100px;
+  }
+
+  .paystack-logo {
+    width: 35%;
+    margin: 15px auto 0;
+    display: block;
+
+    @media (max-width: 575px) {
+      width: 70%;
+    }
+  }
+
+  .bvn-verified {
+    width: 100% !important;
   }
 </style>

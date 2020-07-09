@@ -850,7 +850,9 @@ class AppUser extends User
     if ($request->isApi()) {
       return (new AppUserTransformer)->detailed($request->user());
     }
-    return Inertia::render('UserProfile');
+    return Inertia::render('UserProfile', [
+      'banks' => $this->getBanksList()
+    ]);
   }
 
   public function editUserProfile(EditUserProfileValidation $request)
@@ -1029,6 +1031,13 @@ class AppUser extends User
     } else {
       return ['LOGGED_IN' => false, 'user' => []];
     }
+  }
+
+  protected function getBanksList(): array
+  {
+    return [
+      'Access Bank', 'Access Bank (Diamond)', 'ALAT by WEMA', 'ASO Savings and Loans', 'Bowen Microfinance Bank', 'CEMCS Microfinance Bank', 'Citibank Nigeria', 'Ecobank Nigeria', 'Ekondo Microfinance Bank', 'Fidelity Bank', 'First Bank of Nigeria', 'First City Monument Bank', 'Globus Bank', 'Guaranty Trust Bank', 'Hasal Microfinance Bank', 'Heritage Bank', 'Jaiz Bank', 'Keystone Bank', 'Kuda Bank', 'One Finance', 'Parallex Bank', 'Polaris Bank', 'Providus Bank', 'Rubies MFB', 'Sparkle Microfinance Bank', 'Stanbic IBTC Bank', 'Standard Chartered Bank', 'Sterling Bank', 'Suntrust Bank', 'TAJ Bank', 'TCF MFB', 'Titan Bank', 'Union Bank of Nigeria', 'United Bank For Africa', 'Unity Bank', 'VFD', 'Wema Bank', 'Zenith Bank',
+    ];
   }
 
   /**

@@ -12,7 +12,7 @@
                       <h4>Reach us via</h4>
                       <p><i class="fa fa-phone"></i>
                         +2348176233714 (9am to 4pm - weekdays only)
-                      </p> <a href="mailto:hello@smartcoophq.com">hello@smartcoophq.com</a>
+                      </p> <a href="mailto:hello@smartcoophq.org">hello@smartcoophq.org</a>
                       <h5>Recources</h5>
                       <ul>
                         <li><a href="{{config('app/url')}}/terms-and-conditions">Terms &amp; Conditions</a></li>

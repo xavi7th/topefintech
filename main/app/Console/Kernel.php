@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
       ->everyMinute()
       ->withoutOverlapping(180)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/autosave-deductions-log' . now()->toDateTimeString() . '.cson')
-      ->emailOutputTo('xavi7th@gmail.com')
+      // ->emailOutputTo('xavi7th@gmail.com')
       // ->runInBackground()
       ->onSuccess(function () {
         ActivityLog::notifyAdmins('Processing auto save deductions completed successfully');
@@ -55,7 +55,8 @@ class Kernel extends ConsoleKernel
     $schedule->command('savings:process-mature-savings')
       ->daily()
       ->withoutOverlapping(30)
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-savings-log' . now()->toDateTimeString() . '.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-saving```s-log' . now()->toDateTimeString() . '.cson')
+      ->emailOutputTo('xavi7th@gmail.com')
       // ->runInBackground()
       ->onSuccess(function () {
         ActivityLog::notifyAdmins('Processing mature savings completed successfully');
@@ -65,6 +66,12 @@ class Kernel extends ConsoleKernel
       });
 
     // $schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
+
+    /**
+     * !See the explanation in ./explanation.cson
+     */
+    $schedule->command('queue:restart')->hourly();
+    $schedule->command('queue:work --sleep=3 --timeout=900 --queue=high,default,low')->runInBackground()->withoutOVerlapping()->everyMinute();
   }
 
   /**
