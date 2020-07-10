@@ -178,7 +178,7 @@ class AppUser extends User
 
   public function active_loan_request()
   {
-    return $this->hasOne(LoanRequest::class)->latest();
+    return $this->hasOne(LoanRequest::class)->latest()->withDefault();
   }
 
   public function loan_transactions()
