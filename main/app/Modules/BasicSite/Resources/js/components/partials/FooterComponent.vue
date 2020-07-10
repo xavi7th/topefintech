@@ -43,11 +43,8 @@
             <aside class="widget links">
               <h4>We are available:</h4>
               <p>
-                Monday - Friday:
+                Monday - Saturday:
                 <br />08:00 AM - 08:00 PM CAT
-              </p>
-              <p>
-                <a href="#">Click here</a> &nbsp; to get Instant Website &amp; Mobile Apps for your cooperative Society
               </p>
             </aside>
           </div>
@@ -84,7 +81,7 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-10">
-            <p>Smart Co-operative Society Limited, also known as SmartCoop, is a FinTech FinTech based Co-operative Society with Registration Number: 41023</p>
+            <p>Smart Monie is a FinTech based Co-operative Society with Registration Number: 000000000000</p>
           </div>
           <div class="col-sm-2 text-right">
             <p>

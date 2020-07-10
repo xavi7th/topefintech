@@ -52,16 +52,6 @@ class BasicSiteController extends Controller
     ]);
   }
 
-  public function blog()
-  {
-    return response('', 409)->header('X-Inertia-Location', 'https://blog.smartcoophq.org');
-  }
-
-  public function investmentShop()
-  {
-    return response('', 409)->header('X-Inertia-Location', 'https://shop.smartcoophq.org');
-  }
-
   public function faqs()
   {
     return Inertia::render('FAQPage');

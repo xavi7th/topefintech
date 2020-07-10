@@ -19,15 +19,6 @@
               <span class="rui-yaybar-circle"></span>
             </inertia-link>
           </li>
-          <li>
-            <a href="https://shop.smartcoophq.org" target="_blank">
-              <span class="yay-icon">
-                <span class="fas fa-dolly"></span>
-              </span>
-              <span>Investment Shop</span>
-              <span class="rui-yaybar-circle"></span>
-            </a>
-          </li>
         </ul>
       </div>
     </div>

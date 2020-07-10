@@ -50,10 +50,10 @@
                           </strong>
                         </span>
                         <small class="media-subtitle mb-5 text-black">
-                          <strong>Account Number:</strong> 2141490399
+                          <strong>Account Number:</strong> 00000000000
                         </small>
                         <small class="media-subtitle mb-5 text-black">
-                          <strong>Account Name:</strong> Smart Multi-Purpose Cooperative Society Limited
+                          <strong>Account Name:</strong> Smart Monie
                         </small>
                         <small class="media-subtitle mb-10 text-black">
                           <strong>Bank Name:</strong> United Bank for Africa
@@ -115,7 +115,7 @@
                           <strong>Pay via oPay</strong>
                         </span>
                         <small class="media-subtitle mb-5 text-black">
-                          <strong>oPay Wallet:</strong> smartcoophq
+                          <strong>oPay Wallet:</strong> smartmonie
                         </small>
                         <small class="media-subtitle mb-5 text-danger">
                           <strong>NB:</strong>

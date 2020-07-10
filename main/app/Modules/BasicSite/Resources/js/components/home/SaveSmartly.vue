@@ -35,7 +35,7 @@
               <h4>
                 <a href="#">Save and invest for no reason.</a>
               </h4>
-              <p>That money you don’t want to spend but you can’t just keep in in hand, you can save it on SmartCoop</p>
+              <p>That money you don’t want to spend but you can’t just keep in in hand, you can save it on Smart Monie</p>
               <!-- <a href="#" class="readMore">More details</a> -->
             </div>
           </div>
@@ -68,7 +68,7 @@
               <h4>
                 <a href="#">Watch your savings grow.</a>
               </h4>
-              <p>Monitor the progress of your savings from your SmartCoop dashboard in real-time.</p>
+              <p>Monitor the progress of your savings from your Smart Monie dashboard in real-time.</p>
               <!-- <a href="#" class="readMore">More details</a> -->
             </div>
             <div class="latestPost">

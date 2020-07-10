@@ -24,7 +24,7 @@
               <div class="privacyPage pt-0">
                 <h3>Accessing Your Information</h3>
                 <p>
-                  You must notify us of any change in your Personal Information by updating your SmartCoop
+                  You must notify us of any change in your Personal Information by updating your Smart Monie
                   account profile through our Services. Any changes will affect only future uses of your Personal
                   Information.
                   Subject to applicable law, which might, from time to time, oblige us to store your Personal
@@ -60,12 +60,12 @@
                   technology, such as Secure Sockets Layer (SSL).
                   No method of electronic transmission or storage is 100% secure. Therefore, we cannot guarantee
                   absolute security of your Personal Information. You also play a role in protecting your Personal
-                  Information. Please safeguard your username and password for your SmartCoop account and do
-                  not share them with others. If we receive instructions using your SmartCoop account login
+                  Information. Please safeguard your username and password for your Smart Monie account and do
+                  not share them with others. If we receive instructions using your Smart Monie account login
                   information, we will consider that you have authorized the instructions. You agree to notify us
-                  immediately of any unauthorized use of your SmartCoop account or any other breach of security.
+                  immediately of any unauthorized use of your Smart Monie account or any other breach of security.
                   We reserve the right, in our sole discretion, to refuse to provide our Services, terminate
-                  SmartCoop accounts, and to remove or edit content.
+                  Smart Monie accounts, and to remove or edit content.
                 </p>
                 <h3>Protecting Children&#39;s Privacy</h3>
                 <p>
@@ -94,7 +94,7 @@
                   our Services. Except as otherwise expressly stated by us, your access and use of our Services is
                   subject to the version of this Privacy Policy in effect at the time of access or use.
                 </p>
-                <h3>How can I contact SmartCoop?</h3>
+                <h3>How can I contact Smart Monie?</h3>
                 <p>
                   If you have any questions, comments, or concerns regarding these Terms or the Services, please
                   contact us via email at

@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 7.18.0 on 2020-07-09 08:01:06.
+ * Generated for Laravel 7.18.0 on 2020-07-10 12:34:51.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15222,6 +15222,19 @@ namespace Illuminate\Support {
  
 }
 
+namespace danielme85\LaravelLogToDB { 
+
+    /**
+     * Class LogToDb
+     *
+     * @package danielme85\LaravelLogToDB
+     */ 
+    class LogToDB {
+         
+    }
+ 
+}
+
 namespace Nwidart\Modules\Facades { 
 
     /**
@@ -15811,19 +15824,6 @@ namespace Nwidart\Modules\Facades {
             //Method inherited from \Nwidart\Modules\FileRepository            
                         return \Nwidart\Modules\Laravel\LaravelFileRepository::hasMacro($name);
         }
-         
-    }
- 
-}
-
-namespace danielme85\LaravelLogToDB { 
-
-    /**
-     * Class LogToDb
-     *
-     * @package danielme85\LaravelLogToDB
-     */ 
-    class LogToDB {
          
     }
  
@@ -20387,9 +20387,9 @@ namespace  {
 
     class View extends \Illuminate\Support\Facades\View {}
 
-    class Module extends \Nwidart\Modules\Facades\Module {}
-
     class LogToDB extends \danielme85\LaravelLogToDB\LogToDB {}
+
+    class Module extends \Nwidart\Modules\Facades\Module {}
 
     class JWTAuth extends \Tymon\JWTAuth\Facades\JWTAuth {}
 

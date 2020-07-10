@@ -1,5 +1,5 @@
 <template>
-  <layout title="Welcome to Smartcoop">
+  <layout title="Welcome to Smart Monie">
     <Hero />
     <Highlights />
     <!-- <InterestCalculator /> -->

@@ -38,7 +38,7 @@ class SendAccountVerificationMessage extends Notification
   public function toDatabase($user)
   {
     return [
-      'action' => (new HtmlString('<b>Welcome to the SmartCoop Community</b>. <br> Thank you for joining SmartCoop. You one stop online Cooperative. <br> Take advantage of our manual and auto saving schemes and get interest to meet your financial needs. <br> You can also take loans and pay over a period of time. <br> Once again, welcome to our community of SmartSavers. <br> <br> Cheers, <br> Your buddies at ' . config('app.name')))
+      'action' => (new HtmlString('<b>Welcome to the Smart Monie Community</b>. <br> Thank you for joining Smart Monie. You one stop online Cooperative. <br> Take advantage of our manual and auto saving schemes and get interest to meet your financial needs. <br> You can also take loans and pay over a period of time. <br> Once again, welcome to our community of SmartSavers. <br> <br> Cheers, <br> Your buddies at ' . config('app.name')))
     ];
   }
 
@@ -47,9 +47,9 @@ class SendAccountVerificationMessage extends Notification
 
     return (new MailMessage)
       ->success()
-      ->subject('Welcome to the SmartCoop Community')
+      ->subject('Welcome to the Smart Monie Community')
       ->greeting('Hello ' . $appUser->full_name . ',')
-      ->line('Thank you for joining SmartCoop. You one stop online Cooperative.')
+      ->line('Thank you for joining Smart Monie. You one stop online Cooperative.')
       ->line('Take advantage of our manual and auto saving schemes and get interest to meet your financial needs.')
       ->line('You can also take loans and pay over a period of time.')
       ->line('Once again, welcome to our community of SmartSavers')

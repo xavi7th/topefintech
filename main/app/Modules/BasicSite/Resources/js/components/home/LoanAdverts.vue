@@ -69,7 +69,7 @@
         <div class="col-xl-6 col-lg-4 col-md-12">
           <div class="serviceArea">
             <h3>We provide awesome services, it’s here</h3>
-            <p>SmartCoop uses the highest levels of Internet Security, and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.</p>
+            <p>Smart Monie uses the highest levels of Internet Security, and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.</p>
             <p>We are here to help you when you need your financial support, then we are help you.</p>
             <a href="#" class="common_btn">View More</a>
           </div>

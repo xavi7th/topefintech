@@ -18,12 +18,12 @@
           <div class="row">
             <div class="col-lg-6 col-md-6 faqPdRight">
               <div class="singleFaq">
-                <h3>01. What is SmartCoop?</h3>
-                <p>-SmartCoop is an online Cooperative Society that encourages her members to save quarterly/monthly/weekly/daily in other to reach achieve their financial goals. Savings attract interest daily.</p>
+                <h3>01. What is Smart Monie?</h3>
+                <p>-Smart Monie is an online Cooperative Society that encourages her members to save quarterly/monthly/weekly/daily in other to reach achieve their financial goals. Savings attract interest daily.</p>
               </div>
               <div class="singleFaq">
-                <h3>02. How do I access SmartCoop?</h3>
-                <p>-Simply visit our website www.smartcoophq.org or download the SmartCoop app from Play store, sign up and start saving.</p>
+                <h3>02. How do I access Smart Monie?</h3>
+                <p>-Simply visit our website www.smartmonie.org or download the Smart Monie app from Play store, sign up and start saving.</p>
               </div>
               <div class="singleFaq">
                 <h3>03. How is the interest made?</h3>
@@ -77,7 +77,7 @@
               </div>
               <div class="singleFaq">
                 <h3>15. What is the investment Shop all about?</h3>
-                <p>-The investment shop is a section of SmartCoop where you can invest in specific projects such and farm and food processing. Our AgriTech partners are fully insure by Leadway Assurance. Interests ranges from 10 to 25 percent in 4 to 12 months month. Interest and initial investment is paid at the end of the investment cycle.</p>
+                <p>-The investment shop is a section of Smart Monie where you can invest in specific projects such and farm and food processing. Our AgriTech partners are fully insure by Leadway Assurance. Interests ranges from 10 to 25 percent in 4 to 12 months month. Interest and initial investment is paid at the end of the investment cycle.</p>
               </div>
               <div class="singleFaq">
                 <h3>16. Are funds in the Investment Shop secure?</h3>
@@ -117,26 +117,26 @@
               </div>
               <div class="singleFaq">
                 <h3>25. What do I need to request a loan?</h3>
-                <p>-You must have been a member of SmartCoop for at least one month. Your sureties must have been active members for at least two months. You must have a valid card on your account. You must have done the BVN validation.</p>
+                <p>-You must have been a member of Smart Monie for at least one month. Your sureties must have been active members for at least two months. You must have a valid card on your account. You must have done the BVN validation.</p>
               </div>
               <div class="singleFaq">
                 <h3>26. How long do does it take for my loan request to be processed?</h3>
                 <p>-As soon as your sureties approve your loan, you will get paid within 48 hours.</p>
               </div>
               <div class="singleFaq">
-                <h3>27. Why does SmartCoop require my BVN?</h3>
+                <h3>27. Why does Smart Monie require my BVN?</h3>
                 <p>-We do not store or share your BVN (Bank Verification Number). It is only used to verify your identity before you request a loan.</p>
               </div>
               <div class="singleFaq">
-                <h3>28. Can someone hack my bank account or SmartCoop account with just my BVN?</h3>
+                <h3>28. Can someone hack my bank account or Smart Monie account with just my BVN?</h3>
                 <p>-Nobody can access any of your accounts by just knowing your BVN. Your BVN can only be used to verify your identity, in other to avoid duplication of profiles and fraud, since every user only has one BVN.</p>
               </div>
               <div class="singleFaq">
-                <h3>29. Does SmartCoop give referral bonuses?</h3>
-                <p>-The referral bonus is only available to agents. They get up to 50 naira on each 5,000 naira transaction made. Contact us to be an agent; hello@smartcoophq.org | 08098075887</p>
+                <h3>29. Does Smart Monie give referral bonuses?</h3>
+                <p>-The referral bonus is only available to agents. They get up to 50 naira on each 5,000 naira transaction made. Contact us to be an agent; hello@smartmonie.org | 08098075887</p>
               </div>
               <div class="singleFaq">
-                <h3>30. Does SmartCoop have a physical address?</h3>
+                <h3>30. Does Smart Monie have a physical address?</h3>
                 <p>-Yes, we do. We are located at 60, Udu road by Sedco Round About. Warri, Delta State. NG. Call 08098075887 to book an appointment</p>
               </div>
             </div>

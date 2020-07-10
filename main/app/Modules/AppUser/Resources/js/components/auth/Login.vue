@@ -9,7 +9,7 @@
         </div>
         <div class="col-12">
           <h2 class="display-4 mb-10 text-center">Create Account</h2>
-          <p>Login to your dashboard to access your smartcoop features</p>
+          <p>Login to your dashboard to access your Smart Monie features</p>
           <FlashMessage />
         </div>
         <div class="col-12">
@@ -121,7 +121,7 @@
                 html: this.$page.flash.error,
                 icon: "error",
                 timer: 10000,
-                footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartcoophq.org">hello@smartcoophq.org</a>`
+                footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`
               }).then(() => {});
             } else {
               swal.close();

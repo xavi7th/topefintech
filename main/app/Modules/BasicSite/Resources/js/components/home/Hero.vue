@@ -17,8 +17,8 @@
                 We are changing the Narrative using FinTech. Now you can do all of it online. No need to leave the comfort of your homes.
                 We are bringing the Cooperative to your doorstep. All you need is your smart phone.
               </p>
-              <h3 class="mt-3">Save with SmartCoop</h3>
-              <p>SmartCoop helps you attain financial freedom by enabling you save money and provide interest based loans to SMEs on the go.</p>
+              <h3 class="mt-3">Save with Smart Monie</h3>
+              <p>Smart Monie helps you attain financial freedom by enabling you save money and provide interest based loans to SMEs on the go.</p>
               <p>Earn 10% - 13% interests on savings</p>
             </div>
           </div>
