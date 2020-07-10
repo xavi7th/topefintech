@@ -22,82 +22,27 @@ Creation date: 06/03/2019 06:22
     }
 }
 
-[class^="flaticon-"]:before,
-[class*=" flaticon-"]:before,
-[class^="flaticon-"]:after,
-[class*=" flaticon-"]:after {
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {
     font-family: Flaticon;
     font-style: normal;
 }
 
-.flaticon-loan:before {
-    content: "\f100";
-}
-
-.flaticon-loan-1:before {
-    content: "\f101";
-}
-
-.flaticon-money:before {
-    content: "\f102";
-}
-
-.flaticon-resume:before {
-    content: "\f103";
-}
-
-.flaticon-mortgage-loan:before {
-    content: "\f104";
-}
-
-.flaticon-back:before {
-    content: "\f105";
-}
-
-.flaticon-right-arrow:before {
-    content: "\f106";
-}
-
-.flaticon-chevron:before {
-    content: "\f107";
-}
-
-.flaticon-magnifying-glass:before {
-    content: "\f108";
-}
-
-.flaticon-give-money:before {
-    content: "\f109";
-}
-
-.flaticon-hand:before {
-    content: "\f10a";
-}
-
-.flaticon-plus-1:before {
-    content: "\f10b";
-}
-
-.flaticon-plus-button:before {
-    content: "\f10c";
-}
-
-.flaticon-next:before {
-    content: "\f10d";
-}
-
-.flaticon-left-arrow:before {
-    content: "\f10e";
-}
-
-.flaticon-add:before {
-    content: "\f10f";
-}
-
-.flaticon-add-plus-button:before {
-    content: "\f110";
-}
-
-.flaticon-loan-2:before {
-    content: "\f111";
-}
+.flaticon-loan:before { content: "\f100"; }
+.flaticon-loan-1:before { content: "\f101"; }
+.flaticon-money:before { content: "\f102"; }
+.flaticon-resume:before { content: "\f103"; }
+.flaticon-mortgage-loan:before { content: "\f104"; }
+.flaticon-back:before { content: "\f105"; }
+.flaticon-right-arrow:before { content: "\f106"; }
+.flaticon-chevron:before { content: "\f107"; }
+.flaticon-magnifying-glass:before { content: "\f108"; }
+.flaticon-give-money:before { content: "\f109"; }
+.flaticon-hand:before { content: "\f10a"; }
+.flaticon-plus-1:before { content: "\f10b"; }
+.flaticon-plus-button:before { content: "\f10c"; }
+.flaticon-next:before { content: "\f10d"; }
+.flaticon-left-arrow:before { content: "\f10e"; }
+.flaticon-add:before { content: "\f10f"; }
+.flaticon-add-plus-button:before { content: "\f110"; }
+.flaticon-loan-2:before { content: "\f111"; }

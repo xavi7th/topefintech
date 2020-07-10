@@ -1,9 +1,9 @@
 <template>
   <div>
-    <footer class="footer">
+    <footer class="footer footer_2">
       <div class="container">
         <div class="row">
-          <div class="col-12 col-lg col-md">
+          <div class="col-lg-4 col-md-6">
             <aside class="widget about_widgets">
               <img src="/img/logo.png" alt class="footer-logo" />
               <h4>Reach us via</h4>
@@ -39,16 +39,34 @@
               </ul>
             </aside>
           </div>
-          <div class="col-12 col-lg-5 col-md">
+          <div class="col-lg-4 col-md-6">
             <aside class="widget links">
               <h4>We are available:</h4>
               <p>
                 Monday - Saturday:
                 <br />08:00 AM - 08:00 PM CAT
               </p>
+              <h4>Quick Links</h4>
+              <ul>
+                <li>
+                  <a href="#">How it Works</a>
+                </li>
+                <li>
+                  <a href="#">Guarantee</a>
+                </li>
+                <li>
+                  <a href="#">Security</a>
+                </li>
+                <li>
+                  <a href="#">Report Bug</a>
+                </li>
+                <li>
+                  <a href="#">Pricing</a>
+                </li>
+              </ul>
             </aside>
           </div>
-          <div class="col-12 col-lg col-md">
+          <div class="col-lg-4 col-md-6">
             <aside class="widget subscribe_widgets">
               <h4>Find us at:</h4>
               <p class="text-black">{{$page.app.address}}</p>
@@ -77,17 +95,13 @@
       </div>
     </footer>
 
-    <section class="copyright">
+    <section class="copyright copyright_2">
       <div class="container">
         <div class="row">
-          <div class="col-sm-10">
-            <p>Smart Monie is a FinTech based Co-operative Society with Registration Number: 000000000000</p>
-          </div>
-          <div class="col-sm-2 text-right">
+          <div class="col-sm-12 text-center">
             <p>
-              <a href="#" id="backTo">
-                <i class="flaticon-chevron"></i>
-              </a>
+              Copyright
+              <i class="icofont-copyright"></i> 2019; All Right Reserved
             </p>
           </div>
         </div>

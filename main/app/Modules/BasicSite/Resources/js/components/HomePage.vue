@@ -2,13 +2,16 @@
   <layout title="Welcome to Smart Monie">
     <Hero />
     <Highlights />
-    <!-- <InterestCalculator /> -->
-    <LoanAdverts />
+    <AboutUs />
+    <RegistrationSteps />
+    <InterestCalculator />
     <SaveSmartly />
-    <!-- <RegistrationSteps /> -->
+    <Testimonials />
+    <CTA />
+    <DailyNews />
+
     <!-- <SaverOfTheMonth /> -->
     <!-- <StoriesSummary /> -->
-    <Testimonials />
   </layout>
 </template>
 
@@ -16,12 +19,14 @@
   import Hero from "@basicsite-components/home/Hero";
   import Highlights from "@basicsite-components/home/Highlights";
   import InterestCalculator from "@basicsite-components/home/InterestCalculator";
-  import LoanAdverts from "@basicsite-components/home/LoanAdverts";
+  import AboutUs from "@basicsite-components/home/AboutUs";
   import SaveSmartly from "@basicsite-components/home/SaveSmartly";
   import RegistrationSteps from "@basicsite-components/home/RegistrationSteps";
   import SaverOfTheMonth from "@basicsite-components/home/SaverOfTheMonth";
   import StoriesSummary from "@basicsite-components/home/StoriesSummary";
   import Testimonials from "@basicsite-components/home/Testimonials";
+  import CTA from "@basicsite-components/home/CTA";
+  import DailyNews from "@basicsite-components/home/DailyNews";
   import Layout from "@basicsite-components/BasicSiteAppComponent";
   import { mixins } from "@basicsite-assets/js/misc";
   export default {
@@ -34,12 +39,14 @@
       Hero,
       Highlights,
       InterestCalculator,
-      LoanAdverts,
+      AboutUs,
       SaveSmartly,
       RegistrationSteps,
       SaverOfTheMonth,
       StoriesSummary,
       Testimonials,
+      CTA,
+      DailyNews,
       Layout
     }
   };

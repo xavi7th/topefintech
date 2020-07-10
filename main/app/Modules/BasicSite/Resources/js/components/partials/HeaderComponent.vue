@@ -7,13 +7,13 @@
             <inertia-link :href="$route('app.home')">
               <img class="hidden-xs" src="/img/logo.png" alt width="120" />
               <img
-                class="d-block d-sm-none"
+                class="d-block d-md-none"
                 src="/img/logo.png"
                 alt
                 width="120"
                 v-if="$isCurrentUrl('app.home')"
               />
-              <img class="d-block d-sm-none" src="/img/logo-white.png" alt width="120" v-else />
+              <img class="d-block d-md-none" src="/img/logo-white.png" alt width="120" v-else />
             </inertia-link>
           </div>
         </div>
@@ -27,9 +27,6 @@
             <ul>
               <li v-for="(item, index) in routes" :key="index">
                 <inertia-link :href="$route(item.name)">{{item.menu_name}}</inertia-link>
-              </li>
-              <li>
-                <inertia-link class="hidden-xs" :href="$route('app.contact_us')">Contact Us</inertia-link>
               </li>
               <li>
                 <a href="/login">Login</a>
@@ -93,6 +90,12 @@
 
     img.hidden-xs {
       display: block !important;
+    }
+
+    li {
+      a {
+        color: #222;
+      }
     }
   }
 </style>

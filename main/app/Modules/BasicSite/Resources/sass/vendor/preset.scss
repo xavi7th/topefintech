@@ -24,13 +24,11 @@ License URI:
 / 1. Font Settings
 ------------------------------------------------------------------------------*/
 
-body,
-html {
+body, html{
     margin: 0;
     padding: 0;
 }
-
-body {
+body{
     line-height: 30px;
     color: #929292;
     letter-spacing: 0;
@@ -42,28 +40,20 @@ body {
     -moz-transition: all ease 400ms;
 }
 
-body.bg_right {
+body.bg_right{
     background: url(/img/bg/1.png) no-repeat right top;
 }
-
 /*------------------------------------------------------------------------------
 / 2. Typography Settings
 ------------------------------------------------------------------------------*/
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6{
     color: #222222;
     font-weight: 300;
     margin: 0 0 15px;
 }
-
-button:focus {
+button:focus{
     outline: none;
 }
-
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -71,30 +61,25 @@ input[type=number]::-webkit-outer-spin-button {
     -moz-appearance: none;
     margin: 0;
 }
-
 input[type="number"] {
     -moz-appearance: textfield !important;
 }
 
-a {
+a{
     color: #222222;
     text-decoration: none;
     transition: all ease 400ms;
     -webkit-transition: all ease 400ms;
     -moz-transition: all ease 400ms;
 }
-
-a:hover,
-a:focus {
+a:hover, a:focus{
     text-decoration: none;
     outline: 0;
 }
-
-a:focus {
+a:focus{
     color: #fff;
 }
-
-ul li {
+ul li{
     margin: 0;
     padding: 0;
     list-style: none;
@@ -103,26 +88,24 @@ ul li {
 /*------------------------------------------------------------------------------
 / 3. Section Title Settings
 ------------------------------------------------------------------------------*/
-.noPadding {
+.noPadding{
     padding: 0;
 }
-
-.noPaddingRight {
+.noPaddingRight{
     padding-right: 0;
 }
-
-.noPaddingLeft {
+.noPaddingLeft{
     padding-left: 0;
 }
 
 /*------------------------------------------------------------------------------
 / 4. Button Settings
 ------------------------------------------------------------------------------*/
-.common_btn {
+.common_btn{
     border: none;
     font-size: 17px;
     font-weight: 700;
-    background: #24b3ff;
+    background: #8180e0;
     color: #fff;
     height: 55px;
     text-align: center;
@@ -141,7 +124,6 @@ ul li {
     -ms-transition: all 0.4s ease-out;
     -o-transition: all 0.4s ease-out;
 }
-
 .common_btn::after {
     background: #222222;
     border-radius: 3px;
@@ -163,7 +145,6 @@ ul li {
     width: 100%;
     z-index: -1;
 }
-
 .common_btn:hover::after {
     transform: scale(1);
     -moz-transform: scale(1);
@@ -171,44 +152,37 @@ ul li {
     -ms-transform: scale(1);
     -o-transform: scale(1);
 }
-
-.common_btn:hover {
+.common_btn:hover{
     color: #fff;
 }
 
 /*------------------------------------------------------------------------------
 / 5. Section Settings
 ------------------------------------------------------------------------------*/
-.commonSection {
+.commonSection{
     padding: 85px 0 96px;
     position: relative;
 }
-
-.commonSection .container {
+.commonSection .container{
     position: relative;
     z-index: 2;
 }
-
-.grays {
+.grays{
     background: #f8f8fb;
 }
-
-.sec_title {
+.sec_title{
     font-size: 48px;
     line-height: 60px;
     font-weight: 300;
     color: #222222;
     margin: 0 0 30px;
 }
-
-.sec_desc {
+.sec_desc{
     margin: 0 0 85px;
 }
-
-.white {
+.white{
     color: #ffffff;
 }
-
-.color_aaa {
+.color_aaa{
     color: #aaaaaa;
 }

@@ -1,68 +1,52 @@
 <template>
-  <section class="payloan_header_bg header_bg_1">
+  <section class="payloan_header_bg header_bg_2 px-xl-1">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col-lg-6">
-          <div class="welcome_area">
-            <div class="welcome_text">
-              <h1>
-                The Sure
-                <span>Way</span>
-              </h1>
-              <h3>To Save &amp; Provide loans to SMEs</h3>
-              <h4>
-                <i>Remember the Traditional Cooperative Societies?</i>
-              </h4>
-              <p>
-                We are changing the Narrative using FinTech. Now you can do all of it online. No need to leave the comfort of your homes.
-                We are bringing the Cooperative to your doorstep. All you need is your smart phone.
-              </p>
-              <h3 class="mt-3">Save with Smart Monie</h3>
-              <p>Smart Monie helps you attain financial freedom by enabling you save money and provide interest based loans to SMEs on the go.</p>
-              <p>Earn 10% - 13% interests on savings</p>
-            </div>
+        <div class="col-md-6 order-md-2">
+          <div class="header_img">
+            <img src="img/slider/5.png" alt />
           </div>
         </div>
-        <div class="col-lg-6">
-          <div class="header_img">
-            <img src="/img/slider/2.png" alt />
+        <div class="col-md-6 order-md-1">
+          <div class="welcome_area">
+            <div class="welcome_text">
+              <h1>Save with Smart Monie.</h1>
+              <p>Smart Monie helps you attain financial freedom by enabling you save money and provide interest based loans to SMEs on the go. Earn 10% - 13% interests on savings</p>
+            </div>
+            <div class="welcome_button">
+              <a href="#" class="common_btn">Contact Us</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <section class="commonSection callToAction_3">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-7 col-md-8">
-            <h3 class="sec_title">Create account for free</h3>
-          </div>
-          <div class="col-lg-5 col-md-4 text-center">
-            <a class="common_btn" href="#">Create Account</a>
-          </div>
-        </div>
-      </div>
-    </section>
   </section>
 </template>
 <style lang="scss" scoped>
-  .header_bg_1 {
-    padding: 200px 0 100px;
-  }
+  .header_bg_2 {
+    position: relative;
+    padding: 130px 0 70px;
 
-  .callToAction_3 {
-    padding: 30px 0 30px;
-    margin-top: 100px;
+    @media (max-width: 767px) and (min-width: 576px) {
+      padding-top: 50px;
 
-    .sec_title {
-      font-weight: 300;
-      text-align: center;
+      img {
+        width: 50%;
+        margin: 10px auto;
+        display: block;
+      }
+
+      .welcome_area {
+        margin: 20px -25px 0;
+      }
     }
 
-    .common_btn {
-      margin-top: 0 !important;
-      height: 50px;
-      padding: 20px 50px;
-      font-weight: 200;
+    @media (max-width: 575px) {
+      ☄img {
+        width: 80% !important;
+        margin: 20px auto !important;
+        display: block !important;
+      }
     }
   }
 </style>

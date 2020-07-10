@@ -1,57 +1,44 @@
 <template>
-  <section class="commonSection">
+  <section class="commonSection homeService_2">
     <div class="container">
       <div class="row">
-        <div class="col-12 text-center">
-          <div class="latestPost">
-            <h2>
-              <a href="#">Mobile Apps</a>
-            </h2>
-          </div>
-
-          <div class="row justify-content-around">
-            <a href target="_blank">
-              <img src="/img/playstore.jpg" alt="United Capital logo" />
-            </a>
-            <a href target="_blank">
-              <img src="/img/appstore.jpg" alt="FBN Quest logo" />
-            </a>
+        <div class="col-lg-12 text-center">
+          <h2 class="sec_title">High grade security layers</h2>
+          <p class="sec_desc">
+            Smart Monie uses the highest levels of Internet Security, and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.
+            We are here to help you when you need your financial support, then we are help you.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-6">
+          <div class="singleService_4">
+            <i class="flaticon-money"></i>
+            <h1>9.35%</h1>
+            <div class="clearfix"></div>
+            <h4>Personal Loan</h4>
+            <p>Stay turned the world theme better finance & business.</p>
+            <h5>20 months installment</h5>
           </div>
         </div>
-
-        <div class="col-12 text-center">
-          <div class="latestPost">
-            <h2>
-              <a href="#">Our Fund Managers</a>
-            </h2>
-          </div>
-
-          <div class="row justify-content-around">
-            <a href target="_blank">
-              <img src="/img/united-capital.png" alt="United Capital logo" />
-            </a>
-            <a href target="_blank">
-              <img src="/img/fbn-quest.png" alt="FBN Quest logo" />
-            </a>
+        <div class="col-lg-4 col-md-6">
+          <div class="singleService_4">
+            <i class="flaticon-mortgage-loan"></i>
+            <h1>10.2%</h1>
+            <div class="clearfix"></div>
+            <h4>Business Loan</h4>
+            <p>Stay turned the world theme better finance & business.</p>
+            <h5>20 months installment</h5>
           </div>
         </div>
-        <div class="col-12 text-center">
-          <div class="latestPost">
-            <h2>
-              <a href="#">Our Investment Partners</a>
-            </h2>
-          </div>
-
-          <div class="row justify-content-around">
-            <a href target="_blank">
-              <img src="/img/farm-crowdy.png" alt="farm Crowdy logo" />
-            </a>
-            <a href target="_blank">
-              <img src="/img/farm-centa.png" alt="Farm Centa logo" />
-            </a>
-            <a href target="_blank">
-              <img src="/img/thrive-agric.png" alt="Thrive agric logo" />
-            </a>
+        <div class="col-lg-4 col-md-6">
+          <div class="singleService_4">
+            <i class="flaticon-loan-1"></i>
+            <h1>28.6%</h1>
+            <div class="clearfix"></div>
+            <h4>Education Loan</h4>
+            <p>Stay turned the world theme better finance & business.</p>
+            <h5>20 months installment</h5>
           </div>
         </div>
       </div>
@@ -60,7 +47,7 @@
 </template>
 
 <style lang="scss" scoped>
-  .homeService {
+  .homeService_2 {
     padding-top: 0 !important;
 
     &:before {
@@ -70,13 +57,5 @@
     &:after {
       top: -300px;
     }
-  }
-  .serviceArea {
-    padding: 0 !important;
-  }
-
-  .latestPost {
-    border-bottom-color: transparent;
-    margin-bottom: 50px;
   }
 </style>
