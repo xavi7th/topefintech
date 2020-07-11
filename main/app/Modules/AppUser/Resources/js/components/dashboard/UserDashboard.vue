@@ -19,9 +19,9 @@
                 <div class="rui-widget-chart-info">
                   <div class="rui-widget-title h2">
                     {{
-                    total_core_savings_amount | Naira}}
+                    total_smart_savings_amount | Naira}}
                   </div>
-                  <small class="rui-widget-subtitle">Core Savings Balance</small>
+                  <small class="rui-widget-subtitle">Smart Savings Balance</small>
                 </div>
                 <div class="rui-chartjs-container">
                   <div
@@ -126,25 +126,6 @@
                 </div>
               </div>
             </div>
-            <div class="swiper-slide">
-              <div class="rui-widget rui-widget-chart">
-                <div class="rui-widget-chart-info">
-                  <div class="rui-widget-title h2">{{total_loans_amount| Naira }}</div>
-                  <small class="rui-widget-subtitle">Total Loans</small>
-                </div>
-
-                <div class="rui-chartjs-container">
-                  <div
-                    class="rui-chartist rui-chartist-donut"
-                    data-width="200"
-                    data-height="200"
-                    data-chartist-series="1,5"
-                    data-chartist-width="4"
-                    data-chartist-gradient="#8e9fff;#2bb7ef"
-                  ></div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <div class="swiper-button-next">
@@ -189,52 +170,8 @@
                 class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-primary btn-w-sm"
               >Enter Amount</button>
             </div>
-            <!--
-            <div class="card-footer text-muted">Last Savings: 2 days ago</div>
-            -->
-          </div>
-        </div>
-      </div>
-      <div class="rui-gap-2"></div>
-      <div class="rui-gap-3"></div>
 
-      <div class="row xs-gap vertical-gap" id="loansSummary" v-if="false">
-        <div class="col-12">
-          <div class="card-heading">
-            <h4 class="card-heading-title">Loans Summary</h4>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title h2">Special title treatment</h5>
-              <p
-                class="card-text"
-              >With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-brand">Go somewhere</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title h2">Special title treatment</h5>
-              <p
-                class="card-text"
-              >With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-brand">Go somewhere</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card text-right">
-            <div class="card-body">
-              <h5 class="card-title h2">Special title treatment</h5>
-              <p
-                class="card-text"
-              >With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-brand">Go somewhere</a>
-            </div>
+            <div class="card-footer text-muted">Last Savings: 2 days ago</div>
           </div>
         </div>
       </div>
@@ -251,7 +188,7 @@
         <div class="col-sm-4">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title h2">Smart Lock</h5>
+              <h5 class="card-title h2">Smart Savings</h5>
               <p
                 class="card-text"
               >With supporting text below as a natural lead-in to additional content.</p>
@@ -351,12 +288,11 @@
     mixins: [mixins],
     props: {
       total_savings_amount: Number,
-      total_core_savings_amount: Number,
+      total_smart_savings_amount: Number,
       interest_today: Number,
       total_interests_amount: Number,
       total_uncleared_interests_amount: Number,
-      total_withdrawals_amount: Number,
-      total_loans_amount: Number
+      total_withdrawals_amount: Number
     },
     components: { Layout },
     data: () => {
@@ -438,7 +374,7 @@
             data: {
               amount: amount || this.details.amount,
               description:
-                "Distributed savings into account of " +
+                "Fund savings into account of " +
                 this.$options.filters.Naira(amount)
             },
             replace: false,

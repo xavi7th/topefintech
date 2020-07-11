@@ -22,106 +22,41 @@ return [
   'instagram' => env('APP_INSTAGRAM', null),
   'twitter' => env('APP_TWITTER', null),
 
-  /*
-    |--------------------------------------------------------------------------
-    | Core Savings Interest Rate
-    |--------------------------------------------------------------------------
-    |
-    |The interest rate that will be applied to all core savings.
-    |
-    */
 
   'balance_before_bvn_validation' => env('BALANCE_BEFORE_BVN_VALIDATION', 5000),
 
   /*
     |--------------------------------------------------------------------------
-    | Core Savings Interest Rate
+    | Smart Savings Interest Rate
     |--------------------------------------------------------------------------
     |
-    |The interest rate that will be applied to all core savings.
+    |The interest rate that will be applied to all smart savings.
     |
     */
 
-  'core_savings_interest_rate' => env('CORE_SAVINGS_INTEREST_RATE', 0.5),
+  'smart_savings_interest_rate' => env('SMART_SAVINGS_INTEREST_RATE', 0.5),
 
   /*
     |--------------------------------------------------------------------------
-    | GOS Interest Rate
+    | Target Interest Rate
     |--------------------------------------------------------------------------
     |
     |The interest rate that will be applied to all goal oriented savings.
     |
     */
 
-  'gos_savings_interest_rate' => env('GOS_SAVINGS_INTEREST_RATE', 0.5),
+  'target_savings_interest_rate' => env('Target_SAVINGS_INTEREST_RATE', 0.5),
 
   /*
     |--------------------------------------------------------------------------
-    | LOCKED Savings Interest Rate
+    | Dormant Savings Funds Days
     |--------------------------------------------------------------------------
     |
-    |The interest rate that will be applied to all locked savings.
-    |
-    */
-
-  'locked_savings_interest_rate' => env('LOCKED_SAVINGS_INTEREST_RATE', 0.5),
-
-  /*
-    |--------------------------------------------------------------------------
-    | LOCKED Savings Interest Rate
-    |--------------------------------------------------------------------------
-    |
-    |The interest rate that will be applied to all locked savings.
+    | The adminitrative days before funds starts yielding interests
     |
     */
 
   'days_before_interest_starts_counting' => env('DAYS_BEFORE_INTEREST', 2),
-
-  /*
-    |--------------------------------------------------------------------------
-    | Smart Loan Interest Rate
-    |--------------------------------------------------------------------------
-    |
-    |The interest rate that will be applied to all smart loans.
-    |
-    */
-
-  'smart_loan_interest_rate' => env('SMART_LOAN_INTEREST_RATE', 10),
-
-  /*
-    |--------------------------------------------------------------------------
-    | Smart Loan Duration
-    |--------------------------------------------------------------------------
-    |
-		|	This is the duration in months which the lender has to pay back the loan.
-		|	This is minus the grace period.
-    |
-    */
-
-  'smart_loan_duration' => env('SMART_LOAN_DURATION', 3),
-
-  /*
-    |--------------------------------------------------------------------------
-    | Smart Loan Grace Period
-    |--------------------------------------------------------------------------
-    |
-    |The grace period in DAYS of default before a loan is automatically wiped
-    |
-    */
-
-  'smart_loan_grace_period' => env('SMART_LOAN_GRACE_PERIOD', 30),
-
-  /*
-    |--------------------------------------------------------------------------
-    | Smart Loan Auto Debit Day
-    |--------------------------------------------------------------------------
-    |
-    |	The day of the week when we process loan auto debit repayments
-    |
-    */
-
-  'smart_loan_weekly_auto_debit_day' => env('SMART_LOAN_WEEKLY_AUTO_DEBIT_DAY', 'friday'),
-  'smart_loan_monthly_auto_debit_day' => env('SMART_LOAN_MONTHLY_AUTO_DEBIT_DAY', 23),
 
   /*
     |--------------------------------------------------------------------------

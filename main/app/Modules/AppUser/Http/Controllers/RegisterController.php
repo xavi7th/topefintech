@@ -2,12 +2,9 @@
 
 namespace App\Modules\AppUser\Http\Controllers;
 
-use App\User;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +14,7 @@ use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Http\Requests\RegistrationValidation;
-use App\Modules\AppUser\Notifications\CoreSavingsInitialised;
+use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 
 class RegisterController extends Controller
@@ -157,16 +154,14 @@ class RegisterController extends Controller
     ActivityLog::notifyAdmins($user->email   . ' registered an account on the site.');
 
     /**
-     * Create an empty Savings profile for him with 100% savings distribution
+     * Create an empty Smart Savings profile for him
      */
-    $user->savings_list()->create([
-      'savings_distribution' => 100,
-    ]);
+    $user->savings_list()->create();
 
     /**
-     * Notify the user that a core savings account prifile was initialised for him. He can start saving right away
+     * Notify the user that a smart savings account prifile was initialised for him. He can start saving right away
      */
-    $user->notify(new CoreSavingsInitialised($user));
+    $user->notify(new SmartSavingsInitialised($user));
 
     $token = $user->createVerificationToken();
     $user->notify(new SendAccountVerificationMessage('mail', $token));

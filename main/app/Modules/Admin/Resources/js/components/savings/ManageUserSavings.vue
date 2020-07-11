@@ -24,17 +24,6 @@
             aria-selected="false"
           >Autosave Settings</a>
         </li>
-        <li class="nav-item">
-          <a
-            class="nav-link rui-tabs-link"
-            id="contactPillsSliding-tab"
-            data-toggle="pill"
-            href="#contactPillsSliding"
-            role="tab"
-            aria-controls="contactPillsSliding"
-            aria-selected="false"
-          >Savings Distribution</a>
-        </li>
       </ul>
       <div class="tab-content">
         <div
@@ -57,19 +46,11 @@
         >
           <ManageAutoSaveSettings :auto_save_list="auto_save_list"></ManageAutoSaveSettings>
         </div>
-        <div
-          class="tab-pane fade"
-          id="contactPillsSliding"
-          role="tabpanel"
-          aria-labelledby="contactPillsSliding-tab"
-        >
-          <SavingsDistribution :savings_list="savings_list"></SavingsDistribution>
-        </div>
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="newGOSModal" modalTitle="Create New Goal Oriented Savings">
-        <form class="#" @submit.prevent="createGOS">
+      <modal modalId="newTargetModal" modalTitle="Create New Goal Oriented Savings">
+        <form class="#" @submit.prevent="createTarget">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -84,12 +65,16 @@
               <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
             </div>
             <div class="col-12">
-              <label for="gos-type">Select GOS Plan</label>
-              <select class="custom-select" name="gos-type" v-model="details.gos_type_id">
+              <label for="target-type">Select Target Plan</label>
+              <select class="custom-select" name="target-type" v-model="details.target_type_id">
                 <option selected>Select</option>
-                <option v-for="gos in gos_types" :key="gos.id" :value="gos.id">{{gos.name}}</option>
+                <option
+                  v-for="target in target_types"
+                  :key="target.id"
+                  :value="target.id"
+                >{{target.name}}</option>
               </select>
-              <FlashMessage v-if="errors.gos_type_id" :msg="errors.gos_type_id[0]" />
+              <FlashMessage v-if="errors.target_type_id" :msg="errors.target_type_id[0]" />
             </div>
             <div class="col-12">
               <button type="submit" class="btn btn-success btn-long">
@@ -99,32 +84,9 @@
           </div>
         </form>
       </modal>
-      <modal modalId="newLockedModal" modalTitle="Initialise Locked Funds">
-        <form class="#" @submit.prevent="createLockedFunds">
-          <FlashMessage />
-          <div class="row vertical-gap sm-gap">
-            <div class="col-12">
-              <label for="lock-duration">Duration (Months)</label>
-              <input
-                type="text"
-                class="form-control"
-                id="lock-duration"
-                v-model="details.duration"
-                placeholder="Enter duration to lock funds"
-              />
-              <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
-            </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-success btn-long">
-                <span class="text">Create</span>
-              </button>
-            </div>
-          </div>
-        </form>
-      </modal>
       <modal
         modalId="fundThisSavingsModal"
-        :modalTitle="`Add funds to your ${details.gos_type? details.gos_type.name: '' } Savings`"
+        :modalTitle="`Add funds to your ${details.target_type? details.target_type.name: '' } Savings`"
       >
         <form class="#" @submit.prevent="addFundsToThisSavings">
           <FlashMessage />
@@ -150,7 +112,7 @@
       </modal>
       <modal
         modalId="defundThisSavingsModal"
-        :modalTitle="`Remove funds to this ${details.gos_type? details.gos_type.name: '' } Savings`"
+        :modalTitle="`Remove funds to this ${details.target_type? details.target_type.name: '' } Savings`"
       >
         <form class="#" @submit.prevent="removeFundsFromThisSavings">
           <FlashMessage />
@@ -174,16 +136,16 @@
           </div>
         </form>
       </modal>
-      <modal modalId="fundSavingsModal" :modalTitle="`Add distributed funds to your savings`">
+      <modal modalId="fundSavingsModal" :modalTitle="`Add funds to user's savings`">
         <form class="#" @submit.prevent="addFundsToSavings">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
-              <label for="amount-to-distribute">Amount to fund</label>
+              <label for="amount-to-fund">Amount to fund</label>
               <input
                 type="number"
                 class="form-control"
-                id="amount-to-distribute"
+                id="amount-to-fund"
                 v-model="details.amount"
                 placeholder="Amount to add to funds"
               />
@@ -192,14 +154,6 @@
             <div class="col-12">
               <button type="submit" class="btn btn-success btn-long mr-25">
                 <span class="text">Pay</span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-brand btn-long"
-                @click="getDistributionDetails"
-                v-if="!auth.user.isAdmin"
-              >
-                <span class="text">View Distribution Details</span>
               </button>
             </div>
           </div>
@@ -215,16 +169,14 @@
   import Layout from "@admin-assets/js/AdminAppComponent";
   import ManageSavings from "@dashboard-assets/js/components/savings/partials/ManageSavings";
   import ManageAutoSaveSettings from "@dashboard-assets/js/components/savings/partials/ManageAutoSaveSettings";
-  import SavingsDistribution from "@dashboard-assets/js/components/savings/partials/SavingsDistribution";
   export default {
     name: "AdminManageUserSavings",
     mixins: [mixins],
-    props: ["gos_types", "savings_list", "auto_save_list", "user"],
+    props: ["target_types", "savings_list", "auto_save_list", "user"],
     components: {
       Layout,
       ManageSavings,
-      ManageAutoSaveSettings,
-      SavingsDistribution
+      ManageAutoSaveSettings
     },
     data: () => {
       return {
@@ -237,8 +189,8 @@
         BlockToast.fire({ text: "Adding funds to savings ..." });
 
         let url = this.$page.auth.user.isAdmin
-          ? this.$route("admin.user_savings.locked.fund", this.user.id)
-          : this.$route("appuser.savings.locked.fund");
+          ? this.$route("admin.user_savings.target.fund", this.user.id)
+          : this.$route("appuser.savings.target.fund");
 
         this.$inertia
           .post(
@@ -262,7 +214,7 @@
 
         this.$inertia
           .post(
-            this.$route("admin.user_savings.locked.defund", this.user.id),
+            this.$route("admin.user_savings.target.defund", this.user.id),
             {
               ...this.details
             },
@@ -277,56 +229,8 @@
             swal.close();
           });
       },
-      getDistributionDetails() {
-        BlockToast.fire({ text: "Getting distribution details ..." });
-
-        axios
-          .get(this.$route("appuser.savings.distribution"), {
-            params: {
-              amount: this.details.amount
-            }
-          })
-          .then(({ data }) => {
-            let str = "";
-            console.log(data);
-            _.each(data, ($val, $key) => {
-              str =
-                str +
-                "<br><b class='mb-10 d-inline-block'>" +
-                $key +
-                " Savings :</b>" +
-                this.$options.filters.Naira($val);
-            });
-
-            console.log(str);
-
-            swal.fire({
-              title: "<strong>Savings Breakdown</strong>",
-              icon: "info",
-              html: `<div class="card"><div class="card-header">TOTAL: ${this.$options.filters.Naira(
-                this.details.amount
-              )}</div><div class="card-body  p-0"><blockquote class="blockquote mb-0 text-left text-capitalize"><p>${str}</p><footer class="blockquote-footer text-right">Proceed?</footer></blockquote></div></div>`,
-              showCloseButton: false,
-              showCancelButton: true,
-              focusConfirm: true,
-              confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
-              confirmButtonAriaLabel: "Thumbs up, great!"
-            });
-          })
-          .catch(err => {
-            if (err.response) {
-              swal.fire({
-                position: "top-end",
-                icon: "error",
-                title: err.response.data.message[0],
-                showConfirmButton: false,
-                timer: 3500
-              });
-            }
-          });
-      },
       addFundsToSavings() {
-        BlockToast.fire({ text: "Adding distributed funds to your savings ..." });
+        BlockToast.fire({ text: "Adding funds to this savings ..." });
 
         let url = this.$page.auth.user.isAdmin
           ? this.$route("admin.user_savings.fund", this.user.id)

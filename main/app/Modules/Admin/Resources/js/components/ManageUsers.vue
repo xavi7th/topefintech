@@ -114,7 +114,7 @@
                       >Savings Details</inertia-link>
                       <inertia-link
                         v-if="user.is_email_verified"
-                        :href="$route('admin.user.smart-interest', user.id)"
+                        :href="$route('admin.user.interest', user.id)"
                         class="btn btn-brand btn-sm"
                       >Interest Logs</inertia-link>
                       <inertia-link
@@ -132,54 +132,7 @@
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="savingsPlans" :modalTitle="`Add distributed funds to your savings`">
-        <form class="m-25">
-          <FlashMessage />
-          <div class="form-group mb-5" :class="{'has-error': errors.full_name}">
-            <label for="form-full-name">
-              <strong>Full Name</strong>
-            </label>
-            <input
-              type="text"
-              class="form-control form-control-pill"
-              id="form-full-name"
-              v-model="details.full_name"
-              name="full_name"
-            />
-            <FlashMessage v-if="errors.full_name" :msg="errors.full_name[0]" />
-          </div>
-          <div class="form-group mb-5" :class="{'has-error': errors.email}">
-            <label for="form-mail">
-              <strong>E-Mail</strong>
-            </label>
-            <input
-              type="text"
-              class="form-control form-control-pill"
-              id="form-mail"
-              v-model="details.email"
-              name="email"
-            />
-            <FlashMessage v-if="errors.email" :msg="errors.email[0]" />
-          </div>
-          <div class="form-group mb-5" :class="{'has-error': errors.phone}">
-            <label for="form-phone">
-              <strong>Phone</strong>
-            </label>
-            <input
-              type="text"
-              class="form-control form-control-pill"
-              id="form-phone"
-              v-model="details.phone"
-              name="phone"
-            />
-            <FlashMessage v-if="errors.phone" :msg="errors.phone[0]" />
-          </div>
-
-          <div class="form-group mt-20 text-center">
-            <button type="button" class="btn btn-brand">Create Admin Account</button>
-          </div>
-        </form>
-      </modal>
+      <modal modalId="savingsPlans" :modalTitle="`I can't remember what I wanted to do here`"></modal>
     </template>
   </layout>
 </template>

@@ -10,11 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\GOSType;
+use App\Modules\AppUser\Models\TargetType;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\DebitCard;
-use App\Modules\AppUser\Models\LoanSurety;
-use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
@@ -57,11 +55,7 @@ class AppUserController extends Controller
 
         WithdrawalRequest::appUserRoutes();
 
-        GOSType::appUserRoutes();
-
-        LoanSurety::appUserRoutes();
-
-        LoanRequest::appUserRoutes();
+        TargetType::appUserRoutes();
 
         Transaction::appUserRoutes();
 
@@ -76,12 +70,11 @@ class AppUserController extends Controller
   {
     return Inertia::render('dashboard/UserDashboard', [
       'total_savings_amount' =>  $request->user()->total_deposit_amount(),
-      'total_core_savings_amount' => $request->user()->total_withdrawable_amount(),
+      'total_smart_savings_amount' => $request->user()->total_withdrawable_amount(),
       'interest_today' =>  $request->user()->daily_interest(),
       'total_interests_amount' =>  $request->user()->total_interests_amount(),
       'total_uncleared_interests_amount' => $request->user()->savings_interests()->uncleared()->sum('amount'),
       'total_withdrawals_amount' =>  $request->user()->total_withdrawal_amount(),
-      'total_loans_amount' => optional($request->user()->active_loan_request)->loan_statistics()->balance_left,
     ]);
   }
 }

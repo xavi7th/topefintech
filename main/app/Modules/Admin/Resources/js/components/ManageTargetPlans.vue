@@ -1,5 +1,5 @@
 <template>
-  <layout title="Create GOS Savings Funds" :isAuth="false">
+  <layout title="Create Target Savings Funds" :isAuth="false">
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-6">
@@ -13,17 +13,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="gos in gos_list" :key="gos.id">
-                  <th scope="row">{{gos.id}}</th>
+                <tr v-for="target in target_list" :key="target.id">
+                  <th scope="row">{{target.id}}</th>
                   <td
                     class="text-capitalize d-flex justify-content-between align-items-center"
-                  >{{ gos.name }} Savings</td>
+                  >{{ target.name }} Savings</td>
                   <td class="text-capitalize">
-                    {{gos.savings_count }}
+                    {{target.savings_count }}
                     <button
                       class="btn btn-danger btn-sm"
-                      v-if="gos.savings_count == 0"
-                      @click="deleteGOS(gos.id)"
+                      v-if="target.savings_count == 0"
+                      @click="deleteTarget(target.id)"
                     >Delete</button>
                   </td>
                 </tr>
@@ -33,19 +33,21 @@
         </div>
         <div class="col-lg-6 col-xl-5">
           <div class="d-flex align-items-center justify-content-between mb-25">
-            <h2 class="mnb-2" id="formBase">Create New GOS Plan</h2>
+            <h2 class="mnb-2" id="formBase">Create New Target Plan</h2>
           </div>
-          <form class="#" @submit.prevent="createGos">
+          <form class="#" @submit.prevent="createTarget">
             <div class="row vertical-gap sm-gap">
               <div class="col-12">
-                <label for="gosName">
-                  GOS Plan Name
-                  <span style="color: red;">(What do you want to user to save towards?)</span>
+                <label for="targetName">
+                  Target Plan Name
+                  <span
+                    style="color: red;"
+                  >(What do you want to user to save towards?)</span>
                 </label>
                 <input
                   type="text"
                   class="form-control"
-                  id="gosName"
+                  id="targetName"
                   v-model="name"
                   placeholder="Please Specify"
                 />
@@ -72,10 +74,10 @@
   import { mixins } from "@dashboard-assets/js/config";
   import Layout from "@admin-assets/js/AdminAppComponent";
   export default {
-    name: "ManageGOSPlans",
+    name: "ManageTargetPlans",
     mixins: [mixins],
     props: {
-      gos_list: Array
+      target_list: Array
     },
     components: {
       Layout
@@ -86,13 +88,13 @@
       };
     },
     methods: {
-      createGos() {
+      createTarget() {
         BlockToast.fire({
           text: "Creating ..."
         });
 
         this.$inertia
-          .post(this.$route("admin.gos.create"), { name: this.name })
+          .post(this.$route("admin.target.create"), { name: this.name })
           .then(() => {
             console.log(this.flash);
 
@@ -107,12 +109,12 @@
             }
           });
       },
-      deleteGOS(id) {
+      deleteTarget(id) {
         BlockToast.fire({
           text: "Deleting ..."
         });
 
-        this.$inertia.delete(this.$route("admin.gos.delete", id)).then(() => {
+        this.$inertia.delete(this.$route("admin.target.delete", id)).then(() => {
           console.log(this.flash);
 
           if (this.flash.success) {

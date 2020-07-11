@@ -36,7 +36,7 @@
           <tr v-for="savings in savings_list" :key="savings.id">
             <th scope="row">{{savings.id}}</th>
             <td class="text-capitalize d-flex justify-content-between align-items-center">
-              {{savings.gos_type.name || 'N/A'}} Savings
+              {{savings.target_type.name || 'N/A'}} Savings
               <button
                 type="button"
                 class="btn btn-success btn-uniform btn-round btn-xs"
@@ -60,23 +60,6 @@
             <td class="text-capitalize">{{savings.current_balance | Naira }}</td>
             <td class="text-capitalize">{{savings.funded_at | dayjs('YYYY-MM-DD') }}</td>
             <td class="text-capitalize">{{ savings.maturity_date | dayjs('YYYY-MM-DD') }}</td>
-            <!-- <td>
-                      <input
-                        v-model="savings.savings_distribution"
-                        v-if="editDistribution"
-                        class="form-control"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-danger btn-uniform btn-round btn-xs"
-                        @click="deleteAutoSave(asv)"
-                      >
-                        <span class="icon">
-                          <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>
-                        </span>
-                        Fund
-                      </button>
-            </td>-->
           </tr>
         </tbody>
       </table>

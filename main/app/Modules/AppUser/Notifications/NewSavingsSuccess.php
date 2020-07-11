@@ -60,7 +60,7 @@ class NewSavingsSuccess extends Notification
   public function toDatabase($user)
   {
     return [
-      'action' => 'Congratulations! You just saved ' . to_naira($this->amount) . " according to your savings distribution."
+      'action' => 'Congratulations! You just saved ' . to_naira($this->amount) . " into your account."
     ];
   }
 }

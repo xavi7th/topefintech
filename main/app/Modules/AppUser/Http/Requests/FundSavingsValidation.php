@@ -16,7 +16,7 @@ class FundSavingsValidation extends FormRequest
   public function rules()
   {
     return [
-      'gos_type_id' => 'nullable|exists:gos_types,id',
+      'target_type_id' => 'nullable|exists:target_types,id',
       'maturity_date' => 'nullable|date',
       'amount' => 'required|numeric',
     ];
@@ -43,27 +43,6 @@ class FundSavingsValidation extends FormRequest
   {
     return [];
   }
-
-
-  /**
-   * Configure the validator instance.
-   *
-   * @param  \Illuminate\Validation\Validator  $validator
-   * @return void
-   */
-  public function withValidator($validator)
-  {
-    $validator->after(function ($validator) {
-      /**
-       * Check if by some trickery the user has manipulated his savings distribution above 100%
-       */
-      if ($this->user()->total_distribution_percentage() != 100) {
-        $validator->errors()->add('Savings distribution', 'Your savings distribution is not 100%. Correct it before continuing');
-        return;
-      }
-    });
-  }
-
 
   /**
    * Overwrite the validator response so we can customise it per the structure requested from the fronend

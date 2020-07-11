@@ -20,7 +20,7 @@
                           <span class="media-body">
                             <span
                               class="media-title"
-                            >You can only withdraw from your core savings account</span>
+                            >You can only withdraw from your smart savings account</span>
                           </span>
                         </a>
                       </div>

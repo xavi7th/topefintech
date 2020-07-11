@@ -47,7 +47,7 @@
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="createAdminModal" :modalTitle="`Add distributed funds to your savings`">
+      <modal modalId="createAdminModal" :modalTitle="`Create a new admin account`">
         <form class="m-25">
           <FlashMessage />
           <div class="form-group mb-5" :class="{'has-error': errors.full_name}">

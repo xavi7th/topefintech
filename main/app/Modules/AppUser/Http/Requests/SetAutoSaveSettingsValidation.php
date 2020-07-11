@@ -75,18 +75,8 @@ class SetAutoSaveSettingsValidation extends FormRequest
   public function withValidator($validator)
   {
     $validator->after(function ($validator) {
-      // dd($this->all());
-      /**
-       * Check if by some trickery the user has manipulated his savings distribution above 100%
-       */
-      $total_percentage = $this->user()->savings_list()->sum('savings_distribution');
-      if ($total_percentage != 100) {
-        $validator->errors()->add('amount', 'Your savings distribution is not 100%. Correct it before continuing');
-        return;
-      }
-
-      if ($this->user()->has_authorised_card()) {
-        $validator->errors()->add('amount', 'You must authorise a card fro debits before adding an auto save setting');
+      if (!$this->user()->has_authorised_card()) {
+        $validator->errors()->add('amount', 'You must authorise a card for debits before adding an auto save setting');
         return;
       }
     });

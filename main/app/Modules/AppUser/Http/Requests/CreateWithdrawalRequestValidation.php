@@ -2,11 +2,8 @@
 
 namespace App\Modules\AppUser\Http\Requests;
 
-use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\LoanSurety;
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
-use Illuminate\Auth\Access\AuthorizationException;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 
 class CreateWithdrawalRequestValidation extends FormRequest
@@ -19,7 +16,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
   public function rules()
   {
     return [
-      'amount' => 'bail|required|numeric|gte:2000|lte:' . $this->user()->total_withdrawable_amount(),
+      'amount' => 'bail|required|numeric|gte:1000|lte:' . $this->user()->total_withdrawable_amount(),
     ];
   }
 
@@ -41,11 +38,10 @@ class CreateWithdrawalRequestValidation extends FormRequest
   public function messages()
   {
     return [
-      'amount.gte' => 'Minimum amount withdrawable is ' . to_naira(2000),
+      'amount.gte' => 'Minimum amount withdrawable is ' . to_naira(1000),
       'amount.lte' => 'Maximum amount withdrawable is ' . to_naira($this->user()->total_withdrawable_amount())
     ];
   }
-
 
   /**
    * Configure the validator instance.
@@ -61,22 +57,6 @@ class CreateWithdrawalRequestValidation extends FormRequest
        */
       if (!($this->user()->is_bvn_verified && $this->user()->is_bank_verified)) {
         $validator->errors()->add('amount', 'BVN and bank account number must be verified before withdrawal');
-      }
-
-      /**
-       * Check if has pending loan
-       */
-      if ($this->user()->has_pending_loan()) {
-        $validator->errors()->add('amount', 'Those with pending loans cannot withdraw funds');
-        return;
-      }
-
-      /**
-       * Check if surety and how much
-       */
-      if ($this->user()->is_loan_surety() && ($this->amount >= ($this->user()->total_withdrawable_amount() - $this->user()->loan_surety_amount()))) {
-        $validator->errors()->add('amount', 'Loan sureties can only withdraw funds above the surety amount');
-        return;
       }
 
       /**

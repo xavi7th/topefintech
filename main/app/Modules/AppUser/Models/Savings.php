@@ -10,82 +10,32 @@ use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\GOSType;
+use App\Modules\AppUser\Models\TargetType;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\PaystackTransaction;
-use App\Modules\AppUser\Notifications\SmartLockBroken;
-use App\Modules\AppUser\Notifications\SmartLockMature;
-use App\Modules\AppUser\Notifications\GOSSavingsMatured;
-use App\Modules\AppUser\Http\Requests\FundSavingsValidation;
-use App\Modules\Admin\Http\Requests\FundUserSavingsValidation;
-use App\Modules\AppUser\Http\Requests\CreateGOSFundValidation;
+use App\Modules\AppUser\Notifications\TargetSavingsBroken;
+use App\Modules\AppUser\Notifications\TargetSavingsMature;
+use App\Modules\AppUser\Notifications\TargetSavingsMatured;
+use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
-use App\Modules\AppUser\Http\Requests\CreateLockedFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
-use App\Modules\AppUser\Http\Requests\UpdateSavingsDistributionValidation;
 use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 
-/**
- * App\Modules\AppUser\Models\Savings
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $type
- * @property int|null $gos_type_id
- * @property \Illuminate\Support\Carbon|null $maturity_date
- * @property float $current_balance
- * @property \Illuminate\Support\Carbon|null $funded_at
- * @property float $savings_distribution
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\AppUser $app_user
- * @property-read \App\Modules\AppUser\Models\GOSType|null $gos_type
- * @property-read \App\Modules\AppUser\Models\Transaction $initial_deposit_transaction
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings matured()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereCurrentBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereGosTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereSavingsDistribution($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
- * @mixin \Eloquent
- */
 class Savings extends Model
 {
   use SoftDeletes;
 
-  protected $fillable = ['type', 'gos_type_id', 'maturity_date', 'amount', 'savings_distribution'];
+  protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount'];
   protected $table = 'savings';
   protected $dates = ['funded_at', 'maturity_date', 'interest_processed_at'];
   protected $casts = [
     'current_balance' => 'double',
     'app_user_id' => 'int',
-    'gos_type_id' => 'int',
-    'savings_distribution' => 'double',
+    'target_type_id' => 'int'
   ];
 
   public function __construct(array $attributes = [])
@@ -113,24 +63,19 @@ class Savings extends Model
     return $this->app_user_id === $user->id;
   }
 
-  public function is_core_savings(): bool
+  public function is_smart_savings(): bool
   {
-    return $this->type == 'core';
+    return $this->type == 'smart';
   }
 
-  public function is_smart_lock(): bool
+  public function is_target_savings(): bool
   {
-    return $this->type == 'locked';
+    return $this->type == 'target';
   }
 
-  public function is_gos_savings(): bool
+  public function target_type()
   {
-    return $this->type == 'gos';
-  }
-
-  public function gos_type()
-  {
-    return $this->belongsTo(GOSType::class)->withDefault(function ($user, $post) {
+    return $this->belongsTo(TargetType::class)->withDefault(function ($user, $post) {
       $user->name = $post->type;
     });
   }
@@ -205,14 +150,12 @@ class Savings extends Model
   {
     /**
      * Handle withdrawals. so you dont give interest on deposits that have been "withdrawn"
-     * -- Only core savings have withdrawals
+     * -- Only smart savings have withdrawals
      */
-    if ($this->is_core_savings()) {
-      return ($this->interestable_deposit_transactions()->sum('amount') - $this->total_withdrawals_sum()) * (config('app.core_savings_interest_rate') / 100);
-    } else if ($this->is_gos_savings()) {
-      return $this->interestable_deposit_transactions()->sum('amount') * (config('app.gos_savings_interest_rate') / 100);
-    } else if ($this->is_smart_lock()) {
-      return $this->interestable_deposit_transactions()->sum('amount') * (config('app.locked_savings_interest_rate') / 100);
+    if ($this->is_smart_savings()) {
+      return ($this->interestable_deposit_transactions()->sum('amount') - $this->total_withdrawals_sum()) * (config('app.smart_savings_interest_rate') / 100);
+    } else if ($this->is_target_savings()) {
+      return $this->interestable_deposit_transactions()->sum('amount') * (config('app.target_savings_interest_rate') / 100);
     }
   }
 
@@ -239,7 +182,7 @@ class Savings extends Model
       /**
        * Add a deposit transaction for this savings with a description for interest roll over
        */
-      $decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->gos_type->name . ' savings';
+      $decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->target_type->name . ' savings';
 
       $this->create_deposit_transaction($uncleared_interests_sum, $decsription);
 
@@ -270,10 +213,10 @@ class Savings extends Model
   public function is_mature(): ?bool
   {
     /**
-     * ! Fail on core savings
-     * ? Core savings has no maturity date
+     * ! Fail on smart savings
+     * ? Smart savings has no maturity date
      */
-    if ($this->is_core_savings()) {
+    if ($this->is_smart_savings()) {
       return null;
     }
 
@@ -286,7 +229,7 @@ class Savings extends Model
   public function complete_mature_savings(): bool
   {
     /**
-     * Make sure this is not a core or immature locked or gos savings
+     * Make sure this is not a smart or immature target savings
      */
     if (!$this->is_mature()) {
       return false;
@@ -306,17 +249,17 @@ class Savings extends Model
     }
 
     /**
-     * Create a deposit transaction moving the balance of this savings to the core
+     * Create a deposit transaction moving the balance of this savings to the smart
      */
-    $user_core_savings = $this->app_user->core_savings;
+    $user_smart_savings = $this->app_user->smart_savings;
 
-    $user_core_savings->create_deposit_transaction($this->current_balance, 'Mature ' . $this->gos_type->name . ' funds rollover');
+    $user_smart_savings->create_deposit_transaction($this->current_balance, 'Mature ' . $this->target_type->name . ' funds rollover');
 
     /**
-     * Add same amount to the current balance of core savings
+     * Add same amount to the current balance of smart savings
      */
-    $user_core_savings->current_balance += $this->current_balance;
-    $user_core_savings->save();
+    $user_smart_savings->current_balance += $this->current_balance;
+    $user_smart_savings->save();
 
     /**
      * Delete this savings (so that it leaves the record of the user)
@@ -372,9 +315,8 @@ class Savings extends Model
   static function adminRoutes()
   {
     Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('admin.user_savings')->defaults('extras', ['nav_skip' => true]);
-    Route::post('{appUser}/savings/fund', [self::class, 'distributeFundsToUserSavings'])->name('admin.user_savings.fund')->defaults('extras', ['nav_skip' => true]);
-    Route::post('{appUser}/savings/locked-funds/add', [self::class, 'lockMoreUserFunds'])->name('admin.user_savings.locked.fund');
-    Route::post('{appUser}/savings/locked-funds/deduct', [self::class, 'deductUserFunds'])->name('admin.user_savings.locked.defund');
+    Route::post('{appUser}/savings/target-funds/add', [self::class, 'lockMoreUserFunds'])->name('admin.user_savings.target.fund');
+    Route::post('{appUser}/savings/target-funds/deduct', [self::class, 'deductUserFunds'])->name('admin.user_savings.target.defund');
     Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('admin.view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
   }
 
@@ -382,39 +324,23 @@ class Savings extends Model
   {
     Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
 
-    Route::get('savings/get-distribution-details', [self::class, 'getDistributionDetails'])->name('appuser.savings.distribution')->defaults('extras', ['nav_skip' => true]);
-
-    Route::post('/savings/fund', [self::class, 'distributeFundsToSavings'])->name('appuser.savings.fund');
-
-    Route::get('/savings/fund/verify', [self::class, 'verifyDistributeFundsToSavings'])->name('appuser.savings.fund.verify')->defaults('extras', ['nav_skip' => true]);
-
     Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
 
     Route::delete('/savings/auto-save/{autoSaveSetting}', [self::class, 'deleteAutoSaveSettings'])->name('appuser.savings.delete-autosave');
 
-    Route::post('/savings/locked-funds/create', [self::class, 'createNewLockedFundsProfile'])->name('appuser.savings.locked.initialise');
+    Route::post('/savings/target-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.target.fund');
 
-    Route::post('/savings/locked-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.locked.fund');
+    Route::get('/savings/{savings}/target-funds/add', [self::class, 'verifyLockMoreFunds'])->name('appuser.savings.target.fund.verify')->defaults('extras', ['nav_skip' => true]);
 
-    Route::get('/savings/{savings}/locked-funds/add', [self::class, 'verifyLockMoreFunds'])->name('appuser.savings.locked.fund.verify')->defaults('extras', ['nav_skip' => true]);
-
-    Route::get('/savings/{savings}/break', [self::class, 'breakLockedFunds']);
+    Route::get('/savings/{savings}/break', [self::class, 'breakTargetFunds']);
 
     Route::get('/savings/{savings}/verify', [self::class, 'verifySavingsAmount']);
 
     Route::get('/savings/{savings}/check-maturity', [self::class, 'checkSavingsMaturity']);
 
-    Route::get('/savings/gos-funds/create', [self::class, 'viewGOSList'])->name('appuser.create-gos-plan')->defaults('extras', ['icon' => 'far fa-folder']);
+    Route::get('/savings/target-funds/create', [self::class, 'viewTargetList'])->name('appuser.create-target-plan')->defaults('extras', ['icon' => 'far fa-folder']);
 
-    Route::post('/savings/gos-funds/create', [self::class, 'createNewGOSSavingsProfile'])->name('appuser.savings.gos.initialise');
-
-    Route::get('/savings/distribution', [self::class, 'getSavingsDistributionRatio']);
-
-    Route::put('/savings/distribution/update', [self::class, 'updateSavingsDistributionRatio'])->name('appuser.savings.distribution.update');
-
-    Route::get('savings/initialise', [self::class, 'makeDistributedPayment'])->name('appuser.paystack.initialise')->defaults('extras', ['nav_skip' => true]);
-
-    Route::get('savings/verify', [self::class, 'verifyDistributedPayment'])->name('appuser.paystack.verify')->defaults('extras', ['nav_skip' => true]);
+    Route::post('/savings/target-funds/create', [self::class, 'createNewTargetSavingsProfile'])->name('appuser.savings.target.initialise');
   }
 
   public function viewUserSavings(Request $request)
@@ -423,44 +349,16 @@ class Savings extends Model
       return $request->user()->savings_list;
     } else {
       return Inertia::render('savings/UserSavings', [
-        'savings_list' => $request->user()->savings_list->load('gos_type'),
+        'savings_list' => $request->user()->savings_list->load('target_type'),
         'auto_save_list' => $request->user()->auto_save_settings,
-        'gos_types' => GOSType::all()
+        'target_types' => TargetType::all()
       ]);
     }
   }
 
-  public function viewGOSList()
+  public function viewTargetList()
   {
-    return Inertia::render('savings/CreateGOSPlan');
-  }
-
-  public function getDistributionDetails(FundSavingsValidation $request)
-  {
-
-    if (!auth()->user()->has_gos_savings() && !auth()->user()->has_locked_savings()) {
-      return ['core' => $request->amount];
-    } else {
-
-      $savings_distribution = [];
-      $savings_distribution_percentage = 0;
-      $savings_distribution_percentage += auth()->user()->core_savings->savings_distribution;
-      $savings_distribution['core'] = $request->amount * (auth()->user()->core_savings->savings_distribution / 100);
-      foreach (auth()->user()->gos_savings->all() as $savings) {
-        $savings_distribution_percentage += $savings->savings_distribution;
-        $savings_distribution[$savings->gos_type->name] = $request->amount * ($savings->savings_distribution / 100);
-      }
-      foreach (auth()->user()->locked_savings->all() as $savings) {
-        $savings_distribution_percentage += $savings->savings_distribution;
-        $savings_distribution['locked' . $savings->id] = $request->amount * ($savings->savings_distribution / 100);
-      }
-
-      if (intval($savings_distribution_percentage) !== 100) {
-        return generate_422_error('Your savings distribution is not 100%. Go to savings distribution and edit');
-      } else {
-        return $savings_distribution;
-      }
-    }
+    return Inertia::render('savings/CreateTargetPlan');
   }
 
   public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)
@@ -490,43 +388,6 @@ class Savings extends Model
     }
   }
 
-  public function distributeFundsToSavings(FundSavingsValidation $request)
-  {
-    return PaystackTransaction::initializeTransaction($request, $request->amount,  "Distributed savings into account of " . to_naira($request->amount), route('appuser.savings.fund.verify'));
-  }
-
-  public function verifyDistributeFundsToSavings(Request $request)
-  {
-
-    if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user()))) {
-      return back()->withError('An error occured');
-    } else {
-
-      /**
-       * If user has core but no gos or locked update the core
-       * If user has gos or locked use distribution to spread it
-       *
-       * ! UPDATE CORE Update savings and create a transactions record
-       * !
-       */
-
-
-      if (!$request->user()->has_gos_savings() && !$request->user()->has_locked_savings()) {
-        $request->user()->fund_core_savings($rsp['amount']);
-      } else {
-        $request->user()->distribute_savings($rsp['amount'], $rsp['description']);
-      }
-
-      $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
-
-      if ($request->isApi()) {
-        return response()->json(['rsp' => $request->user()->savings_list], 201);
-      } else {
-        return back()->withSuccess('Completed! Funds have been distributed into your savings portfolio');
-      }
-    }
-  }
-
   public function lockMoreFunds(Request $request)
   {
     if (!$request->savings_id) {
@@ -542,7 +403,7 @@ class Savings extends Model
       return generate_422_error('Invalid savings selected');
     }
 
-    return PaystackTransaction::initializeTransaction($request, $request->amount, 'Fund ' . $savings->type . ' savings', route('appuser.savings.locked.fund.verify', $savings->id));
+    return PaystackTransaction::initializeTransaction($request, $request->amount, 'Fund ' . $savings->type . ' savings', route('appuser.savings.target.fund.verify', $savings->id));
   }
 
   public function verifyLockMoreFunds(Request $request, self $savings)
@@ -553,10 +414,10 @@ class Savings extends Model
 
       try {
 
-        if ($savings->type == 'core') {
-          $request->user()->fund_core_savings($rsp['amount']);
+        if ($savings->type == 'smart') {
+          $request->user()->fund_smart_savings($rsp['amount']);
         } else {
-          $request->user()->fund_locked_savings($savings, $rsp['amount']);
+          $request->user()->fund_target_savings($savings, $rsp['amount']);
         }
 
         $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
@@ -576,7 +437,7 @@ class Savings extends Model
     }
   }
 
-  public function breakLockedFunds(Request $request, self $savings)
+  public function breakTargetFunds(Request $request, self $savings)
   {
     // return $savings;
     /**
@@ -589,17 +450,17 @@ class Savings extends Model
     }
 
     /**
-     * Check if this is a locked fund
+     * Check if this is a target fund
      */
-    if (!$savings->is_smart_lock()) {
-      return generate_422_error('This is a ' . $savings->type . ' savings. Only smart lock funds can be broken');
+    if (!$savings->is_target_savings()) {
+      return generate_422_error('This is a ' . $savings->type . ' savings. Only target savings funds can be broken');
     }
 
     /**
      * Check if this savings is more than 30 days old
      */
     if ($savings->funded_at->gte(now()->subDays(30))) {
-      return generate_422_error('Smart lock must be 30 days old before they can be broken');
+      return generate_422_error('target savings must be 30 days old before they can be broken');
     }
 
     /**
@@ -619,22 +480,22 @@ class Savings extends Model
     /**
      * Create a service charge transaction for this savings for the lock break charge
      */
-    $savings->create_service_charge($service_charge, 'Amount deducted for breaking locked funds');
+    $savings->create_service_charge($service_charge, 'Amount deducted for breaking target funds');
 
     /**
-     * Create a deposit transaction moving the balance of this savings to the core
+     * Create a deposit transaction moving the balance of this savings to the smart
      * ! deduct the charge from it
      */
-    $user_core_savings = $savings->app_user->core_savings;
+    $user_smart_savings = $savings->app_user->smart_savings;
     $balance_amount = $savings->current_balance - $service_charge;
 
-    $user_core_savings->create_deposit_transaction($balance_amount, 'Broken smart lock funds rollover');
+    $user_smart_savings->create_deposit_transaction($balance_amount, 'Broken target savings funds rollover');
 
     /**
-     * Add same amount to the current balance of core savings
+     * Add same amount to the current balance of smart savings
      */
-    $user_core_savings->current_balance += $balance_amount;
-    $user_core_savings->save();
+    $user_smart_savings->current_balance += $balance_amount;
+    $user_smart_savings->save();
 
     /**
      * Delete this savings (so that it leaves the record of the user)
@@ -656,28 +517,11 @@ class Savings extends Model
     return response()->json(['matured' => $savings->is_mature()], 200);
   }
 
-  public function createNewLockedFundsProfile(CreateLockedFundValidation $request)
+  public function createNewTargetSavingsProfile(CreateTargetFundValidation $request)
   {
-    if ($request->user()->has_locked_savings()) {
-      return generate_422_error('You can only have one smart lock profile');
-    }
-    $funds = auth()->user()->locked_savings()->create([
-      'type' => 'locked',
-      'maturity_date' => now()->addMonths($request->duration)
-    ]);
-
-    if ($request->isApi()) {
-      return response()->json(['rsp' => $funds], 201);
-    } else {
-      return back()->withSuccess('Locked Funds savings profile created');
-    }
-  }
-
-  public function createNewGOSSavingsProfile(CreateGOSFundValidation $request)
-  {
-    $funds = auth()->user()->gos_savings()->create([
-      'type' => 'gos',
-      'gos_type_id' => $request->gos_type_id,
+    $funds = auth()->user()->target_savings()->create([
+      'type' => 'target',
+      'target_type_id' => $request->target_type_id,
       'maturity_date' => now()->addMonths($request->duration)
     ]);
     if ($request->isApi()) {
@@ -687,108 +531,13 @@ class Savings extends Model
     }
   }
 
-  public function getSavingsDistributionRatio(Request $request)
-  {
-    return response()->json($request->user()->savings_list()->get(['id', 'savings_distribution']), 200);
-  }
-
-  public function updateSavingsDistributionRatio(UpdateSavingsDistributionValidation $request)
-  {
-    /**
-     * ? SAMPLE DATA
-     * [
-     *			{
-     *					"id": 1,
-     *					"savings_distribution": 30
-     *			},
-     *			{
-     *					"id": 2,
-     *					"savings_distribution": 15
-     *			},
-     *			{
-     *					"id": 3,
-     *					"savings_distribution": 15
-     *			},
-     *			{
-     *					"id": 4,
-     *					"savings_distribution": 25
-     *			},
-     *			{
-     *					"id": 5,
-     *					"savings_distribution": 5
-     *			},
-     *			{
-     *					"id": 6,
-     *					"savings_distribution": 10
-     *			}
-     *	]
-     */
-    $result = $request->user()->update_savings_distribution($request);
-
-    if ($request->isApi()) {
-      return response()->json($result, 201);
-    }
-    return back()->withSuccess('Updated');
-  }
-
-  public function makeDistributedPayment(Request $request)
-  {
-    if (!$request->amount || $request->amount < 100) {
-      return generate_422_error('An amount is required and must be greater than ' . to_naira(100));
-    }
-    if (!$request->description) {
-      return generate_422_error('A description was not supplied for this transaction');
-    }
-
-    return PaystackTransaction::initializeTransaction($request, $request->amount, $request->description, route('appuser.paystack.verify'));
-  }
-
-  public function verifyDistributedPayment(Request $request)
-  {
-    if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user()))) {
-      return back()->withError('An error occured');
-    } else {
-      /**
-       * Give the user value
-       */
-      $request->user()->distribute_savings($rsp['amount'], $rsp['description']);
-
-      $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
-
-      return back()->withSuccess('Done');
-    }
-  }
-
   public function adminViewUserSavings(Request $request, AppUser $user)
   {
-    $savings_list = $user->savings_list->load('gos_type');
+    $savings_list = $user->savings_list->load('target_type');
     $auto_save_list = $user->auto_save_settings;
-    // $gos_types = GOSType::all();
+    // $target_types = TargetType::all();
 
     return Inertia::render('savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
-  }
-
-  public function distributeFundsToUserSavings(FundUserSavingsValidation $request, AppUser $appUser)
-  {
-    // dd($appUser);
-    /**
-     * If user has core but no gos or locked update the core
-     * If user has gos or locked use distribution to spread it
-     *
-     * ! UPDATE CORE Update savings and create a transactions record
-     *
-     */
-    if (!$appUser->has_gos_savings() && !$appUser->has_locked_savings()) {
-      $appUser->fund_core_savings($request->amount);
-    } else {
-      $appUser->distribute_savings($request->amount);
-    }
-
-    $appUser->notify(new NewSavingsSuccess($request->amount));
-
-    if ($request->isApi()) return response()->json(['rsp' => $appUser->savings_list], 201);
-
-    return back()->withSuccess('Completed! Funds have been distributed into user´s savings portfolio');
   }
 
   public function lockMoreUserFunds(Request $request, AppUser $appUser)
@@ -807,11 +556,10 @@ class Savings extends Model
     }
 
     try {
-      if ($savings->type == 'core') {
-
-        $appUser->fund_core_savings($request->amount);
+      if ($savings->type == 'smart') {
+        $appUser->fund_smart_savings($request->amount);
       } else {
-        $appUser->fund_locked_savings($savings, $request->amount);
+        $appUser->fund_target_savings($savings, $request->amount);
       }
 
       $appUser->notify(new NewSavingsSuccess($request->amount));
@@ -846,11 +594,11 @@ class Savings extends Model
     }
 
     try {
-      if ($savings->type == 'core') {
+      if ($savings->type == 'smart') {
 
-        $appUser->defund_core_savings($request->amount);
+        $appUser->defund_smart_savings($request->amount);
       } else {
-        $appUser->defund_locked_savings($savings, $request->amount);
+        $appUser->defund_target_savings($savings, $request->amount);
       }
 
       if ($request->isApi()) {
@@ -903,14 +651,13 @@ class Savings extends Model
       /**
        * Dispatch notifications
        */
-      if ($savings->is_smart_lock()) {
+      if ($savings->is_target_savings()) {
         if (now()->lt($savings->maturity_date)) {
-          $savings->app_user->notify(new SmartLockBroken($savings));
+          $savings->app_user->notify(new TargetSavingsBroken($savings));
         } else {
-          $savings->app_user->notify(new SmartLockMature($savings));
+          $savings->app_user->notify(new TargetSavingsMature($savings));
+          $savings->app_user->notify(new TargetSavingsMatured($savings));
         }
-      } elseif ($savings->is_gos_savings()) {
-        $savings->app_user->notify(new GOSSavingsMatured($savings));
       }
 
       /**

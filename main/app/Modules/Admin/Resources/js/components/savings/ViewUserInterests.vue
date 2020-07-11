@@ -21,14 +21,14 @@
                   v-for="(interest, savings_type) in interest_summary"
                   :key="`${interest + savings_type}`"
                   class="list-group-item list-group-item-action"
-                  v-bind:class="[ savings_type =='core' ? 'list-group-item-brand': savings_type=='locked' ? 'list-group-item-danger':  'list-group-item-success' ]"
+                  v-bind:class="[ savings_type =='smart' ? 'list-group-item-brand':  'list-group-item-success' ]"
                 >
                   <b class="text-capitalize mr-15">{{savings_type}} savings:</b>
                   {{ interest | Naira }}
                 </a>
               </div>
               <inertia-link
-                :href="$route('admin.user.smart-interest.details', [user.id, month])"
+                :href="$route('admin.user.interest.details', [user.id, month])"
                 class="btn btn-info mt-10 mr-0 ml-auto d-block w-30"
               >Details</inertia-link>
             </div>
@@ -45,7 +45,7 @@
   import { mixins } from "@dashboard-assets/js/config";
   import Layout from "@admin-assets/js/AdminAppComponent";
   export default {
-    name: "UserSmartInterests",
+    name: "UserInterests",
     mixins: [mixins],
     components: {
       Layout

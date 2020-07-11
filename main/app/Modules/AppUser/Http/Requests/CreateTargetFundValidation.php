@@ -5,9 +5,8 @@ namespace App\Modules\AppUser\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
-use App\Modules\AppUser\Models\Savings;
 
-class UpdateSavingsDistributionValidation extends FormRequest
+class CreateTargetFundValidation extends FormRequest
 {
   /**
    * Get the validation rules that apply to the request.
@@ -16,7 +15,10 @@ class UpdateSavingsDistributionValidation extends FormRequest
    */
   public function rules()
   {
-    return [];
+    return [
+      'duration' => 'required|numeric|min:4',
+      'target_type_id' => 'required|exists:target_types,id'
+    ];
   }
 
   /**
@@ -29,6 +31,21 @@ class UpdateSavingsDistributionValidation extends FormRequest
     return true;
   }
 
+
+
+  /**
+   * Configure the error messages for the defined validation rules.
+   *
+   * @return array
+   */
+  public function messages()
+  {
+    return [
+      'duration.min' => 'Target Savings funds duration must be a minimum of 10 months'
+    ];
+  }
+
+
   /**
    * Configure the validator instance.
    *
@@ -38,22 +55,13 @@ class UpdateSavingsDistributionValidation extends FormRequest
   public function withValidator($validator)
   {
     $validator->after(function ($validator) {
-      if (collect($this->all())->sum('savings_distribution') !== 100) {
-        $validator->errors()->add('savings distribution', 'Savings Distribution is greater than 100%');
-        return;
-      }
-
-      /**
-       * Check if all the savings list sent belong to the logged in user
-       */
-      foreach ($this->all() as $value) {
-        if (!(Savings::find($value['id'])->app_user_id === auth()->id())) {
-          $validator->errors()->add('savings distribution', 'Invalid savings list selected');
-          return;
-        }
-      }
+      // if ( $this->user()->smart_savings()->exists()) {
+      // 	$validator->errors()->add('Pending request', 'You already have a pending card request.');
+      // 	return;
+      // }
     });
   }
+
 
   /**
    * Overwrite the validator response so we can customise it per the structure requested from the fronend

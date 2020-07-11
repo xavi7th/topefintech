@@ -18,13 +18,10 @@ use App\Modules\AppUser\Models\Savings;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\AppUser\Models\DebitCard;
 use GuzzleHttp\Exception\ClientException;
-use App\Modules\AppUser\Models\LoanSurety;
 use App\Modules\Admin\Models\ServiceCharge;
-use App\Modules\AppUser\Models\LoanRequest;
 use App\Modules\AppUser\Models\Transaction;
 use Gbowo\Adapter\Paystack\PaystackAdapter;
 use App\Modules\AppUser\Models\AutoSaveSetting;
-use App\Modules\AppUser\Models\LoanTransaction;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
@@ -32,104 +29,6 @@ use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 
-/**
- * App\Modules\AppUser\Models\AppUser
- *
- * @property int $id
- * @property string $full_name
- * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string $password
- * @property string|null $phone
- * @property string|null $address
- * @property string|null $city
- * @property string $country
- * @property string|null $acc_num
- * @property string|null $acc_bank
- * @property string|null $acc_type
- * @property string|null $bvn
- * @property bool $is_bvn_verified
- * @property bool $is_bank_verified
- * @property string|null $id_card
- * @property \Illuminate\Support\Carbon|null $verified_at
- * @property bool $can_withdraw
- * @property bool $is_active
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
- * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\AutoSaveSetting[] $auto_save_settings
- * @property-read int|null $auto_save_settings_count
- * @property-read \App\Modules\AppUser\Models\Savings|null $core_savings
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\DebitCard[] $debit_cards
- * @property-read int|null $debit_cards_count
- * @property-read \App\Modules\AppUser\Models\DebitCard|null $default_debit_card
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $gos_savings
- * @property-read int|null $gos_savings_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanRequest[] $loan_requests
- * @property-read int|null $loan_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanTransaction[] $loan_transactions
- * @property-read int|null $loan_transactions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $locked_savings
- * @property-read int|null $locked_savings_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $previous_withdrawal_requests
- * @property-read int|null $previous_withdrawal_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
- * @property-read int|null $processed_withdrawal_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\LoanSurety[] $request_for_surety
- * @property-read int|null $request_for_surety_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $savings_list
- * @property-read int|null $savings_list_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read \App\Modules\AppUser\Models\LoanSurety|null $surety_request
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawal_request
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAccBank($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAccNum($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAccType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereBvn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereCanWithdraw($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereCity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereCountry($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereFullName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereIdCard($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereIsBankVerified($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereIsBvnVerified($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
- * @mixin \Eloquent
- * @property string|null $date_of_birth
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereDateOfBirth($value)
- * @property-read \App\Modules\AppUser\Models\LoanRequest|null $active_loan_request
- * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_requests
- * @property-read \App\Modules\AppUser\Models\LoanRequest|null $pending_loan_request
- * @property-read \App\Modules\AppUser\Models\LoanSurety|null $pending_surety_request
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $withdrawal_requests
- * @property-read int|null $withdrawal_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\PaystackTransaction[] $paystack_transactions
- * @property-read int|null $paystack_transactions_count
- */
 class AppUser extends User
 {
   protected $fillable = [
@@ -166,48 +65,6 @@ class AppUser extends User
     return $this->hasManyThrough(ServiceCharge::class, Savings::class)->latest('service_charges.created_at');
   }
 
-  public function loan_requests()
-  {
-    return $this->hasMany(LoanRequest::class)->latest();
-  }
-
-  public function pending_loan_request()
-  {
-    return $this->hasOne(LoanRequest::class)->where('is_approved', null);
-  }
-
-  public function active_loan_request()
-  {
-    return $this->hasOne(LoanRequest::class)->latest()->withDefault();
-  }
-
-  public function loan_transactions()
-  {
-    return $this->hasManyThrough(LoanTransaction::class, LoanRequest::class)->latest('loan_transactions.created_at');
-  }
-
-  public function request_for_surety()
-  {
-    return $this->hasMany(LoanSurety::class, 'lender_id')->latest();
-  }
-
-  public function surety_request()
-  {
-    return $this->hasOne(LoanSurety::class, 'surety_id')->latest();
-  }
-
-  public function pending_surety_request()
-  {
-    return $this->hasOne(LoanSurety::class, 'surety_id')->where('is_surety_accepted', null);
-  }
-
-  public function suretied_loan()
-  {
-    return $this->surety_request()->where(function ($query) {
-      return $query->where('is_surety_accepted', null)->orWhere('is_surety_accepted', true);
-    });
-  }
-
   public function auto_save_settings()
   {
     return $this->hasMany(AutoSaveSetting::class)->latest();
@@ -233,14 +90,14 @@ class AppUser extends User
     return $this->hasMany(Savings::class)->latest();
   }
 
-  public function core_savings()
+  public function smart_savings()
   {
-    return $this->hasOne(Savings::class)->where('type', 'core');
+    return $this->hasOne(Savings::class)->where('type', 'smart');
   }
 
-  public function core_savings_interests()
+  public function smart_savings_interests()
   {
-    return optional($this->core_savings)->savings_interests()->latest();
+    return optional($this->smart_savings)->savings_interests()->latest();
   }
 
   public function savings_interests()
@@ -248,14 +105,9 @@ class AppUser extends User
     return $this->hasManyThrough(SavingsInterest::class, Savings::class)->latest('savings_interests.created_at');
   }
 
-  public function gos_savings()
+  public function target_savings()
   {
-    return $this->hasMany(Savings::class)->where('type', 'gos')->latest();
-  }
-
-  public function locked_savings()
-  {
-    return $this->hasMany(Savings::class)->where('type', 'locked')->latest();
+    return $this->hasMany(Savings::class)->where('type', 'target')->latest();
   }
 
   public function withdrawal_requests()
@@ -331,24 +183,14 @@ class AppUser extends User
     return $this->auto_save_settings()->exists();
   }
 
-  public function has_core_savings(): bool
+  public function has_smart_savings(): bool
   {
-    return $this->core_savings()->exists();
+    return $this->smart_savings()->exists();
   }
 
-  public function has_gos_savings(): bool
+  public function has_target_savings(): bool
   {
-    return $this->gos_savings()->exists();
-  }
-
-  public function has_locked_savings(): bool
-  {
-    return $this->locked_savings()->exists();
-  }
-
-  public function total_distribution_percentage(): float
-  {
-    return $this->savings_list()->sum('savings_distribution');
+    return $this->target_savings()->exists();
   }
 
   public function has_pending_withdrawal_request(): bool
@@ -374,7 +216,7 @@ class AppUser extends User
 
   public function total_withdrawable_amount(): float
   {
-    return optional($this->core_savings)->current_balance;
+    return optional($this->smart_savings)->current_balance;
   }
 
   public function total_withdrawal_amount(): float
@@ -402,94 +244,6 @@ class AppUser extends User
     return $this->total_deposit_amount() + $this->total_interests_amount();
   }
 
-  public function is_eligible_for_loan(float $amount): bool
-  {
-    /**
-     * ? If the user is not up to one month old return false
-     */
-
-    if (now()->subMonth()->lte($this->created_at)) {
-      return false;
-    }
-    /**
-     * ? If the user has not made a contribution return false
-     */
-    elseif ($this->deposit_transactions()->sum('amount') <= 0) {
-      return false;
-    }
-    /**
-     * If the loan amount is more than 2 times the user's balance return false
-     */
-    elseif ($amount > ($this->total_balance() * 2)) {
-      return false;
-    } elseif (!$this->is_bvn_verified) {
-      return false;
-    } elseif (!$this->default_debit_card()->exists()) {
-      return false;
-    } elseif ($this->has_pending_loan()) {
-      return false;
-    } elseif ($this->is_loan_surety()) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  public function is_eligible_for_loan_surety(float $amount): bool
-  {
-    /**
-     * ? If the user is not up to two months old return false
-     */
-
-    if (now()->subMonths(2)->lte($this->created_at)) {
-      return false;
-    }
-    /**
-     * ? If the user has not made a contribution return false
-     */
-    elseif (!($this->deposit_transactions()->whereMonth('transactions.created_at', now()->month)->exists()
-      && $this->deposit_transactions()->whereMonth('transactions.created_at', now()->subMonth()->month)->exists())) {
-      return false;
-    }
-    /**
-     * ? If the loan amount is more than 2 times the user's balance return false
-     */
-    elseif ($amount > $this->total_balance()) {
-      return false;
-    } elseif (!$this->is_bvn_verified) {
-      return false;
-    } elseif (!$this->default_debit_card()->exists()) {
-      return false;
-    } elseif ($this->has_pending_loan()) {
-      return false;
-    } elseif ($this->is_loan_surety()) {
-      return false;
-    }
-    /**
-     * Else he is eligible. Return true
-     */
-    else {
-      return true;
-    }
-  }
-
-  public function has_pending_loan(): bool
-  {
-    return $this->loan_requests()->where('is_paid', false)->where(function ($q) {
-      $q->where('is_approved', null)->orWhere('is_approved', true);
-    })->exists();
-  }
-
-  public function is_loan_surety(): bool
-  {
-    return $this->suretied_loan()->exists();
-  }
-
-  public function loan_surety_amount(): float
-  {
-    return $this->suretied_loan->loan_request->amount;
-  }
-
   public function activeDays(): int
   {
     return now()->diffInDays($this->created_at);
@@ -504,128 +258,62 @@ class AppUser extends User
     return $debit_card_to_deduct->perform_recurrent_debit($amount);
   }
 
-  public function fund_core_savings(float $amount, string $desc = null): void
+  public function fund_smart_savings(float $amount, string $desc = null): void
   {
     DB::beginTransaction();
-    $core_savings = $this->core_savings;
-    $core_savings->current_balance += $amount;
+    $smart_savings = $this->smart_savings;
+    $smart_savings->current_balance += $amount;
     /**
      * Set the date of his first funding of this savings
      */
-    $core_savings->funded_at  = $core_savings->funded_at ?? now();
-    $core_savings->save();
+    $smart_savings->funded_at  = $smart_savings->funded_at ?? now();
+    $smart_savings->save();
 
-    $desc = $desc ?? 'Deposit into core savings';
-    $core_savings->create_deposit_transaction($amount, $desc);
+    $desc = $desc ?? 'Deposit into smart savings';
+    $smart_savings->create_deposit_transaction($amount, $desc);
 
     DB::commit();
   }
 
-  public function fund_locked_savings(Savings $locked_savings, float $amount): void
+  public function fund_target_savings(Savings $target_savings, float $amount): void
   {
     DB::beginTransaction();
 
-    $locked_savings->current_balance += $amount;
+    $target_savings->current_balance += $amount;
     /**
      * Specify the first time money was deposited into this profile.
      */
-    $locked_savings->funded_at  = $locked_savings->funded_at ?? now();
-    $locked_savings->save();
+    $target_savings->funded_at  = $target_savings->funded_at ?? now();
+    $target_savings->save();
 
-    $locked_savings->create_deposit_transaction($amount, 'Funding ' . $locked_savings->gos_type->name . ' savings');
+    $target_savings->create_deposit_transaction($amount, 'Funding ' . $target_savings->target_type->name . ' savings');
 
     DB::commit();
   }
 
-  public function defund_core_savings(float $amount, string $desc = null): void
+  public function defund_smart_savings(float $amount, string $desc = null): void
   {
     DB::beginTransaction();
-    $core_savings = $this->core_savings;
-    $core_savings->current_balance -= $amount;
-    $core_savings->save();
+    $smart_savings = $this->smart_savings;
+    $smart_savings->current_balance -= $amount;
+    $smart_savings->save();
 
-    $desc = $desc ?? 'Automatic deduction from core savings';
-    $core_savings->create_withdrawal_transaction($amount, $desc);
+    $desc = $desc ?? 'Automatic deduction from smart savings';
+    $smart_savings->create_withdrawal_transaction($amount, $desc);
 
     DB::commit();
   }
 
-  public function defund_locked_savings(Savings $locked_savings, float $amount): void
+  public function defund_target_savings(Savings $target_savings, float $amount): void
   {
     DB::beginTransaction();
 
-    $locked_savings->current_balance -= $amount;
-    $locked_savings->save();
+    $target_savings->current_balance -= $amount;
+    $target_savings->save();
 
-    $locked_savings->create_withdrawal_transaction($amount, 'Automatic deduction from ' . $locked_savings->gos_type->name . ' savings');
-
-    DB::commit();
-  }
-
-  public function distribute_savings(float $amount, string $description = null): void
-  {
-    /**
-     * ! Find a way to dind out from paystack whether paytment really was made
-     */
-    DB::beginTransaction();
-    /**
-     * Fund Core Savings based on distribution
-     */
-    $core_savings = $this->core_savings;
-    $core_savings_amount = ($amount * ($core_savings->savings_distribution / 100));
-    if ($core_savings_amount > 0) {
-      $core_savings->current_balance += $core_savings_amount;
-      $core_savings->funded_at  = $core_savings->funded_at ?? now();
-      $core_savings->save();
-
-      $description = $description ?? 'Distributed savings into core savings';
-      $core_savings->create_deposit_transaction($core_savings_amount, $description);
-    }
-    /**
-     * Fund each gos saving based on distribution
-     */
-    $gos_savings = $this->gos_savings;
-    if (!$gos_savings->isEmpty()) {
-      foreach ($gos_savings->all() as $savings) {
-        $savings_amount = ($amount * ($savings->savings_distribution / 100));
-        if ($savings_amount > 0) {
-          $savings->current_balance += $savings_amount;
-          $savings->funded_at  = $savings->funded_at ?? now();
-          $savings->save();
-
-          $description = $description ?? 'Distributed savings into ' . $savings->gos_type->name . ' savings';
-          $savings->create_deposit_transaction($savings_amount, $description);
-        }
-      }
-    }
-    /**
-     * Fund each locked savings based on distribution
-     */
-    $locked_funds = $this->locked_savings;
-    if (!$locked_funds->isEmpty()) {
-      foreach ($locked_funds->all() as $savings) {
-        $savings_amount = ($amount * ($savings->savings_distribution / 100));
-        if ($savings_amount > 0) {
-          $savings->current_balance += $savings_amount;
-          $savings->funded_at  = $savings->funded_at ?? now();
-          $savings->save();
-
-          $description = $description ?? 'Distributed savings into smart lock savings';
-          $savings->create_deposit_transaction($savings_amount, $description);
-        }
-      }
-    }
+    $target_savings->create_withdrawal_transaction($amount, 'Automatic deduction from ' . $target_savings->target_type->name . ' savings');
 
     DB::commit();
-  }
-
-  public function update_savings_distribution(Request $request)
-  {
-    $savings_list = $request->user()->savings_list;
-    foreach ($request->all() as $val) {
-      $savings_list->where('id', $val['id'])->first()->savings_distribution = $val['savings_distribution'];
-    }
-    return $request->user()->savings_list()->saveMany($savings_list);
   }
 
   static function store_id_card(Request $request)
@@ -641,47 +329,6 @@ class AppUser extends User
     return self::whereEmail($email)->firstOr(function () {
       return new self;
     });
-  }
-
-  public function create_loan_request(float $amount, string $repayment_installation_duration, $auto_debit = false): ?object
-  {
-
-    try {
-      return $this->loan_requests()->create([
-        'amount' => $amount,
-        'expires_at' => now()->addMonths(3),
-        'interest_rate' => config('app.smart_loan_interest_rate'),
-        'repayment_installation_duration' => $repayment_installation_duration,
-        'auto_debit' => filter_var($auto_debit, FILTER_VALIDATE_BOOLEAN),
-        'loan_ref' => unique_random('loan_requests', 'loan_ref', null, 12)
-      ]);
-    } catch (\Throwable $th) {
-      ErrLog::notifyAdmin(auth()->user(), $th, 'Loan request creation failed');
-      return null;
-    }
-  }
-
-  public function create_surety_requests(string $first_surety_email, int $loan_request_id, string $second_surety_email = null): ?object
-  {
-    try {
-      if ($second_surety_email) {
-        $this->request_for_surety()->create(
-          [
-            'surety_id' => self::findByEmail($second_surety_email)->id,
-            'loan_request_id' => $loan_request_id,
-          ]
-        );
-      }
-      return $this->request_for_surety()->create(
-        [
-          'surety_id' => self::findByEmail($first_surety_email)->id,
-          'loan_request_id' => $loan_request_id,
-        ]
-      );
-    } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($this, $th, 'Loan request creation failed');
-      return null;
-    }
   }
 
   public function validate_bvn(string $bvn, string $phone_number = null, string $full_name = null): object
@@ -929,15 +576,13 @@ class AppUser extends User
   {
     $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($request) {
       return $request->user()->load([
-        'loan_transactions.loan_request',
-        'savings_interests.savings.gos_type',
+        'savings_interests.savings.target_type',
         'service_charges',
         'transactions'
       ]);
     });
 
-    $account_statement = collect($userStatement->loan_transactions->each->setAppends(['description']))
-      ->merge($userStatement->savings_interests)
+    $account_statement = collect($userStatement->savings_interests)
       ->merge($userStatement->service_charges)
       ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
 
@@ -979,15 +624,13 @@ class AppUser extends User
   {
     $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($appUser) {
       return $appUser->load([
-        'loan_transactions.loan_request',
-        'savings_interests.savings.gos_type',
+        'savings_interests.savings.target_type',
         'service_charges',
         'transactions'
       ]);
     });
 
-    $account_statement = collect($userStatement->loan_transactions->each->setAppends(['description']))
-      ->merge($userStatement->savings_interests)
+    $account_statement = collect($userStatement->savings_interests)
       ->merge($userStatement->service_charges)
       ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
 

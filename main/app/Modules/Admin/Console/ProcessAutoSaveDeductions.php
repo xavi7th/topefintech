@@ -15,7 +15,6 @@ use App\Modules\Admin\Notifications\GenericAdminNotification;
 use App\Modules\AppUser\Notifications\AutoSaveSavingsFailure;
 use App\Modules\AppUser\Notifications\AutoSaveSavingsSuccess;
 use App\Modules\AppUser\Notifications\DefaultDebitCardNotFound;
-use App\Modules\AppUser\Notifications\InvalidSavingsDistributionValue;
 
 class ProcessAutoSaveDeductions extends Command
 {
@@ -108,55 +107,22 @@ class ProcessAutoSaveDeductions extends Command
      */
     $app_user =  $deduction_request->app_user;
 
-    if ($this->validateAutoSaveDistribution($app_user, $deduction_request->amount)) {
+    if ($this->deductDefaultCard($app_user, $deduction_request->amount)) {
 
-      if ($this->deductDefaultCard($app_user, $deduction_request->amount)) {
+      $this->markRequestAsProcessed($deduction_request);
+    } else {
+      /**
+       * Check if the user permitted us to try his other cards.
+       */
+      if ($deduction_request->try_other_cards) {
 
-        $this->markRequestAsProcessed($deduction_request);
-      } else {
-        /**
-         * Check if the user permitted us to try his other cards.
-         */
-        if ($deduction_request->try_other_cards) {
-
-          if ($this->attemptOtherCardDeductions($app_user, $deduction_request->amount)) {
-            $this->markRequestAsProcessed($deduction_request);
-          }
-        } else {
-          $this->fireAutoSaveFailureAction($app_user, $deduction_request->amount, 'Deducting default card failed or there was no default card set');
+        if ($this->attemptOtherCardDeductions($app_user, $deduction_request->amount)) {
+          $this->markRequestAsProcessed($deduction_request);
         }
+      } else {
+        $this->fireAutoSaveFailureAction($app_user, $deduction_request->amount, 'Deducting default card failed or there was no default card set');
       }
     }
-  }
-
-  /**
-   * Make sure the user distribution is exactly 100% before we start anything
-   *
-   * @param \App\Modules\AppUser\Models\AppUser $app_user
-   * @param float $amount The amount the user wants to autosave
-   *
-   * @return bool The result of the validation
-   */
-  private function validateAutoSaveDistribution(AppUser $app_user, float $amount): bool
-  {
-    /**
-     * ! Make sure the user distribution is 100% before we start anything
-     */
-    if ($app_user->total_distribution_percentage() != 100) {
-      try {
-        $app_user->notify(new InvalidSavingsDistributionValue);
-        Admin::find(1)->notify(new GenericAdminNotification('Invalid Savings', $app_user->full_name . ' has an invalid savings distribution value of ' . $app_user->total_distribution_percentage()));
-        logger()->notice($app_user->full_name . ' has an invalid savings distribution value of ' . $app_user->total_distribution_percentage());
-      } catch (\Throwable $th) {
-        ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of invalid savings distribution value of ' . $app_user->total_distribution_percentage());
-      }
-
-      $this->fireAutoSaveFailureAction($app_user, $amount, 'Invalid savings distributrion value');
-
-      return false;
-    }
-
-    return true;
   }
 
   /**
@@ -266,10 +232,10 @@ class ProcessAutoSaveDeductions extends Command
     dump('Debit Success');
 
     /**
-     * !	fund the user according to their savings distribution
+     * !	fund the user savings
      * ? Should this give us a response so that we can know if it successfully gave the user value?
      */
-    $this->processUserSavingsDistribution($app_user, $amount);
+    $this->processUserSavingsFunding($app_user, $amount);
 
     try {
       $app_user->notify(new AutoSaveSavingsSuccess($amount));
@@ -337,15 +303,15 @@ class ProcessAutoSaveDeductions extends Command
    * @param float $amount The amount the user wants to save
    * @return void
    **/
-  private function processUserSavingsDistribution(AppUser $app_user, float $amount)
+  private function processUserSavingsFunding(AppUser $app_user, float $amount)
   {
-    if (!$app_user->has_gos_savings() && !$app_user->has_locked_savings()) {
-      $app_user->fund_core_savings($amount, 'Core savings funding from Auto Save deduction');
+    if (!$app_user->has_target_savings()) {
+      $app_user->fund_smart_savings($amount, 'Smart savings funding from Auto Save deduction');
     } else {
       /** NOTE: uses transactions */
-      $app_user->distribute_savings($amount, 'Distributed savings from Auto Save deduction');
+      dd('fund a user´s particular savings');
     }
-    dump('Savings distribution success');
+    dump('Savings funding success');
   }
 
   /**

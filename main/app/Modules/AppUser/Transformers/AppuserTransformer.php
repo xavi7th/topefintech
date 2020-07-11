@@ -67,10 +67,7 @@ class AppUserTransformer
       'total_withdrawal' => (double)$user->total_withdrawal_amount(),
       'total_balance' => (double)$user->total_balance(),
       'total_withdrawable' => (double)$user->total_withdrawable_amount(),
-      'has_pending_loan' => (bool)$user->has_pending_loan(),
-      'is_loan_surety' => (boolean)$user->is_loan_surety(),
-      'num_of_days_active' => (int)$user->activeDays(),
-      // 'app_user_category' => (string)$user->app_user_category->category_name,
+      'num_of_days_active' => (int)$user->activeDays()
     ];
   }
 }

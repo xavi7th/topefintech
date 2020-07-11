@@ -16,41 +16,6 @@ use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
 use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
 
-/**
- * App\Modules\AppUser\Models\WithdrawalRequest
- *
- * @property int $id
- * @property int $app_user_id
- * @property float|null $amount
- * @property bool $is_processed
- * @property bool $is_charge_free
- * @property int|null $processed_by
- * @property string|null $processor_type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\AppUser $app_user
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $processor
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereIsChargeFree($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereIsProcessed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereProcessedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereProcessorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest withoutTrashed()
- * @mixin \Eloquent
- */
 class WithdrawalRequest extends Model
 {
   use SoftDeletes;
@@ -129,15 +94,14 @@ class WithdrawalRequest extends Model
     try {
       DB::beginTransaction();
       /**
-       * Remove the amount from core savings current_balane
+       * Remove the amount from smart savings current_balane
        */
-      $core_savings = $request->user()->core_savings;
-      $core_savings->current_balance = ($core_savings->current_balance - $request->amount);
-      $core_savings->save();
+      $smart_savings = $request->user()->smart_savings;
+      $smart_savings->current_balance = ($smart_savings->current_balance - $request->amount);
+      $smart_savings->save();
 
       /**
        * Create a withdrawal request
-       * ! Make sure the user's surety amount is deducted if any
        */
       $withdrawal_request = $request->user()->withdrawal_request()->create($request->validated());
 
@@ -181,8 +145,8 @@ class WithdrawalRequest extends Model
     /**
      * On withdrawal decline remember to top up the current balance back
      */
-    $request_details->app_user->core_savings->current_balance += $request_details->amount;
-    $request_details->app_user->core_savings->save();
+    $request_details->app_user->smart_savings->current_balance += $request_details->amount;
+    $request_details->app_user->smart_savings->save();
 
     /**
      * Notify user that his request was declined
@@ -213,10 +177,10 @@ class WithdrawalRequest extends Model
     DB::beginTransaction();
 
     /**
-     * on approval add a withdrawal transaction for the users core savings_id
+     * on approval add a withdrawal transaction for the users smart savings_id
      */
-    $desc = $withdrawal_request->is_charge_free ? 'Withdrawal from core savings balance' : 'Charge-deductible withdrawal from core savings balance';
-    $withdrawal_request->app_user->core_savings->create_withdrawal_transaction($withdrawal_request->amount, $desc);
+    $desc = $withdrawal_request->is_charge_free ? 'Withdrawal from smart savings balance' : 'Charge-deductible withdrawal from smart savings balance';
+    $withdrawal_request->app_user->smart_savings->create_withdrawal_transaction($withdrawal_request->amount, $desc);
 
     if (!$withdrawal_request->is_charge_free) {
       /**
@@ -227,7 +191,7 @@ class WithdrawalRequest extends Model
       /**
        * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
        */
-      $withdrawal_request->app_user->core_savings->create_service_charge($withdrawal_charge, 'Amount deducted for multiple consecutive withdrawals');
+      $withdrawal_request->app_user->smart_savings->create_service_charge($withdrawal_charge, 'Amount deducted for multiple consecutive withdrawals');
     }
 
     /**

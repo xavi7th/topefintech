@@ -53,13 +53,13 @@ class ProcessInterests extends Command
      * -- The issue is multiple single sum queries VS a single select query with potential 1000s rows which is faster
      */
 
-    foreach (Savings::with(['app_user', 'gos_type'])->cursor() as $savings_record) {
+    foreach (Savings::with(['app_user', 'target_type'])->cursor() as $savings_record) {
       $interest_amount = $savings_record->get_due_interest();
       if ($interest_amount > 0) {
 
-        dump($savings_record->app_user->full_name . ' ' . $savings_record->gos_type->name . ' savings intrested with ' . $interest_amount);
+        dump($savings_record->app_user->full_name . ' ' . $savings_record->target_type->name . ' savings intrested with ' . $interest_amount);
 
-        $this->notification[] = $savings_record->app_user->full_name . ' ' . $savings_record->gos_type->name . ' savings intrested with ' . $interest_amount;
+        $this->notification[] = $savings_record->app_user->full_name . ' ' . $savings_record->target_type->name . ' savings intrested with ' . $interest_amount;
         DB::beginTransaction();
         $savings_record->create_interest_record($interest_amount);
 
@@ -71,6 +71,6 @@ class ProcessInterests extends Command
       }
     }
 
-    Admin::find(1)->notify(new GenericAdminNotification('Smart Interest Logs', collect($this->notification)->implode(', ')));
+    Admin::find(1)->notify(new GenericAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ')));
   }
 }

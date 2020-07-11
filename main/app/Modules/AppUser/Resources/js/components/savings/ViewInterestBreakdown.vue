@@ -21,7 +21,7 @@
                   v-for="(interest, savings_type) in interest_summary"
                   :key="`${interest + savings_type}`"
                   class="list-group-item list-group-item-action"
-                  v-bind:class="[ savings_type =='core' ? 'list-group-item-brand': savings_type=='locked' ? 'list-group-item-danger':  'list-group-item-success' ]"
+                  v-bind:class="[ savings_type =='smart' ? 'list-group-item-brand':  'list-group-item-success' ]"
                 >
                   <b class="text-capitalize mr-15">{{savings_type}} savings:</b>
                   {{ interest | Naira }}
@@ -42,7 +42,7 @@
   import { mixins } from "@dashboard-assets/js/config";
   import Layout from "@dashboard-assets/js/AppComponent";
   export default {
-    name: "SmartInterestBreakdown",
+    name: "InterestBreakdown",
     mixins: [mixins],
     components: {
       Layout
