@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="/vendor/img/favicon.png">
   <style>
     .preloader {
-      background: #24b3ff;
+      background: #fff;
       bottom: 0;
       height: 100%;
       left: 0;
@@ -189,61 +189,9 @@
       }
     }
   </style>
-  <style>
-    .slide-left-enter-active,
-    .slide-left-leave-active,
-    .slide-right-enter-active,
-    .slide-right-leave-active {
-      transition-duration: 0.5s;
-      transition-property: height, opacity, transform;
-      transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
-      overflow: hidden;
-    }
 
-    .slide-left-enter,
-    .slide-right-leave-active {
-      opacity: 0;
-      transform: translate(2em, 0);
-    }
-
-    .slide-left-leave-active,
-    .slide-right-enter {
-      opacity: 0;
-      transform: translate(-2em, 0);
-    }
-
-    .slide-out-in-enter-active {
-      transition: all .3s ease;
-    }
-
-    .slide-out-in-leave-active {
-      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    }
-
-    .slide-out-in-enter,
-    .slide-out-in-leave-to {
-      transform: translateX(80%);
-      opacity: 0;
-    }
-
-    .nav-transition-enter-active {
-      transition: all 0.5s ease;
-    }
-
-    .nav-transition-leave-active {
-      transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
-    }
-
-    .nav-transition-enter,
-    .nav-transition-leave-to
-
-    /* .nav-transition-leave-active below version 2.1.8 */
-      {
-      transform: translateY(-10px);
-      opacity: 0;
-    }
-  </style>
   @routes(['admin', 'basic'])
+
   <script src="{{ mix('js/dashboard-app-vendor.js') }}" defer></script>
   <script src="{{ mix('js/manifest.js') }}" defer></script>
   <script src="{{ mix('js/vendor.js') }}" defer></script>
@@ -252,7 +200,7 @@
 
 <body>
   <div class="preloader text-center">
-    <img src="/img/logo-white.png" alt="">
+    <img src="/img/logo.png" alt="">
     <div class="la-ball-circus la-2x">
       <div></div>
       <div></div>

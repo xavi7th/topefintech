@@ -30,12 +30,6 @@
                 <li>
                   <inertia-link :href="$route('app.career')">Careers</inertia-link>
                 </li>
-                <li>
-                  <inertia-link
-                    class="hidden-sm hidden-lg hidden-md hidden-xl"
-                    :href="$route('app.contact_us')"
-                  >Contact Us</inertia-link>
-                </li>
               </ul>
             </aside>
           </div>
@@ -46,24 +40,6 @@
                 Monday - Saturday:
                 <br />08:00 AM - 08:00 PM CAT
               </p>
-              <h4>Quick Links</h4>
-              <ul>
-                <li>
-                  <a href="#">How it Works</a>
-                </li>
-                <li>
-                  <a href="#">Guarantee</a>
-                </li>
-                <li>
-                  <a href="#">Security</a>
-                </li>
-                <li>
-                  <a href="#">Report Bug</a>
-                </li>
-                <li>
-                  <a href="#">Pricing</a>
-                </li>
-              </ul>
             </aside>
           </div>
           <div class="col-lg-4 col-md-6">
@@ -101,7 +77,8 @@
           <div class="col-sm-12 text-center">
             <p>
               Copyright
-              <i class="icofont-copyright"></i> 2019; All Right Reserved
+              <i class="icofont-copyright"></i>
+              {{ new Date().getFullYear() }}; All Right Reserved
             </p>
           </div>
         </div>

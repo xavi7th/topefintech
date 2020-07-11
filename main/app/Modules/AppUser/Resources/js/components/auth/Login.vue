@@ -8,8 +8,8 @@
           </a>
         </div>
         <div class="col-12">
-          <h2 class="display-4 mb-10 text-center">Create Account</h2>
-          <p>Login to your dashboard to access your Smart Monie features</p>
+          <h2 class="display-4 mb-10 text-center">Sign In</h2>
+          <p>Login to your dashboard to access your Smart Monie back offiice</p>
           <FlashMessage />
         </div>
         <div class="col-12">
