@@ -655,7 +655,6 @@ class Savings extends Model
         if (now()->lt($savings->maturity_date)) {
           $savings->app_user->notify(new TargetSavingsBroken($savings));
         } else {
-          $savings->app_user->notify(new TargetSavingsMature($savings));
           $savings->app_user->notify(new TargetSavingsMatured($savings));
         }
       }
