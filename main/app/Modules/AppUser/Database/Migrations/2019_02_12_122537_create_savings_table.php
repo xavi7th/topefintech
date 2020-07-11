@@ -16,7 +16,7 @@ class CreateSavingsTable extends Migration
     Schema::create('savings', function (Blueprint $table) {
       $table->bigIncrements('id');
       $table->bigInteger('app_user_id')->unsigned();
-      $table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+      $table->foreign('app_user_id')->references('id')->on('app_users')->onDelete('cascade')->onUpdate('cascade');
       $table->string('type')->default('smart');
       $table->bigInteger('target_type_id')->nullable()->unsigned();
       $table->foreign('target_type_id')->references('id')->on('target_types')->onDelete('no action')->onUpdate('cascade');

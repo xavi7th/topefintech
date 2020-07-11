@@ -16,7 +16,7 @@ class CreateDebitCardsTable extends Migration
     Schema::create('debit_cards', function (Blueprint $table) {
       $table->bigIncrements('id');
       $table->bigInteger('app_user_id')->unsigned();
-      $table->foreign('app_user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+      $table->foreign('app_user_id')->references('id')->on('app_users')->onDelete('cascade')->onUpdate('cascade');
       $table->string('brand')->nullable();
       $table->string('sub_brand')->nullable();
       $table->string('country')->nullable();

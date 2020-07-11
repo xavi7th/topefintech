@@ -87,30 +87,6 @@ namespace App\Modules\Admin\Models{
 
 namespace App\Modules\Admin\Models{
 /**
- * App\Modules\Admin\Models\ApiRoutePermission
- *
- * @property int $id
- * @property int $user_id
- * @property string $user_type
- * @property int $api_route_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission whereApiRouteId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ApiRoutePermission whereUserType($value)
- * @mixin \Eloquent
- */
-	class ApiRoutePermission extends \Eloquent {}
-}
-
-namespace App\Modules\Admin\Models{
-/**
  * App\Modules\Admin\Models\ErrLog
  *
  * @property int $id
@@ -155,13 +131,11 @@ namespace App\Modules\Admin\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\AppUser $app_user
- * @method static bool|null forceDelete()
+ * @property-read \App\Modules\AppUser\Models\AppUser|null $app_user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ServiceCharge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ServiceCharge newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\Admin\Models\ServiceCharge onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ServiceCharge query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ServiceCharge whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ServiceCharge whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Admin\Models\ServiceCharge whereDeletedAt($value)
@@ -259,6 +233,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
+ * @mixin \Eloquent
  */
 	class AppUser extends \Eloquent {}
 }
@@ -293,6 +268,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AutoSaveSetting whereTryOtherCards($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AutoSaveSetting whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AutoSaveSetting whereWeekday($value)
+ * @mixin \Eloquent
  */
 	class AutoSaveSetting extends \Eloquent {}
 }
@@ -351,6 +327,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\DebitCard whereYear($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\DebitCard withoutTrashed()
+ * @mixin \Eloquent
  */
 	class DebitCard extends \Eloquent {}
 }
@@ -383,6 +360,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction wherePaystackResponse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereTransactionReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\PaystackTransaction whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 	class PaystackTransaction extends \Eloquent {}
 }
@@ -394,11 +372,10 @@ namespace App\Modules\AppUser\Models{
  * @property int $id
  * @property int $app_user_id
  * @property string $type
- * @property int|null $gos_type_id
+ * @property int|null $target_type_id
  * @property \Illuminate\Support\Carbon|null $maturity_date
  * @property float $current_balance
  * @property \Illuminate\Support\Carbon|null $funded_at
- * @property float $savings_distribution
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -408,7 +385,7 @@ namespace App\Modules\AppUser\Models{
  * @property-read int|null $savings_interests_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
  * @property-read int|null $service_charges_count
- * @property-read \App\Modules\AppUser\Models\TargetType $target_type
+ * @property-read \App\Modules\AppUser\Models\TargetType|null $target_type
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
  * @property-read int|null $transactions_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings matured()
@@ -421,14 +398,14 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereCurrentBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereGosTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereSavingsDistribution($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereTargetTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
+ * @mixin \Eloquent
  */
 	class Savings extends \Eloquent {}
 }
@@ -462,6 +439,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withoutTrashed()
+ * @mixin \Eloquent
  */
 	class SavingsInterest extends \Eloquent {}
 }
@@ -470,11 +448,20 @@ namespace App\Modules\AppUser\Models{
 /**
  * App\Modules\AppUser\Models\TargetType
  *
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $savings
  * @property-read int|null $savings_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 	class TargetType extends \Eloquent {}
 }
@@ -510,6 +497,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Transaction withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction withdrawals()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Transaction withoutTrashed()
+ * @mixin \Eloquent
  */
 	class Transaction extends \Eloquent {}
 }
@@ -546,6 +534,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest withoutTrashed()
+ * @mixin \Eloquent
  */
 	class WithdrawalRequest extends \Eloquent {}
 }

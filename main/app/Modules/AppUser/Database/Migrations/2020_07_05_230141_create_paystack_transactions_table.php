@@ -15,7 +15,7 @@ class CreatePaystackTransactionsTable extends Migration
   {
     Schema::create('paystack_transactions', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('app_user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+      $table->foreignId('app_user_id')->constrained('app_users')->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount');
       $table->string('description');
       $table->string('transaction_reference');
