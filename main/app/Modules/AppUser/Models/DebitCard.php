@@ -80,6 +80,7 @@ class DebitCard extends Model
 
   protected $casts = [
     'is_default' => 'boolean',
+    'is_authorised' => 'boolean',
     'app_user_id' => 'integer',
     'authorization_object' => 'object'
   ];

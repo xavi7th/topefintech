@@ -38,6 +38,7 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $phone
+ * @property string|null $date_of_birth
  * @property string|null $address
  * @property string|null $city
  * @property string $country
@@ -45,7 +46,6 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @property string|null $acc_bank
  * @property string|null $acc_type
  * @property string|null $bvn
- * @property string|null $date_of_birth
  * @property bool $is_bvn_verified
  * @property bool $is_bank_verified
  * @property string|null $id_card
@@ -124,7 +124,6 @@ class AppUser extends User
     'is_bvn_verified' => 'boolean',
     'is_bank_verified' => 'boolean',
   ];
-  protected $table = "users";
 
   const DASHBOARD_ROUTE_PREFIX = "user";
 

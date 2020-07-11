@@ -106,6 +106,8 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     'email_verified_at' => 'datetime',
   ];
 
+  protected $table = "app_users";
+
   public function activities(): MorphMany
   {
     return $this->morphMany(ActivityLog::class, 'user')->latest();

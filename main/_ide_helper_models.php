@@ -161,6 +161,7 @@ namespace App\Modules\AppUser\Models{
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $phone
+ * @property string|null $date_of_birth
  * @property string|null $address
  * @property string|null $city
  * @property string $country
@@ -168,7 +169,6 @@ namespace App\Modules\AppUser\Models{
  * @property string|null $acc_bank
  * @property string|null $acc_type
  * @property string|null $bvn
- * @property string|null $date_of_birth
  * @property bool $is_bvn_verified
  * @property bool $is_bank_verified
  * @property string|null $id_card
@@ -233,7 +233,6 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
- * @mixin \Eloquent
  */
 	class AppUser extends \Eloquent {}
 }
