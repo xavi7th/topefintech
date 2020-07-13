@@ -30,9 +30,7 @@
       <page-title :title="title"></page-title>
 
       <div class="rui-page-content">
-        <transition name="slide-out-in" mode="out-in" :duration="{ enter: 1300, leave: 200 }">
-          <slot></slot>
-        </transition>
+        <slot></slot>
       </div>
 
       <dashboard-footer></dashboard-footer>

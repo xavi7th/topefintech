@@ -75,6 +75,8 @@ class AppUserController extends Controller
       'total_interests_amount' =>  $request->user()->total_interests_amount(),
       'total_uncleared_interests_amount' => $request->user()->savings_interests()->uncleared()->sum('amount'),
       'total_withdrawals_amount' =>  $request->user()->total_withdrawal_amount(),
+      'userInvestments' => [],
+      'targetSavings' => [],
     ]);
   }
 }
