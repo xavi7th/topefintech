@@ -1,7 +1,15 @@
 <template>
   <layout title="My Dashboard" :isAuth="false">
-    <LivePortfolioStatistics :userInvestments="userInvestments" :targetSavings="targetSavings" />
-    <VaultStatistics :targetSavings="targetSavings" :userInvestments="userInvestments" />
+    <LivePortfolioStatistics
+      @addSavings="details=$event"
+      :userInvestments="userInvestments"
+      :userSavings="userSavings"
+    />
+    <VaultStatistics
+      @withdrawInterests="details=$event"
+      :userSavings="userSavings"
+      :userInvestments="userInvestments"
+    />
 
     <template v-slot:modals>
       <modal modalId="otherAmountSavingsModal" modalTitle="Save Funds">
@@ -48,15 +56,9 @@
       userInvestments: {
         type: Array
       },
-      targetSavings: {
+      userSavings: {
         type: Array
-      },
-      total_savings_amount: Number,
-      total_smart_savings_amount: Number,
-      interest_today: Number,
-      total_interests_amount: Number,
-      total_uncleared_interests_amount: Number,
-      total_withdrawals_amount: Number
+      }
     },
     data: () => {
       return {
@@ -105,7 +107,7 @@
 
           // Create gradient
           chart.on("created", function(ctx) {
-            const defs = ctx.svg.elem("defs");
+            let defs = ctx.svg.elem("defs");
             defs
               .elem("linearGradient", {
                 id: "gradient",
@@ -126,6 +128,43 @@
           });
         });
       });
+    },
+    methods: {
+      makeSavings(amount) {
+        this.details.savings_id = this.details.id;
+        BlockToast.fire({
+          text: "Initialising transaction ..."
+        });
+        this.$inertia
+          .post(
+            this.$route("appuser.savings.target.fund"),
+            {
+              ...this.details
+            },
+            {
+              preserveState: true
+            }
+          )
+          .then(() => {
+            console.log(this.$page.flash);
+
+            if (this.$page.flash.error) {
+              ToastLarge.fire({
+                title: "Error",
+                html: this.$page.flash.error,
+                icon: "error"
+              });
+            } else if (this.$page.flash.success) {
+              ToastLarge.fire({
+                title: "Success",
+                html: this.$page.flash.success,
+                icon: "success"
+              });
+            } else {
+              swal.close();
+            }
+          });
+      }
     }
   };
 </script>

@@ -5,8 +5,8 @@
       class="row rui-swiper"
       id="liveAccountStatistics"
       data-swiper-initialslide="0"
-      data-swiper-loop="false"
-      data-swiper-grabcursor="false"
+      :data-swiper-loop="!!userSavings.length || !!userInvestments.length"
+      data-swiper-grabcursor="true"
       data-swiper-center="false"
       data-swiper-slides="auto"
       data-swiper-gap="30"
@@ -14,39 +14,64 @@
     >
       <div class="swiper-container">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <div class="rui-widget rui-widget-chart">
-              <div class="rui-chartjs-container">
-                <div
-                  class="rui-chartist rui-chartist-donut"
-                  data-width="200"
-                  data-height="200"
-                  data-chartist-series="5,2"
-                  data-chartist-width="4"
-                  data-chartist-gradient="#8e9fff;#2bb7ef"
-                ></div>
-              </div>
-
-              <div class="rui-widget-chart-info">
-                <div class="rui-widget-title h2">{{ $page.total_smart_savings_amount | Naira}}</div>
-                <small class="rui-widget-subtitle">Smart Savings Balance</small>
-                <div class="d-flex">
-                  <button
-                    type="button"
-                    data-toggle="modal"
-                    data-target="#otherAmountSavingsModal"
-                    class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-primary btn-xs mr-5"
-                  >Add Savings</button>
-                  <button
-                    type="button"
-                    data-toggle="modal"
-                    data-target="#otherAmountSavingsModal"
-                    class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-danger btn-xs"
-                  >Liquidate</button>
+          <template v-if="!userSavings.length">
+            <div class="swiper-slide">
+              <div class="rui-widget rui-widget-chart">
+                <div class="rui-widget-chart-info">
+                  <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
+                  <small class="rui-widget-subtitle">Target Savings Balance</small>
+                </div>
+                <div class="rui-chartjs-container">
+                  <div
+                    class="rui-chartist rui-chartist-donut"
+                    data-width="200"
+                    data-height="200"
+                    data-chartist-series="1,20"
+                    data-chartist-width="4"
+                    data-chartist-gradient="#ff8ebc;#ef2b5a"
+                  ></div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
+          <template v-else>
+            <div class="swiper-slide" v-for="portfolio in userSavings" :key="portfolio.id">
+              <div class="rui-widget rui-widget-chart">
+                <div class="rui-chartjs-container">
+                  <div
+                    class="rui-chartist rui-chartist-donut"
+                    data-width="200"
+                    data-height="200"
+                    :data-chartist-series="`${portfolio.total_duration},${portfolio.elapsed_duration}`"
+                    data-chartist-width="4"
+                    data-chartist-gradient="#8e9fff;#2bb7ef"
+                  ></div>
+                </div>
+                <div class="rui-widget-chart-info">
+                  <div class="rui-widget-title h2">{{ portfolio.current_balance | Naira }}</div>
+                  <small
+                    class="rui-widget-subtitle text-capitalize"
+                  >{{ portfolio.name }} Savings Balance</small>
+                  <div class="d-flex">
+                    <button
+                      type="button"
+                      data-toggle="modal"
+                      data-target="#otherAmountSavingsModal"
+                      class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-primary btn-xs mr-5"
+                      @click="$emit('addSavings', portfolio)"
+                    >Add Savings</button>
+                    <button
+                      type="button"
+                      data-toggle="modal"
+                      data-target="#otherAmountSavingsModal"
+                      class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-danger btn-xs"
+                      v-if="portfolio.type === 'smart'"
+                    >Liquidate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
 
           <div class="swiper-slide" v-if="!userInvestments.length">
             <div class="rui-widget rui-widget-chart">
@@ -60,25 +85,6 @@
                   data-width="200"
                   data-height="200"
                   data-chartist-series="1,25"
-                  data-chartist-width="4"
-                  data-chartist-gradient="#ff8ebc;#ef2b5a"
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="swiper-slide" v-if="!targetSavings.length">
-            <div class="rui-widget rui-widget-chart">
-              <div class="rui-widget-chart-info">
-                <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                <small class="rui-widget-subtitle">Target Savings Balance</small>
-              </div>
-              <div class="rui-chartjs-container">
-                <div
-                  class="rui-chartist rui-chartist-donut"
-                  data-width="200"
-                  data-height="200"
-                  data-chartist-series="1,20"
                   data-chartist-width="4"
                   data-chartist-gradient="#ff8ebc;#ef2b5a"
                 ></div>
@@ -107,53 +113,8 @@
       userInvestments: {
         type: Array
       },
-      targetSavings: {
+      userSavings: {
         type: Array
-      }
-    },
-    data: () => {
-      return {
-        details: {}
-      };
-    },
-    methods: {
-      makeSavings(amount = null) {
-        BlockToast.fire({
-          text: "Initialising transaction ..."
-        });
-        this.$inertia
-          .visit(this.$route("appuser.paystack.initialise"), {
-            method: "get",
-            data: {
-              amount: amount || this.details.amount,
-              description:
-                "Fund savings into account of " +
-                this.$options.filters.Naira(amount)
-            },
-            replace: false,
-            preserveState: false,
-            preserveScroll: true,
-            only: ["errors", "flash"]
-          })
-          .then(() => {
-            console.log(this.$page.flash);
-
-            if (this.$page.flash.error) {
-              ToastLarge.fire({
-                title: "Error",
-                html: this.$page.flash.error,
-                icon: "error"
-              });
-            } else if (this.$page.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.$page.flash.success,
-                icon: "success"
-              });
-            } else {
-              swal.close();
-            }
-          });
       }
     }
   };

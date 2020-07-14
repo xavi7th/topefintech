@@ -1,18 +1,26 @@
 <template>
   <div class="col-lg-12 col-xl-12">
-    <div class="d-flex align-items-center justify-content-between mb-25">
-      <h2 class="mnb-2" id="formBase">Add to Savings</h2>
-      <button
-        class="btn btn-success btn-long"
-        @click="fundSavings"
-        v-if="!$page.auth.user.isAdmin"
-      >Fund Savings</button>
-      <button class="btn btn-success btn-long" @click="fundSavings" v-else>Fund User's Savings</button>
-    </div>
     <div class="col-12">
       <!-- <button type="button" class="btn btn-success btn-long">
 						<span class="text">Proceed to Payment</span>
       </button>&nbsp;-->
+
+      <div class="col-12 col-md justify-content-between">
+        <button
+          type="button"
+          class="btn btn-brand"
+          data-toggle="modal"
+          data-target="#createSmartSavings"
+          v-if="!$page.auth.user.isAdmin"
+        >Create Smart Savings</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#newTargetModal"
+          v-if="!$page.auth.user.isAdmin"
+        >New Target Savings</button>
+      </div>
     </div>
     <FlashMessage />
     <template v-if="$page.errors">
@@ -83,10 +91,6 @@
         /** Connect to paystack? */
         $("#defundThisSavingsModal").modal("show");
         this.$emit("defund-savings", savings);
-      },
-      fundSavings() {
-        /** Connect to paystack? */
-        $("#fundSavingsModal").modal("show");
       }
     }
   };

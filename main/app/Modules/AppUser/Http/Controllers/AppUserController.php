@@ -19,6 +19,7 @@ use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\AppUser\Http\Controllers\LoginController;
 use App\Modules\AppUser\Http\Controllers\RegisterController;
 use App\Modules\AppUser\Http\Controllers\VerificationController;
+use App\Modules\AppUser\Transformers\SavingsRecordTransformer;
 
 class AppUserController extends Controller
 {
@@ -69,14 +70,8 @@ class AppUserController extends Controller
   public function loadDashboard(Request $request)
   {
     return Inertia::render('dashboard/UserDashboard', [
-      'total_savings_amount' =>  $request->user()->total_deposit_amount(),
-      'total_smart_savings_amount' => $request->user()->total_withdrawable_amount(),
-      'interest_today' =>  $request->user()->daily_interest(),
-      'total_interests_amount' =>  $request->user()->total_interests_amount(),
-      'total_uncleared_interests_amount' => $request->user()->savings_interests()->uncleared()->sum('amount'),
-      'total_withdrawals_amount' =>  $request->user()->total_withdrawal_amount(),
+      'userSavings' => (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->with('target_type')->get(), 'forUserDashboard'),
       'userInvestments' => [],
-      'targetSavings' => [],
     ]);
   }
 }

@@ -10,20 +10,21 @@ use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\TargetType;
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\AppUser\Models\TargetType;
 use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\PaystackTransaction;
+use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Notifications\TargetSavingsBroken;
 use App\Modules\AppUser\Notifications\TargetSavingsMature;
 use App\Modules\AppUser\Notifications\TargetSavingsMatured;
-use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
+use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
-use App\Modules\AppUser\Notifications\NewSavingsSuccess;
+use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
 /**
  * App\Modules\AppUser\Models\Savings
@@ -353,6 +354,16 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
+  public function getTotalDurationAttribute()
+  {
+    return optional($this->maturity_date)->diffInDays($this->funded_at);
+  }
+
+  public function getElapsedDurationAttribute()
+  {
+    return optional($this->maturity_date)->diffInDays(now());
+  }
+
   static function adminRoutes()
   {
     Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('admin.user_savings')->defaults('extras', ['nav_skip' => true]);
@@ -382,6 +393,8 @@ class Savings extends Model
     Route::get('/savings/target-funds/create', [self::class, 'viewTargetList'])->name('appuser.create-target-plan')->defaults('extras', ['icon' => 'far fa-folder']);
 
     Route::post('/savings/target-funds/create', [self::class, 'createNewTargetSavingsProfile'])->name('appuser.savings.target.initialise');
+
+    Route::post('/savings/smart-savings/create', [self::class, 'initialiseSmartSavingsProfile'])->name('appuser.savings.smart.initialise');
   }
 
   public function viewUserSavings(Request $request)
@@ -560,6 +573,9 @@ class Savings extends Model
 
   public function createNewTargetSavingsProfile(CreateTargetFundValidation $request)
   {
+    /**
+     * ! Review this to direct to paystack for payments immediately before creating
+     */
     $funds = auth()->user()->target_savings()->create([
       'type' => 'target',
       'target_type_id' => $request->target_type_id,
@@ -569,6 +585,20 @@ class Savings extends Model
       return response()->json(['rsp' => $funds], 201);
     } else {
       return back()->withSuccess('Created');
+    }
+  }
+
+  public function initialiseSmartSavingsProfile(InitialiseSmartSavingsValidation $request)
+  {
+    $funds = auth()->user()->smart_savings()->create([
+      'type' => 'smart',
+      'maturity_date' => now()->addMonths($request->duration)
+    ]);
+
+    if ($request->isApi()) {
+      return response()->json(['rsp' => $funds], 201);
+    } else {
+      return back()->withSuccess('Smart savings portfolio initialised successfully');
     }
   }
 

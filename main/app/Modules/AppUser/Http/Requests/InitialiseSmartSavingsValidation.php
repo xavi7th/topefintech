@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
 
-class CreateTargetFundValidation extends FormRequest
+class InitialiseSmartSavingsValidation extends FormRequest
 {
   /**
    * Get the validation rules that apply to the request.
@@ -16,8 +16,7 @@ class CreateTargetFundValidation extends FormRequest
   public function rules()
   {
     return [
-      'duration' => 'required|numeric|min:9|max:480',
-      'target_type_id' => 'required|exists:target_types,id'
+      'duration' => 'required|numeric|min:3',
     ];
   }
 
@@ -41,8 +40,8 @@ class CreateTargetFundValidation extends FormRequest
   public function messages()
   {
     return [
-      'duration.min' => 'Target Savings duration must be a minimum of 9 months',
-      'duration.max' => 'Target Savings duration must be a minimum of 480 months (40 years)',
+      'duration.required' => 'Tell us how long you´d like to save for',
+      'duration.min' => 'Smart savings duration must be a minimum of 3 months',
     ];
   }
 
@@ -56,13 +55,12 @@ class CreateTargetFundValidation extends FormRequest
   public function withValidator($validator)
   {
     $validator->after(function ($validator) {
-      // if ( $this->user()->smart_savings()->exists()) {
-      // 	$validator->errors()->add('Pending request', 'You already have a pending card request.');
-      // 	return;
-      // }
+      if ($this->user()->has_smart_savings()) {
+        $validator->errors()->add('duration', 'You already have a smart savings portfolio. If you need more savings portfolios, create a target savings');
+        return;
+      }
     });
   }
-
 
   /**
    * Overwrite the validator response so we can customise it per the structure requested from the fronend

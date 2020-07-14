@@ -11,7 +11,7 @@
             role="tab"
             aria-controls="homePillsSliding"
             aria-selected="true"
-          >Add to Savings</a>
+          >Manage Savings</a>
         </li>
         <li class="nav-item">
           <a
@@ -45,8 +45,8 @@
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="newTargetModal" modalTitle="Create New Goal Oriented Savings">
-        <form class="#" @submit.prevent="createTarget">
+      <modal modalId="newTargetModal" modalTitle="Create New Target Savings">
+        <form class="#" @submit.prevent="createTargetSavings">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -80,8 +80,8 @@
           </div>
         </form>
       </modal>
-      <modal modalId="newTargetModal" modalTitle="Initialise Target Savings">
-        <form class="#" @submit.prevent="createTargetSavings">
+      <modal modalId="createSmartSavings" modalTitle="Initialise Smart Savings Portfolio">
+        <form class="#" @submit.prevent="initialiseSmartSavings">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -129,29 +129,6 @@
           </div>
         </form>
       </modal>
-      <modal modalId="fundSavingsModal" :modalTitle="`Add funds to your savings`">
-        <form class="#" @submit.prevent="addFundsToSavings">
-          <FlashMessage />
-          <div class="row vertical-gap sm-gap">
-            <div class="col-12">
-              <label for="amount-to-fund">Amount to fund</label>
-              <input
-                type="number"
-                class="form-control"
-                id="amount-to-fund"
-                v-model="details.amount"
-                placeholder="Amount to add to funds"
-              />
-              <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
-            </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-success btn-long mr-25">
-                <span class="text">Pay</span>
-              </button>
-            </div>
-          </div>
-        </form>
-      </modal>
     </template>
   </layout>
 </template>
@@ -178,10 +155,10 @@
     },
 
     methods: {
-      createTarget() {
+      initialiseSmartSavings() {
         BlockToast.fire({ text: "creating..." });
         this.$inertia
-          .post(this.$route("appuser.savings.target.initialise"), {
+          .post(this.$route("appuser.savings.smart.initialise"), {
             ...this.details
           })
           .then(() => {
@@ -223,26 +200,6 @@
           .then(() => {
             if (this.flash.success) {
               $("#fundThisSavingsModal").modal("hide");
-            }
-            swal.close();
-          });
-      },
-      addFundsToSavings() {
-        BlockToast.fire({ text: "Adding funds to your savings ..." });
-        this.$inertia
-          .post(
-            this.$route("appuser.savings.fund"),
-            {
-              ...this.details
-            },
-            {
-              preserveState: true
-            }
-          )
-          .then(() => {
-            if (this.flash.success) {
-              this.details = {};
-              $("#fundSavingsModal").modal("hide");
             }
             swal.close();
           });

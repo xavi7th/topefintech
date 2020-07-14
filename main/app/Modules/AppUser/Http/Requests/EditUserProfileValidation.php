@@ -20,18 +20,18 @@ class EditUserProfileValidation extends FormRequest
   public function rules()
   {
     return [
-      // 'email' => ['filled', 'email', Rule::unique('users')->ignore(Auth::apiuser()->id)],
+      // 'email' => ['filled', 'email', Rule::unique('app_users')->ignore(Auth::apiuser()->id)],
       // 'full_name' => 'required|string|max:50',
       'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/|confirmed|max:20',
-      'phone' => ['required_without_all:password,acc_bank,acc_num,acc_type', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', 'max:20', Rule::unique('users')->ignore($this->user()->phone, 'phone')],
+      'phone' => ['required_without_all:password,acc_bank,acc_num,acc_type', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', 'max:20', Rule::unique('app_users')->ignore($this->user()->phone, 'phone')],
       'address' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'city' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'country' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'date_of_birth' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|date',
-      'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('users')->ignore($this->user()->acc_num)],
+      'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('app_users')->ignore($this->user()->acc_num)],
       'acc_bank' => 'bail|required_with:acc_num,acc_type|string',
       'acc_type' => 'bail|required_with:acc_num,acc_bank|string',
-      'bvn' => ['filled', 'numeric', Rule::unique('users')->ignore($this->user()->bvn)],
+      'bvn' => ['filled', 'numeric', Rule::unique('app_users')->ignore($this->user()->bvn)],
       'id_card' => 'bail|nullable|file|mimes:jpeg,bmp,png',
     ];
   }

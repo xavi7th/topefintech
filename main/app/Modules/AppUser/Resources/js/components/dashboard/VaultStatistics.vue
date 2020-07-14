@@ -15,27 +15,58 @@
     >
       <div class="swiper-container">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <div class="rui-widget rui-widget-chart">
-              <div class="rui-widget-chart-info">
-                <div class="rui-widget-title h2">{{ 10000 | Naira}}</div>
-                <small class="rui-widget-subtitle">Interests: Smart Savings</small>
-                <button type="button" class="btn btn-warning btn-xs" @click="makeSavings(100)">
-                  <span class="text">Withdraw</span>
-                </button>
-              </div>
-              <div class="rui-chartjs-container">
-                <div
-                  class="rui-chartist rui-chartist-donut"
-                  data-width="200"
-                  data-height="200"
-                  data-chartist-series="5,2"
-                  data-chartist-width="4"
-                  data-chartist-gradient="#8e9fff;#2bb7ef"
-                ></div>
+          <template v-if="!userSavings.length">
+            <div class="swiper-slide">
+              <div class="rui-widget rui-widget-chart">
+                <div class="rui-widget-chart-info">
+                  <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
+                  <small class="rui-widget-subtitle">Interests: Balance</small>
+                </div>
+                <div class="rui-chartjs-container">
+                  <div
+                    class="rui-chartist rui-chartist-donut"
+                    data-width="200"
+                    data-height="200"
+                    data-chartist-series="1,20"
+                    data-chartist-width="4"
+                    data-chartist-gradient="#ff8ebc;#ef2b5a"
+                  ></div>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
+          <template v-else>
+            <div class="swiper-slide" v-for="portfolio in userSavings" :key="portfolio.id">
+              <div class="rui-widget rui-widget-chart">
+                <div class="rui-chartjs-container">
+                  <div
+                    class="rui-chartist rui-chartist-donut"
+                    data-width="200"
+                    data-height="200"
+                    :data-chartist-series="`${portfolio.total_duration},${portfolio.elapsed_duration}`"
+                    data-chartist-width="4"
+                    data-chartist-gradient="#ff8ebc;#ef2b5a"
+                  ></div>
+                </div>
+                <div class="rui-widget-chart-info">
+                  <div
+                    class="rui-widget-title h2"
+                  >{{ portfolio.total_uncleared_interest_amount | Naira }}</div>
+                  <small
+                    class="rui-widget-subtitle text-capitalize"
+                  >Interests: {{ portfolio.name }} Savings</small>
+                  <div class="d-flex">
+                    <button
+                      type="button"
+                      data-toggle="modal"
+                      data-target="#otherAmountSavingsModal"
+                      class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-warning btn-xs mr-5"
+                    >Withdraw</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
 
           <div class="swiper-slide" v-if="!userInvestments.length">
             <div class="rui-widget rui-widget-chart">
@@ -52,25 +83,6 @@
               <div class="rui-widget-chart-info">
                 <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
                 <small class="rui-widget-subtitle">Interest: Investments</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="swiper-slide" v-if="!targetSavings.length">
-            <div class="rui-widget rui-widget-chart">
-              <div class="rui-widget-chart-info">
-                <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                <small class="rui-widget-subtitle">Interests: Target Savings</small>
-              </div>
-              <div class="rui-chartjs-container">
-                <div
-                  class="rui-chartist rui-chartist-donut"
-                  data-width="200"
-                  data-height="200"
-                  :data-chartist-series="`1,255`"
-                  data-chartist-width="4"
-                  data-chartist-gradient="#ff8ebc;#ef2b5a"
-                ></div>
               </div>
             </div>
           </div>
@@ -96,7 +108,7 @@
       userInvestments: {
         type: Array
       },
-      targetSavings: {
+      userSavings: {
         type: Array
       }
     },
