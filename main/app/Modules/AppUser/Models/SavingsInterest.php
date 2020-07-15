@@ -61,6 +61,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest unprocessed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest unlocked()
  */
 class SavingsInterest extends Model
 {
@@ -243,7 +244,7 @@ class SavingsInterest extends Model
     return $query->where('process_type', 'liquidated');
   }
 
-  public function scopeNotLocked($query)
+  public function scopeUnlocked($query)
   {
     return $query->where('is_locked', false);
   }

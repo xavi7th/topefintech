@@ -22,8 +22,8 @@ class SavingsInterestsTableSeeder extends Seeder
       array(
         'id' => 1,
         'savings_id' => 1,
-        'amount' => 105.0,
-        'is_locked' => 1,
+        'amount' => 100000.0,
+        'is_locked' => 0,
         'created_at' => '2020-04-17 00:00:00',
         'updated_at' => '2020-04-17 00:00:00',
         'deleted_at' => NULL,

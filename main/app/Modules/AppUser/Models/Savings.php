@@ -137,7 +137,8 @@ class Savings extends Model
   public function interestable_deposit_transactions()
   {
     return $this->deposit_transactions()->whereDate('interest_processed_at', '<', now())
-      ->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
+      ->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')))
+      ->where('yields_interests', true);
   }
 
   public function savings_interests()
@@ -364,13 +365,36 @@ class Savings extends Model
 
   public function liquidate()
   {
-    $this->savings_interests()->locked()->unProcessed()->update([
+    DB::beginTransaction();
+    /**
+     * Liquidate all pending interests
+     */
+    $this->savings_interests()->locked()->unprocessed()->update([
       'processed_at' => now(),
       'process_type' => 'liquidated'
     ]);
 
+    /**
+     * Get the previous awarded interests (those that passed the 90 day benchmark cycle)
+     * ! Roll it over into the user's smart savings balance
+     */
+    $accruedInterests = $this->savings_interests()->unlocked()->unprocessed()->sum('amount');
+    $this->current_balance += $accruedInterests;
+
+    /**
+     * Create a deposit transaction of this rollover for user's records
+     */
+    $this->transactions()->create([
+      'type' => 'deposit',
+      'amount' => $accruedInterests,
+      'yields_interests' => false,
+      'description' => 'Rollover of accumulated interests into smart savings balance'
+    ]);
+
     $this->is_liquidated = true;
     $this->save();
+
+    DB::commit();
   }
 
   public function getTotalDurationAttribute()
