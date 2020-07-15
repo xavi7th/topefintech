@@ -66,8 +66,8 @@ class AdminController extends Controller
     $request->user()->notify(new SendAccountVerificationMessage('4546576898098tycvbnm,vxsretyuioghfgxvcbvnbn'));
     return Inertia::render('AdminDashboard', [
       'total_savings_amount' => Savings::sum('current_balance'),
-      'total_uncleared_interests_amount' => SavingsInterest::uncleared()->sum('amount'),
-      'total_cleared_interests_amount' => SavingsInterest::cleared()->sum('amount')
+      'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),
+      'total_cleared_interests_amount' => SavingsInterest::processed()->sum('amount')
     ]);
   }
 }
