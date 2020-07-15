@@ -90,8 +90,7 @@
                   <div class="d-flex">
                     <button
                       type="button"
-                      data-toggle="modal"
-                      data-target="#otherAmountSavingsModal"
+                      v-if="portfolio.type !== 'target'"
                       class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-warning btn-xs mr-5"
                     >Withdraw</button>
                   </div>

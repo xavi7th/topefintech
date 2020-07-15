@@ -53,7 +53,7 @@ class WithdrawalRequestCreatedNotification extends Notification
   public function toDatabase($user)
   {
     return [
-      'action' => 'Your withdrawal request for ' . $this->amount . ' has been received. We will update you once it has been attended to.'
+      'action' => 'Your withdrawal request for ' . to_naira($this->amount) . ' has been received. We will update you once it has been attended to.'
     ];
   }
 }
