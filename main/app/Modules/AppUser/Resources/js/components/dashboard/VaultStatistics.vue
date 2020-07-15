@@ -187,6 +187,59 @@
       },
       withdrawSavings(savings) {
         console.log(savings);
+        swalPreconfirm
+          .fire({
+            confirmButtonText: "Carry on!",
+            text:
+              "This will close this savings portfolio and send a request for its current balance.",
+            preConfirm: () => {
+              return this.$inertia
+                .post(this.$route("appuser.withdraw.create", savings.id), {
+                  description: "Withdraw liquidated smart savings funds"
+                })
+                .then(rsp => {
+                  return true;
+                })
+                .catch(error => {
+                  if (error.response) {
+                    swal.showValidationMessage(
+                      `Request failed: ${error.response.data.message}`
+                    );
+                  } else {
+                    swal.showValidationMessage(`Request failed: ${error}`);
+                  }
+                });
+            }
+          })
+          .then(val => {
+            // debugger;
+
+            if (val.isDismissed) {
+              Toast.fire({
+                title: "Canceled",
+                icon: "info",
+                position: "center"
+              });
+            } else if (val.value) {
+              if (this.$page.errors.length) {
+                ToastLarge.fire({
+                  title: "Oops",
+                  html: _.join(this.$page.errors.amount, "<br>"),
+                  position: "bottom",
+                  icon: "error",
+                  timer: 10000
+                });
+              } else if (this.$page.flash.success) {
+                ToastLarge.fire({
+                  title: "Success",
+                  html: this.$page.flash.success,
+                  position: "bottom",
+                  icon: "success",
+                  timer: 10000
+                });
+              }
+            }
+          });
       }
     }
   };

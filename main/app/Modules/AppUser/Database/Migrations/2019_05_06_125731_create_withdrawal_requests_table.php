@@ -18,6 +18,7 @@ class CreateWithdrawalRequestsTable extends Migration
       $table->bigInteger('app_user_id')->unsigned();
       $table->foreign('app_user_id')->references('id')->on('app_users')->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount')->nullable();
+      $table->string('description')->nullable();
       $table->boolean('is_processed')->default(false);
       $table->boolean('is_charge_free');
       $table->bigInteger('processed_by')->nullable();

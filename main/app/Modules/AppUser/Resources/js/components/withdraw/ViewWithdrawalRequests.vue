@@ -4,7 +4,7 @@
       <div class="row vertical-gap">
         <div class="col-12">
           <div class="table-responsive">
-            <table class="table table-bordered rui-datatable">
+            <table class="table table-bordered rui-datatable" data-order="[]">
               <thead class="thead-dark">
                 <tr>
                   <th scope="col" class="p-0">
@@ -68,7 +68,7 @@
                       <a class="rui-task-title" href="#home">Amount: {{ request.amount | Naira }}</a>
                       <small
                         class="rui-task-subtitle"
-                      >Requested {{ new Date(request.created_at).toDateString() }} {{ new Date(request.created_at).toLocaleTimeString() }}</small>
+                      >{{ request.description }}. Requested {{ new Date(request.created_at).toDateString() }} {{ new Date(request.created_at).toLocaleTimeString() }}</small>
                       <small class="rui-task-subtitle">
                         <a href="#">CHARGE FREE:</a>
                         <span v-if="request.is_charge_free">Yes</span>

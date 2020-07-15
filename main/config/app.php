@@ -47,7 +47,7 @@ return [
     |
     */
 
-  'target_savings_interest_rate' => env('Target_SAVINGS_INTEREST_RATE', 0.5),
+  'target_savings_interest_rate' => env('TARGET_SAVINGS_INTEREST_RATE', 0.5),
 
   /*
     |--------------------------------------------------------------------------
@@ -64,25 +64,10 @@ return [
     |--------------------------------------------------------------------------
     | Undue Withdrawal Charges
     |--------------------------------------------------------------------------
-    |
-		|	User can only withdraw once a month within a 20 day interval without charges.
-		| Any additional withdrawal will attract a charge
-    |
     */
 
-  'undue_withdrawal_charge_percentage' => env('UNDUE_WITHDRAWAL_CHARGE_PERCENTAGE', 5),
-
-  /*
-    |--------------------------------------------------------------------------
-    | Lock Break Percentage Charge
-    |--------------------------------------------------------------------------
-    |
-		|	User can only withdraw once a month within a 20 day interval without charges.
-		| Any additional withdrawal will attract a charge
-    |
-    */
-
-  'lock_break_percentage_charge' => env('LOCK_BREAK_PERCENTAGE_CHARGE', 20),
+  'undue_withdrawal_charge_percentage' => env('UNDUE_WITHDRAWAL_CHARGE_PERCENTAGE', 1.5),
+  'undue_withdrawal_charge_max_amount' => env('UNDUE_WITHDRAWAL_CHARGE_MAX_AMOUNT', 2000),
 
   /*
     |--------------------------------------------------------------------------

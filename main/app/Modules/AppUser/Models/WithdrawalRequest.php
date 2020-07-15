@@ -48,6 +48,8 @@ use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\WithdrawalRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $description
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\WithdrawalRequest whereDescription($value)
  */
 class WithdrawalRequest extends Model
 {
@@ -82,9 +84,9 @@ class WithdrawalRequest extends Model
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
-      Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['nav_skip' => true]);
-      Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]); //->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
-      Route::post('create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
+      Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
+      Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]);
+      Route::post('{savings}/create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
     });
   }
 
@@ -108,7 +110,7 @@ class WithdrawalRequest extends Model
 
   public function getWithdrawalRequests(Request $request)
   {
-    $withdrawal_requests = $request->user()->withdrawal_requests()->withTrashed()->get();
+    $withdrawal_requests = $request->user()->withdrawal_requests()->latest()->withTrashed()->get();
     $statistics = [
       'total_pending' => $request->user()->withdrawal_requests()->where('is_processed', false)->count(),
       'total_processed' => $request->user()->withdrawal_requests()->where('is_processed', true)->count(),
@@ -121,28 +123,27 @@ class WithdrawalRequest extends Model
     return Inertia::render('withdraw/ViewWithdrawalRequests', compact('withdrawal_requests', 'statistics'));
   }
 
-  public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request)
+  public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, Savings $savings)
   {
-    // return $request->validated();
     try {
       DB::beginTransaction();
-      /**
-       * Remove the amount from smart savings current_balane
-       */
-      $smart_savings = $request->user()->smart_savings;
-      $smart_savings->current_balance = ($smart_savings->current_balance - $request->amount);
-      $smart_savings->save();
-
       /**
        * Create a withdrawal request
        */
       $withdrawal_request = $request->user()->withdrawal_request()->create($request->validated());
 
       /**
+       * Delete the savings profile
+       */
+
+      $savings->delete();
+
+
+      /**
        * Notify user that his request was created
        */
       try {
-        $request->user()->notify(new WithdrawalRequestCreatedNotification);
+        $request->user()->notify(new WithdrawalRequestCreatedNotification($savings->current_balance));
       } catch (\Throwable $th) {
         ErrLog::notifyAdmin($request->user(), $th, 'Withdrawal request created notification failed');
       }
@@ -155,7 +156,8 @@ class WithdrawalRequest extends Model
       return back()->withSuccess('Withdrawal request sent. We will update you on the status of your request');
     } catch (\Throwable $th) {
       ErrLog::notifyAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
-      return response()->json(['err' => 'Withdrawal request not created'], 500);
+      if ($request->isApi())  return response()->json(['err' => 'Withdrawal request not created'], 500);
+      abort(500, 'An error occured while creating the request');
     }
   }
 

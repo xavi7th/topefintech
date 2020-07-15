@@ -10,15 +10,16 @@ use Illuminate\Notifications\Messages\MailMessage;
 class WithdrawalRequestCreatedNotification extends Notification
 {
   use Queueable;
+  private $amount;
 
   /**
    * Create a new notification instance.
    *
    * @return void
    */
-  public function __construct()
+  public function __construct(float $amount)
   {
-    //
+    $this->amount = $amount;
   }
 
   /**
@@ -52,7 +53,7 @@ class WithdrawalRequestCreatedNotification extends Notification
   public function toDatabase($user)
   {
     return [
-      'action' => 'Your withdrawal request has been received. We will update you once it has been attended to.'
+      'action' => 'Your withdrawal request for ' . $this->amount . ' has been received. We will update you once it has been attended to.'
     ];
   }
 }

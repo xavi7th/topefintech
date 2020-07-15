@@ -363,7 +363,7 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
-  public function liquidate()
+  public function liquidate(): void
   {
     DB::beginTransaction();
     /**
@@ -395,6 +395,23 @@ class Savings extends Model
     $this->save();
 
     DB::commit();
+  }
+
+  public function is_due_for_free_withdrawal(): bool
+  {
+    /**
+     * check if it is liquidated
+     * check if withdrawal was done in last 20 days
+     */
+
+    if (
+      $this->is_liquidated
+      // $this->previous_withdrawal_requests()->whereMonth('created_at', now()->month)->exists() ||
+      // $this->previous_withdrawal_requests()->whereDate('created_at', '>=', now()->subDays(20))->exists()
+    ) {
+      return false;
+    }
+    return true;
   }
 
   public function getTotalDurationAttribute()

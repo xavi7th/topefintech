@@ -63,7 +63,7 @@ class SavingsRecordTransformer
       'name' => $savings->target_type->name,
       'type' => $savings->type,
       'can_withdraw' => $savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->lte(now()),
-      'locktime_countdown' => $savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->diffInDays(now())
+      'locktime_countdown' => $savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->diffInDays(now()) + 1
     ];
   }
 }

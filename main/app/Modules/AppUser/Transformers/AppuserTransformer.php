@@ -66,7 +66,6 @@ class AppUserTransformer
       'total_accrued_interest' => (double)$user->total_interests_amount(),
       'total_withdrawal' => (double)$user->total_withdrawal_amount(),
       'total_balance' => (double)$user->total_balance(),
-      'total_withdrawable' => (double)$user->total_withdrawable_amount(),
       'num_of_days_active' => (int)$user->activeDays()
     ];
   }

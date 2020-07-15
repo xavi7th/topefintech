@@ -280,27 +280,6 @@ class AppUser extends User
     return $this->withdrawal_request()->exists();
   }
 
-  public function is_due_for_withdrawal(): bool
-  {
-    /**
-     * check if withdrawal was done in last month
-     * check if withdrawal was done in last 20 days
-     */
-
-    if (
-      $this->previous_withdrawal_requests()->whereMonth('created_at', now()->month)->exists() ||
-      $this->previous_withdrawal_requests()->whereDate('created_at', '>=', now()->subDays(20))->exists()
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  public function total_withdrawable_amount(): float
-  {
-    return optional($this->smart_savings)->current_balance;
-  }
-
   public function total_withdrawal_amount(): float
   {
     return $this->withdrawal_transactions()->sum('amount');

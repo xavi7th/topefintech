@@ -16,7 +16,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
   public function rules()
   {
     return [
-      'amount' => 'bail|required|numeric|gte:1000|lte:' . $this->user()->total_withdrawable_amount(),
+      'description' => 'required|max:191'
     ];
   }
 
@@ -28,19 +28,6 @@ class CreateWithdrawalRequestValidation extends FormRequest
   public function authorize()
   {
     return true;
-  }
-
-  /**
-   * Configure the error messages for the defined validation rules.
-   *
-   * @return array
-   */
-  public function messages()
-  {
-    return [
-      'amount.gte' => 'Minimum amount withdrawable is ' . to_naira(1000),
-      'amount.lte' => 'Maximum amount withdrawable is ' . to_naira($this->user()->total_withdrawable_amount())
-    ];
   }
 
   /**
@@ -73,15 +60,18 @@ class CreateWithdrawalRequestValidation extends FormRequest
   {
     /**
      * Check if user is due for withdrawal and flag for extra charge
+     * ! Check if this savings is liquidated
      */
 
-    if (!$this->user()->is_due_for_withdrawal()) {
+    if (!$this->route('savings')->is_due_for_free_withdrawal()) {
       return array_merge(parent::validated(), [
-        'is_charge_free' => false
+        'is_charge_free' => false,
+        'amount' => $this->route('savings')->current_balance
       ]);
     } else {
       return array_merge(parent::validated(), [
-        'is_charge_free' => true
+        'is_charge_free' => true,
+        'amount' => $this->route('savings')->current_balance
       ]);
     }
   }
