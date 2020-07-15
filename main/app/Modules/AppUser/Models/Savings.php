@@ -66,6 +66,12 @@ use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
  * @mixin \Eloquent
+ * @property-read mixed $elapsed_duration
+ * @property-read mixed $total_duration
+ * @property bool $is_liquidated
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsLiquidated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings active()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings liquidated()
  */
 class Savings extends Model
 {
@@ -77,7 +83,8 @@ class Savings extends Model
   protected $casts = [
     'current_balance' => 'double',
     'app_user_id' => 'int',
-    'target_type_id' => 'int'
+    'target_type_id' => 'int',
+    'is_liquidated' => 'boolean'
   ];
 
   public function __construct(array $attributes = [])
@@ -98,21 +105,6 @@ class Savings extends Model
   public function app_user()
   {
     return $this->belongsTo(AppUser::class);
-  }
-
-  public function belongs_to(AppUser $user): bool
-  {
-    return $this->app_user_id === $user->id;
-  }
-
-  public function is_smart_savings(): bool
-  {
-    return $this->type == 'smart';
-  }
-
-  public function is_target_savings(): bool
-  {
-    return $this->type == 'target';
   }
 
   public function target_type()
@@ -148,6 +140,41 @@ class Savings extends Model
       ->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
   }
 
+  public function savings_interests()
+  {
+    return $this->hasMany(SavingsInterest::class);
+  }
+
+  public function unprocessed_savings_interests()
+  {
+    return $this->savings_interests()->unprocessed();
+  }
+
+  public function processed_savings_interests()
+  {
+    return $this->savings_interests()->processed();
+  }
+
+  public function belongs_to(AppUser $user): bool
+  {
+    return $this->app_user_id === $user->id;
+  }
+
+  public function is_active(): bool
+  {
+    return !$this->is_liquidated || !$this->is_mature();
+  }
+
+  public function is_smart_savings(): bool
+  {
+    return $this->type == 'smart';
+  }
+
+  public function is_target_savings(): bool
+  {
+    return $this->type == 'target';
+  }
+
   public function total_deposits_sum(): float
   {
     return $this->deposit_transactions()->sum('amount');
@@ -158,38 +185,27 @@ class Savings extends Model
     return $this->withdrawal_transactions()->sum('amount');
   }
 
-  public function savings_interests()
-  {
-    return $this->hasMany(SavingsInterest::class);
-  }
-
-  public function uncleared_savings_interests()
-  {
-    return $this->savings_interests()->where('is_cleared', false);
-  }
-
-  public function cleared_savings_interests()
-  {
-    return $this->savings_interests()->where('is_cleared', true);
-  }
-
   public function total_accrued_interest_amount(): float
   {
     return $this->savings_interests()->sum('amount');
   }
 
-  public function total_uncleared_interest_amount(): float
+  public function total_unprocessed_interest_amount(): float
   {
-    return $this->savings_interests()->uncleared()->sum('amount');
+    return $this->unprocessed_savings_interests()->sum('amount');
   }
 
-  public function total_cleared_interest_amount(): float
+  public function total_processed_interest_amount(): float
   {
-    return $this->savings_interests()->cleared()->sum('amount');
+    return $this->processed_savings_interests()->sum('amount');
   }
 
   public function get_due_interest(): float
   {
+
+    if (!$this->is_active()) {
+      return 0;
+    }
     /**
      * Handle withdrawals. so you dont give interest on deposits that have been "withdrawn"
      * -- Only smart savings have withdrawals
@@ -215,7 +231,7 @@ class Savings extends Model
       /**
        * Get sum of uncleared interests
        */
-      $uncleared_interests_sum = $this->total_uncleared_interest_amount();
+      $uncleared_interests_sum = $this->total_unprocessed_interest_amount();
 
       if ($uncleared_interests_sum <= 0) {
         return 0;
@@ -231,7 +247,7 @@ class Savings extends Model
       /**
        * Mark all the interests as cleared
        */
-      $this->uncleared_savings_interests()->update(['is_cleared' => true]);
+      $this->unprocessed_savings_interests()->update(['is_cleared' => true]);
 
       /**
        * Add the amount to this saving's current_balance
@@ -254,14 +270,6 @@ class Savings extends Model
 
   public function is_mature(): ?bool
   {
-    /**
-     * ! Fail on smart savings
-     * ? Smart savings has no maturity date
-     */
-    if ($this->is_smart_savings()) {
-      return null;
-    }
-
     /**
      * Check if the maturity date is up to today
      */
@@ -354,6 +362,17 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
+  public function liquidate()
+  {
+    $this->savings_interests()->locked()->unProcessed()->update([
+      'processed_at' => now(),
+      'process_type' => 'liquidated'
+    ]);
+
+    $this->is_liquidated = true;
+    $this->save();
+  }
+
   public function getTotalDurationAttribute()
   {
     return optional($this->maturity_date)->diffInDays($this->funded_at);
@@ -395,6 +414,8 @@ class Savings extends Model
     Route::post('/savings/target-funds/create', [self::class, 'createNewTargetSavingsProfile'])->name('appuser.savings.target.initialise');
 
     Route::post('/savings/smart-savings/create', [self::class, 'initialiseSmartSavingsProfile'])->name('appuser.savings.smart.initialise');
+
+    Route::put('/savings/smart-savings/liquidate', [self::class, 'liquidateSmartSavings'])->name('appuser.savings.smart.liquidate')->defaults('extras', ['nav_skip' => true]);
   }
 
   public function viewUserSavings(Request $request)
@@ -602,6 +623,21 @@ class Savings extends Model
     }
   }
 
+  public function liquidateSmartSavings(Request $request)
+  {
+    $smartSavings = $request->user()->smart_savings;
+
+    if ($smartSavings->is_target_savings()) {
+      abort(422, 'You can only liquidate your smart savings');
+    }
+
+    if ($smartSavings->funded_at->gte(now()->subDays(config('app.smart_savings_minimum_liquidation_duration')))) {
+      abort(422, 'You can only liquidate your smart savings after ' . config('app.smart_savings_minimum_liquidation_duration') . ' days');
+    }
+
+    $smartSavings->liquidate();
+  }
+
   public function adminViewUserSavings(Request $request, AppUser $user)
   {
     $savings_list = $user->savings_list->load('target_type');
@@ -707,6 +743,16 @@ class Savings extends Model
   public function scopeMatured($query)
   {
     return $query->whereDate('maturity_date', '<=', now());
+  }
+
+  public function scopeActive($query)
+  {
+    return $query->whereDate('maturity_date', '>=', now())->where('is_liquidated', false);
+  }
+
+  public function scopeLiquidated($query)
+  {
+    return $query->where('is_liquidated', true);
   }
 
   /**

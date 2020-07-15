@@ -9,6 +9,7 @@
       @withdrawInterests="details=$event"
       :userSavings="userSavings"
       :userInvestments="userInvestments"
+      :liquidatedSavings="liquidatedSavings"
     />
 
     <template v-slot:modals>
@@ -53,12 +54,9 @@
     name: "UserDashboard",
     mixins: [mixins],
     props: {
-      userInvestments: {
-        type: Array
-      },
-      userSavings: {
-        type: Array
-      }
+      userInvestments: Array,
+      userSavings: Array,
+      liquidatedSavings: Array
     },
     data: () => {
       return {
@@ -172,7 +170,7 @@
 <style lang="scss" >
   #vaultStatistics {
     .ct-slice-donut {
-      fill: darkgray;
+      fill: #d5e2cf;
       fill-opacity: 0.5;
     }
   }

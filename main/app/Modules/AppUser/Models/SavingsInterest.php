@@ -42,6 +42,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withoutTrashed()
  * @mixin \Eloquent
+ * @property int $is_withdrawn
+ * @property int $is_compounded
+ * @property int $is_locked
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest compounded()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest locked()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notCompounded()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notLocked()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notWithdrawn()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsCompounded($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsLocked($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsWithdrawn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest withdrawn()
+ * @property int|null $processed_at
+ * @property string|null $process_type
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest liquidated()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessedAt($value)
  */
 class SavingsInterest extends Model
 {
@@ -195,24 +214,42 @@ class SavingsInterest extends Model
   }
 
   /**
-   * Scope a query to only uncleared interests
+   * Scope a query to only certain parameters
    *
    * @param  \Illuminate\Database\Eloquent\Builder  $query
    * @return \Illuminate\Database\Eloquent\Builder
    */
-  public function scopeUncleared($query)
+  public function scopeUnprocessed($query)
   {
-    return $query->where('is_cleared', false);
+    return $query->where('processed_at', null);
+  }
+  public function scopeProcessed($query)
+  {
+    return $query->where('processed_at', '<>', null);
   }
 
-  /**
-   * Scope a query to only uncleared interests
-   *
-   * @param  \Illuminate\Database\Eloquent\Builder  $query
-   * @return \Illuminate\Database\Eloquent\Builder
-   */
-  public function scopeCleared($query)
+  public function scopeWithdrawn($query)
   {
-    return $query->where('is_cleared', true);
+    return $query->where('process_type', 'withdrawn');
+  }
+
+  public function scopeCompounded($query)
+  {
+    return $query->where('process_type', 'compounded');
+  }
+
+  public function scopeLiquidated($query)
+  {
+    return $query->where('process_type', 'liquidated');
+  }
+
+  public function scopeNotLocked($query)
+  {
+    return $query->where('is_locked', false);
+  }
+
+  public function scopeLocked($query)
+  {
+    return $query->where('is_locked', true);
   }
 }

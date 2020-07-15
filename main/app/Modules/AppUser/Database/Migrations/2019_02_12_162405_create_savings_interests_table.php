@@ -19,7 +19,9 @@ class CreateSavingsInterestsTable extends Migration
       $table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount');
       $table->string('description')->nullable();
-      $table->boolean('is_cleared')->default(false);
+      $table->timestamp('processed_at')->nullable();
+      $table->enum('process_type', ['withdrawn', 'compounded', 'liquidated'])->nullable();
+      $table->boolean('is_locked')->default(true);
 
 
       $table->timestamps();

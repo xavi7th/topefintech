@@ -24,7 +24,7 @@ class SavingsTableSeeder extends Seeder
         'app_user_id' => 2,
         'type' => 'smart',
         'target_type_id' => NULL,
-        'maturity_date' => NULL,
+        'maturity_date' => now()->addMonth(),
         'current_balance' => 119290.0,
         'funded_at' => '2020-04-11 19:11:20',
         'created_at' => '2020-04-17 00:00:00',

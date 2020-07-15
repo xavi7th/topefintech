@@ -82,8 +82,8 @@ class WithdrawalRequest extends Model
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
-      Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
       Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['nav_skip' => true]);
+      Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]); //->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
       Route::post('create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
     });
   }

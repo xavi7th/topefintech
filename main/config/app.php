@@ -35,6 +35,8 @@ return [
     */
 
   'smart_savings_interest_rate' => env('SMART_SAVINGS_INTEREST_RATE', 0.5),
+  'smart_savings_minimum_liquidation_duration' => env('SMART_SAVINGS_MINIMUM_LIQUIDATION_DURATION', 90),
+  'liquidated_savings_locktime' => env('LIQUIDATED_SAVINGS_LOCKTIME', 7),
 
   /*
     |--------------------------------------------------------------------------

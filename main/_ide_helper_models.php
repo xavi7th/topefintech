@@ -233,6 +233,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
+ * @mixin \Eloquent
  */
 	class AppUser extends \Eloquent {}
 }
@@ -405,6 +406,12 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
  * @mixin \Eloquent
+ * @property-read mixed $elapsed_duration
+ * @property-read mixed $total_duration
+ * @property bool $is_liquidated
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsLiquidated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings active()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings liquidated()
  */
 	class Savings extends \Eloquent {}
 }
@@ -439,6 +446,25 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withoutTrashed()
  * @mixin \Eloquent
+ * @property int $is_withdrawn
+ * @property int $is_compounded
+ * @property int $is_locked
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest compounded()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest locked()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notCompounded()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notLocked()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notWithdrawn()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsCompounded($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsLocked($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsWithdrawn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest withdrawn()
+ * @property int|null $processed_at
+ * @property string|null $process_type
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest liquidated()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessedAt($value)
  */
 	class SavingsInterest extends \Eloquent {}
 }

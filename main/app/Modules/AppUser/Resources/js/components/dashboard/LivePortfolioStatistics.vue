@@ -62,8 +62,7 @@
                     >Add Savings</button>
                     <button
                       type="button"
-                      data-toggle="modal"
-                      data-target="#otherAmountSavingsModal"
+                      @click="liquidateSmartSavings"
                       class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-danger btn-xs"
                       v-if="portfolio.type === 'smart'"
                     >Liquidate</button>
@@ -107,6 +106,7 @@
 </template>
 
 <script>
+  import axios from "axios";
   export default {
     name: "LivePortfolioStatistics",
     props: {
@@ -115,6 +115,56 @@
       },
       userSavings: {
         type: Array
+      }
+    },
+    methods: {
+      liquidateSmartSavings() {
+        swalPreconfirm
+          .fire({
+            confirmButtonText: "Carry on!",
+            text:
+              "This will cause you to lose all the savings that have accrued in your Smart Savings Vault.",
+            preConfirm: () => {
+              return axios
+                .put(this.$route("appuser.savings.smart.liquidate"))
+                .then(rsp => {
+                  return true;
+                })
+                .catch(error => {
+                  if (error.response) {
+                    swal.showValidationMessage(
+                      `Error: ${error.response.data.message}`
+                    );
+                  } else {
+                    swal.showValidationMessage(`Request failed: ${error}`);
+                  }
+                });
+            }
+          })
+          .then(val => {
+            if (val.isDismissed) {
+              Toast.fire({
+                title: "Canceled",
+                icon: "info",
+                position: "center"
+              });
+            } else if (val.value) {
+              this.$inertia.reload({
+                method: "get",
+                data: {},
+                preserveState: false,
+                preserveScroll: true,
+                only: ["userSavings", "flash", "errors", "liquidatedSavings"]
+              });
+              ToastLarge.fire({
+                title: "Success",
+                html: `Your Smart Savings has been liquidated and rolled over to your vault. You can make a withdrawal request.`,
+                position: "bottom",
+                icon: "info",
+                timer: 10000
+              });
+            }
+          });
       }
     }
   };

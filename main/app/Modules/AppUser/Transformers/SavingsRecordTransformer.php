@@ -51,7 +51,19 @@ class SavingsRecordTransformer
       'type' => $savings->type,
       'total_duration' => $savings->total_duration,
       'elapsed_duration' => $savings->elapsed_duration,
-      'total_uncleared_interest_amount' => $savings->total_uncleared_interest_amount()
+      'total_unprocessed_interest_amount' => $savings->total_unprocessed_interest_amount()
+    ];
+  }
+
+  private function forLiquidatedVault(Savings $savings)
+  {
+    return [
+      'id' => $savings->id,
+      'current_balance' => $savings->current_balance,
+      'name' => $savings->target_type->name,
+      'type' => $savings->type,
+      'can_withdraw' => $savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->lte(now()),
+      'locktime_countdown' => $savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->diffInDays(now())
     ];
   }
 }

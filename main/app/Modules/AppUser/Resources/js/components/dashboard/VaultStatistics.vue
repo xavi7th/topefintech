@@ -36,6 +36,38 @@
             </div>
           </template>
           <template v-else>
+            <div class="swiper-slide" v-for="portfolio in liquidatedSavings" :key="portfolio.id">
+              <div class="rui-widget rui-widget-chart">
+                <div class="rui-chartjs-container">
+                  <div
+                    class="rui-chartist rui-chartist-donut"
+                    data-width="200"
+                    data-height="200"
+                    :data-chartist-series="`1,1`"
+                    data-chartist-width="4"
+                    data-chartist-gradient="#ff8ebc;#ef2b5a"
+                  ></div>
+                </div>
+                <div class="rui-widget-chart-info">
+                  <div class="rui-widget-title h2">{{ portfolio.current_balance | Naira }}</div>
+                  <small
+                    class="rui-widget-subtitle text-uppercase text-danger"
+                  >Liquidated: {{ portfolio.name }} Savings</small>
+                  <div class="d-flex">
+                    <button
+                      class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-warning btn-xs mr-5"
+                      v-if="portfolio.can_withdraw"
+                      @click="withdrawSavings(portfolio)"
+                    >Withdraw</button>
+                    <div
+                      class="alert alert-danger btn-xs fs-11"
+                      role="alert"
+                      v-else
+                    >LOCKED: {{ portfolio.locktime_countdown }} days</div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="swiper-slide" v-for="portfolio in userSavings" :key="portfolio.id">
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-chartjs-container">
@@ -51,7 +83,7 @@
                 <div class="rui-widget-chart-info">
                   <div
                     class="rui-widget-title h2"
-                  >{{ portfolio.total_uncleared_interest_amount | Naira }}</div>
+                  >{{ portfolio.total_unprocessed_interest_amount | Naira }}</div>
                   <small
                     class="rui-widget-subtitle text-capitalize"
                   >Interests: {{ portfolio.name }} Savings</small>
@@ -105,12 +137,9 @@
   export default {
     name: "VaultStatistics",
     props: {
-      userInvestments: {
-        type: Array
-      },
-      userSavings: {
-        type: Array
-      }
+      userInvestments: Array,
+      userSavings: Array,
+      liquidatedSavings: Array
     },
     data: () => {
       return {
@@ -155,6 +184,9 @@
               swal.close();
             }
           });
+      },
+      withdrawSavings(savings) {
+        console.log(savings);
       }
     }
   };

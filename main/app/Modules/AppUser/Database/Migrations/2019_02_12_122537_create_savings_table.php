@@ -23,6 +23,7 @@ class CreateSavingsTable extends Migration
       $table->timestamp('maturity_date')->nullable();
       $table->double('current_balance')->default(0);
       $table->timestamp('funded_at')->nullable();
+      $table->boolean('is_liquidated')->default(false);
 
 
       $table->timestamps();
