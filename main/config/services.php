@@ -36,5 +36,10 @@ return [
     'charge_authorization_url' => env('PAYSTACK_CHARGE_AUTHORIZATION_URL', null),
     'secret_key' => env('PAYSTACK_SECRET_KEY', null),
   ],
+  'bulk_sms' => [
+    'endpoint' => 'https://www.bulksmsnigeria.com/api/v1/sms/create',
+    'api_token' => env('BULK_SMS_API_TOKEN'),
+    'from' => env('BULK_SMS_SENDER_ID'),
+  ],
 
 ];

@@ -16,7 +16,6 @@ use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Http\Controllers\LoginController;
-use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 
 class AdminController extends Controller
 {
@@ -62,8 +61,6 @@ class AdminController extends Controller
 
   public function loadAdminApp(Request $request)
   {
-    // $request->user()->notify(new GenericAdminNotification('test subj', 'test notif'));
-    $request->user()->notify(new SendAccountVerificationMessage('4546576898098tycvbnm,vxsretyuioghfgxvcbvnbn'));
     return Inertia::render('AdminDashboard', [
       'total_savings_amount' => Savings::sum('current_balance'),
       'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),

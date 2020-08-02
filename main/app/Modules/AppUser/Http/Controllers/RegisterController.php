@@ -127,7 +127,7 @@ class RegisterController extends Controller
     ActivityLog::notifyAdmins($user->phone   . ' registered an account on the site.');
 
     $token = $user->createVerificationToken();
-    $user->notify(new SendAccountVerificationMessage('sms', $token));
+    $user->notify((new SendAccountVerificationMessage('sms', $token))->onQueue('high'));
 
     /**
      * TODO Notify the referrer if any
