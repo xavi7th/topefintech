@@ -14,15 +14,15 @@
         </div>
         <div class="col-12">
           <input
-            type="email"
+            type="text"
             class="form-control"
-            :class="{'is-invalid': errors.email, 'is-valid': !errors.email}"
+            :class="{'is-invalid': errors.phone, 'is-valid': !errors.phone}"
             id="form-mail"
-            v-model="details.email"
-            name="email"
-            placeholder="Email"
+            v-model="details.phone"
+            name="phone"
+            placeholder="Phone Number"
           />
-          <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
+          <div class="invalid-feedback" v-if="errors.phone">{{errors.phone[0]}}</div>
         </div>
         <div class="col-12">
           <input
@@ -116,13 +116,62 @@
             }
 
             if (this.$page.flash.error) {
-              ToastLarge.fire({
-                title: "Oops!",
-                html: this.$page.flash.error,
-                icon: "error",
-                timer: 10000,
-                footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`
-              }).then(() => {});
+              if (this.$page.flash.error === 416) {
+                swalPreconfirm
+                  .fire({
+                    title: "Enter OTP",
+                    html:
+                      "Sorry buddy, <br> Your account has not been verified. <br> Enter your OTP.",
+                    input: "text",
+                    inputAttributes: {
+                      autocapitalize: "off"
+                    },
+                    confirmButtonText: "Validate",
+                    preConfirm: otp => {
+                      return this.$inertia
+                        .post(this.$route("appuser.otp.verify"), { otp })
+                        .then(rsp => {
+                          return true;
+                        })
+                        .catch(error => {
+                          if (error.response) {
+                            swal.showValidationMessage(
+                              `Error: ${error.response.data.message}`
+                            );
+                          } else {
+                            swal.showValidationMessage(
+                              `Request failed: ${error}`
+                            );
+                          }
+                        });
+                    }
+                  })
+                  .then(val => {
+                    if (val.isDismissed) {
+                      Toast.fire({
+                        title: "Canceled",
+                        icon: "info",
+                        position: "center"
+                      });
+                    } else if (val.value) {
+                      if (this.$page.flash.success) {
+                        ToastLarge.fire({
+                          title: "Success",
+                          html: this.$page.flash.success,
+                          icon: "success"
+                        });
+                      }
+                    }
+                  });
+              } else {
+                ToastLarge.fire({
+                  title: "Oops!",
+                  html: this.$page.flash.error,
+                  icon: "error",
+                  timer: 10000,
+                  footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`
+                }).then(() => {});
+              }
             } else {
               swal.close();
             }

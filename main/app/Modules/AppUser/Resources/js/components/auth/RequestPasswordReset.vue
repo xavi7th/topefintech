@@ -13,20 +13,20 @@
         </div>
         <div class="col-12">
           <h2 class="display-4 mb-10 text-center">Forgot Login Password</h2>
-          <p>Enter your login email to request a password reset link</p>
+          <p>Enter your login phone number to request a password reset token</p>
           <FlashMessage />
         </div>
         <div class="col-12">
           <input
-            type="email"
+            type="text"
             class="form-control"
-            :class="{'is-invalid': errors.email, 'is-valid': !errors.email}"
+            :class="{'is-invalid': errors.phone, 'is-valid': !errors.phone}"
             id="form-mail"
-            v-model="details.email"
-            name="email"
-            placeholder="Email"
+            v-model="details.phone"
+            name="phone"
+            placeholder="Phone Number"
           />
-          <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
+          <div class="invalid-feedback" v-if="errors.phone">{{errors.phone[0]}}</div>
         </div>
         <div class="col-12">
           <button type="submit" class="btn btn-brand btn-block text-center">Request Password Reset</button>

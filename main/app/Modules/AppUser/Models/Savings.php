@@ -21,6 +21,7 @@ use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Notifications\TargetSavingsBroken;
 use App\Modules\AppUser\Notifications\TargetSavingsMature;
 use App\Modules\AppUser\Notifications\TargetSavingsMatured;
+use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
 use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
@@ -652,10 +653,15 @@ class Savings extends Model
 
   public function initialiseSmartSavingsProfile(InitialiseSmartSavingsValidation $request)
   {
-    $funds = auth()->user()->smart_savings()->create([
+    $funds = $request->user()->smart_savings()->create([
       'type' => 'smart',
       'maturity_date' => now()->addMonths($request->duration)
     ]);
+
+    /**
+     * Notify the user that a smart savings account prifile was initialised for him. He can start saving right away
+     */
+    $request->user()->notify(new SmartSavingsInitialised($request->user()));
 
     if ($request->isApi()) {
       return response()->json(['rsp' => $funds], 201);

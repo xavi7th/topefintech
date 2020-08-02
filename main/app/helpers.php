@@ -38,7 +38,7 @@ if (!function_exists('unique_random')) {
 
       if ($chars == null) {
         if ($numeric) {
-          $random = $prefix . rand(100001, 999999999);
+          $random = $prefix . rand(100001, PHP_INT_MAX);
         } else {
           $random = $prefix . Str::uuid();
         }

@@ -17,7 +17,7 @@ class SendAccountVerificationMessage extends Notification
   /** @var string $token The verification token */
   private $token;
 
-  public function __construct($channel = 'mail', string $token = null)
+  public function __construct($channel = 'sms', string $token = null)
   {
     $this->token = $token;
     $this->channel = $channel;

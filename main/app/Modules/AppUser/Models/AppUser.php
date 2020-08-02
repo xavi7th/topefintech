@@ -514,12 +514,12 @@ class AppUser extends User
    **/
   public function createVerificationToken(): string
   {
-    $token = unique_random('password_resets', 'token', null, 100);
+    $token = unique_random('password_resets', 'token', null, 100, true);
 
     // DB::table('password_resets')->where('email', $this->email)->delete();
 
     DB::table('password_resets')->insert(
-      ['email' => $this->email, 'token' => $token, 'created_at' => now()]
+      ['phone' => $this->phone, 'token' => $token, 'created_at' => now()]
     );
 
     return $token;
@@ -666,7 +666,7 @@ class AppUser extends User
 
   public function verifyUser(Request $request, AppUser $user)
   {
-    $user->email_verified_at = now();
+    $user->verified_at = now();
     $user->save();
 
     if ($request->isApi())

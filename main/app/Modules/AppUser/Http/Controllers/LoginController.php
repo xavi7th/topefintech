@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Modules\AppUser\Notifications\SendPasswordResetLink;
+use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 
 /**
  *
@@ -62,6 +63,7 @@ class LoginController extends Controller
     Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [self::class, 'login'])->middleware('guest')->name('appuser.login');
     Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
+    Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);
     Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
     Route::get('reset-password/{token}', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
     Route::put('reset-password/', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
@@ -102,7 +104,7 @@ class LoginController extends Controller
        */
       $this->apiToken = $this->apiGuard()->attempt($this->credentials($request));
 
-      ActivityLog::notifyAdmins($this->guard()->user()->email  . ' logged into the super admin dashboard');
+      ActivityLog::notifyAdmins($this->guard()->user()->phone  . ' logged into their dashboard');
 
       return $this->sendLoginResponse($request);
     }
@@ -113,6 +115,35 @@ class LoginController extends Controller
     $this->incrementLoginAttempts($request);
 
     return $this->sendFailedLoginResponse($request);
+  }
+
+  public function verifyUserToken(Request $request)
+  {
+    $tokenRecord = DB::table('password_resets')->where('token', $request->otp)->first();
+
+    if (!$tokenRecord) {
+      return back()->withError('Phone number could not be verified. Invalid token!');
+    } else {
+      DB::beginTransaction();
+
+      $user = AppUser::where('phone', $tokenRecord->phone)->first();
+
+      $user->verified_at = now();
+      $user->save();
+
+      DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
+
+      $user->notify(new SendAccountVerificationMessage('database'));
+
+      DB::commit();
+
+      /**
+       * Log the user in and redirect to dashboard
+       */
+      $this->guard()->login($user);
+
+      return redirect()->route($user->dashboardRoute())->withSuccess('Account verified successfully. Welcome to ' . config('app.name'));
+    }
   }
 
   public function logout(Request $request)
@@ -135,17 +166,17 @@ class LoginController extends Controller
     if ($request->isMethod('GET')) {
       return Inertia::render('auth/RequestPasswordReset');
     } else if ($request->isMethod('POST')) {
-      if (!$request->email) {
-        return generate_422_error('An email is required to reset your password');
+      if (!$request->phone) {
+        return generate_422_error('An phone number is required to reset your password');
       }
       try {
-        $user = AppUser::where('email', $request->email)->firstOrFail();
+        $user = AppUser::where('phone', $request->phone)->firstOrFail();
 
         $token = $user->createVerificationToken();
         $user->notify(new SendPasswordResetLink($token));
       } catch (ModelNotFoundException $th) { }
 
-      return back()->withSuccess('If the email is valid, a password reset link will be sent to your email. Follow the instructions to reset your password');
+      return back()->withSuccess('If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password');
     }
   }
 
@@ -174,7 +205,7 @@ class LoginController extends Controller
     DB::beginTransaction();
 
     $tokenRecord = DB::table('password_resets')->where('token', $validated['token'])->first();
-    $user = AppUser::where('email', $tokenRecord->email)->first();
+    $user = AppUser::where('phone', $tokenRecord->phone)->first();
 
     $user->password = $request->password;
     $user->save();
@@ -210,7 +241,7 @@ class LoginController extends Controller
   protected function authenticated(Request $request, AppUser $user)
   {
     if ($user->isAppUser()) {
-      if (Auth::appuser()->is_email_verified()) {
+      if ($user->is_verified()) {
         // config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
         if ($request->isApi()) {
           return response()->json($this->respondWithToken($this->apiToken), 202);
@@ -222,7 +253,7 @@ class LoginController extends Controller
         if ($request->isApi()) {
           return response()->json(['message' => 'Unverified user'], 416);
         }
-        return back()->withError('Sorry buddy, <br> Your email address has not been verified. <br> Please check your email for a verification mail or send us a message.');
+        return back()->withError(416);
       }
     } else {
       Auth::logout();
@@ -242,7 +273,7 @@ class LoginController extends Controller
    */
   public function username()
   {
-    return 'email';
+    return 'phone';
   }
 
   /**

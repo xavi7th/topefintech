@@ -19,7 +19,7 @@ class RegistrationValidation extends FormRequest
       'first_name' => 'required|string|max:50',
       'last_name' => 'required|string|max:50',
       'phone' => 'required|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|unique:app_users,phone',
-      'email' => 'required|string|email|max:50|unique:app_users,email',
+      'email' => 'nullable|string|email|max:50|unique:app_users,email',
       'password' => 'required|string|min:4|max:50|confirmed',
       'agreement' => 'required|in:1,true,"true"',
       'referral_id' => 'nullable|exists:agents,ref_code'

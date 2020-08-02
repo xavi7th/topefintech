@@ -15,14 +15,15 @@ use App\Modules\AppUser\Models\AppUser;
 */
 
 $factory->define(AppUser::class, function (Faker $faker) {
-	return [
-		'full_name' => $faker->name,
-		'email' => $faker->unique()->safeEmail,
-		'email_verified_at' => now(),
-		'password' => 'pass',
-		'country' => $faker->country,
-		'phone' => $faker->phoneNumber,
-		'id_card' => '/storage/id_cards/',
-		'remember_token' => Str::random(10),
-	];
+  return [
+    'full_name' => $faker->name,
+    'email' => $faker->unique()->safeEmail,
+    'email_verified_at' => now(),
+    'verified_at' => now(),
+    'password' => 'pass',
+    'country' => $faker->country,
+    'phone' => $faker->phoneNumber,
+    'id_card' => '/storage/id_cards/',
+    'remember_token' => Str::random(10),
+  ];
 });

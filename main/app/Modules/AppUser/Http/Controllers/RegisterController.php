@@ -65,8 +65,7 @@ class RegisterController extends Controller
   {
     Route::group(['middleware' => 'guest'], function () {
       Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('app.create_account')->defaults('extras', ['nav_skip' => true]);
-      Route::post('register', 'RegisterController@register')->name('appuser.register');
-      Route::get('verify-email/{token}', 'RegisterController@verifyUserToken')->name('appuser.email.verify')->defaults('extras', ['nav_skip' => true]);
+      Route::post('register', [RegisterController::class, 'register'])->name('appuser.register');
     });
   }
 
@@ -89,31 +88,6 @@ class RegisterController extends Controller
 
     return $this->registered($request, $user)
       ?: redirect($this->redirectPath());
-  }
-
-
-  public function verifyUserToken(Request $request, string $token)
-  {
-    $tokenRecord = DB::table('password_resets')->where('token', $token)->first();
-
-    if (!$tokenRecord) {
-      return redirect()->route('app.login')->withError('Email could not be verified. Invalid token!');
-    } else {
-      DB::beginTransaction();
-
-      $user = AppUser::where('email', $tokenRecord->email)->first();
-
-      $user->verified_at = now();
-      $user->email_verified_at = now();
-      $user->save();
-
-      DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
-
-      $user->notify(new SendAccountVerificationMessage('database'));
-      DB::commit();
-
-      return redirect()->route('app.login')->withSuccess('Email verified successfully. Login to begin your session');
-    }
   }
 
   /**
@@ -150,22 +124,10 @@ class RegisterController extends Controller
    */
   protected function registered(Request $request, AppUser $user)
   {
-    //
-    ActivityLog::notifyAdmins($user->email   . ' registered an account on the site.');
-
-    /**
-     * Create an empty Smart Savings profile for him
-     */
-    $user->savings_list()->create();
-
-    /**
-     * Notify the user that a smart savings account prifile was initialised for him. He can start saving right away
-     */
-    $user->notify(new SmartSavingsInitialised($user));
+    ActivityLog::notifyAdmins($user->phone   . ' registered an account on the site.');
 
     $token = $user->createVerificationToken();
-    $user->notify(new SendAccountVerificationMessage('mail', $token));
-
+    $user->notify(new SendAccountVerificationMessage('sms', $token));
 
     /**
      * TODO Notify the referrer if any
@@ -173,11 +135,12 @@ class RegisterController extends Controller
      */
 
     DB::commit();
+
+    if ($request->isApi()) {
+      return $this->respondWithToken();
+    }
     return redirect()->route('app.login')->withSuccess('Account Created');
-
-    return $this->respondWithToken();
   }
-
 
   /**
    * Get the token array structure.
@@ -195,7 +158,6 @@ class RegisterController extends Controller
       'user' => (new AppUserTransformer)->basic($user = auth()->user()),
     ], 201);
   }
-
 
   protected function apiGuard()
   {

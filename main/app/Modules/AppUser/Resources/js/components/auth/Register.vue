@@ -67,7 +67,7 @@
             id="form-email"
             v-model="details.email"
             name="name"
-            placeholder="Email"
+            placeholder="Email (optional)"
           />
 
           <div class="invalid-feedback" v-if="errors.email">{{errors.email[0]}}</div>
