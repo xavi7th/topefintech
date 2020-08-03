@@ -8,22 +8,35 @@ use Illuminate\Support\HtmlString;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Modules\AppUser\Notifications\Channels\BulkSMSMessage;
 
 class SendPasswordResetLink extends Notification
 {
   use Queueable;
 
   /** @var string $token The verification token */
-  private $token;
+  private $otp;
 
-  public function __construct(string $token)
+  public function __construct(string $otp)
   {
-    $this->token = $token;
+    $this->otp = $otp;
   }
 
   public function via()
   {
-    return ['mail'];
+    return ['mail', BulkSMSMessage::class];
+  }
+
+  /**
+   * Get the SMS representation of the notification.
+   *
+   * @param mixed $app_user
+   */
+  public function toBulkSMS($app_user)
+  {
+    return (new BulkSMSMessage)
+      ->sms_message('DO NOT DISCLOSE. \n Your ' . config('app.name') . ' OTP for password reset is ' . $this->otp . '. If this reset wasn’t initiated by you, kindly log in and change your password to secure your account.')
+      ->to($app_user->phone);
   }
 
   public function toMail(AppUser $appUser)
