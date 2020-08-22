@@ -65,8 +65,8 @@ class LoginController extends Controller
     Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
     Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);
     Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
-    Route::get('reset-password/{token}', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
-    Route::put('reset-password/', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
+    Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
+    Route::put('reset-password', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
   }
 
   public function showLoginForm(Request $request)
@@ -176,7 +176,7 @@ class LoginController extends Controller
         $user->notify(new SendPasswordResetLink($token));
       } catch (ModelNotFoundException $th) { }
 
-      return back()->withSuccess('If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password');
+      return redirect()->route('appuser.password_reset.verify')->withSuccess('If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password');
     }
   }
 
