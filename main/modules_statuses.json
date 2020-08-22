@@ -1,5 +1,6 @@
 {
     "Admin": true,
     "BasicSite": true,
-    "AppUser": true
+    "AppUser": true,
+    "Agent": true
 }
