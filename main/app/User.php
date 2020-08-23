@@ -119,10 +119,12 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
 
   public function get_navigation_routes(): object
   {
-    if ($this->isAdmin()) {
-      return get_related_routes('admin.', ['GET']);
-    } elseif ($this->isAppUser()) {
+    if ($this->isAppUser()) {
       return get_related_routes('appuser.', ['GET']);
+    } elseif ($this->isAgent()) {
+      return get_related_routes('agent.', ['GET']);
+    } elseif ($this->isAdmin()) {
+      return get_related_routes('admin.', ['GET']);
     } else {
       return get_related_routes('app.', ['GET']);
     }

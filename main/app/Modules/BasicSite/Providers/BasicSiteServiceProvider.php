@@ -58,7 +58,7 @@ class BasicSiteServiceProvider extends ServiceProvider
         'twitter' => config('app.twitter'),
       ],
       'routes' => function (Request $request) {
-        return $request->route() ? Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? [] : (object)[];
+        return $request->route() ? (Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? []) : (object)[];
       },
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
       'auth' => function (Request $request) {

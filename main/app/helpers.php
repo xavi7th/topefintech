@@ -44,7 +44,7 @@ if (!function_exists('unique_random')) {
         }
       } else {
         if ($numeric) {
-          $random = $prefix . rand(substr(100000001, 1, ($chars)), substr(9999999999, -($chars)));
+          $random = $prefix . rand(substr(100000001, 1, ($chars)), substr(9999999999, - ($chars)));
         } else {
           $random = $prefix . Str::random($chars);
         }
@@ -503,5 +503,20 @@ if (!function_exists('compress_image_upload')) {
 
       return $url;
     }
+  }
+}
+
+if (!function_exists('routeHasRootNamespace')) {
+  /**
+   * Check if the current route has the provided namespace
+   *
+   * @param string $namespace
+   *
+   * @return bool
+   */
+
+  function routeHasRootNamespace($namespace = 'app.'): bool
+  {
+    return Str::startsWith(\Route::currentRouteName(), $namespace);
   }
 }

@@ -223,6 +223,7 @@
               }
             } else {
               swal.close();
+              location.reload();
             }
             this.$page.flash.error = null;
           });

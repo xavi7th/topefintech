@@ -59,14 +59,24 @@ class LoginController extends Controller
    */
   public function __construct()
   {
-    Inertia::setRootView('appuser::app');
+    // dd(routeHasRootNamespace('app.'));
+    if (routeHasRootNamespace('appuser.')) {
+      Inertia::setRootView('appuser::app');
+    } elseif (routeHasRootNamespace('app.')) {
+      Inertia::setRootView('appuser::app');
+    } elseif (routeHasRootNamespace('admin.')) {
+      Inertia::setRootView('admin::app');
+    } elseif (routeHasRootNamespace('agent.')) {
+      Inertia::setRootView('agent::app');
+    }
   }
 
   static function routes()
   {
-    Route::get('/login', [self::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('extras', ['nav_skip' => true]);
-    Route::post('login', [self::class, 'login'])->middleware('guest')->name('appuser.login');
-    Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
+    Route::get('/login', [self::class, 'showLoginForm'])->middleware('guest:web,agent')->name('app.login')->defaults('extras', ['nav_skip' => true]);
+    Route::post('login', [self::class, 'login'])->middleware('guest:web,agent')->name('appuser.login');
+    // Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
+    Route::match(['GET', 'POST'], 'logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth:web,agent');
     Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);
     Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
     Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
@@ -106,7 +116,6 @@ class LoginController extends Controller
     if ($this->attemptLogin($request)) {
 
       // ActivityLog::notifyAdmins($this->authenticatedGuard()->user()->phone  . ' logged into their dashboard');
-
       return $this->sendLoginResponse($request);
     }
 
@@ -158,6 +167,7 @@ class LoginController extends Controller
     }
 
     if ($request->isApi()) return response()->json(['logged_out' => true], 200);
+    // return response('', 409)->header('X-Inertia-Location', route('app.login'));
     return redirect()->route('app.login');
   }
 
@@ -272,7 +282,7 @@ class LoginController extends Controller
         $this->apiToken = Auth::guard($guard . '_api')->attempt($this->credentials(request()));
       }
       if (is_null($guard)) {
-        $this->apiToken = $this->apiGuard()->attempt($this->credentials($request));
+        $this->apiToken = $this->apiGuard()->attempt($this->credentials(request()));
       }
       return true;
     }
@@ -313,7 +323,7 @@ class LoginController extends Controller
       if ($user->is_verified()) {
         // config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
         if ($request->isApi()) return response()->json($this->respondWithToken($this->apiToken), 202);
-        return redirect()->intended(route($user->dashboardRoute()));
+        return redirect(null, 302)->intended(route($user->dashboardRoute()));
       } else {
         $this->logout($request);
         if ($request->isApi()) return response()->json(['message' => 'Unverified user'], 416);
