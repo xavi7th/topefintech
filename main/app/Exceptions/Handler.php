@@ -72,7 +72,7 @@ class Handler extends ExceptionHandler
 
       try {
         Inertia::setRootView('basicsite::app');
-        return Inertia::render('DisplayError', ['status' => $response->status()])
+        return Inertia::render('BasicSite,DisplayError', ['status' => $response->status()])
           ->toResponse($request)
           ->setStatusCode($response->status());
       } catch (\Throwable $th) {

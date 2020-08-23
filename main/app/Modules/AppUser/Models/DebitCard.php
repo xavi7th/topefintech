@@ -213,7 +213,7 @@ class DebitCard extends Model
     if ($request->isApi()) {
       return $request->user()->debit_cards;
     } else {
-      return Inertia::render('DebitCards', [
+      return Inertia::render('AppUser,DebitCards', [
         'debit_cards' => (new DebitCardTransformer)->collectionTransformer($request->user()->debit_cards, 'transformWithX')
       ]);
     }

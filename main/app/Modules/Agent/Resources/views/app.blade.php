@@ -190,12 +190,12 @@
     }
   </style>
 
-  @routes(['admin', 'basic'])
+  @routes(['agent', 'basic'])
 
   <script src="{{ mix('js/dashboard-app-vendor.js') }}" defer></script>
   <script src="{{ mix('js/manifest.js') }}" defer></script>
   <script src="{{ mix('js/vendor.js') }}" defer></script>
-  <script src="{{ mix('js/admin-app.js') }}" defer></script>
+  <script src="{{ mix('js/agent-app.js') }}" defer></script>
 </head>
 
 <body>

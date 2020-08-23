@@ -44,7 +44,7 @@ class BasicSiteController extends Controller
 
   public function index()
   {
-    return Inertia::render('HomePage', [
+    return Inertia::render('BasicSite,HomePage', [
       // 'testimonials' => (new TestimonialTransformer)->collectionTransformer(Testimonial::all(), 'transformForHomePage'),
       // 'team_members' => (new TeamMemberTransformer)->collectionTransformer(TeamMember::all(), 'transformForHomePage')
     ]);
@@ -52,27 +52,27 @@ class BasicSiteController extends Controller
 
   public function faqs()
   {
-    return Inertia::render('FAQPage');
+    return Inertia::render('BasicSite,FAQPage');
   }
 
   public function careers()
   {
-    return Inertia::render('CareersPage');
+    return Inertia::render('BasicSite,CareersPage');
   }
 
   public function showPrivacyPage()
   {
-    return Inertia::render('PrivacyPage');
+    return Inertia::render('BasicSite,PrivacyPage');
   }
 
   public function showTermsPage()
   {
-    return Inertia::render('TermsPage');
+    return Inertia::render('BasicSite,TermsPage');
   }
 
   public function showContactForm()
   {
-    return Inertia::render('ContactUsPage');
+    return Inertia::render('BasicSite,ContactUsPage');
   }
 
   public function sendContactMessage(ContactFormValidation $request)

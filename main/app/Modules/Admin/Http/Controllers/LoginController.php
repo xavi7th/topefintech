@@ -63,7 +63,7 @@ class LoginController extends Controller
    */
   public function showLoginForm(Request $request)
   {
-    return Inertia::render('auth/Login');
+    return Inertia::render('Admin,auth/Login');
   }
 
   /**
@@ -134,7 +134,8 @@ class LoginController extends Controller
 
     try {
       $this->apiGuard()->logout();
-    } catch (\Throwable $th) { }
+    } catch (\Throwable $th) {
+    }
 
     return redirect()->route('admin.login');
   }

@@ -1,7 +1,10 @@
 <template>
   <nav class="rui-navbar rui-navbar-top rui-navbar-sticky">
     <div class="rui-navbar-brand">
-      <inertia-link :href="$route('admin.dashboard')" class="rui-navbar-logo">
+      <inertia-link
+        :href="$urlExists('admin.dashboard') ? $route('admin.dashboard') : $route('agent.dashboard')"
+        class="rui-navbar-logo"
+      >
         <img
           src="/img/logo.png"
           data-src-night="/img/logo.png"
@@ -30,7 +33,10 @@
             </a>
             <ul class="nav dropdown-menu">
               <li>
-                <inertia-link class="nav-link" :href="$route('admin.notifications')">
+                <inertia-link
+                  class="nav-link"
+                  :href="$urlExists('admin.notifications') ? $route('admin.notifications') : $route('agent.notifications')"
+                >
                   <span data-feather="bell" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Notifications</span>
                   <span
@@ -62,7 +68,7 @@
                 </a>
               </li>-->
               <li>
-                <inertia-link method="post" :href="$route('admin.logout')" class="nav-link">
+                <inertia-link method="post" href="/logout" class="nav-link">
                   <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Logout</span>
                   <span class="rui-nav-circle"></span>
@@ -77,7 +83,7 @@
 </template>
 <script>
   export default {
-    name: "AdminDashboardHeader"
+    name: "AdminDashboardHeader",
   };
 </script>
 

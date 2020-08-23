@@ -15,6 +15,7 @@ use App\Modules\AppUser\Models\WithdrawalRequest;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\Agent\Models\Agent;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 
 /**
@@ -106,8 +107,6 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     'email_verified_at' => 'datetime',
   ];
 
-  protected $table = "app_users";
-
   public function activities(): MorphMany
   {
     return $this->morphMany(ActivityLog::class, 'user')->latest();
@@ -129,12 +128,14 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     }
   }
 
-  static function dashboardRoute(): string
+  public function dashboardRoute(): string
   {
-    if (Auth::appuser()) {
+    if ($this->isAppUser()) {
       return  'appuser.dashboard';
-    } else if (Auth::admin()) {
+    } else if ($this->isAdmin()) {
       return 'admin.dashboard';
+    } else if ($this->isAgent()) {
+      return 'agent.dashboard';
     } else {
       return route('home');
     }
@@ -153,6 +154,11 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
   public function isAppUser(): bool
   {
     return $this instanceof AppUser;
+  }
+
+  public function isAgent(): bool
+  {
+    return $this instanceof Agent;
   }
 
   public function getDetails()

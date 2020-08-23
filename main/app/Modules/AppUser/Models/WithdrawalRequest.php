@@ -105,7 +105,7 @@ class WithdrawalRequest extends Model
 
   public function showWithdrawalForm(Request $request)
   {
-    return Inertia::render('withdraw/MakeWithdrawalRequest');
+    return Inertia::render('AppUser,withdraw/MakeWithdrawalRequest');
   }
 
   public function getWithdrawalRequests(Request $request)
@@ -120,7 +120,7 @@ class WithdrawalRequest extends Model
       return response()->json($withdrawal_requests, 200);
     }
 
-    return Inertia::render('withdraw/ViewWithdrawalRequests', compact('withdrawal_requests', 'statistics'));
+    return Inertia::render('AppUser,withdraw/ViewWithdrawalRequests', compact('withdrawal_requests', 'statistics'));
   }
 
   public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, Savings $savings)

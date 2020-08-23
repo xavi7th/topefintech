@@ -129,7 +129,7 @@ class SavingsInterest extends Model
     if ($request->isApi()) {
       return response()->json($interests_summary, 200);
     } else {
-      return Inertia::render('savings/ViewInterests', [
+      return Inertia::render('AppUser,savings/ViewInterests', [
         'interests_summary' => $interests_summary
       ]);
     }
@@ -156,7 +156,7 @@ class SavingsInterest extends Model
       return response()->json($interests_summary, 200);
     }
 
-    return Inertia::render('savings/ViewInterestBreakdown', [
+    return Inertia::render('AppUser,savings/ViewInterestBreakdown', [
       'interests_summary' => $interests_summary,
       'month' => $month
     ]);
@@ -179,7 +179,7 @@ class SavingsInterest extends Model
     if ($request->isApi()) {
       return response()->json($interests_summary, 200);
     } else {
-      return Inertia::render('savings/ViewUserInterests', [
+      return Inertia::render('AppUser,savings/ViewUserInterests', [
         'interests_summary' => $interests_summary,
         'user' => $appUser
       ]);
@@ -207,7 +207,7 @@ class SavingsInterest extends Model
       return response()->json($interests_summary, 200);
     }
 
-    return Inertia::render('savings/ViewUserInterestBreakdown', [
+    return Inertia::render('AppUser,savings/ViewUserInterestBreakdown', [
       'interests_summary' => $interests_summary,
       'month' => $month,
       'user' => $appUser

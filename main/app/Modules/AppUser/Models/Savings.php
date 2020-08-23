@@ -465,7 +465,7 @@ class Savings extends Model
     if ($request->isApi()) {
       return $request->user()->savings_list;
     } else {
-      return Inertia::render('savings/UserSavings', [
+      return Inertia::render('AppUser,savings/UserSavings', [
         'savings_list' => $request->user()->savings_list->load('target_type'),
         'auto_save_list' => $request->user()->auto_save_settings,
         'target_types' => TargetType::all()
@@ -475,7 +475,7 @@ class Savings extends Model
 
   public function viewTargetList()
   {
-    return Inertia::render('savings/CreateTargetPlan');
+    return Inertia::render('AppUser,savings/CreateTargetPlan');
   }
 
   public function setAutoSaveSettings(SetAutoSaveSettingsValidation $request)
@@ -691,7 +691,7 @@ class Savings extends Model
     $auto_save_list = $user->auto_save_settings;
     // $target_types = TargetType::all();
 
-    return Inertia::render('savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+    return Inertia::render('Admin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
   }
 
   public function lockMoreUserFunds(Request $request, AppUser $appUser)
@@ -776,7 +776,7 @@ class Savings extends Model
     if ($request->isApi()) {
       return $notifications;
     }
-    return Inertia::render('AdminNotifications', [
+    return Inertia::render('Admin,AdminNotifications', [
       'notifications' => $notifications
     ]);
   }

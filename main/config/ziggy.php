@@ -5,6 +5,9 @@ return [
     'admin' => [
       'admin.*',
     ],
+    'agent' => [
+      'agent.*',
+    ],
     'appuser' => [
       'appuser.*',
     ],

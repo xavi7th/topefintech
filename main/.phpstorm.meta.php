@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-08-22 13:14:01.
+    * Generated on 2020-08-23 02:11:08.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -1437,6 +1437,7 @@ namespace PHPSTORM_META {
 
 	override(\factory(0), map([
         '' => '@FactoryBuilder',
+        'App\Modules\Agent\Models\Agent' => \App\Modules\Agent\Models\AgentFactoryBuilder::class,
         'App\Modules\BasicSite\Models\TeamMember' => \App\Modules\BasicSite\Models\TeamMemberFactoryBuilder::class,
         'App\Modules\BasicSite\Models\Testimonial' => \App\Modules\BasicSite\Models\TestimonialFactoryBuilder::class,
         'App\Modules\AppUser\Models\DebitCard' => \App\Modules\AppUser\Models\DebitCardFactoryBuilder::class,

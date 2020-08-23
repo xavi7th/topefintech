@@ -69,7 +69,7 @@ class AppUserController extends Controller
 
   public function loadDashboard(Request $request)
   {
-    return Inertia::render('dashboard/UserDashboard', [
+    return Inertia::render('AppUser,dashboard/UserDashboard', [
       'userSavings' => function () use ($request) {
         return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->active()->with('target_type')->get(), 'forUserDashboard');
       },

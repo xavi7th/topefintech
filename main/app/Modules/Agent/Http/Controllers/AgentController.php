@@ -2,78 +2,40 @@
 
 namespace App\Modules\Agent\Http\Controllers;
 
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use App\Modules\Agent\Models\Agent;
+use Illuminate\Support\Facades\Route;
 
 class AgentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Response
-     */
-    public function index()
-    {
-        return view('agent::index');
-    }
+  public function __construct()
+  {
+    Inertia::setRootView('agent::app');
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
-    {
-        return view('agent::create');
-    }
+  /**
+   * The agent routes
+   * @return Response
+   */
+  public static function routes()
+  {
+    Route::group(['middleware' => 'web', 'prefix' => Agent::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Agent\Http\Controllers'], function () {
+      // LoginController::routes();
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+      Route::group(['middleware' => ['auth:agent', 'verified_agents']], function () {
+        Route::get('/', [self::class, 'loadAgentApp'])->name('agent.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        return view('agent::show');
-    }
+        Agent::adminRoutes();
+        Agent::agentRoutes();
+      });
+    });
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        return view('agent::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+  public function loadAgentApp(Request $request)
+  {
+    return Inertia::render('Agent,AgentDashboard');
+  }
 }

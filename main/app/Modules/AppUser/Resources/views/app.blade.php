@@ -7,7 +7,7 @@
   <title>{{ config('app.name') }}</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="/vendor/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
   <style>
     .preloader {
       background: #fff;
@@ -75,10 +75,10 @@
       border-radius: 100%;
       opacity: .5;
       -webkit-animation: ball-circus-position 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1), ball-circus-size 2.5s infinite cubic-bezier(0.25, 0, 0.75,
-        1);
+          1);
       -moz-animation: ball-circus-position 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1), ball-circus-size 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1);
       -o-animation: ball-circus-position 2.5s infinite cubic-bezier(0.25, 0, 0.75,
-        1), ball-circus-size 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1);
+          1), ball-circus-size 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1);
       animation: ball-circus-position 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1), ball-circus-size 2.5s infinite cubic-bezier(0.25, 0, 0.75, 1);
     }
 
@@ -183,7 +183,7 @@
       50% {
         -webkit-transform: scale(0.3, 0.3);
         -moz-transform: scale(0.3,
-          0.3);
+            0.3);
         -o-transform: scale(0.3, 0.3);
         transform: scale(0.3, 0.3);
       }

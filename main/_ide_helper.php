@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 7.18.0 on 2020-08-22 13:14:01.
+ * Generated for Laravel 7.18.0 on 2020-08-23 02:11:08.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -20993,6 +20993,13 @@ namespace Illuminate\Support {
     class Fluent {}
 }
 
+namespace App\Modules\Agent\Models {
+    /**
+    * @method \Illuminate\Database\Eloquent\Collection|Agent[]|Agent create($attributes = [])
+    * @method \Illuminate\Database\Eloquent\Collection|Agent[]|Agent make($attributes = [])
+    */
+    class AgentFactoryBuilder extends \Illuminate\Database\Eloquent\FactoryBuilder {}
+}
 namespace App\Modules\BasicSite\Models {
     /**
     * @method \Illuminate\Database\Eloquent\Collection|TeamMember[]|TeamMember create($attributes = [])

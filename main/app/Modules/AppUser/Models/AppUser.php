@@ -558,7 +558,7 @@ class AppUser extends User
     if ($request->isApi()) {
       return (new AppUserTransformer)->detailed($request->user());
     }
-    return Inertia::render('UserProfile', [
+    return Inertia::render('AppUser,UserProfile', [
       'banks' => $this->getBanksList()
     ]);
   }
@@ -628,7 +628,7 @@ class AppUser extends User
     if ($request->isApi()) {
       return $request->user()->notifications;
     }
-    return Inertia::render('UserNotifications', [
+    return Inertia::render('AppUser,UserNotifications', [
       'notifications' => $request->user()->notifications
     ]);
   }
@@ -651,7 +651,7 @@ class AppUser extends User
       return $account_statement;
     }
 
-    return Inertia::render('UserTransactionHistory', compact('account_statement'));
+    return Inertia::render('AppUser,UserTransactionHistory', compact('account_statement'));
   }
 
 
@@ -661,7 +661,7 @@ class AppUser extends User
     if ($request->isApi())
       return $users;
 
-    return Inertia::render('ManageUsers', compact('users'));
+    return Inertia::render('AppUser,ManageUsers', compact('users'));
   }
 
   public function verifyUser(Request $request, AppUser $user)
@@ -699,7 +699,7 @@ class AppUser extends User
       return $account_statement;
     }
 
-    return Inertia::render('savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
+    return Inertia::render('AppUser,savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
   }
 
   public function getUserTransactions(AppUser $user)

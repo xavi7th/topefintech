@@ -3,9 +3,9 @@
 namespace App\Modules\Agent\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\Agent\Models\Agent;
 
-class AgentDatabaseSeeder extends Seeder
+class AgentsTableSeeder extends Seeder
 {
   /**
    * Run the database seeds.
@@ -14,8 +14,6 @@ class AgentDatabaseSeeder extends Seeder
    */
   public function run()
   {
-    Model::unguard();
-
-    $this->call(AgentsTableSeeder::class);
+    factory(Agent::class, 1)->create();
   }
 }

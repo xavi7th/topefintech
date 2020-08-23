@@ -62,7 +62,7 @@ class Admin extends User
   protected $fillable = [
     'role_id', 'full_name', 'email', 'password', 'phone', 'bvn', 'user_passport', 'gender', 'address', 'dob',
   ];
-  protected $table = "admins";
+
   protected $dates = ['dob', 'verified_at'];
   const DASHBOARD_ROUTE_PREFIX = 'admin-panel';
 
@@ -97,7 +97,7 @@ class Admin extends User
     $admins = (new AdminUserTransformer)->collectionTransformer(self::all(), 'transformForAdminViewAdmins');
     if ($request->isApi())
       return $admins;
-    return Inertia::render('ManageAdmins', compact('admins'));
+    return Inertia::render('Admin,ManageAdmins', compact('admins'));
   }
 
   public function createAdmin(Request $request)
@@ -146,7 +146,7 @@ class Admin extends User
     if ($request->isApi()) {
       return $request->user()->notifications;
     }
-    return Inertia::render('AdminNotifications', [
+    return Inertia::render('Admin,AdminNotifications', [
       'notifications' => $request->user()->notifications
     ]);
   }

@@ -4,9 +4,13 @@ namespace App\Modules\AppUser\Http\Controllers;
 
 use App\User;
 use Inertia\Inertia;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Support\Facades\DB;
+use App\Modules\Agent\Models\Agent;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -60,18 +64,19 @@ class LoginController extends Controller
 
   static function routes()
   {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('extras', ['nav_skip' => true]);
+    Route::get('/login', [self::class, 'showLoginForm'])->middleware('guest')->name('app.login')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [self::class, 'login'])->middleware('guest')->name('appuser.login');
     Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
     Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);
     Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
     Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
     Route::put('reset-password', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
+    Route::post('first-time', [self::class, 'newAgentSetPassword'])->name('admin.password.new');
   }
 
   public function showLoginForm(Request $request)
   {
-    return Inertia::render('auth/Login');
+    return Inertia::render('AppUser,auth/Login');
   }
 
   /**
@@ -99,12 +104,8 @@ class LoginController extends Controller
     }
 
     if ($this->attemptLogin($request)) {
-      /**
-       * ? Log the user into the api guard also
-       */
-      $this->apiToken = $this->apiGuard()->attempt($this->credentials($request));
 
-      ActivityLog::notifyAdmins($this->guard()->user()->phone  . ' logged into their dashboard');
+      // ActivityLog::notifyAdmins($this->authenticatedGuard()->user()->phone  . ' logged into their dashboard');
 
       return $this->sendLoginResponse($request);
     }
@@ -148,23 +149,22 @@ class LoginController extends Controller
 
   public function logout(Request $request)
   {
-    $this->guard()->logout();
+    $this->authenticatedGuard()->logout();
     $request->session()->invalidate();
 
     try {
-      $this->apiGuard()->logout();
-    } catch (\Throwable $th) { }
-
-    if ($request->isApi()) {
-      return response()->json(['logged_out' => true], 200);
+      optional($this->authenticatedApiGuard())->logout();
+    } catch (\Throwable $th) {
     }
+
+    if ($request->isApi()) return response()->json(['logged_out' => true], 200);
     return redirect()->route('app.login');
   }
 
   public function showRequestPasswordForm(Request $request)
   {
     if ($request->isMethod('GET')) {
-      return Inertia::render('auth/RequestPasswordReset');
+      return Inertia::render('AppUser,auth/RequestPasswordReset');
     } else if ($request->isMethod('POST')) {
       if (!$request->phone) {
         return generate_422_error('An phone number is required to reset your password');
@@ -174,7 +174,8 @@ class LoginController extends Controller
 
         $token = $user->createVerificationToken();
         $user->notify(new SendPasswordResetLink($token));
-      } catch (ModelNotFoundException $th) { }
+      } catch (ModelNotFoundException $th) {
+      }
 
       return redirect()->route('appuser.password_reset.verify')->withSuccess('If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password');
     }
@@ -191,7 +192,7 @@ class LoginController extends Controller
       DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
       return redirect()->route('appuser.password_reset.request')->withError('Password reset token could completed. This link has expired. Try again!');
     } else {
-      return Inertia::render('auth/ResetPassword', compact('token'));
+      return Inertia::render('AppUser,auth/ResetPassword', compact('token'));
     }
   }
 
@@ -217,6 +218,26 @@ class LoginController extends Controller
     return redirect()->route('app.login')->withSuccess('Password reset successfully. Login to access your dashboard');
   }
 
+  public function newAgentSetPassword(Request $request)
+  {
+    $agent = Agent::where('email', $request->email)->firstOrFail();
+
+    if ($agent && !$agent->is_verified()) {
+      Db::beginTransaction();
+
+      $agent->password = $request->pw;
+      $agent->verified_at = now();
+      $agent->save();
+
+      DB::commit();
+
+      Auth::guard('agent')->login($agent);
+
+      return redirect()->route($agent->dashboardRoute())->withSuccess('Password set');
+    }
+    return back()->withError('Unauthorised');
+  }
+
   /**
    * Validate the user login request.
    *
@@ -232,36 +253,83 @@ class LoginController extends Controller
   }
 
   /**
+   * Attempt to log the user into the application.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return bool
+   */
+  protected function attemptLogin(Request $request): bool
+  {
+    return $this->attemptGuardLogin()
+      ?? $this->attemptGuardLogin('agent')
+      ?? false;
+  }
+
+  private function attemptGuardLogin(string $guard = null): ?bool
+  {
+    if (Auth::guard($guard)->attempt($this->credentials(request()), request()->filled('remember'))) {
+      if (Arr::has(config('auth.guards'), $guard . '_api')) {
+        $this->apiToken = Auth::guard($guard . '_api')->attempt($this->credentials(request()));
+      }
+      if (is_null($guard)) {
+        $this->apiToken = $this->apiGuard()->attempt($this->credentials($request));
+      }
+      return true;
+    }
+    return null;
+  }
+
+  /**
+   * Send the response after the user was authenticated.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  protected function sendLoginResponse(Request $request)
+  {
+    $request->session()->regenerate();
+
+    $this->clearLoginAttempts($request);
+
+    if ($response = $this->authenticated($request, $this->authenticatedGuard()->user())) {
+      return $response;
+    }
+
+    return $request->isApi()
+      ? new Response('', 204)
+      : redirect()->intended(route($this->authenticatedGuard()->user()->dashboardRoute()));
+  }
+
+  /**
    * The user has been authenticated. We can redirect them to where we want or leave empty for the redirectto property to handle
    *
    * @param  \Illuminate\Http\Request  $request
    * @param  mixed  $user
    * @return mixed
    */
-  protected function authenticated(Request $request, AppUser $user)
+  protected function authenticated(Request $request, User $user)
   {
     if ($user->isAppUser()) {
       if ($user->is_verified()) {
         // config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
-        if ($request->isApi()) {
-          return response()->json($this->respondWithToken($this->apiToken), 202);
-        }
-        return redirect()->route($user->dashboardRoute());
+        if ($request->isApi()) return response()->json($this->respondWithToken($this->apiToken), 202);
+        return redirect()->intended(route($user->dashboardRoute()));
       } else {
-        Auth::logout();
-        session()->invalidate();
-        if ($request->isApi()) {
-          return response()->json(['message' => 'Unverified user'], 416);
-        }
+        $this->logout($request);
+        if ($request->isApi()) return response()->json(['message' => 'Unverified user'], 416);
         return back()->withError(416);
       }
     } else {
-      Auth::logout();
-      session()->invalidate();
-      if ($request->isApi()) {
-        return response()->json(['message' => 'Access Denied'], 401);
+      if ($user->is_verified()) {
+        if ($request->isApi())  return response()->json($this->respondWithToken($this->apiToken), 202);
+        return redirect()->intended(route($user->dashboardRoute()));
+      } else {
+        $this->logout($request);
+        if ($request->isApi()) {
+          return response()->json(['unverified' => 'Unverified user'], 401);
+        }
+        return back()->withError(416);
       }
-      abort(401, 'Access Denied');
     }
     return redirect()->route('app.login');
   }
@@ -305,5 +373,26 @@ class LoginController extends Controller
   protected function apiGuard()
   {
     return Auth::guard('api_user');
+  }
+
+
+  protected function authenticatedGuard(): ?SessionGuard
+  {
+    if (Auth::guard()->check()) {
+      return Auth::guard();
+    } elseif (Auth('agent')->check()) {
+      return Auth::guard('agent');
+    } else {
+      return null;
+    }
+  }
+
+  protected function authenticatedApiGuard(): ?SessionGuard
+  {
+    if (Auth::guard('api_user')->check()) {
+      return Auth::guard('api_user');
+    } else {
+      return null;
+    }
   }
 }

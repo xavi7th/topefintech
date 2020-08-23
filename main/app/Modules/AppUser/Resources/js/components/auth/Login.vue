@@ -97,7 +97,7 @@
     remember: ["details"],
     data: () => ({
       details: {},
-      formSubmitted: false
+      formSubmitted: false,
     }),
     mixins: [mixins],
     props: ["errors"],
@@ -105,12 +105,12 @@
     methods: {
       loginUser() {
         BlockToast.fire({
-          text: "Accessing your dashboard..."
+          text: "Accessing your dashboard...",
         });
 
         this.$inertia
           .post(this.$route("appuser.login"), { ...this.details })
-          .then(rsp => {
+          .then((rsp) => {
             if (_.size(this.errors)) {
               this.formSubmitted = true;
             }
@@ -124,16 +124,16 @@
                       "Sorry buddy, <br> Your account has not been verified. <br> Enter your OTP.",
                     input: "text",
                     inputAttributes: {
-                      autocapitalize: "off"
+                      autocapitalize: "off",
                     },
                     confirmButtonText: "Validate",
-                    preConfirm: otp => {
+                    preConfirm: (otp) => {
                       return this.$inertia
                         .post(this.$route("appuser.otp.verify"), { otp })
-                        .then(rsp => {
+                        .then((rsp) => {
                           return true;
                         })
-                        .catch(error => {
+                        .catch((error) => {
                           if (error.response) {
                             swal.showValidationMessage(
                               `Error: ${error.response.data.message}`
@@ -144,24 +144,73 @@
                             );
                           }
                         });
-                    }
+                    },
                   })
-                  .then(val => {
+                  .then((val) => {
                     if (val.isDismissed) {
                       Toast.fire({
                         title: "Canceled",
                         icon: "info",
-                        position: "center"
+                        position: "center",
                       });
                     } else if (val.value) {
                       if (this.$page.flash.success) {
                         ToastLarge.fire({
                           title: "Success",
                           html: this.$page.flash.success,
-                          icon: "success"
+                          icon: "success",
                         });
                       }
                     }
+                  });
+              } else if (this.flash.error === 406) {
+                swal
+                  .fire({
+                    title: "One more thing!",
+                    text: `This seems to be your first login. You need to supply a password`,
+                    icon: "info",
+                  })
+                  .then(() => {
+                    swal
+                      .fire({
+                        title: "Enter a password",
+                        input: "text",
+                        inputAttributes: {
+                          autocapitalize: "off",
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: "Set Password",
+                        showLoaderOnConfirm: true,
+                        preConfirm: (pw) => {
+                          return this.$inertia
+                            .post(this.$route("admin.password.new"), {
+                              pw,
+                              email: this.details.email,
+                            })
+                            .then(() => {
+                              swal.close();
+                              return { rsp: true };
+                            });
+                        },
+                        allowOutsideClick: () => !swal.isLoading(),
+                      })
+                      .then((result) => {
+                        console.log(result);
+
+                        if (result.value) {
+                          swal.fire({
+                            title: `Success`,
+                            text: "Password set successfully!",
+                            icon: "success",
+                          });
+                        } else if (result.dismiss) {
+                          swal.fire({
+                            title: "Cancelled",
+                            text: "You can´t login without setting a password",
+                            icon: "info",
+                          });
+                        }
+                      });
                   });
               } else {
                 ToastLarge.fire({
@@ -169,7 +218,7 @@
                   html: this.$page.flash.error,
                   icon: "error",
                   timer: 10000,
-                  footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`
+                  footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`,
                 }).then(() => {});
               }
             } else {
@@ -177,8 +226,8 @@
             }
             this.$page.flash.error = null;
           });
-      }
-    }
+      },
+    },
   };
 </script>
 

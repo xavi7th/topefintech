@@ -92,7 +92,7 @@ class ErrLog extends Model
       if ($request->isApi())
         return $errors;
 
-      return Inertia::render('ErrorLogs', compact('errors'));
+      return Inertia::render('Admin,ErrorLogs', compact('errors'));
     }
   }
 }

@@ -101,7 +101,7 @@ class TargetType extends Model
   {
     if ($request->isApi()) return TargetType::all();
 
-    return Inertia::render('ManageTargetPlans', [
+    return Inertia::render('Admin,ManageTargetPlans', [
       'target_list' => function () {
         return TargetType::withCount('savings')->get();
       }

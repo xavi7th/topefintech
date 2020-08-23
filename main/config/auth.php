@@ -1,11 +1,12 @@
 <?php
 
 use App\Modules\Admin\Models\Admin;
+use App\Modules\Agent\Models\Agent;
 use App\Modules\AppUser\Models\AppUser;
 
 return [
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
     |--------------------------------------------------------------------------
@@ -16,12 +17,12 @@ return [
     |
     */
 
-	'defaults' => [
-		'guard' => 'web',
-		'passwords' => 'users',
-	],
+  'defaults' => [
+    'guard' => 'web',
+    'passwords' => 'users',
+  ],
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Authentication Guards
     |--------------------------------------------------------------------------
@@ -38,26 +39,30 @@ return [
     |
     */
 
-	'guards' => [
-		'web' => [
-			'driver' => 'session',
-			'provider' => 'users',
-		],
-		'api_user' => [
-			'driver' => 'jwt',
-			'provider' => 'users',
-		],
-		'admin' => [
-			'driver' => 'session',
-			'provider' => 'admins',
-		],
-		'admin_api' => [
-			'driver' => 'jwt',
-			'provider' => 'admins',
-		],
-	],
+  'guards' => [
+    'web' => [
+      'driver' => 'session',
+      'provider' => 'users',
+    ],
+    'api_user' => [
+      'driver' => 'jwt',
+      'provider' => 'users',
+    ],
+    'admin' => [
+      'driver' => 'session',
+      'provider' => 'admins',
+    ],
+    'admin_api' => [
+      'driver' => 'jwt',
+      'provider' => 'admins',
+    ],
+    'agent' => [
+      'driver' => 'session',
+      'provider' => 'agents',
+    ],
+  ],
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | User Providers
     |--------------------------------------------------------------------------
@@ -74,22 +79,26 @@ return [
     |
     */
 
-	'providers' => [
-		'users' => [
-			'driver' => 'eloquent',
-			'model' => AppUser::class,
-		],
-		'admins' => [
-			'driver' => 'eloquent',
-			'model' => Admin::class,
-		],
-		// 'users' => [
-		//     'driver' => 'database',
-		//     'table' => 'users',
-		// ],
-	],
+  'providers' => [
+    'users' => [
+      'driver' => 'eloquent',
+      'model' => AppUser::class,
+    ],
+    'admins' => [
+      'driver' => 'eloquent',
+      'model' => Admin::class,
+    ],
+    'agents' => [
+      'driver' => 'eloquent',
+      'model' => Agent::class,
+    ],
+    // 'users' => [
+    //     'driver' => 'database',
+    //     'table' => 'users',
+    // ],
+  ],
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
     |--------------------------------------------------------------------------
@@ -104,16 +113,16 @@ return [
     |
     */
 
-	'passwords' => [
-		'users' => [
-			'provider' => 'users',
-			'table' => 'password_resets',
-			'expire' => 60,
-			'throttle' => 60,
-		],
-	],
+  'passwords' => [
+    'users' => [
+      'provider' => 'users',
+      'table' => 'password_resets',
+      'expire' => 60,
+      'throttle' => 60,
+    ],
+  ],
 
-	/*
+  /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
@@ -124,6 +133,6 @@ return [
     |
     */
 
-	'password_timeout' => 10800,
+  'password_timeout' => 10800,
 
 ];

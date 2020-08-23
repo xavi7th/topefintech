@@ -16,11 +16,11 @@ class RegistrationValidation extends FormRequest
   public function rules()
   {
     return [
-      'first_name' => 'required|string|max:50',
-      'last_name' => 'required|string|max:50',
-      'phone' => 'required|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|unique:app_users,phone',
-      'email' => 'nullable|string|email|max:50|unique:app_users,email',
-      'password' => 'required|string|min:4|max:50|confirmed',
+      'first_name' => 'required|string|max:30',
+      'last_name' => 'required|string|max:30',
+      'phone' => 'required|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|unique:app_users,phone|unique:agents,phone',
+      'email' => 'nullable|string|email|max:30|unique:app_users,email|unique:agents,email',
+      'password' => 'required|string|min:4|max:30|confirmed',
       'agreement' => 'required|in:1,true,"true"',
       'referral_id' => 'nullable|exists:agents,ref_code'
     ];
