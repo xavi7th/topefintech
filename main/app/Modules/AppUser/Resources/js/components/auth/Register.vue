@@ -84,6 +84,7 @@
           />
           <div class="invalid-feedback" v-if="errors.password">{{errors.password[0]}}</div>
         </div>
+
         <div class="col-12">
           <input
             type="password"
@@ -98,6 +99,19 @@
             class="invalid-feedback"
             v-if="errors.password_confirmation"
           >{{errors.password_confirmation[0]}}</div>
+        </div>
+
+        <div class="col-12">
+          <input
+            type="ref-code"
+            class="form-control"
+            :class="{'is-invalid': errors.ref_code, 'is-valid': !errors.ref_code}"
+            id="form-pass-confirm"
+            v-model="details.ref_code"
+            name="ref_code"
+            placeholder="Smart Collector Code"
+          />
+          <div class="invalid-feedback" v-if="errors.ref_code">{{errors.ref_code[0]}}</div>
         </div>
 
         <div class="col-sm-12">
@@ -160,13 +174,13 @@
     remember: ["details"],
     data: () => ({
       formSubmitted: false,
-      details: {}
+      details: {},
     }),
     methods: {
       createAccount() {
         this.formSubmitted == false;
         BlockToast.fire({
-          text: "Setting up your account..."
+          text: "Setting up your account...",
         });
         let formData = new FormData();
 
@@ -177,10 +191,10 @@
         this.$inertia
           .post(this.$route("appuser.register"), formData, {
             headers: {
-              "Content-Type": "multipart/form-data"
-            }
+              "Content-Type": "multipart/form-data",
+            },
           })
-          .then(rsp => {
+          .then((rsp) => {
             if (_.size(this.errors) == 0) {
               console.log("cuccess");
 
@@ -188,15 +202,15 @@
                 title: "Congrats",
                 html:
                   "Your account has been created. A verification mail has been sent to your email.",
-                timer: 20000
+                timer: 20000,
               });
             } else {
               swal.close();
             }
             this.formSubmitted = true;
           });
-      }
-    }
+      },
+    },
   };
 </script>
 

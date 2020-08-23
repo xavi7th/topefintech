@@ -58,6 +58,8 @@ use App\Modules\AppUser\Transformers\AppUserTransformer;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property string|null $ref_code
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRefCode($value)
  */
 class Agent extends User
 {
@@ -77,8 +79,12 @@ class Agent extends User
 
   public function managed_users()
   {
-    return AppUser::all();
     return $this->hasMany(AppUser::class);
+  }
+
+  static function findByRefCode(string $refCode): self
+  {
+    return self::whereRefCode($refCode)->first();
   }
 
   public function is_verified(): bool
@@ -112,7 +118,7 @@ class Agent extends User
 
   public function getListOfUsers(Request $request)
   {
-    $managedUsers = (new AppUserTransformer)->collectionTransformer($request->user()->managed_users(), 'forAgents');
+    $managedUsers = (new AppUserTransformer)->collectionTransformer($request->user()->managed_users, 'forAgents');
 
     if ($request->isApi()) return $managedUsers;
     return Inertia::render('Agent,ManageUsers', compact('managedUsers'));

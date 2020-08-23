@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Http\Requests;
 
+use App\Modules\Agent\Models\Agent;
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
@@ -22,7 +23,7 @@ class RegistrationValidation extends FormRequest
       'email' => 'nullable|string|email|max:30|unique:app_users,email|unique:agents,email',
       'password' => 'required|string|min:4|max:30|confirmed',
       'agreement' => 'required|in:1,true,"true"',
-      'referral_id' => 'nullable|exists:agents,ref_code'
+      'ref_code' => 'nullable|exists:agents,ref_code'
     ];
   }
 
@@ -45,8 +46,9 @@ class RegistrationValidation extends FormRequest
     /**
      * merge the name fields into one for storing
      */
-    return array_merge((collect(parent::validated())->except(['first_name', 'last_name']))->all(), [
-      'full_name' => $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name
+    return array_merge((collect(parent::validated())->except(['first_name', 'last_name', 'ref_code', 'agreement']))->all(), [
+      'full_name' => $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name,
+      'agent_id' => Agent::findByRefCode($this->ref_code)->id
     ]);
   }
 

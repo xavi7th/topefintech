@@ -549,6 +549,8 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property int|null $agent_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAgentId($value)
  */
 	class AppUser extends \Eloquent {}
 }
@@ -759,6 +761,9 @@ namespace App\Modules\Agent\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereVerifiedAt($value)
+ * @mixin \Eloquent
+ * @property string|null $ref_code
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRefCode($value)
  */
 	class Agent extends \Eloquent {}
 }

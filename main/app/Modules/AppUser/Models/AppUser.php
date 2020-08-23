@@ -111,11 +111,13 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property int|null $agent_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAgentId($value)
  */
 class AppUser extends User
 {
   protected $fillable = [
-    'full_name', 'email', 'password', 'phone', 'id_card'
+    'full_name', 'email', 'password', 'phone', 'id_card', 'agent_id'
   ];
   protected $dates = ['email_verified_at', 'verified_at'];
   protected $casts = [

@@ -35,6 +35,7 @@ class CreateUsersTable extends Migration
       $table->timestamp('verified_at')->nullable();
       $table->boolean('can_withdraw')->default(false);
       $table->boolean('is_active')->default(true);
+      $table->foreignId('agent_id')->nullable()->constrained()->onDelete('cascade');
 
       $table->rememberToken();
       $table->timestamps();
