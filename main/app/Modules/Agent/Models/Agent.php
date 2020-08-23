@@ -12,6 +12,8 @@ use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Transformers\AppUserTransformer;
 
 /**
  * App\Modules\Agent\Models\Agent
@@ -73,7 +75,13 @@ class Agent extends User
     Inertia::setRootView('agent::app');
   }
 
-  public function is_verified()
+  public function managed_users()
+  {
+    return AppUser::all();
+    return $this->hasMany(AppUser::class);
+  }
+
+  public function is_verified(): bool
   {
     return $this->verified_at !== null;
   }
@@ -87,6 +95,10 @@ class Agent extends User
   {
     Route::group([], function () {
       Route::get('notifications', [self::class, 'getAgentNotifications'])->name('agent.notifications')->defaults('extras', ['nav_skip' => true]);
+      Route::get('managed-users', [self::class, 'getListOfUsers'])->name('agent.manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
+      Route::get('{appUser:phone}/savings', [self::class, 'agentViewManagedUserSavings'])->name('agent.user_savings')->defaults('extras', ['nav_skip' => true]);
+      Route::get('user/{appUser:phone}/statement', [self::class, 'agentGetManagedUserAccountStatement'])->name('agent.user.statement')->defaults('extras', ['nav_skip' => true]);
+      Route::get('{appUser:phone}/savings-interest', [self::class, 'agentGetManagedUserSavingsInterests'])->name('agent.user.interest')->defaults('extras', ['nav_skip' => true]);
     });
   }
 
@@ -98,6 +110,67 @@ class Agent extends User
     });
   }
 
+  public function getListOfUsers(Request $request)
+  {
+    $managedUsers = (new AppUserTransformer)->collectionTransformer($request->user()->managed_users(), 'forAgents');
+
+    if ($request->isApi()) return $managedUsers;
+    return Inertia::render('Agent,ManageUsers', compact('managedUsers'));
+  }
+
+  public function agentGetManagedUserAccountStatement(Request $request, AppUser $appUser)
+  {
+    $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($appUser) {
+      return $appUser->load([
+        'savings_interests.savings.target_type',
+        'service_charges',
+        'transactions'
+      ]);
+    });
+
+    $account_statement = collect($userStatement->savings_interests)
+      ->merge($userStatement->service_charges)
+      ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
+
+    if ($request->isApi()) {
+      return $account_statement;
+    }
+
+    return Inertia::render('AppUser,savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
+  }
+
+  public function agentViewManagedUserSavings(Request $request, AppUser $user)
+  {
+    $savings_list = $user->savings_list->load('target_type');
+    $auto_save_list = $user->auto_save_settings;
+    // $target_types = TargetType::all();
+
+    return Inertia::render('Admin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+  }
+
+  public function agentGetManagedUserSavingsInterests(Request $request, AppUser $appUser)
+  {
+    $records = $appUser->savings_interests()->with('savings.target_type')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
+    // dd($appUser);
+    $interests_summary =  transform($records, function ($value) {
+      return $value->groupBy('month')->transform(function ($item, $key) {
+        return $item->groupBy('savings.target_type.name')->transform(function ($item, $key) {
+          return $item->sum('amount');
+        });
+      })->transform(function ($item) {
+        return collect($item->all())->merge(['total' => $item->sum()]);
+      });
+    });
+
+    if ($request->isApi()) {
+      return response()->json($interests_summary, 200);
+    } else {
+      return Inertia::render('AppUser,savings/ViewUserInterests', [
+        'interests_summary' => $interests_summary,
+        'user' => $appUser
+      ]);
+    }
+  }
 
   public function getAgentNotifications(Request $request)
   {

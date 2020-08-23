@@ -29,11 +29,9 @@ class AppUserTransformer
         })
       ];
     } catch (\Throwable $e) {
-      return [
-        'data' => $collection->map(function ($v) use ($transformerMethod) {
-          return $this->$transformerMethod($v);
-        })
-      ];
+      return $collection->map(function ($v) use ($transformerMethod) {
+        return $this->$transformerMethod($v);
+      });
     }
   }
 
@@ -42,6 +40,24 @@ class AppUserTransformer
     return [
       'email' => (string)$user->email,
       'full_name' => (string)$user->full_name,
+    ];
+  }
+
+  public function forAgents(AppUser $user)
+  {
+    return [
+      'email' => (string)$user->email,
+      'full_name' => (string)$user->full_name,
+      'bank' => (string)$user->acc_bank,
+      'address' => (string)$user->address,
+      'phone' => (string)$user->phone,
+      'account_number' => (string)$user->acc_num,
+      'total_balance' => (float)$user->total_balance(),
+      'total_accrued_interest' => (float)$user->total_interests_amount(),
+      'total_withdrawal' => (float)$user->total_withdrawal_amount(),
+      'total_deposit' => (float)$user->total_deposit_amount(),
+      'num_of_days_active' => (int)$user->activeDays(),
+      'is_verified' => (bool)$user->is_verified(),
     ];
   }
 
@@ -61,11 +77,11 @@ class AppUserTransformer
       'is_bank_verified' => (bool)$user->is_bank_verified,
       'phone' => (string)$user->phone,
       'id_card' => (string)$user->id_card,
-      'is_email_verified' => (boolean)$user->is_email_verified(),
-      'total_deposit' => (double)$user->total_deposit_amount(),
-      'total_accrued_interest' => (double)$user->total_interests_amount(),
-      'total_withdrawal' => (double)$user->total_withdrawal_amount(),
-      'total_balance' => (double)$user->total_balance(),
+      'is_email_verified' => (bool)$user->is_email_verified(),
+      'total_deposit' => (float)$user->total_deposit_amount(),
+      'total_accrued_interest' => (float)$user->total_interests_amount(),
+      'total_withdrawal' => (float)$user->total_withdrawal_amount(),
+      'total_balance' => (float)$user->total_balance(),
       'num_of_days_active' => (int)$user->activeDays()
     ];
   }

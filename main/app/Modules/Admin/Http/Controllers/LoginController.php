@@ -164,7 +164,7 @@ class LoginController extends Controller
         if ($request->isApi())
           return response()->json($this->respondWithToken(), 202);
 
-        return redirect()->route(Admin::dashboardRoute());
+        return redirect()->route($user->dashboardRoute());
       } else {
         $this->logout($request);
         if ($request->isApi())

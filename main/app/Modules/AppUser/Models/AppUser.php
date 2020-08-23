@@ -661,7 +661,7 @@ class AppUser extends User
     if ($request->isApi())
       return $users;
 
-    return Inertia::render('AppUser,ManageUsers', compact('users'));
+    return Inertia::render('Admin,ManageUsers', compact('users'));
   }
 
   public function verifyUser(Request $request, AppUser $user)
