@@ -4,6 +4,8 @@ namespace App\Modules\Admin\Transformers;
 
 use App\User;
 use App\Modules\Admin\Models\Admin;
+use App\Modules\Agent\Models\Agent;
+use App\Modules\AppUser\Models\AppUser;
 
 class AdminUserTransformer
 {
@@ -51,11 +53,11 @@ class AdminUserTransformer
       'address' => (string)$user->address,
       'date_of_birth' => (string)$user->date_of_birth,
       'id_card' => (string)$user->id_card,
-      'is_verified' => (boolean)$user->is_verified(),
-      'is_email_verified' => (boolean)$user->is_email_verified(),
+      'is_verified' => (bool)$user->is_verified(),
+      'is_email_verified' => (bool)$user->is_email_verified(),
       'email_verified_at' => (string)$user->email_verified_at,
-      'is_bvn_verified' => (boolean)$user->is_bvn_verified,
-      'is_bank_verified' => (boolean)$user->is_bank_verified,
+      'is_bvn_verified' => (bool)$user->is_bvn_verified,
+      'is_bank_verified' => (bool)$user->is_bank_verified,
     ];
   }
 
@@ -67,8 +69,23 @@ class AdminUserTransformer
       'created_at' => (string)$user->created_at,
       'email' => (string)$user->email,
       'id_card' => (string)$user->id_card,
-      'is_verified' => (boolean)$user->is_verified(),
-      'isAdmin' => (boolean)$user->isAdmin(),
+      'is_verified' => (bool)$user->is_verified(),
+      'isAdmin' => (bool)$user->isAdmin(),
+    ];
+  }
+
+  public function transformForAdminViewAgents(Agent $user)
+  {
+    return [
+      'id' => (int)$user->id,
+      'full_name' => (string)$user->full_name,
+      'created_at' => (string)$user->created_at,
+      'email' => (string)$user->email,
+      'phone' => (string)$user->phone,
+      'wallet_balance' => (string)$user->wallet_balance,
+      'avatar' => (string)$user->avatar,
+      'is_verified' => (bool)$user->is_verified(),
+      'isAgent' => (bool)$user->isAgent(),
     ];
   }
 }

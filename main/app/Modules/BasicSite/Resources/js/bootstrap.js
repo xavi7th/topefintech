@@ -115,7 +115,7 @@ new Vue( {
                         `../../../${section}/Resources/js/components/${module}.vue` )
                     .then( module => module.default ).catch( err => {
                         if ( err.code == "MODULE_NOT_FOUND" ) {
-                            console.log( err );
+                            console.error( err );
                             // debugger
                             // location.href = route( 'app.home' ).url()
                         } else {

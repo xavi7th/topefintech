@@ -291,8 +291,8 @@ class Agent extends User
   {
     $validator = Validator::make($request->all(), [
       'full_name' => 'required|max:255',
-      'phone' => 'required|max:20|unique:agents,email',
-      'email' => 'required|email',
+      'phone' => 'required|max:20|unique:agents,phone',
+      'email' => 'required|email|max:20|unique:agents,email',
     ]);
 
     if ($validator->fails()) {
@@ -300,6 +300,9 @@ class Agent extends User
         ->withErrors($validator)
         ->withError('There are errors in your form');
     }
+
+    // dd($validator->validated());
+    Cache::forget('allAgents');
 
     try {
       DB::beginTransaction();

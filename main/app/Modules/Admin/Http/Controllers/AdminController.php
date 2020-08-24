@@ -7,12 +7,13 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Modules\Admin\Models\Admin;
+use App\Modules\Agent\Models\Agent;
 use App\Http\Controllers\Controller;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\TargetType;
 use App\Modules\AppUser\Models\Savings;
+use App\Modules\AppUser\Models\TargetType;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Http\Controllers\LoginController;
@@ -50,6 +51,7 @@ class AdminController extends Controller
         Route::get('/', [AdminController::class, 'loadAdminApp'])->name('admin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
         Admin::adminRoutes();
+        Agent::adminRoutes();
         AppUser::adminRoutes();
         TargetType::adminRoutes();
         Savings::adminRoutes();
