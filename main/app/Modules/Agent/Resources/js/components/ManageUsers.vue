@@ -2,7 +2,7 @@
   <layout title="Managed Users">
     <div class="container-fluid">
       <div class="row vertical-gap">
-        <div class="col-12 col-lg-8 offset-lg-2">
+        <div class="col-12 col-lg-10 offset-lg-1">
           <div class="table-responsive">
             <table class="table table-bordered rui-datatable" data-order="[]">
               <thead class="thead-dark">

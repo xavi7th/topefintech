@@ -23,12 +23,9 @@ class AgentController extends Controller
   public static function routes()
   {
     Route::group(['middleware' => 'web', 'prefix' => Agent::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Agent\Http\Controllers'], function () {
-      // LoginController::routes();
-
       Route::group(['middleware' => ['auth:agent', 'verified_agents']], function () {
         Route::get('/', [self::class, 'loadAgentApp'])->name('agent.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
-        Agent::adminRoutes();
         Agent::agentRoutes();
       });
     });
@@ -36,6 +33,10 @@ class AgentController extends Controller
 
   public function loadAgentApp(Request $request)
   {
-    return Inertia::render('Agent,AgentDashboard');
+    return Inertia::render('Agent,AgentDashboard', [
+      'totalClients' => $request->user()->managed_users()->count(),
+      'totalTransactions' => $request->user()->agent_wallet_transactions()->withdrawals()->count(),
+      'latestNotifications' => $request->user()->notifications()->latest()->take(3)->get()
+    ]);
   }
 }

@@ -74,6 +74,8 @@ class Agent extends User
 
   protected $dates = ['dob', 'verified_at'];
 
+  protected $appends = ['wallet_balance'];
+
   const DASHBOARD_ROUTE_PREFIX = 'smart-collectors';
 
   public function __construct(array $attributes = [])
@@ -87,9 +89,19 @@ class Agent extends User
     return $this->hasMany(AppUser::class);
   }
 
+  public function agent_wallet_transactions()
+  {
+    return $this->hasMany(AgentWalletTransaction::class);
+  }
+
   static function findByRefCode(string $refCode): self
   {
     return self::whereRefCode($refCode)->first();
+  }
+
+  public function getWalletBalanceAttribute(): float
+  {
+    return $this->agent_wallet_transactions()->deposits()->sum('amount') - $this->agent_wallet_transactions()->withdrawals()->sum('amount');
   }
 
   public function is_email_verified(): bool
