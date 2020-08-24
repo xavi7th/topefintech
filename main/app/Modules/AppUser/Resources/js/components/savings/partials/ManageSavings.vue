@@ -18,7 +18,7 @@
           class="btn btn-primary"
           data-toggle="modal"
           data-target="#newTargetModal"
-          v-if="!$page.auth.user.isAdmin"
+          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent"
         >New Target Savings</button>
       </div>
     </div>
@@ -91,8 +91,8 @@
         /** Connect to paystack? */
         $("#defundThisSavingsModal").modal("show");
         this.$emit("defund-savings", savings);
-      }
-    }
+      },
+    },
   };
 </script>
 

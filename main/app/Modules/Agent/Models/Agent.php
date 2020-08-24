@@ -10,10 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Validator;
-use App\Modules\Admin\Transformers\AdminUserTransformer;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\Savings;
+use Illuminate\Support\Facades\Validator;
+use App\Modules\AppUser\Models\TargetType;
+use App\Modules\Admin\Transformers\AdminUserTransformer;
+use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
+use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
+use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
 /**
  * App\Modules\Agent\Models\Agent
@@ -87,6 +92,11 @@ class Agent extends User
     return self::whereRefCode($refCode)->first();
   }
 
+  public function is_email_verified(): bool
+  {
+    return $this->email_verified_at !== null;
+  }
+
   public function is_verified(): bool
   {
     return $this->verified_at !== null;
@@ -105,6 +115,8 @@ class Agent extends User
       Route::get('{appUser:phone}/savings', [self::class, 'agentViewManagedUserSavings'])->name('agent.user_savings')->defaults('extras', ['nav_skip' => true]);
       Route::get('user/{appUser:phone}/statement', [self::class, 'agentGetManagedUserAccountStatement'])->name('agent.user.statement')->defaults('extras', ['nav_skip' => true]);
       Route::get('{appUser:phone}/savings-interest', [self::class, 'agentGetManagedUserSavingsInterests'])->name('agent.user.interest')->defaults('extras', ['nav_skip' => true]);
+      Route::post('{appUser:phone}/smart-savings/initialise', [self::class, 'initialiseSmartSavingsProfile'])->name('agent.savings.smart.initialise');
+      Route::post('{appUser:phone}/savings/target-funds/add', [self::class, 'fundManagedUser'])->name('agent.user_savings.target.fund');
     });
   }
 
@@ -145,13 +157,15 @@ class Agent extends User
     return Inertia::render('AppUser,savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
   }
 
-  public function agentViewManagedUserSavings(Request $request, AppUser $user)
+  public function agentViewManagedUserSavings(Request $request, AppUser $appUser)
   {
-    $savings_list = $user->savings_list->load('target_type');
-    $auto_save_list = $user->auto_save_settings;
-    // $target_types = TargetType::all();
+    if (!$appUser->is_managed_by($request->user())) {
+      return back()->withError('You are not this user´s smart collector');
+    }
+    $savings_list = $appUser->savings_list->load('target_type');
+    $target_types = TargetType::all();
 
-    return Inertia::render('Admin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+    return Inertia::render('Agent,ViewManagedUserSavings', compact('appUser', 'savings_list', 'target_types'));
   }
 
   public function agentGetManagedUserSavingsInterests(Request $request, AppUser $appUser)
@@ -177,6 +191,68 @@ class Agent extends User
       ]);
     }
   }
+
+  public function initialiseSmartSavingsProfile(Request $request, AppUser $appUser)
+  {
+    if (!$request->duration || $request->duration < 3) {
+      return back()->withError('Specify a duration greater than 3 months');
+    }
+
+
+    if ($appUser->has_smart_savings()) {
+      return back()->withError('User has smart savings already');
+    }
+
+    $funds = $appUser->smart_savings()->create([
+      'type' => 'smart',
+      'maturity_date' => now()->addMonths($request->duration)
+    ]);
+
+    /**
+     * Notify the user that a smart savings account profile was initialised for him. He can start saving right away
+     */
+    $appUser->notify(new SmartSavingsInitialised($appUser));
+
+    if ($request->isApi()) return response()->json(['rsp' => $funds], 201);
+    return back()->withSuccess('Smart savings portfolio initialised successfully');
+  }
+
+  public function fundManagedUser(Request $request, AppUser $appUser)
+  {
+    if (!$request->savings_id) {
+      return generate_422_error('Invalid savings selected');
+    }
+    if (!$request->amount || $request->amount <= 0) {
+      return generate_422_error('You need to specify an amount to add to this savings');
+    }
+
+    $savings = Savings::find($request->savings_id);
+
+    if (is_null($savings)) {
+      return generate_422_error('Invalid savings7687 selected');
+    }
+
+    try {
+      if ($savings->type == 'smart') {
+        $appUser->fund_smart_savings($request->amount);
+      } else {
+        return generate_422_error('Smart collectors can only fund smart savings');
+      }
+
+      $appUser->notify(new NewSavingsSuccess($request->amount));
+
+      if ($request->isApi()) return response()->json(['rsp' => 'Created'], 201);
+      return back()->withSuccess('Congrats! Funds added to user´s savings');
+    } catch (\Throwable $th) {
+      if ($th->getCode() == 422) {
+        return generate_422_error($th->getMessage());
+      } else {
+        ErrLog::notifyAdmin(auth()->user(), $th, 'Fund user savings failed');
+        return back()->withError('Fund user savings failed');
+      }
+    };
+  }
+
 
   public function getAgentNotifications(Request $request)
   {

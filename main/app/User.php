@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Support\Str;
 use App\Modules\Admin\Models\Admin;
+use App\Modules\Agent\Models\Agent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
@@ -12,10 +13,10 @@ use Illuminate\Notifications\Notifiable;
 use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\WithdrawalRequest;
+use App\Modules\Agent\Transformers\AgentTransformer;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
-use App\Modules\Agent\Models\Agent;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 
 /**
@@ -167,6 +168,8 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
   {
     if ($this->isAppUser()) {
       return (new AppUserTransformer)->detailed($this);
+    } elseif ($this->isAgent()) {
+      return (new AgentTransformer)->fullTransform($this);
     } elseif ($this->isAdmin()) {
       return (new AdminUserTransformer)->transformForAdminViewAdmins($this);
     }

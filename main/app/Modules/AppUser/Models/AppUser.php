@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Paystack\Bank\ListBanks;
 use Illuminate\Support\Facades\DB;
+use App\Modules\Agent\Models\Agent;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Auth;
 use Paystack\Bank\GetAccountDetails;
@@ -139,6 +140,11 @@ class AppUser extends User
     }
   }
 
+  public function smart_collector()
+  {
+    return $this->belongsTo(Agent::class, 'agent_id');
+  }
+
   public function paystack_transactions()
   {
     return $this->hasMany(PaystackTransaction::class);
@@ -252,6 +258,10 @@ class AppUser extends User
     return $this->verified_at !== null;
   }
 
+  public function is_managed_by(Agent $user): bool
+  {
+    return $this->smart_collector == $user;
+  }
   public function is_email_verified(): bool
   {
     return $this->email_verified_at !== null;
