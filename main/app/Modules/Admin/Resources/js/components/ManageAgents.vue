@@ -34,7 +34,7 @@
                           class="rui-changelog-item"
                           :class="[agent.is_verified ? 'rui-changelog-success': 'rui-changelog-danger']"
                         >
-                          <span class="rui-changelog-item-type">{{ agent.email }}</span>
+                          <span class="rui-changelog-item-type">EMAIL: {{ agent.email }}</span>
                         </div>
                       </li>
                       <li>
@@ -42,13 +42,28 @@
                           class="rui-changelog-item"
                           :class="[agent.is_verified ? 'rui-changelog-success': 'rui-changelog-danger']"
                         >
-                          <span class="rui-changelog-item-type">{{ agent.phone }}</span>
+                          <span class="rui-changelog-item-type">PHONE NUMBER:{{ agent.phone }}</span>
+                        </div>
+                      </li>
+                      <li>
+                        <div
+                          class="rui-changelog-item"
+                          :class="[agent.is_verified ? 'rui-changelog-success': 'rui-changelog-danger']"
+                        >
+                          <span
+                            class="rui-changelog-item-type"
+                          >AGENT REFERRAL CODE: {{ agent.ref_code }}</span>
                         </div>
                       </li>
                     </ul>
-                    <!-- <div class="col-12 text-right">
-                      <button class="btn btn-sm btn-danger">Delete</button>
-                    </div>-->
+                    <div class="col-12 text-right">
+                      <button
+                        class="btn btn-sm btn-danger"
+                        data-toggle="modal"
+                        data-target="#fundAgentModal"
+                        @click="agentToFund = agent"
+                      >Fund Agent</button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -58,6 +73,29 @@
       </div>
     </div>
     <template v-slot:modals>
+      <modal modalId="fundAgentModal" :modalTitle="`Fund Agent's wallet`">
+        <form class="m-25">
+          <FlashMessage />
+
+          <div class="form-group mb-5" :class="{'has-error': errors.amount}">
+            <label for="form-amount">
+              <strong>Amount</strong>
+            </label>
+            <input
+              type="text"
+              class="form-control form-control-pill"
+              id="form-amount"
+              v-model="details.amount"
+              name="amount"
+            />
+            <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
+          </div>
+
+          <div class="form-group mt-20 text-center">
+            <button type="button" class="btn btn-brand" @click="fundAgent">Fund Agent's Account</button>
+          </div>
+        </form>
+      </modal>
       <modal modalId="createAgentModal" :modalTitle="`Create a new agent account`">
         <form class="m-25">
           <FlashMessage />
@@ -122,6 +160,7 @@
     mixins: [mixins],
     data: () => ({
       details: {},
+      agentToFund: null,
     }),
 
     methods: {
@@ -138,6 +177,29 @@
                 title: "Success",
                 html: `They will be required to set a password om their first login`,
                 type: "success",
+              });
+            } else {
+              swal.close();
+            }
+          });
+      },
+      fundAgent(agent) {
+        BlockToast.fire({
+          text: "Funding agent...",
+        });
+
+        this.$inertia
+          .post(this.$route("admin.fund_agent", this.agentToFund.id), {
+            amount: this.details.amount,
+          })
+          .then(() => {
+            if (this.flash.success) {
+              this.details.amount = null;
+
+              ToastLarge.fire({
+                title: "Success",
+                html: this.flash.success,
+                icon: "success",
               });
             } else {
               swal.close();

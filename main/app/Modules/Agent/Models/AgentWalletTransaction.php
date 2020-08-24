@@ -15,11 +15,11 @@ class AgentWalletTransaction extends Model
 
   public function scopeDeposits($query)
   {
-    return $query->where('trans_type', 'deposits');
+    return $query->where('trans_type', 'deposit');
   }
 
   public function scopeWithdrawals($query)
   {
-    return $query->where('trans_type', 'withdrawals');
+    return $query->where('trans_type', 'withdrawal');
   }
 }

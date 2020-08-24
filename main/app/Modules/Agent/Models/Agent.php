@@ -137,6 +137,7 @@ class Agent extends User
     Route::group([], function () {
       Route::get('agents', [self::class, 'getAgents'])->name('admin.view_agents')->defaults('extras', ['icon' => 'fas fa-user-tie']);
       Route::post('agent/create', [self::class, 'createAgent'])->name('admin.create_agent');
+      Route::post('agent/{agent}/fund', [self::class, 'fundAgent'])->name('admin.fund_agent');
     });
   }
 
@@ -320,6 +321,40 @@ class Agent extends User
     } catch (\Throwable $e) {
 
       ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating agent account');
+
+      if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
+      return back()->withError('An error occurred. Check the error logs');
+    }
+  }
+
+  public function fundAgent(Request $request, self $agent)
+  {
+    $validator = Validator::make($request->all(), [
+      'amount' => 'required|numeric',
+    ]);
+
+    if ($validator->fails()) {
+      return back()
+        ->withErrors($validator)
+        ->withError('There are errors in your form');
+    }
+
+    // dd($validator->validated());
+
+    Cache::forget('allAgents');
+
+    try {
+      $agent->agent_wallet_transactions()->create([
+        'amount' => $request->amount,
+        'trans_type' => 'deposit',
+        'description' => 'Agent Wallet top-up',
+      ]);
+
+      if ($request->isApi()) return response()->json(['rsp' => $agent], 201);
+      return back()->withSuccess('Funding successful');
+    } catch (\Throwable $e) {
+
+      ErrLog::notifyAdminAndFail($request->user(), $e, 'Error funding agent account');
 
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
       return back()->withError('An error occurred. Check the error logs');
