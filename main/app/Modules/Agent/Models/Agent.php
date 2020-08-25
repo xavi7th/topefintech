@@ -239,13 +239,25 @@ class Agent extends User
       return generate_422_error('You need to specify an amount to add to this savings');
     }
 
+    if ($request->amount > $request->user()->wallet_balance) {
+      return generate_422_error('The specified amount is greater than your wallet balance');
+    }
+
     $savings = Savings::find($request->savings_id);
 
     if (is_null($savings)) {
-      return generate_422_error('Invalid savings7687 selected');
+      return generate_422_error('Invalid savings selected');
     }
 
     try {
+      DB::beginTransaction();
+
+      $request->user()->agent_wallet_transactions()->create([
+        'trans_type' => 'withdrawal',
+        'amount' => $request->amount,
+        'description' => 'Smart collector account funding for ' . $appUser->full_name
+      ]);
+
       if ($savings->type == 'smart') {
         $appUser->fund_smart_savings($request->amount);
       } else {
@@ -254,13 +266,15 @@ class Agent extends User
 
       $appUser->notify(new NewSavingsSuccess($request->amount));
 
+      DB::commit();
+
       if ($request->isApi()) return response()->json(['rsp' => 'Created'], 201);
       return back()->withSuccess('Congrats! Funds added to user´s savings');
     } catch (\Throwable $th) {
       if ($th->getCode() == 422) {
         return generate_422_error($th->getMessage());
       } else {
-        ErrLog::notifyAdmin(auth()->user(), $th, 'Fund user savings failed');
+        ErrLog::notifyAdminAndFail($request->user(), $th, 'Fund user savings failed');
         return back()->withError('Fund user savings failed');
       }
     };
