@@ -18,8 +18,12 @@ class RedirectIfAuthenticated
    */
   public function handle($request, Closure $next, $guard = null)
   {
+    // dd($guards);
+    // foreach ($guards as $g) {
+    //   dd($g);
+    // }
     if (Auth::guard($guard)->check()) {
-      return redirect()->route(auth($guard)->user()->dashboardRoute());
+      return redirect()->route($request->user()->dashboardRoute());
     }
 
     return $next($request);

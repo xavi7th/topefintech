@@ -323,7 +323,7 @@ class LoginController extends Controller
       if ($user->is_verified()) {
         // config(['session.lifetime' => (string)(1 * (60 * 24 * 365))]);
         if ($request->isApi()) return response()->json($this->respondWithToken($this->apiToken), 202);
-        return redirect(null, 302)->intended(route($user->dashboardRoute()));
+        return redirect()->intended(route($user->dashboardRoute()));
       } else {
         $this->logout($request);
         if ($request->isApi()) return response()->json(['message' => 'Unverified user'], 416);
@@ -332,7 +332,7 @@ class LoginController extends Controller
     } else {
       if ($user->is_verified()) {
         if ($request->isApi())  return response()->json($this->respondWithToken($this->apiToken), 202);
-        return redirect()->intended(route($user->dashboardRoute()));
+        return redirect()->route($user->dashboardRoute());
       } else {
         $this->logout($request);
         if ($request->isApi()) {
