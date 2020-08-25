@@ -55,6 +55,16 @@
                           >AGENT REFERRAL CODE: {{ agent.ref_code }}</span>
                         </div>
                       </li>
+                      <li>
+                        <div
+                          class="rui-changelog-item"
+                          :class="[agent.is_verified ? 'rui-changelog-success': 'rui-changelog-danger']"
+                        >
+                          <span
+                            class="rui-changelog-item-type"
+                          >BASE OF OPERATIONS: {{ agent.base_of_operation }}</span>
+                        </div>
+                      </li>
                     </ul>
                     <div class="col-12 text-right">
                       <button
@@ -137,6 +147,19 @@
               name="phone"
             />
             <FlashMessage v-if="errors.phone" :msg="errors.phone[0]" />
+          </div>
+          <div class="form-group mb-5" :class="{'has-error': errors.city_of_operation}">
+            <label for="form-city-of-operation">
+              <strong>City of Operation</strong>
+            </label>
+            <input
+              type="text"
+              class="form-control form-control-pill"
+              id="form-city-of-operation"
+              v-model="details.city_of_operation"
+              name="city-of-operation"
+            />
+            <FlashMessage v-if="errors.city_of_operation" :msg="errors.city_of_operation[0]" />
           </div>
 
           <div class="form-group mt-20 text-center">

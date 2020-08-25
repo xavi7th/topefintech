@@ -69,7 +69,7 @@ use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 class Agent extends User
 {
   protected $fillable = [
-    'role_id', 'full_name', 'email', 'password', 'phone', 'bvn', 'user_passport', 'gender', 'address', 'dob',
+    'role_id', 'full_name', 'email', 'password', 'phone', 'bvn', 'user_passport', 'gender', 'address', 'dob', 'city_of_operation'
   ];
 
   protected $dates = ['dob', 'verified_at'];
@@ -308,6 +308,7 @@ class Agent extends User
       'full_name' => 'required|max:255',
       'phone' => 'required|max:20|unique:agents,phone',
       'email' => 'required|email|max:20|unique:agents,email',
+      'city_of_operation' => 'required|string|max:20',
     ]);
 
     if ($validator->fails()) {

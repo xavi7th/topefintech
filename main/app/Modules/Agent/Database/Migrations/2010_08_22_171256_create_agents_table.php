@@ -24,6 +24,7 @@ class CreateAgentsTable extends Migration
       $table->string('avatar')->nullable();
       $table->string('gender')->enum(['male', 'female'])->nullable();
       $table->string('address')->nullable();
+      $table->string('city_of_operation')->nullable();
       $table->date('dob')->nullable();
       $table->timestamp('verified_at')->nullable();
 
