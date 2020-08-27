@@ -10,7 +10,7 @@ mix.webpackConfig( {
     },
 } )
 mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
-mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
+// mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
 
 mix.scripts( [
     __dirname + '/Resources/js/vendor/jquery-3.2.1.min.js',

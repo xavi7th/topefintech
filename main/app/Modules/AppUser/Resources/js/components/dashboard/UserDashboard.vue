@@ -1,7 +1,7 @@
 <template>
   <layout title="My Dashboard" :isAuth="false">
     <LivePortfolioStatistics
-      @addSavings="details=$event"
+      @add-savings="details=$event"
       :userInvestments="userInvestments"
       :userSavings="userSavings"
     />
@@ -9,6 +9,7 @@
       @withdrawInterests="details=$event"
       :userSavings="userSavings"
       :userInvestments="userInvestments"
+      :maturedSavings="maturedSavings"
       :liquidatedSavings="liquidatedSavings"
     />
 
@@ -56,18 +57,19 @@
     props: {
       userInvestments: Array,
       userSavings: Array,
-      liquidatedSavings: Array
+      liquidatedSavings: Array,
+      maturedSavings: Array,
     },
     data: () => {
       return {
-        details: {}
+        details: {},
       };
     },
     components: { Layout, LivePortfolioStatistics, VaultStatistics },
     mounted() {
       this.$nextTick(() => {
         // Doughnut
-        $(".rui-chartist").each(function() {
+        $(".rui-chartist").each(function () {
           const $this = $(this);
           let dataSeries = $this.attr("data-chartist-series");
           const dataWidth = $this.attr("data-width");
@@ -104,7 +106,7 @@
           const chart = new Chartist.Pie($this[0], data, conf);
 
           // Create gradient
-          chart.on("created", function(ctx) {
+          chart.on("created", function (ctx) {
             let defs = ctx.svg.elem("defs");
             defs
               .elem("linearGradient", {
@@ -112,16 +114,16 @@
                 x1: 0,
                 y1: 1,
                 x2: 0,
-                y2: 0
+                y2: 0,
               })
               .elem("stop", {
                 offset: 0,
-                "stop-color": dataGradient.split(";")[0]
+                "stop-color": dataGradient.split(";")[0],
               })
               .parent()
               .elem("stop", {
                 offset: 1,
-                "stop-color": dataGradient.split(";")[1]
+                "stop-color": dataGradient.split(";")[1],
               });
           });
         });
@@ -131,16 +133,16 @@
       makeSavings(amount) {
         this.details.savings_id = this.details.id;
         BlockToast.fire({
-          text: "Initialising transaction ..."
+          text: "Initialising transaction ...",
         });
         this.$inertia
           .post(
             this.$route("appuser.savings.target.fund"),
             {
-              ...this.details
+              ...this.details,
             },
             {
-              preserveState: true
+              preserveState: true,
             }
           )
           .then(() => {
@@ -150,20 +152,20 @@
               ToastLarge.fire({
                 title: "Error",
                 html: this.$page.flash.error,
-                icon: "error"
+                icon: "error",
               });
             } else if (this.$page.flash.success) {
               ToastLarge.fire({
                 title: "Success",
                 html: this.$page.flash.success,
-                icon: "success"
+                icon: "success",
               });
             } else {
               swal.close();
             }
           });
-      }
-    }
+      },
+    },
   };
 </script>
 

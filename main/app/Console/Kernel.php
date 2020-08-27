@@ -28,7 +28,9 @@ class Kernel extends ConsoleKernel
   protected function schedule(Schedule $schedule)
   {
     $schedule->command('savings:process-interest')
-      ->daily()
+      ->everyMinute()
+
+      // ->daily()
       ->withoutOverlapping(10)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-interests-' . now()->toDateString() . '.cson')
       ->emailOutputTo('xavi7th@gmail.com')
@@ -53,7 +55,10 @@ class Kernel extends ConsoleKernel
       });
 
     $schedule->command('savings:process-mature-savings')
-      ->daily()
+      // ->daily()
+
+      ->everyMinute()
+
       ->withoutOverlapping(30)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-saving```s-log' . now()->toDateTimeString() . '.cson')
       ->emailOutputTo('xavi7th@gmail.com')

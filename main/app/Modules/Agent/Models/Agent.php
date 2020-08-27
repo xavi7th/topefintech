@@ -65,6 +65,13 @@ use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
  * @mixin \Eloquent
  * @property string|null $ref_code
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRefCode($value)
+ * @property string|null $city_of_operation
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Agent\Models\AgentWalletTransaction[] $agent_wallet_transactions
+ * @property-read int|null $agent_wallet_transactions_count
+ * @property-read float $wallet_balance
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\AppUser[] $managed_users
+ * @property-read int|null $managed_users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereCityOfOperation($value)
  */
 class Agent extends User
 {

@@ -78,7 +78,10 @@ class AppUserController extends Controller
       },
       'liquidatedSavings' => function () use ($request) {
         return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->liquidated()->get(), 'forLiquidatedVault');
-      }
+      },
+      'maturedSavings' => function () use ($request) {
+        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->matured()->get(), 'forUserDashboard');
+      },
     ]);
   }
 }

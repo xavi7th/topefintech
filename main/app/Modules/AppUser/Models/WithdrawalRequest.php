@@ -86,7 +86,7 @@ class WithdrawalRequest extends Model
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
       Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
       Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]);
-      Route::post('{savings}/create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
+      Route::post('{savings_id}/create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
     });
   }
 
@@ -123,8 +123,10 @@ class WithdrawalRequest extends Model
     return Inertia::render('AppUser,withdraw/ViewWithdrawalRequests', compact('withdrawal_requests', 'statistics'));
   }
 
-  public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, Savings $savings)
+  public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, $savings_id)
   {
+    $savings = Savings::find($savings_id);
+
     try {
       DB::beginTransaction();
       /**
@@ -136,7 +138,11 @@ class WithdrawalRequest extends Model
        * Delete the savings profile
        */
 
-      $savings->delete();
+      $savings->deleted_at = now();
+      $savings->is_withdrawn = true;
+      $savings->save();
+
+      // $savings->delete();
 
 
       /**

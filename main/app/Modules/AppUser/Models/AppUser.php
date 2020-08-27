@@ -114,6 +114,7 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @mixin \Eloquent
  * @property int|null $agent_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAgentId($value)
+ * @property-read \App\Modules\Agent\Models\Agent|null $smart_collector
  */
 class AppUser extends User
 {

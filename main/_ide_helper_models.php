@@ -372,10 +372,14 @@ namespace App\Modules\AppUser\Models{
  * @property \Illuminate\Support\Carbon|null $maturity_date
  * @property float $current_balance
  * @property \Illuminate\Support\Carbon|null $funded_at
+ * @property bool $is_liquidated
+ * @property bool $is_withdrawn
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Modules\AppUser\Models\AppUser $app_user
+ * @property-read mixed $elapsed_duration
+ * @property-read mixed $total_duration
  * @property-read \App\Modules\AppUser\Models\Transaction|null $initial_deposit_transaction
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
  * @property-read int|null $savings_interests_count
@@ -384,6 +388,8 @@ namespace App\Modules\AppUser\Models{
  * @property-read \App\Modules\AppUser\Models\TargetType|null $target_type
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
  * @property-read int|null $transactions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings active()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings liquidated()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings matured()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings newQuery()
@@ -395,19 +401,14 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereFundedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsLiquidated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsWithdrawn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereMaturityDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereTargetTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
- * @mixin \Eloquent
- * @property-read mixed $elapsed_duration
- * @property-read mixed $total_duration
- * @property bool $is_liquidated
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsLiquidated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings active()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings liquidated()
  */
 	class Savings extends \Eloquent {}
 }
@@ -551,6 +552,7 @@ namespace App\Modules\AppUser\Models{
  * @mixin \Eloquent
  * @property int|null $agent_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAgentId($value)
+ * @property-read \App\Modules\Agent\Models\Agent|null $smart_collector
  */
 	class AppUser extends \Eloquent {}
 }
@@ -720,6 +722,37 @@ namespace App\Modules\Admin\Models{
 
 namespace App\Modules\Agent\Models{
 /**
+ * App\Modules\Agent\Models\AgentWalletTransaction
+ *
+ * @property int $id
+ * @property int $agent_id
+ * @property float $amount
+ * @property string $trans_type
+ * @property string $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\Modules\Agent\Models\Agent $agent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction deposits()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereAgentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereTransType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\AgentWalletTransaction withdrawals()
+ * @mixin \Eloquent
+ */
+	class AgentWalletTransaction extends \Eloquent {}
+}
+
+namespace App\Modules\Agent\Models{
+/**
  * App\Modules\Agent\Models\Agent
  *
  * @property int $id
@@ -764,6 +797,13 @@ namespace App\Modules\Agent\Models{
  * @mixin \Eloquent
  * @property string|null $ref_code
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRefCode($value)
+ * @property string|null $city_of_operation
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Agent\Models\AgentWalletTransaction[] $agent_wallet_transactions
+ * @property-read int|null $agent_wallet_transactions_count
+ * @property-read float $wallet_balance
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\AppUser[] $managed_users
+ * @property-read int|null $managed_users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereCityOfOperation($value)
  */
 	class Agent extends \Eloquent {}
 }

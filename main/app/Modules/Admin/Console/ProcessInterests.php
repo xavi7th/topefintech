@@ -53,7 +53,7 @@ class ProcessInterests extends Command
      * -- The issue is multiple single sum queries VS a single select query with potential 1000s rows which is faster
      */
 
-    foreach (Savings::with(['app_user', 'target_type'])->cursor() as $savings_record) {
+    foreach (Savings::active()->with(['app_user', 'target_type'])->cursor() as $savings_record) {
       $interest_amount = $savings_record->get_due_interest();
       if ($interest_amount > 0) {
 

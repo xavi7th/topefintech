@@ -2,6 +2,7 @@
 
 namespace App\Modules\AppUser\Http\Requests;
 
+use App\Modules\AppUser\Models\Savings;
 use Illuminate\Foundation\Http\FormRequest;
 use \Illuminate\Contracts\Validation\Validator;
 use App\Modules\BasicSite\Exceptions\AxiosValidationExceptionBuilder;
@@ -62,16 +63,16 @@ class CreateWithdrawalRequestValidation extends FormRequest
      * Check if user is due for withdrawal and flag for extra charge
      * ! Check if this savings is liquidated
      */
-
-    if (!$this->route('savings')->is_due_for_free_withdrawal()) {
+    $savings_record = Savings::find($this->route('savings_id'));
+    if (!$savings_record->is_due_for_free_withdrawal()) {
       return array_merge(parent::validated(), [
         'is_charge_free' => false,
-        'amount' => $this->route('savings')->current_balance
+        'amount' => $savings_record->current_balance
       ]);
     } else {
       return array_merge(parent::validated(), [
         'is_charge_free' => true,
-        'amount' => $this->route('savings')->current_balance
+        'amount' => $savings_record->current_balance
       ]);
     }
   }

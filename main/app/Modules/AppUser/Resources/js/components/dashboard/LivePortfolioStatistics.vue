@@ -5,7 +5,7 @@
       class="row rui-swiper"
       id="liveAccountStatistics"
       data-swiper-initialslide="0"
-      :data-swiper-loop="!!userSavings.length || !!userInvestments.length"
+      :data-swiper-loop="(!!userSavings.length && userSavings.length > 3) || !!userInvestments.length"
       data-swiper-grabcursor="true"
       data-swiper-center="false"
       data-swiper-slides="auto"
@@ -58,7 +58,7 @@
                       data-toggle="modal"
                       data-target="#otherAmountSavingsModal"
                       class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-outline-primary btn-xs mr-5"
-                      @click="$emit('addSavings', portfolio)"
+                      @click="$emit('add-savings', portfolio)"
                     >Add Savings</button>
                     <button
                       type="button"
@@ -107,15 +107,16 @@
 
 <script>
   import axios from "axios";
+
   export default {
     name: "LivePortfolioStatistics",
     props: {
       userInvestments: {
-        type: Array
+        type: Array,
       },
       userSavings: {
-        type: Array
-      }
+        type: Array,
+      },
     },
     methods: {
       liquidateSmartSavings() {
@@ -127,10 +128,10 @@
             preConfirm: () => {
               return axios
                 .put(this.$route("appuser.savings.smart.liquidate"))
-                .then(rsp => {
+                .then((rsp) => {
                   return true;
                 })
-                .catch(error => {
+                .catch((error) => {
                   if (error.response) {
                     swal.showValidationMessage(
                       `Error: ${error.response.data.message}`
@@ -139,14 +140,14 @@
                     swal.showValidationMessage(`Request failed: ${error}`);
                   }
                 });
-            }
+            },
           })
-          .then(val => {
+          .then((val) => {
             if (val.isDismissed) {
               Toast.fire({
                 title: "Canceled",
                 icon: "info",
-                position: "center"
+                position: "center",
               });
             } else if (val.value) {
               this.$inertia.reload({
@@ -154,19 +155,19 @@
                 data: {},
                 preserveState: false,
                 preserveScroll: true,
-                only: ["userSavings", "flash", "errors", "liquidatedSavings"]
+                only: ["userSavings", "flash", "errors", "liquidatedSavings"],
               });
               ToastLarge.fire({
                 title: "Success",
                 html: `Your Smart Savings has been liquidated and rolled over to your vault. You can make a withdrawal request.`,
                 position: "bottom",
                 icon: "info",
-                timer: 10000
+                timer: 10000,
               });
             }
           });
-      }
-    }
+      },
+    },
   };
 </script>
 

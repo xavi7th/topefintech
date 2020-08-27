@@ -15,12 +15,14 @@
     >
       <div class="swiper-container">
         <div class="swiper-wrapper">
-          <template v-if="!userSavings.length">
+          <template
+            v-if="!userSavings.length && !maturedSavings.length && !liquidatedSavings.length"
+          >
             <div class="swiper-slide">
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-widget-chart-info">
                   <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                  <small class="rui-widget-subtitle">Interests: Balance</small>
+                  <small class="rui-widget-subtitle">Total Interests</small>
                 </div>
                 <div class="rui-chartjs-container">
                   <div
@@ -36,6 +38,33 @@
             </div>
           </template>
           <template v-else>
+            <div class="swiper-slide" v-for="portfolio in maturedSavings" :key="portfolio.id">
+              <div class="rui-widget rui-widget-chart">
+                <div class="rui-chartjs-container">
+                  <div
+                    class="rui-chartist rui-chartist-donut"
+                    data-width="200"
+                    data-height="200"
+                    :data-chartist-series="`1,1`"
+                    data-chartist-width="4"
+                    data-chartist-gradient="#ff8ebc;#ef2b5a"
+                  ></div>
+                </div>
+                <div class="rui-widget-chart-info">
+                  <div class="rui-widget-title h2">{{ portfolio.current_balance | Naira }}</div>
+                  <small
+                    class="rui-widget-subtitle text-uppercase text-danger"
+                  >MATURED: {{ portfolio.name }} Savings</small>
+                  <div class="d-flex">
+                    <button
+                      class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-warning btn-xs mr-5"
+                      @click="withdrawSavings(portfolio)"
+                    >Withdraw</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="swiper-slide" v-for="portfolio in liquidatedSavings" :key="portfolio.id">
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-chartjs-container">
@@ -68,6 +97,7 @@
                 </div>
               </div>
             </div>
+
             <div class="swiper-slide" v-for="portfolio in userSavings" :key="portfolio.id">
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-chartjs-container">
@@ -133,22 +163,35 @@
 </template>
 
 <script>
+  import { getErrorString } from "@basicsite-assets/js/bootstrap";
+
   export default {
     name: "VaultStatistics",
     props: {
       userInvestments: Array,
       userSavings: Array,
-      liquidatedSavings: Array
+      liquidatedSavings: Array,
+      maturedSavings: Array,
     },
     data: () => {
       return {
-        details: {}
+        details: {},
       };
+    },
+    updated() {
+      console.log(this.$page.errors);
+      if (_.size(this.$page.errors)) {
+        ToastLarge.fire({
+          title: "Error",
+          html: getErrorString(this.$page.errors),
+          icon: "error",
+        });
+      }
     },
     methods: {
       makeSavings(amount = null) {
         BlockToast.fire({
-          text: "Initialising transaction ..."
+          text: "Initialising transaction ...",
         });
         this.$inertia
           .visit(this.$route("appuser.paystack.initialise"), {
@@ -157,12 +200,12 @@
               amount: amount || this.details.amount,
               description:
                 "Fund savings into account of " +
-                this.$options.filters.Naira(amount)
+                this.$options.filters.Naira(amount),
             },
             replace: false,
             preserveState: false,
             preserveScroll: true,
-            only: ["errors", "flash"]
+            only: ["errors", "flash"],
           })
           .then(() => {
             console.log(this.$page.flash);
@@ -171,13 +214,13 @@
               ToastLarge.fire({
                 title: "Error",
                 html: this.$page.flash.error,
-                icon: "error"
+                icon: "error",
               });
             } else if (this.$page.flash.success) {
               ToastLarge.fire({
                 title: "Success",
                 html: this.$page.flash.success,
-                icon: "success"
+                icon: "success",
               });
             } else {
               swal.close();
@@ -185,7 +228,6 @@
           });
       },
       withdrawSavings(savings) {
-        console.log(savings);
         swalPreconfirm
           .fire({
             confirmButtonText: "Carry on!",
@@ -194,12 +236,12 @@
             preConfirm: () => {
               return this.$inertia
                 .post(this.$route("appuser.withdraw.create", savings.id), {
-                  description: "Withdraw liquidated smart savings funds"
+                  description: "Withdraw liquidated smart savings funds",
                 })
-                .then(rsp => {
+                .then((rsp) => {
                   return true;
                 })
-                .catch(error => {
+                .catch((error) => {
                   if (error.response) {
                     swal.showValidationMessage(
                       `Request failed: ${error.response.data.message}`
@@ -208,16 +250,16 @@
                     swal.showValidationMessage(`Request failed: ${error}`);
                   }
                 });
-            }
+            },
           })
-          .then(val => {
+          .then((val) => {
             // debugger;
 
             if (val.isDismissed) {
               Toast.fire({
                 title: "Canceled",
                 icon: "info",
-                position: "center"
+                position: "center",
               });
             } else if (val.value) {
               if (this.$page.errors.length) {
@@ -226,7 +268,7 @@
                   html: _.join(this.$page.errors.amount, "<br>"),
                   position: "bottom",
                   icon: "error",
-                  timer: 10000
+                  timer: 10000,
                 });
               } else if (this.$page.flash.success) {
                 ToastLarge.fire({
@@ -234,15 +276,12 @@
                   html: this.$page.flash.success,
                   position: "bottom",
                   icon: "success",
-                  timer: 10000
+                  timer: 10000,
                 });
               }
             }
           });
-      }
-    }
+      },
+    },
   };
 </script>
-
-<style lang="scss" scoped>
-</style>
