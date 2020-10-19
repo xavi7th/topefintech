@@ -14,9 +14,9 @@ class CreateAutoSaveSettingsTable extends Migration
   public function up()
   {
     Schema::create('auto_save_settings', function (Blueprint $table) {
-      $table->bigIncrements('id');
-      $table->bigInteger('app_user_id')->unsigned();
-      $table->foreign('app_user_id')->references('id')->on('app_users')->onDelete('cascade')->onUpdate('cascade');
+      $table->engine = 'InnoDB';
+      $table->id();
+      $table->foreignId('app_user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount');
       $table->enum('period', ['daily', 'weekly', 'monthly', 'quarterly']);
       $table->integer('date')->nullable();

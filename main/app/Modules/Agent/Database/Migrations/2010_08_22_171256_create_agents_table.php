@@ -14,7 +14,8 @@ class CreateAgentsTable extends Migration
   public function up()
   {
     Schema::create('agents', function (Blueprint $table) {
-      $table->bigIncrements('id');
+      $table->engine = 'InnoDB';
+      $table->id();
       $table->string('ref_code')->nullable();
       $table->string('full_name');
       $table->string('email')->unique();

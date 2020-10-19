@@ -14,6 +14,7 @@ class CreateAgentWalletTransactionsTable extends Migration
   public function up()
   {
     Schema::create('agent_wallet_transactions', function (Blueprint $table) {
+      $table->engine = 'InnoDB';
       $table->id();
       $table->foreignId('agent_id')->constrained()->onDelete('cascade');
       $table->double('amount');

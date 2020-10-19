@@ -14,14 +14,14 @@ class CreateWithdrawalRequestsTable extends Migration
   public function up()
   {
     Schema::create('withdrawal_requests', function (Blueprint $table) {
-      $table->bigIncrements('id');
-      $table->bigInteger('app_user_id')->unsigned();
-      $table->foreign('app_user_id')->references('id')->on('app_users')->onDelete('cascade')->onUpdate('cascade');
+      $table->engine = 'InnoDB';
+      $table->id();
+      $table->foreignId('app_user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount')->nullable();
       $table->string('description')->nullable();
       $table->boolean('is_processed')->default(false);
       $table->boolean('is_charge_free');
-      $table->bigInteger('processed_by')->nullable();
+      $table->unsignedBigInteger('processed_by')->nullable();
       $table->string('processor_type')->nullable();
 
       $table->timestamps();

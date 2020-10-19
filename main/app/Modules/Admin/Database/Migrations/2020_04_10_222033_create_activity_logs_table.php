@@ -14,8 +14,9 @@ class CreateActivityLogsTable extends Migration
 	public function up()
 	{
 		Schema::create('activity_logs', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->bigInteger('user_id');
+      $table->engine = 'InnoDB';
+      $table->id();
+      $table->unsignedBigInteger('user_id');
 			$table->string('user_type');
 			$table->text('activity');
 

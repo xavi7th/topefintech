@@ -14,6 +14,7 @@ class CreatePaystackTransactionsTable extends Migration
   public function up()
   {
     Schema::create('paystack_transactions', function (Blueprint $table) {
+      $table->engine = 'InnoDB';
       $table->id();
       $table->foreignId('app_user_id')->constrained('app_users')->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount');

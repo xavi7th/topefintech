@@ -14,9 +14,9 @@ class CreateTransactionsTable extends Migration
   public function up()
   {
     Schema::create('transactions', function (Blueprint $table) {
-      $table->bigIncrements('id');
-      $table->bigInteger('savings_id')->unsigned();
-      $table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade')->onUpdate('cascade');
+      $table->engine = 'InnoDB';
+      $table->id();
+      $table->foreignId('savings_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->enum('trans_type', ['deposit', 'withdrawal']);
       $table->double('amount');
       $table->string('description')->nullable();

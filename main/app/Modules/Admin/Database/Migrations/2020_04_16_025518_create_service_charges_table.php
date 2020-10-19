@@ -14,9 +14,9 @@ class CreateServiceChargesTable extends Migration
 	public function up()
 	{
 		Schema::create('service_charges', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->unsignedBigInteger('savings_id');
-			$table->foreign('savings_id')->references('id')->on('savings')->onDelete('cascade')->onUpdate('cascade');
+      $table->engine = 'InnoDB';
+      $table->id();
+      $table->foreignId('savings_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
 			$table->double('amount');
 			$table->string('description');
 			$table->boolean('is_processed')->default(false);
