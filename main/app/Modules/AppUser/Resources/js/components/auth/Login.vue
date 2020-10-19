@@ -111,9 +111,6 @@
         this.$inertia
           .post(this.$route("appuser.login"), { ...this.details })
           .then((rsp) => {
-            if (_.size(this.errors)) {
-              this.formSubmitted = true;
-            }
 
             if (this.$page.flash.error) {
               if (this.$page.flash.error === 416) {
@@ -183,9 +180,9 @@
                         showLoaderOnConfirm: true,
                         preConfirm: (pw) => {
                           return this.$inertia
-                            .post(this.$route("admin.password.new"), {
+                            .post(this.$route("app.password.new"), {
                               pw,
-                              email: this.details.email,
+                              phone: this.details.phone,
                             })
                             .then(() => {
                               swal.close();
@@ -221,7 +218,12 @@
                   footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`,
                 }).then(() => {});
               }
-            } else {
+            }
+            else if (_.size(this.$page.errors)) {
+              swal.close();
+              this.formSubmitted = true;
+            }
+            else {
               swal.close();
               location.reload();
             }

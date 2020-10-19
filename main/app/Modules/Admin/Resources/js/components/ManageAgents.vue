@@ -198,7 +198,7 @@
             if (this.flash.success) {
               ToastLarge.fire({
                 title: "Success",
-                html: `They will be required to set a password om their first login`,
+                html: `They will be required to set a password on their first login`,
                 type: "success",
               });
             } else {

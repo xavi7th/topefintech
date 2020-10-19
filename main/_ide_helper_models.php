@@ -409,6 +409,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
+ * @mixin \Eloquent
  */
 	class Savings extends \Eloquent {}
 }

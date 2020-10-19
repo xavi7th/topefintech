@@ -101,9 +101,9 @@ class Agent extends User
     return $this->hasMany(AgentWalletTransaction::class);
   }
 
-  static function findByRefCode(string $refCode): self
+  static function findByRefCode(?string $refCode): self
   {
-    return self::whereRefCode($refCode)->first();
+    return self::whereRefCode($refCode)->firstOrNew();
   }
 
   public function getWalletBalanceAttribute(): float
@@ -314,7 +314,7 @@ class Agent extends User
     $validator = Validator::make($request->all(), [
       'full_name' => 'required|max:255',
       'phone' => 'required|max:20|unique:agents,phone',
-      'email' => 'required|email|max:20|unique:agents,email',
+      'email' => 'required|email|max:50|unique:agents,email',
       'city_of_operation' => 'required|string|max:20',
     ]);
 
@@ -332,14 +332,14 @@ class Agent extends User
       $agent = self::create(Arr::collapse([
         $validator->validated(),
         [
-          'password' => bcrypt('amju@agent')
+          'password' => 'amju@agent'
         ]
       ]));
 
       DB::commit();
 
       if ($request->isApi()) return response()->json(['rsp' => $agent], 201);
-      return back()->withSuccess('Agent account created. They will be required to set a password om their first login');
+      return back()->withSuccess('Agent account created. They will be required to set a password on their first login');
     } catch (\Throwable $e) {
 
       ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating agent account');

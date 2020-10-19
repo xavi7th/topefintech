@@ -118,7 +118,7 @@ class Admin extends User
       $admin = self::create(Arr::collapse([
         $validator->validated(),
         [
-          'password' => bcrypt('amju@admin')
+          'password' => bcrypt('agent@smartmonie')
         ]
       ]));
 
@@ -127,7 +127,7 @@ class Admin extends User
       if ($request->isApi())
         return response()->json(['rsp' => $admin], 201);
 
-      return back()->withSuccess('Admin account created. They will be required to set a password om their first login');
+      return back()->withSuccess('Admin account created. They will be required to set a password on their first login');
     } catch (\Throwable $e) {
 
       ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating admin account');

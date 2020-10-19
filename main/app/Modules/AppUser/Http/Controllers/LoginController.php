@@ -81,7 +81,7 @@ class LoginController extends Controller
     Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
     Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
     Route::put('reset-password', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
-    Route::post('first-time', [self::class, 'newAgentSetPassword'])->name('admin.password.new');
+    Route::post('password/set', [self::class, 'newAgentSetPassword'])->name('app.password.new');
   }
 
   public function showLoginForm(Request $request)
@@ -230,21 +230,28 @@ class LoginController extends Controller
 
   public function newAgentSetPassword(Request $request)
   {
-    $agent = Agent::where('email', $request->email)->firstOrFail();
 
-    if ($agent && !$agent->is_verified()) {
-      Db::beginTransaction();
+    try {
 
-      $agent->password = $request->pw;
-      $agent->verified_at = now();
-      $agent->save();
+      $agent = Agent::where('phone', $request->phone)->firstOrFail();
 
-      DB::commit();
+      if ($agent && !$agent->is_verified()) {
+        Db::beginTransaction();
 
-      Auth::guard('agent')->login($agent);
+        $agent->password = $request->pw;
+        $agent->verified_at = now();
+        $agent->save();
 
-      return redirect()->route($agent->dashboardRoute())->withSuccess('Password set');
+        DB::commit();
+
+        Auth::guard('agent')->login($agent);
+
+        return redirect()->route($agent->dashboardRoute())->withSuccess('Password set');
+      }
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
+      return back()->withError('Agent Not found');
     }
+
     return back()->withError('Unauthorised');
   }
 
@@ -336,9 +343,9 @@ class LoginController extends Controller
       } else {
         $this->logout($request);
         if ($request->isApi()) {
-          return response()->json(['unverified' => 'Unverified user'], 401);
+          return response()->json(['unverified' => 'Unverified user'], 406);
         }
-        return back()->withError(416);
+        return back()->withError(406);
       }
     }
     return redirect()->route('app.login');
@@ -390,8 +397,10 @@ class LoginController extends Controller
   {
     if (Auth::guard()->check()) {
       return Auth::guard();
-    } elseif (Auth('agent')->check()) {
+    } elseif (Auth::guard('agent')->check()) {
       return Auth::guard('agent');
+    } elseif (Auth::guard('admin')->check()) {
+      return Auth::guard('admin');
     } else {
       return null;
     }

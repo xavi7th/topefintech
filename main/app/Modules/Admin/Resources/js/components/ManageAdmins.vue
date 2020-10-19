@@ -105,19 +105,19 @@
   export default {
     name: "ManageAdmins",
     props: {
-      admins: Array
+      admins: Array,
     },
     components: { Layout },
     mixins: [mixins],
     data: () => ({
       users: [],
-      details: {}
+      details: {},
     }),
 
     methods: {
       createAdmin() {
         BlockToast.fire({
-          text: "Creating admin..."
+          text: "Creating admin...",
         });
 
         this.$inertia
@@ -126,15 +126,15 @@
             if (this.flash.success) {
               ToastLarge.fire({
                 title: "Success",
-                html: `They will be required to set a password om their first login`,
-                type: "success"
+                html: `They will be required to set a password on their first login`,
+                type: "success",
               });
             } else {
               swal.close();
             }
           });
-      }
-    }
+      },
+    },
   };
 </script>
 
