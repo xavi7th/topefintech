@@ -105,20 +105,20 @@
                       <button
                         class="btn btn-sm btn-warning"
                         @click="veryfyUser(user.id)"
-                        v-if="!user.is_email_verified"
+                        v-if="!user.verified_at"
                       >Verify</button>
                       <inertia-link
-                        v-if="user.is_email_verified"
+                        v-if="user.verified_at"
                         :href="$route('admin.user_savings', user.id)"
                         class="btn btn-success btn-sm"
                       >Savings Details</inertia-link>
                       <inertia-link
-                        v-if="user.is_email_verified"
+                        v-if="user.verified_at"
                         :href="$route('admin.user.interest', user.id)"
                         class="btn btn-brand btn-sm"
                       >Interest Logs</inertia-link>
                       <inertia-link
-                        v-if="user.is_email_verified"
+                        v-if="user.verified_at"
                         :href="$route('admin.user.statement', user.id)"
                         class="btn btn-dark btn-sm"
                       >Transaction History</inertia-link>

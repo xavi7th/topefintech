@@ -325,7 +325,6 @@ class Agent extends User
     }
 
     // dd($validator->validated());
-    Cache::forget('allAgents');
 
     try {
       DB::beginTransaction();
@@ -392,6 +391,9 @@ class Agent extends User
   {
     static::creating(function ($user) {
       $user->ref_code = unique_random('agents', 'ref_code', 'SMC-', '9');
+    });
+    static::saved(function ($user) {
+      Cache::forget('allAgents');
     });
   }
 }

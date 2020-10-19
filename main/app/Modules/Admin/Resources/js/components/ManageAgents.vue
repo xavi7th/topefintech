@@ -62,7 +62,7 @@
                         >
                           <span
                             class="rui-changelog-item-type"
-                          >BASE OF OPERATIONS: {{ agent.base_of_operation }}</span>
+                          >BASE OF OPERATIONS: {{ agent.city_of_operation }}</span>
                         </div>
                       </li>
                     </ul>

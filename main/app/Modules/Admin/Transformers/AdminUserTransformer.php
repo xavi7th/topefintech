@@ -58,6 +58,8 @@ class AdminUserTransformer
       'email_verified_at' => (string)$user->email_verified_at,
       'is_bvn_verified' => (bool)$user->is_bvn_verified,
       'is_bank_verified' => (bool)$user->is_bank_verified,
+      'created_at' => (string)$user->created_at,
+      'verified_at' => (string)$user->verified_at,
     ];
   }
 
@@ -84,6 +86,7 @@ class AdminUserTransformer
       'phone' => (string)$user->phone,
       'wallet_balance' => (float)$user->wallet_balance,
       'ref_code' => (string)$user->ref_code,
+      'city_of_operation' => (string)$user->city_of_operation,
       'avatar' => (string)$user->avatar,
       'is_verified' => (bool)$user->is_verified(),
       'isAgent' => (bool)$user->isAgent(),
