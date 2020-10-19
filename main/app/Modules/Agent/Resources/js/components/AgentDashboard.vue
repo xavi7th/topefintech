@@ -295,7 +295,7 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@agent-assets/js/AgentAppComponent";
+  import Layout from "@agent-assets/js/AgentAppComponent.vue";
 
   export default {
     props: {

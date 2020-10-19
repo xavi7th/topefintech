@@ -28,6 +28,7 @@ class AgentTransformer
       'email' => (string)$user->email,
       'phone' => (string)$user->phone,
       'gender' => (string)$user->gender,
+      'ref_code' => (string)$user->ref_code,
       'acc_type' => (string)$user->acc_type,
       'acc_num' => (string)$user->acc_num,
       'address' => (string)$user->address,
