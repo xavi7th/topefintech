@@ -20,18 +20,20 @@ class EditUserProfileValidation extends FormRequest
   public function rules()
   {
     return [
-      // 'email' => ['filled', 'email', Rule::unique('app_users')->ignore(Auth::apiuser()->id)],
+      'email' => 'nullable|email|unique:app_users,email,' . $this->user()->id,
       // 'full_name' => 'required|string|max:50',
       'password' => 'filled|min:6|regex:/^([0-9a-zA-Z-_\.\@]+)$/|confirmed|max:20',
-      'phone' => ['required_without_all:password,acc_bank,acc_num,acc_type', 'nullable', 'regex:/^[\+]?[0-9\Q()\E\s-]+$/i', 'max:20', Rule::unique('app_users')->ignore($this->user()->phone, 'phone')],
+      // 'phone' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|max:20|unique:app_users,phone,' . $this->user()->id,
       'address' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'city' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'country' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'date_of_birth' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|date',
-      'acc_num' => ['bail', 'required_with:acc_bank,acc_type', 'numeric', Rule::unique('app_users')->ignore($this->user()->acc_num)],
-      'acc_bank' => 'bail|required_with:acc_num,acc_type|string',
-      'acc_type' => 'bail|required_with:acc_num,acc_bank|string',
-      'bvn' => ['filled', 'numeric', Rule::unique('app_users')->ignore($this->user()->bvn)],
+      'gender' => 'bail|nullable|string|max:10',
+      'acc_name' => 'bail|required_with:acc_bank,acc_num|unique:app_users,acc_name,' . $this->user()->id,
+      'acc_num' => 'bail|required_with:acc_bank,acc_name|numeric|unique:app_users,acc_num,' . $this->user()->id,
+      'acc_bank' => 'bail|required_with:acc_num,acc_name|string|max:70',
+      'acc_type' => 'bail|required_with:acc_num,acc_name|string',
+      'bvn' => 'filled|numeric|unique:app_users,bvn,' . $this->user()->id,
       'id_card' => 'bail|nullable|file|mimes:jpeg,bmp,png',
     ];
   }
@@ -62,6 +64,7 @@ class EditUserProfileValidation extends FormRequest
       'city.required_without_all' => 'Your city is required',
       'country.required_without_all' => 'Your country is required',
       'date_of_birth.required_without_all' => 'Your date of birth is required',
+      'id_card.mimes' => 'Your profile picture must be an image',
     ];
   }
 
@@ -112,18 +115,18 @@ class EditUserProfileValidation extends FormRequest
        * Validate the user's bank account details
        * ! We are using Paystack endpoint
        */
-      if ($this->acc_num && $this->acc_bank) {
-        $rsp = $this->user()->validate_bank_account($this->acc_num, $this->acc_bank, $this->full_name);
+      // if ($this->acc_num && $this->acc_bank) {
+      //   $rsp = $this->user()->validate_bank_account($this->acc_num, $this->acc_bank, $this->full_name);
 
-        if ($rsp === 409) {
-          $validator->errors()->add('acc_num', 'This bank account number does not match the full name you supplied');
-        } elseif ($rsp === 422) {
-          $validator->errors()->add('acc_num', 'This account number is invalid');
-        } elseif ($rsp === 400) {
-          $validator->errors()->add('acc_bank', 'This bank name is incorrect or not verifiable. Try another form of the name if any');
-        }
-        return;
-      }
+      //   if ($rsp === 409) {
+      //     $validator->errors()->add('acc_num', 'This bank account number does not match the full name you supplied');
+      //   } elseif ($rsp === 422) {
+      //     $validator->errors()->add('acc_num', 'This account number is invalid');
+      //   } elseif ($rsp === 400) {
+      //     $validator->errors()->add('acc_bank', 'This bank name is incorrect or not verifiable. Try another form of the name if any');
+      //   }
+      //   return;
+      // }
     });
   }
 

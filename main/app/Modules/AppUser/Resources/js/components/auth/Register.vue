@@ -109,7 +109,7 @@
             id="form-pass-confirm"
             v-model="details.ref_code"
             name="ref_code"
-            placeholder="Smart Collector Code"
+            placeholder="Smart Collector Code (optional)"
           />
           <div class="invalid-feedback" v-if="errors.ref_code">{{errors.ref_code[0]}}</div>
         </div>
@@ -196,12 +196,10 @@
           })
           .then((rsp) => {
             if (_.size(this.errors) == 0) {
-              console.log("cuccess");
-
               ToastLarge.fire({
                 title: "Congrats",
                 html:
-                  "Your account has been created. A verification mail has been sent to your email.",
+                  "Your account has been created. A OTP has been sent to your registered phone number.",
                 timer: 20000,
               });
             } else {

@@ -3,10 +3,12 @@
 use Paystack\Bank\GetBVN;
 use Illuminate\Support\Str;
 use Paystack\Bank\ListBanks;
+use Illuminate\Http\Response;
 use Paystack\Bank\GetCardBIN;
 use Paystack\Bank\GetAccountDetails;
 use GuzzleHttp\Exception\ClientException;
 use Gbowo\Adapter\Paystack\PaystackAdapter;
+use Illuminate\Validation\ValidationException;
 
 // if (env('APP_DEBUG')) ini_set('opcache.revalidate_freq', '0');
 
@@ -363,13 +365,17 @@ if (!function_exists('generate_422_error')) {
    */
   function generate_422_error($errors)
   {
-    if (request()->isApi()) {
-      return response()->json([
-        'error' => 'form validation error',
-        'message' => $errors
-      ], 422);
+    if (is_array($errors)) {
+      throw ValidationException::withMessages($errors)->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     } else {
-      return back()->withError($errors);
+      if (request()->isApi()) {
+        return response()->json([
+          'error' => 'form validation error',
+          'message' => $errors
+        ], 422);
+      } else {
+        return back()->withError($errors);
+      }
     }
   }
 }

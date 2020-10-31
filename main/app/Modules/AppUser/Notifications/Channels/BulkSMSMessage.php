@@ -24,7 +24,7 @@ class BulkSMSMessage
    *
    * @var string
    */
-  public $from = 'BulkSMS.ng';
+  public $from = 'SmartMonie';
 
   /**
    * These are the phone numbers the messages are to be sent to.
@@ -52,7 +52,7 @@ class BulkSMSMessage
    *
    * @var int
    */
-  public $dnd = 1;
+  public $dnd = 3;
 
   /**
    * The API KEY.
@@ -131,7 +131,7 @@ class BulkSMSMessage
       'from' => $msg_obj->from,
       'to' => $msg_obj->to,
       'body' => $msg_obj->sms,
-      'dnd' => $msg_obj->dnd,
+      'dnd' => $this->dnd,
     ]);
 
     /**

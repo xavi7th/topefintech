@@ -554,6 +554,18 @@ namespace App\Modules\AppUser\Models{
  * @property int|null $agent_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAgentId($value)
  * @property-read \App\Modules\Agent\Models\Agent|null $smart_collector
+ * @property string|null $gender
+ * @property string|null $acc_name
+ * @property string|null $paystack_nuban
+ * @property string|null $paystack_nuban_name
+ * @property string|null $paystack_nuban_bank
+ * @property string|null $bvn_name
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAccName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereBvnName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePaystackNuban($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePaystackNubanBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePaystackNubanName($value)
  */
 	class AppUser extends \Eloquent {}
 }

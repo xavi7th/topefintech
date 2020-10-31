@@ -4,6 +4,7 @@ namespace App\Modules\AppUser\Models;
 
 use App\User;
 use Inertia\Inertia;
+use GuzzleHttp\Client;
 use Paystack\Bank\GetBVN;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -115,6 +116,18 @@ use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
  * @property int|null $agent_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAgentId($value)
  * @property-read \App\Modules\Agent\Models\Agent|null $smart_collector
+ * @property string|null $gender
+ * @property string|null $acc_name
+ * @property string|null $paystack_nuban
+ * @property string|null $paystack_nuban_name
+ * @property string|null $paystack_nuban_bank
+ * @property string|null $bvn_name
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereAccName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereBvnName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePaystackNuban($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePaystackNubanBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\AppUser wherePaystackNubanName($value)
  */
 class AppUser extends User
 {
@@ -519,6 +532,49 @@ class AppUser extends User
     dd($data);
   }
 
+  public function get_bank_account_name(string $acc_num, string $acc_bank): string
+  {
+    $paystack = new PaystackAdapter(new Client(
+      [
+        'base_uri' => config('services.paystack.base_url'),
+        'headers' => [
+          'Authorization' => 'Bearer ' . config('services.paystack.secret_key'),
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          'User-Agent' => 'PHP/Gbowo'
+        ]
+      ]
+    ));
+    $paystack->addPlugin(new ListBanks(PaystackAdapter::API_LINK));
+    $paystack->addPlugin(new GetAccountDetails(PaystackAdapter::API_LINK));
+
+    $banks = collect($paystack->listBanks());
+    $bank_details = $banks->filter(function ($item) use ($acc_bank) {
+      return false !== stristr($item['name'], $acc_bank);
+    })->first();
+
+    if (is_null($bank_details)) {
+      generate_422_error(['acc_num' => 'This bank name is incorrect or not verifiable. Try another form of the name if any']);
+    }
+
+    $bank_object = (object)$bank_details;
+
+    try {
+      $data = (object)$paystack->getAccountDetails(["account_number" => $acc_num, "bank_code" => $bank_object->code]);
+    } catch (ClientException $th) {
+      if ($th->getCode() == 400) {
+        ErrLog::notifyAdmin($this, $th, $th->getMessage());
+        generate_422_error(['acc_num' => $th->getResponse()->getReasonPhrase()]);
+        abort(400, ['acc_num' => $th->getResponse()->getReasonPhrase()]);
+      } elseif ($th->getCode() == 422) {
+        ErrLog::notifyAdmin($this, $th, $th->getMessage());
+        generate_422_error(['acc_num' => 'This account number is invalid']);
+      }
+    }
+
+    return $data->account_name;
+  }
+
   /**
    * Create a new OTP for the user
    *
@@ -559,6 +615,7 @@ class AppUser extends User
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models'], function () {
       Route::get('/auth/verify', [self::class, 'verifyAuth']);
+      Route::post('/account/verify', [self::class, 'verifyUserAccount'])->name('appuser.account.verify')->defaults('extras', ['nav_skip' => true]);
       Route::get('profile', [self::class, 'getUserProfile'])->name('appuser.my_profile')->defaults('extras', ['nav_skip' => true]);
       Route::put('/profile/edit', [self::class, 'editUserProfile'])->name('appuser.profile.edit');
       Route::get('/notifications', [self::class, 'getUserNotifications'])->name('appuser.notifications')->defaults('extras', ['nav_skip' => true]);
@@ -566,13 +623,26 @@ class AppUser extends User
     });
   }
 
+  public function verifyUserAccount(Request $request)
+  {
+    if (!$request->acc_num || !$request->acc_bank) {
+      generate_422_error(['acc_num' => 'Account name and number required',]);
+    }
+    $res = $this->get_bank_account_name($request->acc_num, $request->acc_bank);
+
+    if ($request->isApi()) return ['rsp' => $res];
+
+    session()->flash('account_name', $res);
+    return back()->withSuccess('Account validated successfully');
+  }
+
+
   public function getUserProfile(Request $request)
   {
-    if ($request->isApi()) {
-      return (new AppUserTransformer)->detailed($request->user());
-    }
+    if ($request->isApi()) return (new AppUserTransformer)->detailed($request->user());
     return Inertia::render('AppUser,UserProfile', [
-      'banks' => $this->getBanksList()
+      'banks' => fn () => $this->getBanksList(),
+      'account_name' => fn () => session('account_name')
     ]);
   }
 
@@ -623,11 +693,8 @@ class AppUser extends User
       return back()->withSuccess('Profile details updated');
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin(auth()->user(), $th, 'Account details NOT updated');
-      if ($request->isApi()) {
-        return response()->json(['err' => 'Account details NOT updated'], 500);
-      } else {
-        return back()->withError('Account details NOT updated');
-      }
+      if ($request->isApi()) return response()->json(['err' => 'Account details NOT updated'], 500);
+      return back()->withError('Account details NOT updated');
     }
 
     Auth::apiuser()->update($request->validated());
