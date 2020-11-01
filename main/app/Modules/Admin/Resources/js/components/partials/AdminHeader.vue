@@ -68,7 +68,7 @@
                 </a>
               </li>-->
               <li>
-                <a href="/logout" class="nav-link">
+                <a :href="$route('admin.logout')" class="nav-link">
                   <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Logout</span>
                   <span class="rui-nav-circle"></span>

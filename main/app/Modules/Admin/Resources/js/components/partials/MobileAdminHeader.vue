@@ -74,7 +74,7 @@
             </a>
           </li>-->
           <li>
-            <inertia-link method="post" href="/logout" class="nav-link">
+            <inertia-link method="post" :href="$route('admin.logout')" class="nav-link">
               <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
               <span>Logout</span>
               <span class="rui-nav-circle"></span>
