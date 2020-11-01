@@ -9,7 +9,7 @@
                 <div class="col-auto">
                   <div class="rui-profile-img">
                     <img
-                      :src="$page.auth.user.id_card || `/img/avatar.png`"
+                      :src="$page.auth.user.id_card_thumb_url || `/img/avatar.png`"
                       alt="user id card"
                     />
                   </div>

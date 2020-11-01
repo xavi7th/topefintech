@@ -79,6 +79,7 @@ class AppUserTransformer
       'is_bank_verified' => (bool)$user->is_bank_verified,
       'phone' => (string)$user->phone,
       'id_card' => (string)$user->id_card,
+      'id_card_thumb_url' => (string)$user->id_card_thumb_url,
       'is_email_verified' => (bool)$user->is_email_verified(),
       'total_deposit' => (float)$user->total_deposit_amount(),
       'total_accrued_interest' => (float)$user->total_interests_amount(),

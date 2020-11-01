@@ -98,6 +98,9 @@ import route from 'ziggy';
 import FlashMessage from '@dashboard-components/partials/FlashMessage'
 import Modal from '@dashboard-components/partials/Modal'
 import Dayjs from '@dashboard-assets/js/timeFormat';
+import {
+    Inertia
+} from "@inertiajs/inertia";
 
 Vue.prototype.$route = ( ...args ) => route( ...args ).url()
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
@@ -148,3 +151,15 @@ new Vue( {
 
     } )
 } ).$mount( app )
+
+/**
+ *! Cause back() and forward() buttons of the browser to refresh the browser state
+ *? This is to prevent stale data displaying in the browser
+ */
+
+window.addEventListener( 'popstate', () => {
+    Inertia.reload( {
+        preserveScroll: true,
+        preserveState: false
+    } )
+} )

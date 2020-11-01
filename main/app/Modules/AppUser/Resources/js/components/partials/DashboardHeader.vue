@@ -26,7 +26,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img :src="$page.auth.user.id_card || '/img/avatar.png'" alt />
+              <img :src="$page.auth.user.id_card_thumb_url || '/img/avatar.png'" alt />
             </a>
             <ul class="nav dropdown-menu">
               <li>

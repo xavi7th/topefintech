@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use Paystack\Bank\GetAccountDetails;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
-use Illuminate\Support\Facades\Storage;
 use App\Modules\AppUser\Models\DebitCard;
 use GuzzleHttp\Exception\ClientException;
 use App\Modules\Admin\Models\ServiceCharge;
@@ -30,6 +29,7 @@ use App\Modules\Admin\Transformers\AdminUserTransformer;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
+use App\Modules\Admin\Http\Requests\AdminEditUserProfileValidation;
 
 /**
  * App\Modules\AppUser\Models\AppUser
@@ -141,6 +141,7 @@ class AppUser extends User
     'is_bvn_verified' => 'boolean',
     'is_bank_verified' => 'boolean',
   ];
+  protected $appends = ['id_card_thumb_url'];
 
   const DASHBOARD_ROUTE_PREFIX = "user";
 
@@ -403,12 +404,9 @@ class AppUser extends User
     DB::commit();
   }
 
-  static function store_id_card(Request $request)
+  static function store_id_card()
   {
-    Storage::makeDirectory('public/id_cards/' . now()->toDateString());
-    $id_url = Storage::url($request->file('id_card')->store('public/id_cards/' . now()->toDateString()));
-
-    return $id_url;
+    return compress_image_upload('id_card', 'id_cards/' . now()->toDateString() . '/', 'id_cards/' . now()->toDateString() . '/thumbs/', 1400, true, 150)['img_url'];
   }
 
   static function findByEmail($email): object
@@ -594,11 +592,18 @@ class AppUser extends User
     return $token;
   }
 
+  public function getIdCardThumbUrlAttribute(): string
+  {
+    return Str::of($this->id_card)->replace(Str::of($this->id_card)->dirname(), Str::of($this->id_card)->dirname() . '/thumbs');
+  }
+
   static function adminRoutes()
   {
     Route::get('users', [self::class, 'getListOfUsers'])->name('admin.manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
     Route::put('user/{user}/verify', [self::class, 'verifyUser'])->name('admin.user.verify');
     Route::get('user/{appUser}/statement', [self::class, 'adminGetUserAccountStatement'])->name('admin.user.statement')->defaults('extras', ['nav_skip' => true]);
+    Route::get('user/{appUser:phone}/profile', [self::class, 'adminViewUserProfile'])->name('admin.user.profile')->defaults('extras', ['nav_skip' => true]);
+    Route::put('user/{appUser:phone}/profile', [self::class, 'adminEditUserProfile'])->name('admin.user.profile.edit')->defaults('extras', ['nav_skip' => true]);
   }
 
   static function adminApiRoutes()
@@ -663,7 +668,7 @@ class AppUser extends User
       }
 
       if ($request->id_card) {
-        $request->user()->id_card = $request->user()->store_id_card($request);
+        $request->user()->id_card = $request->user()->store_id_card();
       }
 
       /**
@@ -734,7 +739,6 @@ class AppUser extends User
     return Inertia::render('AppUser,UserTransactionHistory', compact('account_statement'));
   }
 
-
   public function getListOfUsers(Request $request)
   {
     $users = (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');
@@ -744,7 +748,7 @@ class AppUser extends User
     return Inertia::render('Admin,ManageUsers', compact('users'));
   }
 
-  public function verifyUser(Request $request, AppUser $user)
+  public function verifyUser(Request $request, self $user)
   {
     $user->verified_at = now();
     $user->save();
@@ -755,11 +759,45 @@ class AppUser extends User
     return back()->withSuccess('User verified. They will be able to access their dashboard now');
   }
 
-  public function deleteUser(AppUser $user)
+  public function deleteUser(self $user)
   {
     $user->transactions()->delete();
     return response()->json(['rsp' => $user->delete()], 204);
   }
+
+  public function adminViewUserProfile(Request $request, self $appUser)
+  {
+    if ($request->isApi()) return (new AppUserTransformer)->detailed($appUser);
+
+    return Inertia::render('Admin,ManageUserProfile', [
+      'banks' => fn () => $this->getBanksList(),
+      'user_details' => (new AppUserTransformer)->detailed($appUser)
+    ]);
+  }
+
+  public function adminEditUserProfile(AdminEditUserProfileValidation $request, self $appUser)
+  {
+    try {
+
+      if ($request->id_card) {
+        $appUser->id_card = $appUser->store_id_card();
+      }
+
+      foreach (collect($request->validated())->except(['id_card', 'phone']) as $key => $value) {
+        $appUser->$key = $value;
+      }
+
+      $appUser->save();
+
+      if ($request->isApi()) return response()->json([], 204);
+      return back()->withSuccess('Profile details updated');
+    } catch (\Throwable $th) {
+      ErrLog::notifyAdmin(auth()->user(), $th, 'Account details NOT updated');
+      if ($request->isApi()) return response()->json(['err' => 'Account details NOT updated'], 500);
+      return back()->withError('Account details NOT updated');
+    }
+  }
+
 
   public function adminGetUserAccountStatement(Request $request, AppUser $appUser)
   {

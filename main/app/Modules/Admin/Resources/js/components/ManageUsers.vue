@@ -16,7 +16,7 @@
                     <div class="row vertical-gap">
                       <div class="col-auto">
                         <div class="rui-profile-img">
-                          <img :src=" user.id_card || '/img/avatar.png'" alt />
+                          <img :src=" user.id_card_thumb_url || '/img/avatar.png'" alt />
                         </div>
                       </div>
                       <div class="col">
@@ -109,18 +109,23 @@
                       >Verify</button>
                       <inertia-link
                         v-if="user.verified_at"
+                        :href="$route('admin.user.profile', user.phone)"
+                        class="btn btn-primary btn-sm"
+                      >Profile</inertia-link>
+                      <inertia-link
+                        v-if="user.verified_at"
                         :href="$route('admin.user_savings', user.id)"
                         class="btn btn-success btn-sm"
-                      >Savings Details</inertia-link>
+                      >Savings</inertia-link>
                       <inertia-link
                         v-if="user.verified_at"
                         :href="$route('admin.user.interest', user.id)"
                         class="btn btn-brand btn-sm"
-                      >Interest Logs</inertia-link>
+                      >Interests</inertia-link>
                       <inertia-link
                         v-if="user.verified_at"
                         :href="$route('admin.user.statement', user.id)"
-                        class="btn btn-dark btn-sm"
+                        class="btn btn-dark btn-sm text-nowrap"
                       >Transaction History</inertia-link>
                     </div>
                   </td>

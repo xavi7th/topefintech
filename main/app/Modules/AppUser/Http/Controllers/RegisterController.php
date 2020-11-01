@@ -98,15 +98,6 @@ class RegisterController extends Controller
    */
   protected function create(Request $request): AppUser
   {
-
-    // $url = request()->file('id_card')->store('public/id_cards');
-    // Storage::setVisibility($url, 'public');
-
-    /** Replace the public part of the url with storage to make it accessible on the frontend */
-    // $url = Str::replaceFirst('public', '/storage', $url);
-
-    //Create an entry into the documents database
-
     /**
      * @todo Create a referral record if any
      * ! If there is a referral ID create a referral entry for the agent
