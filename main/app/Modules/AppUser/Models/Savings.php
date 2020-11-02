@@ -19,7 +19,6 @@ use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\PaystackTransaction;
 use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Notifications\TargetSavingsBroken;
-use App\Modules\AppUser\Notifications\TargetSavingsMature;
 use App\Modules\AppUser\Notifications\TargetSavingsMatured;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
@@ -27,55 +26,6 @@ use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
-/**
- * App\Modules\AppUser\Models\Savings
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $type
- * @property int|null $target_type_id
- * @property \Illuminate\Support\Carbon|null $maturity_date
- * @property float $current_balance
- * @property \Illuminate\Support\Carbon|null $funded_at
- * @property bool $is_liquidated
- * @property bool $is_withdrawn
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\AppUser $app_user
- * @property-read mixed $elapsed_duration
- * @property-read mixed $total_duration
- * @property-read \App\Modules\AppUser\Models\Transaction|null $initial_deposit_transaction
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read \App\Modules\AppUser\Models\TargetType|null $target_type
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings active()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings matured()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereCurrentBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsLiquidated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereIsWithdrawn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereTargetTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Savings whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Savings withoutTrashed()
- * @mixin \Eloquent
- */
 class Savings extends Model
 {
   use SoftDeletes;
@@ -236,7 +186,7 @@ class Savings extends Model
       /**
        * Get sum of uncleared interests
        */
-      $uncleared_interests_sum = $this->total_unprocessed_interest_amount();
+      $uncleared_interests_sum = $this->savings_interests()->unlocked()->unprocessed()->sum('amount');
 
       if ($uncleared_interests_sum <= 0) {
         return 0;
@@ -252,10 +202,13 @@ class Savings extends Model
       /**
        * Mark all the interests as cleared
        */
-      $this->unprocessed_savings_interests()->update(['is_cleared' => true]);
+      $this->savings_interests()->unlocked()->unprocessed()->update([
+        'processed_at' => now(),
+        'process_type' => 'matured'
+      ]);
 
       /**
-       * Add the amount to this saving's current_balance
+       * Add the accrued interest amount to this saving's current_balance to be displayed in the vault
        */
       $this->current_balance += $uncleared_interests_sum;
       $this->save();
@@ -291,6 +244,14 @@ class Savings extends Model
     }
 
     DB::beginTransaction();
+
+    /**
+     * Unlock all accrued interests so that they can be withdrawn
+     */
+    $this->savings_interests()->locked()->unprocessed()->update([
+      'is_locked' => false,
+    ]);
+
     /**
      * Handle uncleared profits.
      *
@@ -299,31 +260,9 @@ class Savings extends Model
      *
      * @return ?float
      */
-    if (is_null($this->rollover_uncleared_interests())) {
+    if (is_null($this->rollover_uncleared_interests('Interests Rolled over at savings maturity'))) {
       return false;
     }
-
-    /**
-     * Create a deposit transaction moving the balance of this savings to the smart
-     */
-    // $user_smart_savings = $this->app_user->smart_savings;
-
-    // $user_smart_savings->create_deposit_transaction($this->current_balance, 'Mature ' . $this->target_type->name . ' funds rollover');
-
-    /**
-     * Add same amount to the current balance of smart savings
-     */
-    // $user_smart_savings->current_balance += $this->current_balance;
-    // $user_smart_savings->save();
-
-    /**
-     * Delete this savings (so that it leaves the record of the user)
-     * // The user can always view the record in the transaction log
-     * ! It is very important to delete them so that their deposit transactions
-     * ! don´t continue to receive interests even after they have matured and rolled over
-     */
-    // $this->delete();
-
     DB::commit();
 
     return true;
@@ -785,21 +724,46 @@ class Savings extends Model
   }
 
   /**
-   * Scope a query to only include matured savings
+   * Scope a query to only include only savings where the maturity_date field is in the past
    *
    * @param  \Illuminate\Database\Eloquent\Builder  $query
    * @return \Illuminate\Database\Eloquent\Builder
    */
   public function scopeMatured($query)
   {
-    return $query->whereDate('maturity_date', '<=', now());
+    return $query->whereDate('maturity_date', '<', now());
   }
 
+  /**
+   * Scope a query to only include only savings that have not yet been withdrawn
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder  $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   */
+  public function scopeNotWithdrawn($query)
+  {
+    return $query->whereIsWithdrawn(false);
+  }
+
+  /**
+   * Limit query to savings that are not liquidated, has not been withdrawn and the maturity date is still in the future
+   *
+   * @param Builder $query
+   *
+   * @return Builder
+   */
   public function scopeActive($query)
   {
     return $query->whereDate('maturity_date', '>=', now())->whereIsLiquidated(false)->whereIsWithdrawn(false);
   }
 
+  /**
+   * Limit query results to savings where is_liquidated column is set to true
+   *
+   * @param Builder $query
+   *
+   * @return Builder
+   */
   public function scopeLiquidated($query)
   {
     return $query->where('is_liquidated', true);
@@ -814,7 +778,7 @@ class Savings extends Model
   {
     parent::boot();
 
-    static::deleting(function ($savings) {
+    static::deleting(function (self $savings) {
       /**
        * Dispatch notifications
        */

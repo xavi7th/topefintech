@@ -11,23 +11,18 @@
           class="btn btn-brand"
           data-toggle="modal"
           data-target="#createSmartSavings"
-          v-if="!$page.auth.user.isAdmin"
+          v-if="!$page.auth.user.has_smart_savings && !$page.auth.user.isAdmin"
         >Create Smart Savings</button>
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-primary mb-10"
           data-toggle="modal"
           data-target="#newTargetModal"
           v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent"
         >New Target Savings</button>
       </div>
     </div>
-    <FlashMessage />
-    <template v-if="$page.errors">
-      <div class="d-flex align-items-center justify-content-between flex-column mb-25">
-        <FlashMessage v-for="err in $page.errors" :msg="err[0]" :key="err[0]" />
-      </div>
-    </template>
+
     <div class="table-responsive">
       <table class="table table-bordered" data-datatable-order="0:asc">
         <thead class="thead-dark">

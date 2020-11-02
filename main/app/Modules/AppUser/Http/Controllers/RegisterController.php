@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Http\Controllers;
 
 use Inertia\Inertia;
+use Tymon\JWTAuth\JWTGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -14,7 +15,6 @@ use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Http\Requests\RegistrationValidation;
-use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 
 class RegisterController extends Controller
@@ -39,7 +39,6 @@ class RegisterController extends Controller
    *
    * @var string
    */
-  // protected $redirectTo = route('appuser.dashboard');
   protected function redirectTo()
   {
     return route('appuser.dashboard');
@@ -127,9 +126,7 @@ class RegisterController extends Controller
 
     DB::commit();
 
-    if ($request->isApi()) {
-      return $this->respondWithToken();
-    }
+    if ($request->isApi()) return $this->respondWithToken();
     return redirect()->route('app.login')->withSuccess('Account Created');
   }
 
@@ -150,7 +147,7 @@ class RegisterController extends Controller
     ], 201);
   }
 
-  protected function apiGuard()
+  protected function apiGuard(): JWTGuard
   {
     return Auth::guard('api_user');
   }

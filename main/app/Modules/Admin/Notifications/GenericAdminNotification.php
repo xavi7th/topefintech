@@ -35,7 +35,7 @@ class GenericAdminNotification extends Notification
    */
   public function via(Admin $admin)
   {
-    return ['database', 'mail'];
+    return ['database'];
   }
 
   /**

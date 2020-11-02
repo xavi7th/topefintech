@@ -10,7 +10,6 @@
         <div class="col-12">
           <h2 class="display-4 mb-10 text-center">Sign In</h2>
           <p>Login to your dashboard to access your Smart Monie back offiice</p>
-          <FlashMessage />
         </div>
         <div class="col-12">
           <input
@@ -216,7 +215,7 @@
                   icon: "error",
                   timer: 10000,
                   footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`,
-                }).then(() => {});
+                });
               }
             }
             else if (_.size(this.$page.errors)) {

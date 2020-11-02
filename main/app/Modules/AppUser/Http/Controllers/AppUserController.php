@@ -7,7 +7,6 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\TargetType;
@@ -20,6 +19,7 @@ use App\Modules\AppUser\Http\Controllers\LoginController;
 use App\Modules\AppUser\Http\Controllers\RegisterController;
 use App\Modules\AppUser\Http\Controllers\VerificationController;
 use App\Modules\AppUser\Transformers\SavingsRecordTransformer;
+use RachidLaasri\Travel\Travel;
 
 class AppUserController extends Controller
 {
@@ -69,6 +69,7 @@ class AppUserController extends Controller
 
   public function loadDashboard(Request $request)
   {
+    // Travel::to('4 months 4 days');
     return Inertia::render('AppUser,dashboard/UserDashboard', [
       'userSavings' => function () use ($request) {
         return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->active()->with('target_type')->get(), 'forUserDashboard');

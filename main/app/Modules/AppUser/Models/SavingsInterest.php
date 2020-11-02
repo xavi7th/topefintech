@@ -20,48 +20,37 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $savings_id
  * @property float $amount
  * @property string|null $description
- * @property bool $is_cleared
+ * @property string|null $processed_at
+ * @property string|null $process_type
+ * @property int $is_locked
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\Savings $savings
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest cleared()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest uncleared()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsCleared($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereSavingsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\SavingsInterest withoutTrashed()
+ * @property-read Savings $savings
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest compounded()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest liquidated()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest locked()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|SavingsInterest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest unlocked()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereIsLocked($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereProcessType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereProcessedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereSavingsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|SavingsInterest withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest withdrawn()
+ * @method static \Illuminate\Database\Query\Builder|SavingsInterest withoutTrashed()
  * @mixin \Eloquent
- * @property int $is_withdrawn
- * @property int $is_compounded
- * @property int $is_locked
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest compounded()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest locked()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notCompounded()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notLocked()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest notWithdrawn()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsCompounded($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsLocked($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereIsWithdrawn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest withdrawn()
- * @property int|null $processed_at
- * @property string|null $process_type
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest processed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest unprocessed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest whereProcessedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\SavingsInterest unlocked()
  */
 class SavingsInterest extends Model
 {

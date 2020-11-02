@@ -49,8 +49,8 @@
 <script>
   import { mixins } from "@dashboard-assets/js/config";
   import Layout from "@dashboard-assets/js/AppComponent";
-  import LivePortfolioStatistics from "@dashboard-components/dashboard/LivePortfolioStatistics";
-  import VaultStatistics from "@dashboard-components/dashboard/VaultStatistics";
+  import LivePortfolioStatistics from "@dashboard-components/dashboard/LivePortfolioStatistics.vue";
+  import VaultStatistics from "@dashboard-components/dashboard/VaultStatistics.vue";
   export default {
     name: "UserDashboard",
     mixins: [mixins],

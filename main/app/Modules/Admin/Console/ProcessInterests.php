@@ -6,9 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\AppUser\Models\Savings;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use App\Modules\Admin\Notifications\GenericAdminNotification;
+use RachidLaasri\Travel\Travel;
 
 class ProcessInterests extends Command
 {
@@ -53,24 +52,25 @@ class ProcessInterests extends Command
      * -- The issue is multiple single sum queries VS a single select query with potential 1000s rows which is faster
      */
 
-    foreach (Savings::active()->with(['app_user', 'target_type'])->cursor() as $savings_record) {
-      $interest_amount = $savings_record->get_due_interest();
-      if ($interest_amount > 0) {
+    // Travel::to('4 months 4 days', function () {
+      foreach (Savings::active()->with(['app_user', 'target_type'])->cursor() as $savings_record) {
+        $interest_amount = $savings_record->get_due_interest();
+        if ($interest_amount > 0) {
 
-        dump($savings_record->app_user->full_name . ' ' . $savings_record->target_type->name . ' savings intrested with ' . $interest_amount);
+        $this->notification[] = $savings_record->app_user->full_name . ' ' . $savings_record->target_type->name . ' savings intrested with ' . to_naira($interest_amount);
+          DB::beginTransaction();
+          $savings_record->create_interest_record($interest_amount);
 
-        $this->notification[] = $savings_record->app_user->full_name . ' ' . $savings_record->target_type->name . ' savings intrested with ' . $interest_amount;
-        DB::beginTransaction();
-        $savings_record->create_interest_record($interest_amount);
-
-        /**
-         * Mark all interestable transactions as processed
-         */
-        $savings_record->mark_interest_as_processed();
-        DB::commit();
+          /**
+           * Mark all interestable transactions as processed
+           */
+          $savings_record->mark_interest_as_processed();
+          DB::commit();
+        }
       }
-    }
+    // });
 
+    dump(collect($this->notification)->implode(', \n'));
     Admin::find(1)->notify(new GenericAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ')));
   }
 }

@@ -41,8 +41,7 @@ class SavingsMaturedNotification extends Notification
   {
 
     return [
-      'action' => $this->savings_record->app_user->full_name . '´s ' . $this->savings_record->target_type->name .
-        ' savings has matured and ' . $this->savings_record->current_balance . ' been rolled over to his smart savings account'
+      'action' => $this->savings_record->app_user->full_name . '´s ' . $this->savings_record->target_type->name . ' savings has matured and is due for payout.'
     ];
   }
 }

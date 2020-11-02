@@ -22,7 +22,7 @@
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-widget-chart-info">
                   <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                  <small class="rui-widget-subtitle">Total Interests</small>
+                  <small class="rui-widget-subtitle">No Interests</small>
                 </div>
                 <div class="rui-chartjs-container">
                   <div
@@ -143,7 +143,7 @@
               </div>
               <div class="rui-widget-chart-info">
                 <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                <small class="rui-widget-subtitle">Interest: Investments</small>
+                <small class="rui-widget-subtitle">No Investments</small>
               </div>
             </div>
           </div>

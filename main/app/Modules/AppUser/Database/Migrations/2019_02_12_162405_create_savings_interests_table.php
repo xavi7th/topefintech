@@ -20,7 +20,7 @@ class CreateSavingsInterestsTable extends Migration
       $table->double('amount');
       $table->string('description')->nullable();
       $table->timestamp('processed_at')->nullable();
-      $table->enum('process_type', ['withdrawn', 'compounded', 'liquidated'])->nullable();
+      $table->enum('process_type', ['withdrawn', 'compounded', 'liquidated', 'matured'])->nullable();
       $table->boolean('is_locked')->default(true);
 
 

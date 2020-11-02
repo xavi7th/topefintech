@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
+use RachidLaasri\Travel\Travel;
 
 class ProcessMatureSavings extends Command
 {
@@ -52,16 +53,20 @@ class ProcessMatureSavings extends Command
      * ? A static method?
      * @param Savings $savings_record
      */
-    foreach (Savings::with(['app_user', 'target_type'])->matured()->get() as $savings_record) {
-      /**
-       * ! An option could be to verify the savings balance before rolling over.
-       * * If there is a discrepancy we could notify the accountants and admins so that they investigate it
-       * ? $savings_record->$savings->is_balance_consistent()
-       */
-      if ($savings_record->complete_mature_savings()) {
-        Admin::send_notification(new SavingsMaturedNotification($savings_record));
+    // Travel::to('4 months 4 days', function () {
+    foreach (Savings::with(['app_user', 'target_type'])->matured()->notWithdrawn()->get() as $savings_record) {
+        /**
+         * ! An option could be to verify the savings balance before rolling over.
+         * * If there is a discrepancy we could notify the accountants and admins so that they investigate it
+         * ? $savings_record->$savings->is_balance_consistent()
+         */
+        if ($savings_record->complete_mature_savings()) {
+        dump($savings_record->app_user->full_name . '´s ' . $savings_record->target_type->name . ' savings has matured and is due for payout.');
+          Admin::send_notification(new SavingsMaturedNotification($savings_record));
+        $savings_record->app_user->smart_collector->notify(new SavingsMaturedNotification($savings_record));
+        }
       }
-    }
+    // });
     echo 'Completed successfully';
   }
 }

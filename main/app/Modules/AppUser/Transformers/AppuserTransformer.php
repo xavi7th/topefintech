@@ -85,6 +85,7 @@ class AppUserTransformer
       'total_accrued_interest' => (float)$user->total_interests_amount(),
       'total_withdrawal' => (float)$user->total_withdrawal_amount(),
       'total_balance' => (float)$user->total_balance(),
+      'has_smart_savings' => (bool)$user->has_smart_savings(),
       'num_of_days_active' => (int)$user->activeDays()
     ];
   }

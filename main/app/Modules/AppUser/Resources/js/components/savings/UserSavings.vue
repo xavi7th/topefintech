@@ -11,7 +11,8 @@
             role="tab"
             aria-controls="homePillsSliding"
             aria-selected="true"
-          >Manage Savings</a>
+            >Manage Savings</a
+          >
         </li>
         <li class="nav-item">
           <a
@@ -22,7 +23,8 @@
             role="tab"
             aria-controls="profilePillsSliding"
             aria-selected="false"
-          >Autosave Settings</a>
+            >Autosave Settings</a
+          >
         </li>
       </ul>
       <div class="tab-content">
@@ -32,7 +34,10 @@
           role="tabpanel"
           aria-labelledby="homePillsSliding-tab"
         >
-          <ManageSavings :savings_list="savings_list" @fund-savings="details=$event"></ManageSavings>
+          <ManageSavings
+            :savings_list="savings_list"
+            @fund-savings="details = $event"
+          ></ManageSavings>
         </div>
         <div
           class="tab-pane fade"
@@ -40,13 +45,15 @@
           role="tabpanel"
           aria-labelledby="profilePillsSliding-tab"
         >
-          <ManageAutoSaveSettings :auto_save_list="auto_save_list"></ManageAutoSaveSettings>
+          <ManageAutoSaveSettings
+            :auto_save_list="auto_save_list"
+          ></ManageAutoSaveSettings>
         </div>
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="newTargetModal" modalTitle="Create New Target Savings">
-        <form class="#" @submit.prevent="createTargetSavings">
+      <form class="#" @submit.prevent="createTargetSavings">
+        <modal modalId="newTargetModal" modalTitle="Create New Target Savings">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -62,26 +69,38 @@
             </div>
             <div class="col-12">
               <label for="target-type">Select Target Plan</label>
-              <select class="custom-select" name="target-type" v-model="details.target_type_id">
+              <select
+                class="custom-select"
+                name="target-type"
+                v-model="details.target_type_id"
+              >
                 <option selected>Select</option>
                 <option
                   v-for="target in target_types"
                   :key="target.id"
                   :value="target.id"
-                >{{target.name}}</option>
+                >
+                  {{ target.name }}
+                </option>
               </select>
-              <FlashMessage v-if="errors.target_type_id" :msg="errors.target_type_id[0]" />
-            </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-success btn-long">
-                <span class="text">Initialise</span>
-              </button>&nbsp;
+              <FlashMessage
+                v-if="errors.target_type_id"
+                :msg="errors.target_type_id[0]"
+              />
             </div>
           </div>
-        </form>
-      </modal>
-      <modal modalId="createSmartSavings" modalTitle="Initialise Smart Savings Portfolio">
-        <form class="#" @submit.prevent="initialiseSmartSavings">
+          <div slot="modal-buttons">
+            <button type="submit" class="btn btn-success btn-long">
+              <span class="text">Initialise</span>
+            </button>
+          </div>
+        </modal>
+      </form>
+      <form class="#" @submit.prevent="initialiseSmartSavings">
+        <modal
+          modalId="createSmartSavings"
+          modalTitle="Initialise Smart Savings Portfolio"
+        >
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -95,19 +114,21 @@
               />
               <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
             </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-success btn-long">
-                <span class="text">Create</span>
-              </button>
-            </div>
           </div>
-        </form>
-      </modal>
-      <modal
-        modalId="fundThisSavingsModal"
-        :modalTitle="`Add funds to your ${details.target_type? details.target_type.name: '' } Savings`"
-      >
-        <form class="#" @submit.prevent="addFundsToThisSavings">
+          <div slot="modal-buttons">
+            <button type="submit" class="btn btn-success btn-long">
+              <span class="text">Create</span>
+            </button>
+          </div>
+        </modal>
+      </form>
+      <form class="#" @submit.prevent="addFundsToThisSavings">
+        <modal
+          modalId="fundThisSavingsModal"
+          :modalTitle="`Add funds to your ${
+            details.target_type ? details.target_type.name : ''
+          } Savings`"
+        >
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
@@ -121,14 +142,14 @@
               />
               <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
             </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-success btn-long">
-                <span class="text">Create</span>
-              </button>
-            </div>
           </div>
-        </form>
-      </modal>
+          <div slot="modal-buttons">
+            <button type="submit" class="btn btn-success btn-long">
+              <span class="text">Create</span>
+            </button>
+          </div>
+        </modal>
+      </form>
     </template>
   </layout>
 </template>
@@ -146,11 +167,11 @@
     components: {
       Layout,
       ManageSavings,
-      ManageAutoSaveSettings
+      ManageAutoSaveSettings,
     },
     data: () => {
       return {
-        details: {}
+        details: {},
       };
     },
 
@@ -159,7 +180,7 @@
         BlockToast.fire({ text: "creating..." });
         this.$inertia
           .post(this.$route("appuser.savings.smart.initialise"), {
-            ...this.details
+            ...this.details,
           })
           .then(() => {
             if (this.flash.success) {
@@ -174,14 +195,16 @@
           .post(
             this.$route("appuser.savings.target.initialise"),
             {
-              ...this.details
+              ...this.details,
             },
             {
-              preserveState: true
+              preserveState: true,
             }
           )
           .then(() => {
-            this.details = {};
+            if (this.flash.success) {
+              this.details = {};
+            }
             swal.close();
           });
       },
@@ -191,10 +214,10 @@
           .post(
             this.$route("appuser.savings.target.fund"),
             {
-              ...this.details
+              ...this.details,
             },
             {
-              preserveState: true
+              preserveState: true,
             }
           )
           .then(() => {
@@ -203,8 +226,8 @@
             }
             swal.close();
           });
-      }
-    }
+      },
+    },
   };
 </script>
 

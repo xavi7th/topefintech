@@ -19,7 +19,7 @@
               <div class="rui-widget rui-widget-chart">
                 <div class="rui-widget-chart-info">
                   <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                  <small class="rui-widget-subtitle">Target Savings Balance</small>
+                  <small class="rui-widget-subtitle">NO SAVINGS PORTFOLIO</small>
                 </div>
                 <div class="rui-chartjs-container">
                   <div
@@ -76,7 +76,7 @@
             <div class="rui-widget rui-widget-chart">
               <div class="rui-widget-chart-info">
                 <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                <small class="rui-widget-subtitle">Total Investments Balance</small>
+                <small class="rui-widget-subtitle">NO INVESTMENTS</small>
               </div>
               <div class="rui-chartjs-container">
                 <div

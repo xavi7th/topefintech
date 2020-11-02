@@ -31,7 +31,7 @@
             id="form-middle_name"
             v-model="details.middle_name"
             name="middle_name"
-            placeholder="Middle Name"
+            placeholder="Middle Name (optional)"
           />
           <div class="invalid-feedback" v-if="errors.middle_name">{{errors.middle_name[0]}}</div>
         </div>
@@ -106,7 +106,7 @@
             type="ref-code"
             class="form-control"
             :class="{'is-invalid': errors.ref_code, 'is-valid': !errors.ref_code}"
-            id="form-pass-confirm"
+            id="form-smart-collector"
             v-model="details.ref_code"
             name="ref_code"
             placeholder="Smart Collector Code (optional)"

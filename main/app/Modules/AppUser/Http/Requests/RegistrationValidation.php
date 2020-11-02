@@ -46,7 +46,7 @@ class RegistrationValidation extends FormRequest
     /**
      * merge the name fields into one for storing
      */
-    return array_merge((collect(parent::validated())->except(['first_name', 'last_name', 'ref_code', 'agreement']))->all(), [
+    return array_merge((collect(parent::validated())->except(['first_name', 'last_name', 'middle_name', 'ref_code', 'agreement']))->all(), [
       'full_name' => $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name,
       'agent_id' => Agent::findByRefCode($this->ref_code)->id
     ]);

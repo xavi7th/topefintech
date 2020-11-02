@@ -14,7 +14,7 @@
           data-src-night="/img/logo.png"
           data-src-day="/img/logo.png"
           alt
-          width="60%"
+          width="40%"
         />
       </inertia-link>
       <div class="dropdown dropdown-triangle">
@@ -81,9 +81,7 @@
 </template>
 <script>
   export default {
-    name: "UserMobileDashboardHeader",
-    computed: {},
-    mounted() {}
+    name: "MobileDashboardHeader"
   };
 </script>
 
