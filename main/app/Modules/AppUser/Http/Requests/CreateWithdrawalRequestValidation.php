@@ -43,8 +43,8 @@ class CreateWithdrawalRequestValidation extends FormRequest
       /**
        * Check if bank and bvn are validated
        */
-      if (!($this->user()->is_bvn_verified && $this->user()->is_bank_verified)) {
-        $validator->errors()->add('amount', 'BVN and bank account number must be verified before withdrawal');
+      if (!$this->user()->is_bank_verified) {
+        $validator->errors()->add('amount', 'You must add a bank account to your profile before withdrawal');
       }
 
       /**

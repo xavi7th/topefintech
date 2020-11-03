@@ -114,7 +114,7 @@
                 <span>Change Password</span>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a
                 class="nav-link rui-tabs-link"
                 id="verifyBVNPage-tab"
@@ -130,7 +130,7 @@
                 ></span>
                 <span>BVN</span>
               </a>
-            </li>
+            </li> -->
           </ul>
           <div class="tab-content">
             <div
@@ -535,7 +535,7 @@
               </div>
             </div>
 
-            <div
+            <!-- <div
               class="tab-pane fade"
               id="verifyBVNPage"
               role="tabpanel"
@@ -598,7 +598,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -607,12 +607,11 @@
 </template>
 
 <script>
-  import { mixins } from "@dashboard-assets/js/config";
+  import { errorHandlers, mixins } from "@dashboard-assets/js/config";
   import Layout from "@dashboard-assets/js/AppComponent";
-  import { getErrorString } from "@basicsite-assets/js/bootstrap";
   export default {
     name: "UserProfile",
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
     props: {
       banks: Array,
       account_name: String,
@@ -703,23 +702,13 @@
           .then((rsp) => {
             if (_.size(this.$page.errors) > 0) {
               this.formSubmitted = true;
-              ToastLarge.fire({
-                title: "Oops!",
-                html: getErrorString(this.$page.errors),
-                icon: "error",
-                timer: 10000,
-              });
             }
-            if (this.$page.flash.success) {
+            else if (this.$page.flash.success) {
               this.formSubmitted = false;
-              ToastLarge.fire({
-                title: "Success",
-                html: this.$page.flash.success,
-                icon: "success",
-              });
-            } else {
-              swal.close();
             }
+
+            this.displayResponse()
+            this.displayErrors()
           });
       },
     },
