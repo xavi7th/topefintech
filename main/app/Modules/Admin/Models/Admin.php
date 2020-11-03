@@ -109,9 +109,7 @@ class Admin extends User
     ]);
 
     if ($validator->fails()) {
-      return back()
-        ->withErrors($validator)
-        ->withError('There are errors in your form');
+      return back()->withErrors($validator);
     }
     try {
       DB::beginTransaction();
@@ -127,7 +125,7 @@ class Admin extends User
       if ($request->isApi())
         return response()->json(['rsp' => $admin], 201);
 
-      return back()->withSuccess('Admin account created. They will be required to set a password on their first login');
+      return back()->withFlash(['success' => 'Admin account created. They will be required to set a password on their first login']);
     } catch (\Throwable $e) {
 
       ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating admin account');
@@ -135,7 +133,7 @@ class Admin extends User
       if ($request->isApi())
         return response()->json(['rsp' => 'error occurred'], 500);
 
-      return back()->withError('An error occurred. Check the error logs');
+      return back()->withFlash(['error' => 'An error occurred. Check the error logs']);
     }
   }
 

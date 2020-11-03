@@ -226,14 +226,14 @@ class DebitCard extends Model
     if ($request->isApi()) {
       return response()->json($debitCard, 201);
     }
-    return back()->withSuccess('Card successfully added to your account');
+    return back()->withFlash(['success' => 'Card successfully added to your account']);
   }
 
   public function setDefaultDebitCard(Request $request)
   {
     $debit_card = self::findOrFail(request('debit_card_id'));
 
-    auth()->user()->debit_cards()->update(['is_default' => false]);
+    $request->user()->debit_cards()->update(['is_default' => false]);
 
     $debit_card->is_default = true;
     $debit_card->save();
@@ -241,7 +241,7 @@ class DebitCard extends Model
     if ($request->isApi()) {
       return response()->json(['rsp' => true], 204);
     }
-    return back()->withSuccess('Card ' . $debit_card->pan . ' has been made the default card');
+    return back()->withFlash(['success' => 'Card ' . $debit_card->pan . ' has been made the default card']);
   }
 
   public function deleteDebitCard(Request $request, self $debit_card)
@@ -270,7 +270,7 @@ class DebitCard extends Model
       if ($request->isApi()) {
         return response()->json([], 204);
       }
-      return back()->withSuccess('Deleted');
+      return back()->withFlash(['success' => 'Deleted']);
     } else {
       abort(403, 'invalid operation');
     }
@@ -286,7 +286,7 @@ class DebitCard extends Model
     // dd($debitCard);
 
     if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user(), $returnResponse = true))) {
-      return back()->withError('An error occured');
+      return back()->withFlash(['error' => 'An error occured']);
     } else {
       DB::beginTransaction();
       /** Give the user value */
@@ -299,7 +299,7 @@ class DebitCard extends Model
 
       DB::commit();
 
-      return back()->withSuccess('Done');
+      return back()->withFlash(['success' => 'Done']);
     }
   }
 

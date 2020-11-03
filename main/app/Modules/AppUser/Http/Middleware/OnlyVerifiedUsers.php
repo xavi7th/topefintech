@@ -27,7 +27,7 @@ class OnlyVerifiedUsers
       if ($request->isApi()) {
         return response()->json(['message' => 'Unverified user'], 416);
       }
-      return redirect()->route('app.login')->withError('Unverified user');
+      return redirect()->route('app.login')->withFlash(['error' => 'Unverified user']);
     }
 
     return $next($request);

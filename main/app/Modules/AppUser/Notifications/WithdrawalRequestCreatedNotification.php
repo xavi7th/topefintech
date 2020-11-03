@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class WithdrawalRequestCreatedNotification extends Notification
+class WithdrawalRequestCreatedNotification extends Notification implements ShouldQueue
 {
   use Queueable;
   private $amount;

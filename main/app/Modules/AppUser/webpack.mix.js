@@ -13,7 +13,7 @@ mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
 // mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
 
 mix.scripts( [
-    __dirname + '/Resources/js/vendor/jquery-3.2.1.min.js',
+    // __dirname + '/Resources/js/vendor/jquery-3.2.1.min.js',
     __dirname + '/Resources/js/vendor/jquery.min.js',
     __dirname + '/Resources/js/vendor/popper.min.js',
     __dirname + '/Resources/js/vendor/bootstrap.min.js',

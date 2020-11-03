@@ -127,7 +127,7 @@ class RegisterController extends Controller
     DB::commit();
 
     if ($request->isApi()) return $this->respondWithToken();
-    return redirect()->route('app.login')->withSuccess('Account Created');
+    return redirect()->route('app.login')->withFlash(['success' => 'Account Created']);
   }
 
   /**

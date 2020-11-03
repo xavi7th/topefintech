@@ -28,6 +28,6 @@ class VerifiedAgents
     }
 
     if ($request->isApi()) return response()->json(['status' => 'Login limited'], 416);
-    return redirect()->route('app.login')->withError('Your account is unverified');
+    return redirect()->route('app.login')->withFlash(['error' => 'Your account is unverified']);
   }
 }

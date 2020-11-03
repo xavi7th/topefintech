@@ -88,12 +88,12 @@ class TargetType extends Model
       ]);
       if ($request->isApi()) return response()->json($target_type, 201);
 
-      return back()->withSuccess('Target Plan created');
+      return back()->withFlash(['success' => 'Target Plan created']);
     } catch (\Throwable $e) {
       ErrLog::notifyAdmin($request->user(), $e, 'Target not created');
       if ($request->isApi())  return response()->json(['rsp' => $e->getMessage()], 500);
 
-      return back()->withError('Target not created. Check error logs');
+      return back()->withFlash(['error' => 'Target not created. Check error logs']);
     }
   }
 
@@ -112,13 +112,13 @@ class TargetType extends Model
   {
     if ($target_type->savings()->exists()) {
       if ($request->isApi())  return response()->json('Target Plan has active savings and cannot be deleted', 403);
-      return back()->withError('Target Plan has active savings and cannot be deleted');
+      return back()->withFlash(['error' => 'Target Plan has active savings and cannot be deleted']);
     }
 
     $target_type->delete();
 
     if ($request->isApi())  return response()->json([], 204);
-    return back()->withSuccess('Target Plan deleted');
+    return back()->withFlash(['success' => 'Target Plan deleted']);
   }
 
 
@@ -144,7 +144,7 @@ class TargetType extends Model
         return response()->json(['target_type' => $targetType], 201);
       }
 
-      return back()->withSuccess('Target has been created. You can now add a plan to it');
+      return back()->withFlash(['success' => 'Target has been created. You can now add a plan to it']);
     } catch (\Throwable $th) {
       return response()->json(['rsp' => $th->getMessage()], 500);
     }

@@ -26,7 +26,7 @@ class OnlyAppUsers
       if (request()->ajax()) {
         return response()->json(['status' => 'Unauthorised request'], 423);
       }
-      return redirect()->route('login')->withErrors('Unauthorised Action');
+      return redirect()->route('login')->withFlash(['error' => 'Unauthorised Action']);
     }
 
     return $next($request);

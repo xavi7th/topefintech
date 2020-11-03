@@ -300,12 +300,11 @@
 </template>
 
 <script>
-  import { mixins } from "@dashboard-assets/js/config";
+  import { mixins, errorHandlers } from "@dashboard-assets/js/config";
   import Layout from "@admin-assets/js/AdminAppComponent";
-  import { getErrorString } from "@basicsite-assets/js/bootstrap";
   export default {
     name: "ManageUserProfile",
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
     props: {
       banks: Array,
       user_details:Object
@@ -367,34 +366,13 @@
             only:['errors', 'flash', 'user_details']
           })
           .then((rsp) => {
+
             if (_.size(this.$page.errors) > 0) {
               this.formSubmitted = true;
-              ToastLarge.fire({
-                title: "Oops!",
-                html: getErrorString(this.$page.errors),
-                icon: "error",
-                timer: 10000,
-              });
             }
-            else if (this.$page.flash.error) {
-              this.formSubmitted = false;
-              ToastLarge.fire({
-                title: "Oops",
-                html: this.$page.flash.error,
-                icon: "error",
-              });
-            }
-            else if (this.$page.flash.success) {
-              this.formSubmitted = false;
-              ToastLarge.fire({
-                title: "Success",
-                html: this.$page.flash.success,
-                icon: "success",
-              });
-            }
-            else {
-              swal.close();
-            }
+
+            this.displayResponse();
+            this.displayError();
           });
       },
     },

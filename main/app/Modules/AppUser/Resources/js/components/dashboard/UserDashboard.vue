@@ -1,12 +1,12 @@
 <template>
   <layout title="My Dashboard" :isAuth="false">
     <LivePortfolioStatistics
-      @add-savings="details=$event"
+      @add-savings="details = $event"
       :userInvestments="userInvestments"
       :userSavings="userSavings"
     />
     <VaultStatistics
-      @withdrawInterests="details=$event"
+      @withdrawInterests="details = $event"
       :userSavings="userSavings"
       :userInvestments="userInvestments"
       :maturedSavings="maturedSavings"
@@ -47,25 +47,25 @@
 </template>
 
 <script>
-  import { mixins } from "@dashboard-assets/js/config";
+  import { errorHandlers, mixins } from "@dashboard-assets/js/config";
   import Layout from "@dashboard-assets/js/AppComponent";
   import LivePortfolioStatistics from "@dashboard-components/dashboard/LivePortfolioStatistics.vue";
   import VaultStatistics from "@dashboard-components/dashboard/VaultStatistics.vue";
   export default {
     name: "UserDashboard",
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
     props: {
       userInvestments: Array,
       userSavings: Array,
       liquidatedSavings: Array,
       maturedSavings: Array,
     },
+    components: { Layout, LivePortfolioStatistics, VaultStatistics },
     data: () => {
       return {
         details: {},
       };
     },
-    components: { Layout, LivePortfolioStatistics, VaultStatistics },
     mounted() {
       this.$nextTick(() => {
         // Doughnut
@@ -146,23 +146,7 @@
             }
           )
           .then(() => {
-            console.log(this.$page.flash);
-
-            if (this.$page.flash.error) {
-              ToastLarge.fire({
-                title: "Error",
-                html: this.$page.flash.error,
-                icon: "error",
-              });
-            } else if (this.$page.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.$page.flash.success,
-                icon: "success",
-              });
-            } else {
-              swal.close();
-            }
+            this.displayResponse();
           });
       },
     },

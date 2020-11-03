@@ -4,11 +4,13 @@ namespace App\Exceptions;
 
 use Throwable;
 use Inertia\Inertia;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use App\Modules\SuperAdmin\Models\ErrLog;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -81,7 +83,7 @@ class Handler extends ExceptionHandler
         }
       }
     } elseif (in_array($response->status(), [419])) {
-      return back()->withError('Your session has expired. Please try again');
+      throw ValidationException::withMessages(['error' => 'Your session has expired. Please try again'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     return $response;

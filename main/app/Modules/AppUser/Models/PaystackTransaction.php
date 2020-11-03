@@ -83,7 +83,7 @@ class PaystackTransaction extends Model
 
     if ($response->failed()) {
       logger('Paystack Initialisation Failed for ' . $request->user()->email, ['paystackRsp' => $response->json(), 'requestData' => $request->all(), 'affectedUser' => $request->user()]);
-      return back()->withError('An error occured. Try again');
+      return back()->withFlash(['error' => 'An error occured. Try again']);
     }
 
     $paystackRsp = $response->json();
@@ -94,7 +94,7 @@ class PaystackTransaction extends Model
       return response('', 409)
         ->header('X-Inertia-Location', $paystackRsp['data']['authorization_url']);
     } else {
-      return back()->withError('An unknown error occured');
+      return back()->withFlash(['error' => 'An unknown error occured']);
     }
   }
 

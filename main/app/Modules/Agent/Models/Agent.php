@@ -180,7 +180,7 @@ class Agent extends User
   public function agentViewManagedUserSavings(Request $request, AppUser $appUser)
   {
     if (!$appUser->is_managed_by($request->user())) {
-      return back()->withError('You are not this user´s smart collector');
+      return back()->withFlash(['error' => 'You are not this user´s smart collector']);
     }
     $savings_list = $appUser->savings_list->load('target_type');
     $target_types = TargetType::all();
@@ -215,12 +215,12 @@ class Agent extends User
   public function initialiseSmartSavingsProfile(Request $request, AppUser $appUser)
   {
     if (!$request->duration || $request->duration < 3) {
-      return back()->withError('Specify a duration greater than 3 months');
+      return back()->withFlash(['error' => 'Specify a duration greater than 3 months']);
     }
 
 
     if ($appUser->has_smart_savings()) {
-      return back()->withError('User has smart savings already');
+      return back()->withFlash(['error' => 'User has smart savings already']);
     }
 
     $funds = $appUser->smart_savings()->create([
@@ -234,7 +234,7 @@ class Agent extends User
     $appUser->notify(new SmartSavingsInitialised($appUser));
 
     if ($request->isApi()) return response()->json(['rsp' => $funds], 201);
-    return back()->withSuccess('Smart savings portfolio initialised successfully');
+    return back()->withFlash(['success' => 'Smart savings portfolio initialised successfully']);
   }
 
   public function fundManagedUser(Request $request, AppUser $appUser)
@@ -276,13 +276,13 @@ class Agent extends User
       DB::commit();
 
       if ($request->isApi()) return response()->json(['rsp' => 'Created'], 201);
-      return back()->withSuccess('Congrats! Funds added to user´s savings');
+      return back()->withFlash(['success' => 'Congrats! Funds added to user´s savings']);
     } catch (\Throwable $th) {
       if ($th->getCode() == 422) {
         return generate_422_error($th->getMessage());
       } else {
         ErrLog::notifyAdminAndFail($request->user(), $th, 'Fund user savings failed');
-        return back()->withError('Fund user savings failed');
+        return back()->withFlash(['error' => 'Fund user savings failed']);
       }
     };
   }
@@ -320,8 +320,7 @@ class Agent extends User
 
     if ($validator->fails()) {
       return back()
-        ->withErrors($validator)
-        ->withError('There are errors in your form');
+        ->withErrors($validator);
     }
 
     // dd($validator->validated());
@@ -338,13 +337,13 @@ class Agent extends User
       DB::commit();
 
       if ($request->isApi()) return response()->json(['rsp' => $agent], 201);
-      return back()->withSuccess('Agent account created. They will be required to set a password on their first login');
+      return back()->withFlash(['success' => 'Agent account created. They will be required to set a password on their first login']);
     } catch (\Throwable $e) {
 
       ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating agent account');
 
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
-      return back()->withError('An error occurred. Check the error logs');
+      return back()->withFlash(['error' => 'An error occurred. Check the error logs']);
     }
   }
 
@@ -356,8 +355,7 @@ class Agent extends User
 
     if ($validator->fails()) {
       return back()
-        ->withErrors($validator)
-        ->withError('There are errors in your form');
+        ->withErrors($validator);
     }
 
     // dd($validator->validated());
@@ -372,13 +370,13 @@ class Agent extends User
       ]);
 
       if ($request->isApi()) return response()->json(['rsp' => $agent], 201);
-      return back()->withSuccess('Funding successful');
+      return back()->withFlash(['success' => 'Funding successful']);
     } catch (\Throwable $e) {
 
       ErrLog::notifyAdminAndFail($request->user(), $e, 'Error funding agent account');
 
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
-      return back()->withError('An error occurred. Check the error logs');
+      return back()->withFlash(['error' => 'An error occurred. Check the error logs']);
     }
   }
 

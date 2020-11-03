@@ -1,3 +1,64 @@
+/**
+ * Transforms an error object into HTML string
+ *
+ * @param {String|Array|null} errors The errors to transform
+ */
+const getErrorString = errors => {
+
+    if ( _.isString( errors ) ) {
+        var errs = errors;
+    } else if ( _.size( errors ) == 1 ) {
+        var errs = _.reduce( errors, function ( val, n ) {
+            return val.join( "<br>" ) + "<br>" + n;
+        } )[ 0 ];
+    } else {
+        var errs = _.reduce( errors, function ( val, n ) {
+            return ( _.isString( val ) ? val : val.join( "<br>" ) ) + "<br>" + n;
+        } );
+    }
+    return errs
+}
+
+/**
+ * Display flash error or success in a sweetalert modal. This should be called before displayErrors()
+ *! The function keyword is required to bind this into the function scope
+ */
+const displayResponse = function ( duration = null ) {
+
+    if ( this.$page.flash.error ) {
+        ToastLarge.fire( {
+            title: "Error",
+            html: this.$page.flash.error,
+            icon: "error",
+            timer: duration || 3000
+        } );
+    } else if ( this.$page.flash.success ) {
+        ToastLarge.fire( {
+            title: "Success",
+            html: this.$page.flash.success,
+            icon: "success",
+            timer: duration || 3000
+        } );
+    } else {
+        swal.close();
+    }
+}
+
+/**
+ * This displays the laravel error object in a nicely formatted way using sweetalert
+ * @param {Number} duration The duration in milliseconds to keep the errors page open
+ */
+const displayErrors = function ( duration = null ) {
+    if ( _.size( this.$page.errors ) ) {
+        ToastLarge.fire( {
+            title: "Error",
+            html: getErrorString( this.$page.errors ),
+            icon: "error",
+            timer: duration || 3000 //milliseconds
+        } );
+    }
+}
+
 export const mixins = {
     props: {
         app: Object,
@@ -14,6 +75,13 @@ export const mixins = {
             $( '.preloader' ).delay( 600 ).fadeOut( 300 );
         } )
     },
+}
+
+export const errorHandlers = {
+    methods: {
+        displayErrors,
+        displayResponse
+    }
 }
 
 export const toOrdinalSuffix = num => {

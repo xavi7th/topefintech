@@ -374,7 +374,7 @@ if (!function_exists('generate_422_error')) {
           'message' => $errors
         ], 422);
       } else {
-        return back()->withError($errors);
+        return back()->withFlash(['error' => $errors]);
       }
     }
   }

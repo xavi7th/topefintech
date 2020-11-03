@@ -163,10 +163,11 @@
 </template>
 
 <script>
-  import { getErrorString } from "@basicsite-assets/js/bootstrap";
+import {  errorHandlers } from '@dashboard-assets/js/config';
 
   export default {
     name: "VaultStatistics",
+    mixins:[errorHandlers],
     props: {
       userInvestments: Array,
       userSavings: Array,
@@ -179,14 +180,7 @@
       };
     },
     updated() {
-      console.log(this.$page.errors);
-      if (_.size(this.$page.errors)) {
-        ToastLarge.fire({
-          title: "Error",
-          html: getErrorString(this.$page.errors),
-          icon: "error",
-        });
-      }
+      this.displayErrors(10000)
     },
     methods: {
       makeSavings(amount = null) {
@@ -208,23 +202,7 @@
             only: ["errors", "flash"],
           })
           .then(() => {
-            console.log(this.$page.flash);
-
-            if (this.$page.flash.error) {
-              ToastLarge.fire({
-                title: "Error",
-                html: this.$page.flash.error,
-                icon: "error",
-              });
-            } else if (this.$page.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.$page.flash.success,
-                icon: "success",
-              });
-            } else {
-              swal.close();
-            }
+            displayResponse()
           });
       },
       withdrawSavings(savings) {
@@ -270,15 +248,12 @@
                   icon: "error",
                   timer: 10000,
                 });
-              } else if (this.$page.flash.success) {
-                ToastLarge.fire({
-                  title: "Success",
-                  html: this.$page.flash.success,
-                  position: "bottom",
-                  icon: "success",
-                  timer: 10000,
-                });
               }
+              this.displayResponse(10000);
+
+              // if (this.$page.) {
+
+              // }
             }
           });
       },

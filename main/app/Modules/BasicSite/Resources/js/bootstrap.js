@@ -65,29 +65,6 @@ window.swalPreconfirm = swal.mixin( {
  * Implement this when you call the mixin
  * .then( ( result ) => {} );
  */
-
-/**
- * Transforms an error object into HTML string
- *
- * @param {String|Array|null} errors The errors to transform
- */
-export const getErrorString = errors => {
-
-    if ( _.isString( errors ) ) {
-        var errs = errors;
-    } else if ( _.size( errors ) == 1 ) {
-        var errs = _.reduce( errors, function ( val, n ) {
-            return val.join( "<br>" ) + "<br>" + n;
-        } )[ 0 ];
-    } else {
-        var errs = _.reduce( errors, function ( val, n ) {
-            return ( _.isString( val ) ? val : val.join( "<br>" ) ) + "<br>" + n;
-        } );
-    }
-    return errs
-}
-
-
 import {
     InertiaApp
 } from '@inertiajs/inertia-vue'

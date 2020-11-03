@@ -15,14 +15,16 @@ class SendAccountVerificationMessage extends Notification implements ShouldQueue
   use Queueable;
 
   private $channel;
+  private $message;
 
   /** @var string $token The verification token */
   private $otp;
 
-  public function __construct($channel = 'sms', string $otp = null)
+  public function __construct($channel = 'sms', string $otp = null, string $message = null)
   {
     $this->otp = $otp;
     $this->channel = $channel;
+    $this->message = $message;
   }
 
   public function via()
@@ -54,7 +56,7 @@ class SendAccountVerificationMessage extends Notification implements ShouldQueue
   public function toBulkSMS($app_user)
   {
     return (new BulkSMSMessage)
-      ->sms_message('DO NOT DISCLOSE. \n Your ' . config('app.name') . ' OTP for phone number verification is ' . $this->otp . '.')
+      ->sms_message($this->message ?? 'DO NOT DISCLOSE. \n Your ' . config('app.name') . ' OTP for phone number verification is ' . $this->otp . '.')
       ->to($app_user->phone);
   }
 

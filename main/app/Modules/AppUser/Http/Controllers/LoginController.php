@@ -11,12 +11,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Agent\Models\Agent;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -132,7 +130,7 @@ class LoginController extends Controller
     $tokenRecord = DB::table('password_resets')->where('token', $request->otp)->first();
 
     if (!$tokenRecord) {
-      return back()->withError('Phone number could not be verified. Invalid token!');
+      return back()->withFlash(['error' => 'Phone number could not be verified. Invalid token!']);
     } else {
       DB::beginTransaction();
 
@@ -152,7 +150,7 @@ class LoginController extends Controller
        */
       $this->guard()->login($user);
 
-      return redirect()->route($user->dashboardRoute())->withSuccess('Account verified successfully. Welcome to ' . config('app.name'));
+      return redirect()->route($user->dashboardRoute())->withFlash(['success' => 'Account verified successfully. Welcome to ' . config('app.name')]);
     }
   }
 
@@ -187,7 +185,7 @@ class LoginController extends Controller
       } catch (ModelNotFoundException $th) {
       }
 
-      return redirect()->route('appuser.password_reset.verify')->withSuccess('If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password');
+      return redirect()->route('appuser.password_reset.verify')->withFlash(['success' => 'If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password']);
     }
   }
 
@@ -196,11 +194,11 @@ class LoginController extends Controller
     $tokenRecord = DB::table('password_resets')->where('token', $token)->first();
 
     if (!$tokenRecord) {
-      return redirect()->route('appuser.password_reset.request')->withError('Password reset token could not be verified. Invalid token!');
+      return redirect()->route('appuser.password_reset.request')->withFlash(['error' => 'Password reset token could not be verified. Invalid token!']);
     }
     if (now()->subHours(6)->gte(Carbon::parse($tokenRecord->created_at))) {
       DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
-      return redirect()->route('appuser.password_reset.request')->withError('Password reset token could completed. This link has expired. Try again!');
+      return redirect()->route('appuser.password_reset.request')->withFlash(['error' => 'Password reset token could completed. This link has expired. Try again!']);
     } else {
       return Inertia::render('AppUser,auth/ResetPassword', compact('token'));
     }
@@ -225,7 +223,7 @@ class LoginController extends Controller
 
     DB::commit();
 
-    return redirect()->route('app.login')->withSuccess('Password reset successfully. Login to access your dashboard');
+    return redirect()->route('app.login')->withFlash(['success' => 'Password reset successfully. Login to access your dashboard']);
   }
 
   public function newAgentSetPassword(Request $request)
@@ -246,13 +244,13 @@ class LoginController extends Controller
 
         Auth::guard('agent')->login($agent);
 
-        return redirect()->route($agent->dashboardRoute())->withSuccess('Password set');
+        return redirect()->route($agent->dashboardRoute())->withFlash(['success' => 'Password set']);
       }
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $th) {
-      return back()->withError('Agent Not found');
+      return back()->withFlash(['error' => 'Agent Not found']);
     }
 
-    return back()->withError('Unauthorised');
+    return back()->withFlash(['error' => 'Unauthorised']);
   }
 
   /**
@@ -334,7 +332,7 @@ class LoginController extends Controller
       } else {
         $this->logout($request);
         if ($request->isApi()) return response()->json(['message' => 'Unverified user'], 416);
-        return back()->withError(416);
+        return back()->withFlash(['error' => 416]);
       }
     } else {
       if ($user->is_verified()) {
@@ -345,7 +343,7 @@ class LoginController extends Controller
         if ($request->isApi()) {
           return response()->json(['unverified' => 'Unverified user'], 406);
         }
-        return back()->withError(406);
+        return back()->withFlash(['error' => 406]);
       }
     }
     return redirect()->route('app.login');

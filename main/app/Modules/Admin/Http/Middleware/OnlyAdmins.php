@@ -26,7 +26,7 @@ class OnlyAdmins
       if (request()->isJson()) {
         return response()->json(['status' => 'Unauthorised request'], 423);
       }
-      return redirect()->route('admin.login')->withErrors('Unauthorised Action');
+      return redirect()->route('admin.login')->withFlash(['error' => 'Unauthorised Action']);
     }
 
     return $next($request);

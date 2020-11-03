@@ -115,9 +115,9 @@ class LoginController extends Controller
 
       $this->guard()->login($admin);
 
-      return redirect()->route(Admin::dashboardRoute())->withSuccess('Password set');
+      return redirect()->route($admin->dashboardRoute())->withFlash(['success' => 'Password set']);
     }
-    return back()->withError('Unauthorised');
+    return back()->withFlash(['error' => 'Unauthorised']);
   }
 
   /**
@@ -167,10 +167,9 @@ class LoginController extends Controller
         return redirect()->route($user->dashboardRoute());
       } else {
         $this->logout($request);
-        if ($request->isApi())
-          return response()->json(['unverified' => 'Unverified user'], 416);
 
-        return back()->withError(['unverified' => 'Unverified user']);
+        if ($request->isApi()) return response()->json(['unverified' => 'Unverified user'], 416);
+        return back()->withFlash(['error' => ['unverified' => 'Unverified user']]);
       }
     } else {
       $this->logout($request);
