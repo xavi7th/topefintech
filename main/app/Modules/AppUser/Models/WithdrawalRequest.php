@@ -66,8 +66,8 @@ class WithdrawalRequest extends Model
   {
     Route::prefix('withdrawal-requests')->name('admin.')->group(function () {
       Route::get('', [self::class, 'adminGetWithdrawalRequests'])->name('withdrawal_requests')->defaults('extras', ['icon' => 'fa fa-x-ray']);
-      Route::put('/{withdrawal_request}/mark-complete', [self::class, 'approveWithdrawalRequest'])->name('withdrawal_request.mark_complete');
-      Route::put('/{withdrawal_request}/cancel', [self::class, 'cancelWithdrawalRequest'])->name('withdrawal_request.delete');
+      Route::put('/{withdrawalRequest}/mark-complete', [self::class, 'approveWithdrawalRequest'])->name('withdrawal_request.mark_complete');
+      Route::delete('/{withdrawalRequestId}/cancel', [self::class, 'cancelWithdrawalRequest'])->name('withdrawal_request.delete');
     });
   }
 
@@ -139,12 +139,13 @@ class WithdrawalRequest extends Model
     $withdrawalRequest = $user->pendingWithdrawalRequest;
     if (!$withdrawalRequest) throw ValidationException::withMessages(['err' => 'You currently have no pending withdrawal requests.'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    DB::transaction(function () use ($withdrawalRequest) {
+    DB::transaction(function () use ($withdrawalRequest, $request) {
       $withdrawalRequest->is_user_verified = true;
       $withdrawalRequest->save();
+
+      DB::table('password_resets')->where('token', $request->otp)->delete();
     });
 
-    DB::table('password_resets')->where('token', $request->otp)->delete();
 
     try {
       $user->notify(new WithdrawalRequestCreatedNotification($withdrawalRequest->amount));
@@ -168,34 +169,38 @@ class WithdrawalRequest extends Model
     return Inertia::render('Admin,WithdrawalRequests', compact('withdrawal_requests'));
   }
 
-  public function cancelWithdrawalRequest(self $withdrawal_request)
+  public function cancelWithdrawalRequest(Request $request, $withdrawalRequestId)
   {
-    DB::beginTransaction();
-    $request_details = $withdrawal_request;
 
-    /**
-     * On withdrawal decline remember to top up the current balance back
-     */
-    $request_details->app_user->smart_savings->current_balance += $request_details->amount;
-    $request_details->app_user->smart_savings->save();
+    $withdrawalRequest = WithdrawalRequest::withTrashed()->find($withdrawalRequestId);
 
-    /**
-     * Notify user that his request was declined
-     */
-    try {
-      $request_details->app_user->notify(new DeclinedWithdrawalRequestNotification($request_details->amount));
-    } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($request_details->app_user, $th, 'Declined withdrawal notification failed');
+    if ($withdrawalRequest->trashed()) {
+      $withdrawalRequest->forceDelete();
+
+      if ($request->isApi()) return response()->json([], 204);
+      return back()->withFlash(['success' => 'Withdrawal request purged from the records']);
+    } else {
+      DB::beginTransaction();
+      /**
+       * Notify user that his request was declined
+       */
+      try {
+        $withdrawalRequest->app_user->notify(new DeclinedWithdrawalRequestNotification($withdrawalRequest));
+      } catch (\Throwable $th) {
+        ErrLog::notifyAdmin($withdrawalRequest->app_user, $th, 'Declined withdrawal notification failed');
+        if ($request->isApi()) return response()->json('Declined withdrawal notification failed', 500);
+        return back()->withFlash(['error' => 'Withdrawal Request NOT DELETED! <br> We could not send the user a notfication and the actions was canceled. Check the logs for more details']);
+      }
+
+      /**
+       * Delete the request;
+       */
+      $withdrawalRequest->delete();
+
+      DB::commit();
+      if ($request->isApi()) return response()->json([], 204);
+      return back()->withFlash(['success' => 'Withdrawal request deleted. The user has been notified']);
     }
-
-    /**
-     * Delete the request;
-     */
-    $request_details->delete();
-
-    DB::commit();
-
-    return response()->json([], 204);
   }
 
   public function approveWithdrawalRequest(self $withdrawal_request)
@@ -281,6 +286,7 @@ class WithdrawalRequest extends Model
     });
 
     static::deleting(function ($withdrawal_request) {
+      Cache::forget('withdrawalRequests');
       if (!$withdrawal_request->isForceDeleting()) {
         ActivityLog::notifyAdmins(auth()->user()->email . ' declined ' . $withdrawal_request->app_user->email . '\'s withdrawal request of ' . to_naira($withdrawal_request->amount));
       }

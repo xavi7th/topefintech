@@ -27,12 +27,19 @@
                       {{ withdrawalRequest.amount_requested | Naira }}
                       <span
                         class="badge badge-danger"
-                        v-if="!withdrawalRequest.is_user_verified"
-                        >WITHDRAWAL OTP NOT VERIFIED</span>
+                        v-if="withdrawalRequest.is_declined"
+                        >DELETED REQUEST</span
+                      >
+                      <span
+                        class="badge badge-danger"
+                        v-else-if="!withdrawalRequest.is_user_verified"
+                        >WITHDRAWAL OTP NOT VERIFIED</span
+                      >
                       <span
                         class="badge badge-success"
                         v-if="withdrawalRequest.is_processed"
-                        >REQUEST PROCESSED</span>
+                        >REQUEST PROCESSED</span
+                      >
                     </h4>
                     <div class="rui-changelog-subtitle">
                       <a href="#">Request Date:</a>
@@ -89,7 +96,8 @@
                             >ACCOUNT NUMBER:{{
                               withdrawalRequest.user_account_number
                             }}
-                            ({{ withdrawalRequest.user_account_bank }} - {{withdrawalRequest.user_account_type}})</span
+                            ({{ withdrawalRequest.user_account_bank }} -
+                            {{ withdrawalRequest.user_account_type }})</span
                           >
                         </div>
                       </li>
@@ -113,7 +121,7 @@
                     </ul>
                     <div class="d-flex justify-content-around">
                       <button
-                        class="btn btn-brand btn-xs"
+                        class="btn btn-brand btn-xs text-nowrap"
                         type="button"
                         data-toggle="collapse"
                         :data-target="`#revealDetails${withdrawalRequest.id}`"
@@ -121,6 +129,29 @@
                         :aria-controls="`revealDetails${withdrawalRequest.id}`"
                       >
                         View Full Details
+                      </button>
+                      <button
+                        class="btn btn-danger btn-xs text-nowrap"
+                        type="button"
+                        @click="deleteWithdrawalRequest(withdrawalRequest)"
+                        v-if="!withdrawalRequest.is_processed && !withdrawalRequest.is_user_verified && !withdrawalRequest.is_declined"
+                      >
+                        DELETE REQUEST
+                      </button>
+                      <button
+                        class="btn btn-danger btn-xs text-nowrap"
+                        type="button"
+                        @click="deleteWithdrawalRequest(withdrawalRequest)"
+                        v-if="withdrawalRequest.is_declined"
+                      >
+                        PURGE REQUEST
+                      </button>
+                      <button
+                        class="btn btn-success btn-xs text-nowrap"
+                        type="button"
+                        v-if="!withdrawalRequest.is_processed && withdrawalRequest.is_user_verified"
+                      >
+                        MARK PROCESSED
                       </button>
                     </div>
                     <div
@@ -167,7 +198,10 @@
                               ]"
                             >
                               <span class="rui-changelog-item-type">
-                                SMART COLLECTOR PHONE: {{ withdrawalRequest.user_smart_collector_phone }}
+                                SMART COLLECTOR PHONE:
+                                {{
+                                  withdrawalRequest.user_smart_collector_phone
+                                }}
                               </span>
                             </div>
                           </li>
@@ -181,7 +215,10 @@
                               ]"
                             >
                               <span class="rui-changelog-item-type">
-                                SMART COLLECTOR AREA OF OPERATION: {{ withdrawalRequest.user_smart_collector_city_of_operation }}
+                                SMART COLLECTOR AREA OF OPERATION:
+                                {{
+                                  withdrawalRequest.user_smart_collector_city_of_operation
+                                }}
                               </span>
                             </div>
                           </li>
@@ -200,15 +237,18 @@
                                 <span
                                   class="badge badge-danger"
                                   v-if="withdrawalRequest.savings_is_liquidated"
-                                  >Liquidated</span>
+                                  >Liquidated</span
+                                >
                                 <span
                                   class="badge badge-success"
                                   v-if="withdrawalRequest.is_charge_free"
-                                  >Charge Free</span>
+                                  >Charge Free</span
+                                >
                                 <span
                                   class="badge badge-danger"
                                   v-if="withdrawalRequest.is_declined"
-                                  >Deleted Request</span>
+                                  >Deleted Request</span
+                                >
                               </span>
                             </div>
                           </li>
@@ -239,7 +279,11 @@
                             >
                               <span class="rui-changelog-item-type"
                                 >SAVINGS START DATE:{{
-                                  new Date(withdrawalRequest.savings_start_date).toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+                                  new Date(
+                                    withdrawalRequest.savings_start_date
+                                  ).toLocaleString("en-US", {
+                                    timeZone: "Africa/Lagos",
+                                  })
                                 }}</span
                               >
                             </div>
@@ -255,7 +299,11 @@
                             >
                               <span class="rui-changelog-item-type"
                                 >SAVINGS MATURITY DATE:{{
-                                  new Date(withdrawalRequest.savings_maturity_date).toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+                                  new Date(
+                                    withdrawalRequest.savings_maturity_date
+                                  ).toLocaleString("en-US", {
+                                    timeZone: "Africa/Lagos",
+                                  })
                                 }}</span
                               >
                             </div>
@@ -290,7 +338,7 @@
 </template>
 
 <script>
-  import { mixins } from "@dashboard-assets/js/config";
+  import { mixins, errorHandlers } from "@dashboard-assets/js/config";
   import Layout from "@admin-assets/js/AdminAppComponent";
   export default {
     name: "WithdrawalRequests",
@@ -298,7 +346,7 @@
       withdrawal_requests: Array,
     },
     components: { Layout },
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
     data: () => ({}),
 
     methods: {
@@ -323,33 +371,23 @@
             }
           });
       },
-      fundWithdrawalRequest(withdrawalRequest) {
+      deleteWithdrawalRequest(withdrawalRequest) {
         BlockToast.fire({
-          text: "Funding withdrawalRequest...",
+          text: "Deleting Request...",
         });
 
         this.$inertia
-          .post(
-            this.$route(
-              "admin.fund_withdrawalRequest",
-              this.withdrawalRequestToFund.id
-            ),
+          .delete(
+            this.$route("admin.withdrawal_request.delete", withdrawalRequest.id),
             {
-              amount: this.details.amount,
+              preserveState: true,
+              preserveScroll: true,
+              only: ['flash','errors', 'withdrawal_requests'],
             }
           )
           .then(() => {
-            if (this.flash.success) {
-              this.details.amount = null;
-
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                icon: "success",
-              });
-            } else {
-              swal.close();
-            }
+           this.displayResponse();
+           this.displayErrors();
           });
       },
     },
