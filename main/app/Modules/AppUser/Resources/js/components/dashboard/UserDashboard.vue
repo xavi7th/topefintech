@@ -48,7 +48,7 @@
 
 <script>
   import { errorHandlers, mixins } from "@dashboard-assets/js/config";
-  import Layout from "@dashboard-assets/js/AppComponent";
+  import Layout from "@dashboard-assets/js/AppComponent.vue";
   import LivePortfolioStatistics from "@dashboard-components/dashboard/LivePortfolioStatistics.vue";
   import VaultStatistics from "@dashboard-components/dashboard/VaultStatistics.vue";
   export default {

@@ -67,13 +67,7 @@ class BasicSiteServiceProvider extends ServiceProvider
           'notification_count' => Auth::user() ? $request->user()->unreadNotifications()->count() : null
         ];
       },
-      // 'flash' => function () {
-      //   return [
-      //     'success' => Session::get('success'),
-      //     'error' => Session::get('error'),
-      //   ];
-      // },
-      'flash' => fn () => Session::get('flash'),
+      'flash' => fn () => Session::get('flash') ?? (object)[],
       'errors' => function () {
         return Session::get('errors')
           ? Session::get('errors')->getBag('default')->getMessages()

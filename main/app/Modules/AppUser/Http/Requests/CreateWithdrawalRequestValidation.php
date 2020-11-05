@@ -50,7 +50,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
       /**
        * check if pending withdrawal request
        */
-      if ($this->user()->has_pending_withdrawal_request()) {
+      if ($this->user()->hasPendingWithdrawalRequest()) {
         $validator->errors()->add('amount', 'You already have a pending request.');
         return;
       }
@@ -63,16 +63,19 @@ class CreateWithdrawalRequestValidation extends FormRequest
      * Check if user is due for withdrawal and flag for extra charge
      * ! Check if this savings is liquidated
      */
-    $savings_record = Savings::find($this->route('savings_id'));
+    // $savings_record = Savings::find($this->route('savings_id'));
+    $savings_record = $this->savings;
     if (!$savings_record->is_due_for_free_withdrawal()) {
       return array_merge(parent::validated(), [
         'is_charge_free' => false,
-        'amount' => $savings_record->current_balance
+        'amount' => $savings_record->current_balance,
+        'savings_id' => $savings_record->id
       ]);
     } else {
       return array_merge(parent::validated(), [
         'is_charge_free' => true,
-        'amount' => $savings_record->current_balance
+        'amount' => $savings_record->current_balance,
+        'savings_id' => $savings_record->id
       ]);
     }
   }

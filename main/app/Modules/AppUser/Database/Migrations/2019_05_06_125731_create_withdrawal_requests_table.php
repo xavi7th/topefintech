@@ -17,6 +17,7 @@ class CreateWithdrawalRequestsTable extends Migration
       $table->engine = 'InnoDB';
       $table->id();
       $table->foreignId('app_user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+      $table->foreignId('savings_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount')->nullable();
       $table->string('description')->nullable();
       $table->boolean('is_user_verified')->default(false);

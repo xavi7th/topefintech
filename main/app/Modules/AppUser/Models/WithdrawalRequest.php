@@ -4,13 +4,16 @@ namespace App\Modules\AppUser\Models;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Admin\Models\ActivityLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\ValidationException;
 use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 use App\Modules\AppUser\Http\Requests\CreateWithdrawalRequestValidation;
 use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
@@ -55,13 +58,15 @@ use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
  * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userUnverified()
  * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userVerified()
  * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsUserVerified($value)
+ * @property int $savings_id
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereSavingsId($value)
  */
 class WithdrawalRequest extends Model
 {
   use SoftDeletes;
 
   protected $fillable = [
-    'app_user_id', 'description', 'amount', 'is_charge_free'
+    'app_user_id', 'description', 'amount', 'is_charge_free', 'savings_id'
   ];
 
   protected $casts = [
@@ -86,12 +91,17 @@ class WithdrawalRequest extends Model
     return $this->belongsTo(AppUser::class);
   }
 
+  public function savingsPortfolio()
+  {
+    return $this->belongsTo(Savings::class);
+  }
+
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
       Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
       Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]);
-      Route::post('{savings_id}/create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
+      Route::post('{savings}/create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
       Route::post('verify', [self::class, 'verifyWithdrawalRequest'])->name('appuser.withdraw.verify');
     });
   }
@@ -129,19 +139,29 @@ class WithdrawalRequest extends Model
     return Inertia::render('AppUser,withdraw/ViewWithdrawalRequests', compact('withdrawal_requests', 'statistics'));
   }
 
-  public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, $savings_id)
+  public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, Savings $savings)
   {
-    try {
-      /**
-       * Create a withdrawal request
-       */
-      $withdrawal_request = $request->user()->withdrawal_request()->create($request->validated());
 
-      $token = $request->user()->createVerificationToken();
-      $request->user()->notify((new SendAccountVerificationMessage('sms', $token, 'A withdrawal request was initialised on your account. Use this OTP: ' . $token . 'to verify the request to enable us proceed.'))->onQueue('high'));
+    try {
+      if (!$request->user()->hasUnverifiedWithdrawalRequest()) {
+        DB::beginTransaction();
+
+        /**
+         * Create a withdrawal request
+         */
+        $withdrawal_request = $request->user()->withdrawal_request()->create($request->validated());
+
+        $token = $request->user()->createVerificationToken();
+        $request->user()->notify((new SendAccountVerificationMessage('sms', $token, 'A withdrawal request was initialised on your account for your ' . $savings->type . ' savings. Use this OTP: ' . $token . 'to verify the request to enable us proceed.'))->onQueue('high'));
+
+        DB::commit();
+      }
 
       if ($request->isApi()) return response()->json($withdrawal_request, 201);
-      return back()->withFlash(['success' => 'A withdrawal request was initialised on your account. Use this OTP to verify the request to enable us proceed.']);
+      return back()->withFlash([
+        'success' => 'A withdrawal request has been initialised on your account. Use this OTP to verify the request to enable us proceed.',
+        'verification_needed' => 'A withdrawal request has been initialised on your account. Use the OTP sent to your registered phone number to verify the request to enable us proceed.'
+      ]);
     } catch (\Throwable $th) {
       ErrLog::notifyAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
       if ($request->isApi())  return response()->json(['err' => 'Withdrawal request not created'], 500);
@@ -151,35 +171,33 @@ class WithdrawalRequest extends Model
 
   public function verifyWithdrawalRequest(Request $request)
   {
-    DB::beginTransaction();
-    // Search for code or abort
-    // Search for pending request or abort
-    // Mark Withdrawal request as user verified
-    //
+    $tokenRecord = DB::table('password_resets')->where('token', $request->otp)->first();
+    if (!$tokenRecord) throw ValidationException::withMessages(['err' => 'Invalid token!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    $withdrawal_request = $request->user()->pending_withdrawal_request;
-    $savings = $withdrawal_request->savings_portfolio;
+    $user = AppUser::where('phone', $tokenRecord->phone)->firstOr(function () {
+      throw ValidationException::withMessages(['err' => 'Invalid or stale request. Contact Support for assistance!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+    });
 
-    /**
-     * Delete the savings profile
-     */
+    if (!$user->is($request->user())) throw ValidationException::withMessages(['err' => 'Request not permitted! Contact our support team for more information.'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    $savings->deleted_at = now();
-    $savings->is_withdrawn = true;
-    $savings->save();
+    $withdrawalRequest = $user->pendingWithdrawalRequest;
+    if (!$withdrawalRequest) throw ValidationException::withMessages(['err' => 'You currently have no pending withdrawal requests.'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    /**
-     * Notify user that his request was created
-     */
+    DB::transaction(function () use ($withdrawalRequest) {
+      $withdrawalRequest->is_user_verified = true;
+      $withdrawalRequest->save();
+    });
+
+    DB::table('password_resets')->where('token', $request->otp)->delete();
+
     try {
-      $request->user()->notify(new WithdrawalRequestCreatedNotification($savings->current_balance));
+      $user->notify(new WithdrawalRequestCreatedNotification($withdrawalRequest->amount));
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($request->user(), $th, 'Withdrawal request created notification failed');
+      ErrLog::notifyAdmin($user, $th, 'Withdrawal request created notification failed');
     }
 
-
-    if ($request->isApi()) return response()->json($withdrawal_request, 201);
-    return back()->withFlash(['success' => 'Withdrawal request sent. We will update you on the status of your request']);
+    if ($request->isApi()) return response()->json($withdrawalRequest, 201);
+    return back()->withFlash(['success' => 'Withdrawal request verified. We will update you on the status of your request', 'verifiation_succeded' => true]);
   }
 
   /**
@@ -279,6 +297,16 @@ class WithdrawalRequest extends Model
   public function scopeUserUnverified($query)
   {
     return $query->whereIsUserVerified(false);
+  }
+
+  public function scopeProcessed($query)
+  {
+    return $query->whereIsProcessed(true);
+  }
+
+  public function scopeUnprocessed($query)
+  {
+    return $query->whereIsProcessed(false);
   }
 
   protected static function boot()

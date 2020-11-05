@@ -227,7 +227,12 @@ class AppUser extends User
 
   public function withdrawal_request()
   {
-    return $this->hasOne(WithdrawalRequest::class)->where('is_processed', false);
+    return $this->hasOne(WithdrawalRequest::class)->unprocessed();
+  }
+
+  public function pendingWithdrawalRequest()
+  {
+    return $this->withdrawal_request()->userUnverified();
   }
 
   public function transactions()
@@ -302,9 +307,14 @@ class AppUser extends User
     return $this->target_savings()->exists();
   }
 
-  public function has_pending_withdrawal_request(): bool
+  public function hasUnverifiedWithdrawalRequest(): bool
   {
-    return $this->withdrawal_request()->exists();
+    return $this->withdrawal_request()->userUnverified()->exists();
+  }
+
+  public function hasPendingWithdrawalRequest(): bool
+  {
+    return $this->withdrawal_request()->userVerified()->exists();
   }
 
   public function total_withdrawal_amount(): float

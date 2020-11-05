@@ -276,32 +276,32 @@ namespace App\Modules\AppUser\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
  * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\AutoSaveSetting[] $auto_save_settings
+ * @property-read \Illuminate\Database\Eloquent\Collection|AutoSaveSetting[] $auto_save_settings
  * @property-read int|null $auto_save_settings_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\DebitCard[] $debit_cards
+ * @property-read \Illuminate\Database\Eloquent\Collection|DebitCard[] $debit_cards
  * @property-read int|null $debit_cards_count
- * @property-read \App\Modules\AppUser\Models\DebitCard|null $default_debit_card
+ * @property-read DebitCard|null $default_debit_card
  * @property-read string $id_card_thumb_url
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\PaystackTransaction[] $paystack_transactions
  * @property-read int|null $paystack_transactions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
+ * @property-read \Illuminate\Database\Eloquent\Collection|WithdrawalRequest[] $processed_withdrawal_requests
  * @property-read int|null $processed_withdrawal_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
+ * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
  * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $savings_list
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $savings_list
  * @property-read int|null $savings_list_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
+ * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
  * @property-read int|null $service_charges_count
- * @property-read \App\Modules\Agent\Models\Agent|null $smart_collector
- * @property-read \App\Modules\AppUser\Models\Savings|null $smart_savings
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $target_savings
+ * @property-read Agent|null $smart_collector
+ * @property-read Savings|null $smart_savings
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $target_savings
  * @property-read int|null $target_savings_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
+ * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
  * @property-read int|null $transactions_count
- * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawal_request
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $withdrawal_requests
+ * @property-read WithdrawalRequest|null $withdrawal_request
+ * @property-read \Illuminate\Database\Eloquent\Collection|WithdrawalRequest[] $withdrawal_requests
  * @property-read int|null $withdrawal_requests_count
  * @method static \Illuminate\Database\Eloquent\Builder|AppUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AppUser newQuery()
@@ -337,6 +337,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereVerifiedAt($value)
+ * @mixin \Eloquent
  */
 	class AppUser extends \Eloquent {}
 }
@@ -484,16 +485,16 @@ namespace App\Modules\AppUser\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\AppUser $app_user
+ * @property-read AppUser $app_user
  * @property-read mixed $elapsed_duration
  * @property-read mixed $total_duration
- * @property-read \App\Modules\AppUser\Models\Transaction|null $initial_deposit_transaction
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\SavingsInterest[] $savings_interests
+ * @property-read Transaction|null $initial_deposit_transaction
+ * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
  * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ServiceCharge[] $service_charges
+ * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
  * @property-read int|null $service_charges_count
- * @property-read \App\Modules\AppUser\Models\TargetType|null $target_type
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Transaction[] $transactions
+ * @property-read TargetType|null $target_type
+ * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
  * @property-read int|null $transactions_count
  * @method static \Illuminate\Database\Eloquent\Builder|Savings active()
  * @method static \Illuminate\Database\Eloquent\Builder|Savings liquidated()
@@ -517,6 +518,7 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Savings whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Savings withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
+ * @mixin \Eloquent
  */
 	class Savings extends \Eloquent {}
 }
@@ -663,6 +665,8 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userUnverified()
  * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userVerified()
  * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsUserVerified($value)
+ * @property int $savings_id
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereSavingsId($value)
  */
 	class WithdrawalRequest extends \Eloquent {}
 }

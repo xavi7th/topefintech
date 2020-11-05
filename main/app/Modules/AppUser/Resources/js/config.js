@@ -3,7 +3,7 @@
  *
  * @param {String|Array|null} errors The errors to transform
  */
-const getErrorString = errors => {
+export const getErrorString = errors => {
 
     if ( _.isString( errors ) ) {
         var errs = errors;
@@ -31,7 +31,7 @@ const displayResponse = function ( duration = null ) {
             html: this.$page.flash.error,
             icon: "error",
             timer: duration || 3000
-        } );
+        } )
     } else if ( this.$page.flash.success ) {
         ToastLarge.fire( {
             title: "Success",

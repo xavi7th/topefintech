@@ -111,6 +111,11 @@ class Savings extends Model
     return $this->belongsTo(AppUser::class);
   }
 
+  public function withdrawalRequest()
+  {
+    return $this->hasOne(WithdrawalRequest::class)->userVerified();
+  }
+
   public function target_type()
   {
     return $this->belongsTo(TargetType::class)->withDefault(function ($user, $post) {
@@ -407,12 +412,12 @@ class Savings extends Model
     return true;
   }
 
-  public function getTotalDurationAttribute()
+  public function getTotalDurationAttribute(): int
   {
     return optional($this->maturity_date)->diffInDays($this->funded_at);
   }
 
-  public function getElapsedDurationAttribute()
+  public function getElapsedDurationAttribute(): int
   {
     return optional($this->maturity_date)->diffInDays(now());
   }

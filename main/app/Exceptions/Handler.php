@@ -60,31 +60,31 @@ class Handler extends ExceptionHandler
   {
     $response = parent::render($request, $exception);
 
-    if (in_array($response->status(), [500, 503, 404, 403, 429])) {
-      if ($this->is404($exception)) {
-        $this->log404($request);
-      }
+    // if (in_array($response->status(), [500, 503, 404, 403, 429])) {
+    //   if ($this->is404($exception)) {
+    //     $this->log404($request);
+    //   }
 
-      /**
-       * ! Handle API request errors
-       */
-      if ($request->isApi()) {
-        return $response;
-      }
+    //   /**
+    //    * ! Handle API request errors
+    //    */
+    //   if ($request->isApi()) {
+    //     return $response;
+    //   }
 
-      try {
-        Inertia::setRootView('basicsite::app');
-        return Inertia::render('BasicSite,DisplayError', ['status' => $response->status()])
-          ->toResponse($request)
-          ->setStatusCode($response->status());
-      } catch (\Throwable $th) {
-        if (app()->environment('local')) {
-          dd('Handler Error: ', $th);
-        }
-      }
-    } elseif (in_array($response->status(), [419])) {
-      throw ValidationException::withMessages(['error' => 'Your session has expired. Please try again'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
+    //   try {
+    //     Inertia::setRootView('basicsite::app');
+    //     return Inertia::render('BasicSite,DisplayError', ['status' => $response->status()])
+    //       ->toResponse($request)
+    //       ->setStatusCode($response->status());
+    //   } catch (\Throwable $th) {
+    //     if (app()->environment('local')) {
+    //       dd('Handler Error: ', $th);
+    //     }
+    //   }
+    // } elseif (in_array($response->status(), [419])) {
+    //   throw ValidationException::withMessages(['error' => 'Your session has expired. Please try again'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+    // }
 
     return $response;
   }
