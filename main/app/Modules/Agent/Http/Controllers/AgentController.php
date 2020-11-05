@@ -11,10 +11,6 @@ use Illuminate\Support\Facades\Route;
 
 class AgentController extends Controller
 {
-  public function __construct()
-  {
-    Inertia::setRootView('agent::app');
-  }
 
   /**
    * The agent routes

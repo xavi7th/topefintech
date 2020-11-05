@@ -57,16 +57,7 @@ class LoginController extends Controller
    */
   public function __construct()
   {
-    // dd(routeHasRootNamespace('app.'));
-    if (routeHasRootNamespace('appuser.')) {
-      Inertia::setRootView('appuser::app');
-    } elseif (routeHasRootNamespace('app.')) {
-      Inertia::setRootView('appuser::app');
-    } elseif (routeHasRootNamespace('admin.')) {
-      Inertia::setRootView('admin::app');
-    } elseif (routeHasRootNamespace('agent.')) {
-      Inertia::setRootView('agent::app');
-    }
+    // $this->middleware('guest');
   }
 
   static function routes()

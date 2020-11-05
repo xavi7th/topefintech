@@ -26,56 +26,6 @@ use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
-/**
- * App\Modules\AppUser\Models\Savings
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $type
- * @property int|null $target_type_id
- * @property \Illuminate\Support\Carbon|null $maturity_date
- * @property float $current_balance
- * @property \Illuminate\Support\Carbon|null $funded_at
- * @property bool $is_liquidated
- * @property bool $is_withdrawn
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read AppUser $app_user
- * @property-read mixed $elapsed_duration
- * @property-read mixed $total_duration
- * @property-read Transaction|null $initial_deposit_transaction
- * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read TargetType|null $target_type
- * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @method static \Illuminate\Database\Eloquent\Builder|Savings active()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings matured()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings notWithdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings query()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCurrentBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereIsLiquidated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereIsWithdrawn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereTargetTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|Savings withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
- * @mixin \Eloquent
- */
 class Savings extends Model
 {
   use SoftDeletes;
@@ -90,16 +40,6 @@ class Savings extends Model
     'is_liquidated' => 'boolean',
     'is_withdrawn' => 'boolean',
   ];
-
-  public function __construct(array $attributes = [])
-  {
-    parent::__construct($attributes);
-    if (User::hasRouteNamespace('appuser.')) {
-      Inertia::setRootView('appuser::app');
-    } elseif (User::hasRouteNamespace('admin.')) {
-      Inertia::setRootView('admin::app');
-    }
-  }
 
   public function service_charges()
   {

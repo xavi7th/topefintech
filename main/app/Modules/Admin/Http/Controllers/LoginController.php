@@ -42,7 +42,6 @@ class LoginController extends Controller
 
   public function __construct()
   {
-    Inertia::setRootView('admin::app');
     $this->middleware('throttle:5,1')->except(['admin.login.show']);
     $this->middleware('guest:admin')->only(['showLoginForm', 'login']);
     $this->middleware('auth:admin')->only(['logout', 'newAdminSetPassword']);

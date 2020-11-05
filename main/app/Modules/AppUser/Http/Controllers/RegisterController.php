@@ -51,7 +51,6 @@ class RegisterController extends Controller
    */
   public function __construct()
   {
-    Inertia::setRootView('appuser::app');
     $this->middleware('guest');
   }
 

@@ -20,12 +20,6 @@ use App\Modules\Admin\Http\Controllers\LoginController;
 
 class AdminController extends Controller
 {
-
-  public function __construct()
-  {
-    Inertia::setRootView('admin::app');
-  }
-
   public static function apiRoutes()
   {
     Route::group(['middleware' => ['api'], 'prefix' =>  Admin::DASHBOARD_ROUTE_PREFIX . '/api/',  'namespace' => '\App\Modules\Admin\Http\Controllers'], function () {

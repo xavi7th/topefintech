@@ -11,38 +11,10 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * App\Modules\AppUser\Models\TargetType
- *
- * @property int $id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\Savings[] $savings
- * @property-read int|null $savings_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\TargetType whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class TargetType extends Model
 {
   protected $fillable = ['name'];
   protected $table = 'target_types';
-
-  public function __construct(array $attributes = [])
-  {
-    parent::__construct($attributes);
-    if (User::hasRouteNamespace('appuser.')) {
-      Inertia::setRootView('appuser::app');
-    } elseif (User::hasRouteNamespace('admin.')) {
-      Inertia::setRootView('admin::app');
-    }
-  }
 
   public function savings()
   {

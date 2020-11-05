@@ -2,10 +2,7 @@
 
 namespace App\Modules\Admin\Transformers;
 
-use App\User;
-use App\ErrLog;
-use Illuminate\Support\Facades\Log;
-use App\Modules\AppUser\Models\Transaction;
+use App\Modules\Admin\Models\ErrLog;
 
 class AdminActivityTransformer
 {

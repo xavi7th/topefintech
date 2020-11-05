@@ -20,59 +20,6 @@ use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
-/**
- * App\Modules\Agent\Models\Agent
- *
- * @property int $id
- * @property string $full_name
- * @property string $email
- * @property string $password
- * @property string|null $phone
- * @property string|null $bvn
- * @property string|null $avatar
- * @property string|null $gender
- * @property string|null $address
- * @property \Illuminate\Support\Carbon|null $dob
- * @property \Illuminate\Support\Carbon|null $verified_at
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
- * @property-read int|null $activities_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
- * @property-read int|null $processed_withdrawal_requests_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereBvn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereDob($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereFullName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereVerifiedAt($value)
- * @mixin \Eloquent
- * @property string|null $ref_code
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereRefCode($value)
- * @property string|null $city_of_operation
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Agent\Models\AgentWalletTransaction[] $agent_wallet_transactions
- * @property-read int|null $agent_wallet_transactions_count
- * @property-read float $wallet_balance
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\AppUser[] $managed_users
- * @property-read int|null $managed_users_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Agent\Models\Agent whereCityOfOperation($value)
- */
 class Agent extends User
 {
   protected $fillable = [
@@ -84,12 +31,6 @@ class Agent extends User
   protected $appends = ['wallet_balance'];
 
   const DASHBOARD_ROUTE_PREFIX = 'smart-collectors';
-
-  public function __construct(array $attributes = [])
-  {
-    parent::__construct($attributes);
-    Inertia::setRootView('agent::app');
-  }
 
   public function managed_users()
   {
