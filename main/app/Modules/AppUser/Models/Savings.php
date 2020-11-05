@@ -22,9 +22,11 @@ use App\Modules\AppUser\Notifications\TargetSavingsBroken;
 use App\Modules\AppUser\Notifications\TargetSavingsMatured;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
+use App\Modules\Admin\Transformers\AdminSavingsTransformer;
 use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
+use RachidLaasri\Travel\Travel;
 
 class Savings extends Model
 {
@@ -624,7 +626,9 @@ class Savings extends Model
 
   public function adminViewUserSavings(Request $request, AppUser $user)
   {
-    $savings_list = $user->savings_list->load('target_type');
+    Travel::to('4 months 4 days');
+    $savings_list = (new AdminSavingsTransformer)->collectionTransformer($user->savings_list->load('target_type'), 'basic');
+    // $savings_list = $user->savings_list->load('target_type');
     $auto_save_list = $user->auto_save_settings;
     // $target_types = TargetType::all();
 
@@ -710,9 +714,7 @@ class Savings extends Model
   {
     $notifications = Admin::find(1)->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
 
-    if ($request->isApi()) {
-      return $notifications;
-    }
+    if ($request->isApi()) return $notifications;
     return Inertia::render('Admin,AdminNotifications', [
       'notifications' => $notifications
     ]);

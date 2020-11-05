@@ -39,9 +39,11 @@
           <tr v-for="savings in savings_list" :key="savings.id">
             <th scope="row">{{savings.id}}</th>
             <td class="text-capitalize d-flex justify-content-between align-items-center">
-              {{savings.target_type.name || 'N/A'}} Savings
+              {{savings.name || savings.target_type.name || 'N/A'}} Savings
+              <span class="badge badge-danger" v-if="savings.is_matured && $page.auth.user.isAdmin">MATURED</span>
               <button
                 type="button"
+                v-if="!savings.is_matured"
                 class="btn btn-success btn-uniform btn-round btn-xs"
                 @click="fundThisSavings(savings)"
               >
@@ -53,7 +55,7 @@
                 type="button"
                 class="btn btn-danger btn-uniform btn-round btn-xs"
                 @click="defundThisSavings(savings)"
-                v-if="$page.auth.user.isAdmin"
+                v-if="$page.auth.user.isAdmin && !savings.is_matured"
               >
                 <span class="icon">
                   <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>

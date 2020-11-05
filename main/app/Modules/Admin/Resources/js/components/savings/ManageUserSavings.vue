@@ -167,7 +167,7 @@
   import { mixins, toOrdinalSuffix } from "@dashboard-assets/js/config";
   import axios from "axios";
   import Layout from "@admin-assets/js/AdminAppComponent";
-  import ManageSavings from "@dashboard-assets/js/components/savings/partials/ManageSavings";
+  import ManageSavings from "@dashboard-assets/js/components/savings/partials/ManageSavings.vue";
   import ManageAutoSaveSettings from "@dashboard-assets/js/components/savings/partials/ManageAutoSaveSettings";
   export default {
     name: "AdminManageUserSavings",
