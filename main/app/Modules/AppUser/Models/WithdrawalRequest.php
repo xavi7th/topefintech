@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Admin\Models\ActivityLog;
+use App\Modules\Admin\Transformers\AdminWithdrawalRequestTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\ValidationException;
 use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
@@ -31,6 +33,7 @@ class WithdrawalRequest extends Model
   protected $casts = [
     'is_processed' => 'boolean',
     'is_charge_free' => 'boolean',
+    'is_user_verified' => 'boolean',
     'amount' => 'double',
   ];
 
@@ -46,7 +49,7 @@ class WithdrawalRequest extends Model
 
   public function savingsPortfolio()
   {
-    return $this->belongsTo(Savings::class);
+    return $this->belongsTo(Savings::class, 'savings_id');
   }
 
   static function appUserRoutes()
@@ -59,12 +62,12 @@ class WithdrawalRequest extends Model
     });
   }
 
-  static function adminApiRoutes()
+  static function adminRoutes()
   {
-    Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
-      Route::get('', 'WithdrawalRequest@adminGetWithdrawalRequests');
-      Route::put('/{withdrawal_request}/mark-complete', 'WithdrawalRequest@approveWithdrawalRequest');
-      Route::put('/{withdrawal_request}/cancel', 'WithdrawalRequest@cancelWithdrawalRequest');
+    Route::prefix('withdrawal-requests')->name('admin.')->group(function () {
+      Route::get('', [self::class, 'adminGetWithdrawalRequests'])->name('withdrawal_requests')->defaults('extras', ['icon' => 'fa fa-x-ray']);
+      Route::put('/{withdrawal_request}/mark-complete', [self::class, 'approveWithdrawalRequest'])->name('withdrawal_request.mark_complete');
+      Route::put('/{withdrawal_request}/cancel', [self::class, 'cancelWithdrawalRequest'])->name('withdrawal_request.delete');
     });
   }
 
@@ -157,9 +160,12 @@ class WithdrawalRequest extends Model
    * Admin routes
    * @return Illuminate\Http\JsonResponse
    */
-  public function adminGetWithdrawalRequests()
+  public function adminGetWithdrawalRequests(Request $request)
   {
-    return response()->json(self::with('processor')->withTrashed()->get(), 200);
+    $withdrawal_requests = Cache::rememberForever('withdrawalRequests', fn () => (new AdminWithdrawalRequestTransformer)->collectionTransformer(self::with(['processor', 'app_user.smart_collector', 'savingsPortfolio'])->withTrashed()->get(), 'detailed'));
+
+    if ($request->isApi()) return $withdrawal_requests;
+    return Inertia::render('Admin,WithdrawalRequests', compact('withdrawal_requests'));
   }
 
   public function cancelWithdrawalRequest(self $withdrawal_request)
@@ -266,18 +272,18 @@ class WithdrawalRequest extends Model
   {
     parent::boot();
 
-    static::created(function ($withdrawal_request) {
-      ActivityLog::notifyAdmins(auth()->user()->email . ' requested a withdrawal request of ' . to_naira($withdrawal_request->amount));
+    static::created(function (self $withdrawalRequest) {
+      ActivityLog::notifyAdmins(auth()->user()->email . ' requested a withdrawal request of ' . to_naira($withdrawalRequest->amount));
+    });
+
+    static::saved(function (self $withdrawalRequest) {
+      Cache::forget('withdrawalRequests');
     });
 
     static::deleting(function ($withdrawal_request) {
       if (!$withdrawal_request->isForceDeleting()) {
         ActivityLog::notifyAdmins(auth()->user()->email . ' declined ' . $withdrawal_request->app_user->email . '\'s withdrawal request of ' . to_naira($withdrawal_request->amount));
       }
-    });
-
-    static::retrieved(function ($withdrawal_request) {
-      $withdrawal_request->load('app_user');
     });
 
     static::updating(function ($withdrawal_request) {

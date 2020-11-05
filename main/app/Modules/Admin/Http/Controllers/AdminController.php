@@ -27,7 +27,7 @@ class AdminController extends Controller
 
         AppUser::adminApiRoutes();
 
-        WithdrawalRequest::adminApiRoutes();
+
       });
     });
   }
@@ -50,6 +50,7 @@ class AdminController extends Controller
         TargetType::adminRoutes();
         Savings::adminRoutes();
         SavingsInterest::adminRoutes();
+        WithdrawalRequest::adminRoutes();
         ErrLog::routes();
       });
     });
