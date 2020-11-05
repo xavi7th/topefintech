@@ -62,8 +62,8 @@ class LoginController extends Controller
 
   static function routes()
   {
-    Route::get('/login', [self::class, 'showLoginForm'])->middleware('guest:web,agent')->name('app.login')->defaults('extras', ['nav_skip' => true]);
-    Route::post('login', [self::class, 'login'])->middleware('guest:web,agent')->name('appuser.login');
+    Route::get('/login', [self::class, 'showLoginForm'])->middleware('guest:web,agent,admin')->name('app.login')->defaults('extras', ['nav_skip' => true]);
+    Route::post('login', [self::class, 'login'])->middleware('guest:web,agent,admin')->name('appuser.login');
     // Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
     Route::match(['GET', 'POST'], 'logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth:web,agent');
     Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);

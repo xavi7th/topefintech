@@ -175,6 +175,11 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     }
   }
 
+  public function getType(): string
+  {
+    return class_basename(get_class($this));
+  }
+
   public function setPasswordAttribute($value): void
   {
     $this->attributes['password'] = bcrypt($value);

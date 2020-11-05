@@ -34,7 +34,7 @@
       </div>
       <div class="mt-20 text-grey-5 text-center">
         Don't have an account?
-        <inertia-link :href="$route('app.create_account')" class="text-2">Get started easily</inertia-link>
+        <inertia-link :href="$route('app.register.show')" class="text-2">Get started easily</inertia-link>
       </div>
     </form>
   </layout>

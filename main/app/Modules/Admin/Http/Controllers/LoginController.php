@@ -37,13 +37,13 @@ class LoginController extends Controller
    */
   protected function redirectTo()
   {
-    return route(Admin::dashboardRoute());
+    return route(request()->user()->dashboardRoute());
   }
 
   public function __construct()
   {
     $this->middleware('throttle:5,1')->except(['admin.login.show']);
-    $this->middleware('guest:admin')->only(['showLoginForm', 'login']);
+    $this->middleware('guest:web,agent,admin')->only(['showLoginForm', 'login']);
     $this->middleware('auth:admin')->only(['logout', 'newAdminSetPassword']);
   }
 
@@ -52,7 +52,7 @@ class LoginController extends Controller
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('admin.login.show')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [LoginController::class, 'login'])->name('admin.login');
     // Route::post('first-time', [LoginController::class, 'newAdminSetPassword'])->name('admin.password.new');
-    Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
+    Route::match(['get', 'post'], 'logout', [LoginController::class, 'logout'])->name('admin.logout');
   }
 
   /**

@@ -16,14 +16,16 @@ class RedirectIfAuthenticated
    * @param  string|null  $guard
    * @return mixed
    */
-  public function handle($request, Closure $next, $guard = null)
+  public function handle($request, Closure $next, ...$guards)
   {
-    // dd($guards);
-    // foreach ($guards as $g) {
-    //   dd($g);
-    // }
-    if (Auth::guard($guard)->check()) {
-      return redirect()->route($request->user()->dashboardRoute());
+    if (empty($guards)) {
+      $guards = [null];
+    }
+
+    foreach ($guards as $guard) {
+      if (Auth::guard($guard)->check()) {
+        return redirect()->route(Auth::guard($guard)->user()->dashboardRoute());
+      }
     }
 
     return $next($request);
