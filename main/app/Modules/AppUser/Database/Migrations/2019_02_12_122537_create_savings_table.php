@@ -23,7 +23,7 @@ class CreateSavingsTable extends Migration
       $table->double('current_balance')->default(0);
       $table->timestamp('funded_at')->nullable();
       $table->boolean('is_liquidated')->default(false);
-      $table->boolean('is_withdrawn')->default(false);
+      $table->timestamp('withdrawn_at')->nullable();
 
 
       $table->timestamps();

@@ -15,6 +15,61 @@ use App\Modules\AppUser\Models\PaystackTransaction;
 use App\Modules\AppUser\Transformers\DebitCardTransformer;
 use App\Modules\AppUser\Http\Requests\AddNewDebitCardValidation;
 
+/**
+ * App\Modules\AppUser\Models\DebitCard
+ *
+ * @property int $id
+ * @property int $app_user_id
+ * @property string|null $brand
+ * @property string|null $sub_brand
+ * @property string|null $country
+ * @property string|null $card_type
+ * @property string|null $bank
+ * @property string $pan
+ * @property string $pan_hash
+ * @property string|null $month
+ * @property string|null $year
+ * @property string|null $cvv
+ * @property string|null $cvv_hash
+ * @property bool $is_default
+ * @property bool $is_authorised
+ * @property string|null $authorization_code
+ * @property object|null $authorization_object
+ * @property string $uuid
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read AppUser $app_user
+ * @property-read mixed $xed_pan
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard newQuery()
+ * @method static \Illuminate\Database\Query\Builder|DebitCard onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard query()
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereAppUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereAuthorizationCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereAuthorizationObject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereBrand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereCardType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereCvv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereCvvHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereIsAuthorised($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereIsDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard wherePan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard wherePanHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereSubBrand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DebitCard whereYear($value)
+ * @method static \Illuminate\Database\Query\Builder|DebitCard withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|DebitCard withoutTrashed()
+ * @mixin \Eloquent
+ */
 class DebitCard extends Model
 {
   use SoftDeletes;

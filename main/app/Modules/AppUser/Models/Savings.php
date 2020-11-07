@@ -2,7 +2,6 @@
 
 namespace App\Modules\AppUser\Models;
 
-use App\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +27,60 @@ use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 use RachidLaasri\Travel\Travel;
 
+/**
+ * App\Modules\AppUser\Models\Savings
+ *
+ * @property int $id
+ * @property int $app_user_id
+ * @property string $type
+ * @property int|null $target_type_id
+ * @property \Illuminate\Support\Carbon|null $maturity_date
+ * @property float $current_balance
+ * @property \Illuminate\Support\Carbon|null $funded_at
+ * @property bool $is_liquidated
+ * @property string|null $withdrawn_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read AppUser $app_user
+ * @property-read int $elapsed_duration
+ * @property-read bool $is_withdrawn
+ * @property-read int $total_duration
+ * @property-read Transaction|null $initial_deposit_transaction
+ * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
+ * @property-read int|null $savings_interests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
+ * @property-read int|null $service_charges_count
+ * @property-read TargetType|null $target_type
+ * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawalRequest
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings active()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings liquidated()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings matured()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings notWithdrawn()
+ * @method static \Illuminate\Database\Query\Builder|Savings onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereAppUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCurrentBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereFundedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereIsLiquidated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereMaturityDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereTargetTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereWithdrawnAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Savings withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings withdrawn()
+ * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings yieldsInterests()
+ * @mixin \Eloquent
+ */
 class Savings extends Model
 {
   use SoftDeletes;
@@ -39,8 +92,7 @@ class Savings extends Model
     'current_balance' => 'double',
     'app_user_id' => 'int',
     'target_type_id' => 'int',
-    'is_liquidated' => 'boolean',
-    'is_withdrawn' => 'boolean',
+    'is_liquidated' => 'boolean'
   ];
 
   public function service_charges()
@@ -279,7 +331,8 @@ class Savings extends Model
     $this->transactions()->create([
       'trans_type' => 'withdrawal',
       'amount' => $amount,
-      'description' => $desc
+      'description' => $desc,
+      'yields_interest' => false
     ]);
   }
 
@@ -359,6 +412,11 @@ class Savings extends Model
     return optional($this->maturity_date)->diffInDays($this->funded_at);
   }
 
+  public function getIsWithdrawnAttribute(): bool
+  {
+    return !is_null($this->withdrawn_at);
+  }
+
   public function getElapsedDurationAttribute(): int
   {
     return optional($this->maturity_date)->diffInDays(now());
@@ -401,15 +459,12 @@ class Savings extends Model
 
   public function viewUserSavings(Request $request)
   {
-    if ($request->isApi()) {
-      return $request->user()->savings_list;
-    } else {
-      return Inertia::render('AppUser,savings/UserSavings', [
-        'savings_list' => $request->user()->savings_list->load('target_type'),
-        'auto_save_list' => $request->user()->auto_save_settings,
-        'target_types' => TargetType::all()
-      ]);
-    }
+    if ($request->isApi()) return $request->user()->savings_list;
+    return Inertia::render('AppUser,savings/UserSavings', [
+      'savings_list' => $request->user()->savings_list()->active()->with('target_type')->get(),
+      'auto_save_list' => $request->user()->auto_save_settings,
+      'target_types' => TargetType::all()
+    ]);
   }
 
   public function viewTargetList()
@@ -739,7 +794,18 @@ class Savings extends Model
    */
   public function scopeNotWithdrawn($query)
   {
-    return $query->whereIsWithdrawn(false);
+    return $query->whereWithdrawnAt(null);
+  }
+
+  /**
+   * Scope a query to only include only savings that have not yet been withdrawn
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder  $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   */
+  public function scopeWithdrawn($query)
+  {
+    return $query->where('withdrawn_at', '<>', null);
   }
 
   /**
@@ -751,7 +817,12 @@ class Savings extends Model
    */
   public function scopeActive($query)
   {
-    return $query->whereDate('maturity_date', '>=', now())->whereIsLiquidated(false)->whereIsWithdrawn(false);
+    return $query->whereDate('maturity_date', '>=', now())->whereIsLiquidated(false)->whereWithdrawnAt(null);
+  }
+
+  public function scopeYieldsInterests($query)
+  {
+    return $query->whereYieldsInterests(true);
   }
 
   /**

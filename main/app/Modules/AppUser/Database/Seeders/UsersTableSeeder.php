@@ -53,7 +53,7 @@ class UsersTableSeeder extends Seeder
         'email' => 'xavi7th@gmail.com',
         'verified_at' => '2020-04-15 05:47:29',
         'password' => bcrypt('pass'),
-        'phone' => '0803444444444',
+        'phone' => '07059312514',
         'address' => NULL,
         'city' => NULL,
         'country' => 'Nigeria',

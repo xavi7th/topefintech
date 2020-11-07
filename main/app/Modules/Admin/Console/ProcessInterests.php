@@ -52,8 +52,11 @@ class ProcessInterests extends Command
      * -- The issue is multiple single sum queries VS a single select query with potential 1000s rows which is faster
      */
 
-    // Travel::to('4 months 4 days', function () {
-      foreach (Savings::active()->with(['app_user', 'target_type'])->cursor() as $savings_record) {
+    Travel::to('4 months 4 days', function () {
+      /**
+       * @var Savings $savings_record
+       */
+    foreach (Savings::active()->with(['app_user', 'target_type'])->cursor() as $savings_record) {
         $interest_amount = $savings_record->get_due_interest();
         if ($interest_amount > 0) {
 
@@ -68,7 +71,7 @@ class ProcessInterests extends Command
           DB::commit();
         }
       }
-    // });
+    });
 
     dump(collect($this->notification)->implode(', \n'));
     Admin::find(1)->notify(new GenericAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ')));

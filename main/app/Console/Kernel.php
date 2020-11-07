@@ -27,8 +27,8 @@ class Kernel extends ConsoleKernel
   protected function schedule(Schedule $schedule)
   {
     $schedule->command('savings:process-interest')
-      ->daily()
-      // ->everyMinute()
+    // ->daily()
+    ->everyMinute()
       ->withoutOverlapping(10)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-interests-' . now()->toDateString() . '.cson')
       ->onFailure(function () {
@@ -44,8 +44,8 @@ class Kernel extends ConsoleKernel
       });
 
     $schedule->command('savings:process-mature-savings')
-      ->daily()
-      // ->everyMinute()
+    // ->daily()
+    ->everyMinute()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-savings-log' . now()->toDateString() . '.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing mature savings failed to complete successfully');

@@ -52,7 +52,7 @@ class SavingsRecordTransformer
       'total_duration' => (int)$savings->total_duration,
       'elapsed_duration' => (int)$savings->elapsed_duration,
       'total_unprocessed_interest_amount' => (float)$savings->total_unprocessed_interest_amount(),
-      'has_withdrawal_request' => (bool)$savings->withdrawalRequest()->exists()
+      'has_withdrawal_request' => (bool)$savings->withdrawalRequest()->unprocessed()->exists()
     ];
   }
 

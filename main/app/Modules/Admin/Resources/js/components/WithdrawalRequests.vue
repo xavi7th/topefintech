@@ -150,6 +150,7 @@
                         class="btn btn-success btn-xs text-nowrap"
                         type="button"
                         v-if="!withdrawalRequest.is_processed && withdrawalRequest.is_user_verified"
+                        @click="markWithdrawalRequestAsProcessed(withdrawalRequest)"
                       >
                         MARK PROCESSED
                       </button>
@@ -350,25 +351,20 @@
     data: () => ({}),
 
     methods: {
-      createWithdrawalRequest() {
+      markWithdrawalRequestAsProcessed(withdrawalRequest) {
         BlockToast.fire({
-          text: "Creating withdrawalRequest...",
+          text: "working ...",
         });
 
         this.$inertia
-          .post(this.$route("admin.create_withdrawalRequest"), {
-            ...this.details,
+          .post(this.$route("admin.withdrawal_request.mark_complete", withdrawalRequest.id), null, {
+             preserveState: true,
+              preserveScroll: true,
+              only: ['flash','errors', 'withdrawal_requests'],
           })
           .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: `They will be required to set a password on their first login`,
-                type: "success",
-              });
-            } else {
-              swal.close();
-            }
+            this.displayResponse();
+           this.displayErrors();
           });
       },
       deleteWithdrawalRequest(withdrawalRequest) {

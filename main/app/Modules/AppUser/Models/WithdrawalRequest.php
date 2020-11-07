@@ -22,6 +22,50 @@ use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
 use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
 
+/**
+ * App\Modules\AppUser\Models\WithdrawalRequest
+ *
+ * @property int $id
+ * @property int $app_user_id
+ * @property int $savings_id
+ * @property float|null $amount
+ * @property string|null $description
+ * @property bool $is_user_verified
+ * @property bool $is_processed
+ * @property bool $is_charge_free
+ * @property int|null $processed_by
+ * @property string|null $processor_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read AppUser $app_user
+ * @property-read Model|\Eloquent $processor
+ * @property-read Savings $savingsPortfolio
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userUnverified()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userVerified()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAppUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsChargeFree($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsProcessed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsUserVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereSavingsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withoutTrashed()
+ * @mixin \Eloquent
+ */
 class WithdrawalRequest extends Model
 {
   use SoftDeletes;
@@ -66,7 +110,7 @@ class WithdrawalRequest extends Model
   {
     Route::prefix('withdrawal-requests')->name('admin.')->group(function () {
       Route::get('', [self::class, 'adminGetWithdrawalRequests'])->name('withdrawal_requests')->defaults('extras', ['icon' => 'fa fa-x-ray']);
-      Route::put('/{withdrawalRequest}/mark-complete', [self::class, 'approveWithdrawalRequest'])->name('withdrawal_request.mark_complete');
+      Route::post('/{withdrawalRequest}/mark-complete', [self::class, 'approveWithdrawalRequest'])->name('withdrawal_request.mark_complete');
       Route::delete('/{withdrawalRequestId}/cancel', [self::class, 'cancelWithdrawalRequest'])->name('withdrawal_request.delete');
     });
   }
@@ -203,40 +247,54 @@ class WithdrawalRequest extends Model
     }
   }
 
-  public function approveWithdrawalRequest(self $withdrawal_request)
+  public function approveWithdrawalRequest(Request $request, self $withdrawalRequest)
   {
-    if ($withdrawal_request->is_processed) {
-      ActivityLog::notifyAdmins(auth()->user()->email . ' attempted to approve an already processed request: ' . $withdrawal_request->id);
-      return generate_422_error('Request has been processed already');
+    if ($withdrawalRequest->is_processed) {
+      ActivityLog::notifyAdmins($request->user()->email . ' attempted to approve an already processed request: ' . $withdrawalRequest->id);
+      throw ValidationException::withMessages(['err' => 'This request has been processed already!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+    if (!$withdrawalRequest->is_user_verified) {
+      ActivityLog::notifyAdmins($request->user()->email . ' attempted to approve a request that has not been verified by the user: ' . $withdrawalRequest->id);
+      throw ValidationException::withMessages(['err' => 'Invalid action!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    $savingsPortfolio = $withdrawalRequest->savingsPortfolio;
+    $appUser = $withdrawalRequest->app_user;
 
     DB::beginTransaction();
 
     /**
-     * on approval add a withdrawal transaction for the users smart savings_id
+     * on approval add a withdrawal transaction to clear the savings protfolio
      */
-    $desc = $withdrawal_request->is_charge_free ? 'Withdrawal from smart savings balance' : 'Charge-deductible withdrawal from smart savings balance';
-    $withdrawal_request->app_user->smart_savings->create_withdrawal_transaction($withdrawal_request->amount, $desc);
+    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance';
+    $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
 
-    if (!$withdrawal_request->is_charge_free) {
+    if (!$withdrawalRequest->is_charge_free) {
       /**
        * Get deductible percentage of withdrawal request amount
        */
-      $withdrawal_charge = $withdrawal_request->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+      $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
 
       /**
        * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
        */
-      $withdrawal_request->app_user->smart_savings->create_service_charge($withdrawal_charge, 'Amount deducted for multiple consecutive withdrawals');
+      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings portfolio');
     }
 
     /**
      * Mark the request as processed
      */
-    $withdrawal_request->is_processed = true;
-    $withdrawal_request->processed_by = auth()->id();
-    $withdrawal_request->processor_type = get_class(auth()->user());
-    $withdrawal_request->save();
+    $withdrawalRequest->is_processed = true;
+    $withdrawalRequest->processed_by = $request->user()->id;
+    $withdrawalRequest->processor_type = get_class($request->user());
+    $withdrawalRequest->save();
+
+    /**
+     * Mark the savings as withdrawn
+     */
+    $savingsPortfolio->withdrawn_at = now();
+    $savingsPortfolio->save();
 
     DB::commit();
 
@@ -244,13 +302,13 @@ class WithdrawalRequest extends Model
      * Notify user that his request has been processed
      */
     try {
-      $withdrawal_request->app_user->notify(new ProcessedWithdrawalRequestNotification($withdrawal_request));
+      $appUser->notify(new ProcessedWithdrawalRequestNotification($withdrawalRequest));
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($withdrawal_request->app_user, $th, 'Processed withdrawal notification failed');
+      ErrLog::notifyAdmin($appUser, $th, 'ProWe could not send a notification of transaction processed to ' . $appUser->full_name);
     }
 
-
-    return response()->json([], 204);
+    if ($request->isApi()) return response()->json('Withdrawal request marked as processed', 204);
+    return back()->withFlash(['success' => 'Withdrawal request marked as processed']);
   }
 
   public function scopeUserVerified($query)

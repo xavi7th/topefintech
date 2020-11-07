@@ -8,7 +8,7 @@
       <div class="col-12 col-md justify-content-between">
         <button
           type="button"
-          class="btn btn-brand"
+          class="btn btn-brand mb-10"
           data-toggle="modal"
           data-target="#createSmartSavings"
           v-if="!$page.auth.user.has_smart_savings && !$page.auth.user.isAdmin"
