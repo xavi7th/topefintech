@@ -54,6 +54,13 @@ class CreateWithdrawalRequestValidation extends FormRequest
         $validator->errors()->add('amount', 'You already have a pending request.');
         return;
       }
+      /**
+       * check if this portfolio is mature
+       */
+      if (!$this->savings->is_mature()) {
+        $validator->errors()->add('amount', 'This savings is not yet due for withdrawal.');
+        return;
+      }
     });
   }
 
