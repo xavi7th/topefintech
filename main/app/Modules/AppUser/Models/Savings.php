@@ -80,19 +80,22 @@ use RachidLaasri\Travel\Travel;
  * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Savings yieldsInterests()
  * @mixin \Eloquent
+ * @property int $interests_withdrawable
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsWithdrawable($value)
  */
 class Savings extends Model
 {
   use SoftDeletes;
 
-  protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount'];
+  protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount', 'interests_withdrawable'];
   protected $table = 'savings';
   protected $dates = ['funded_at', 'maturity_date', 'interest_processed_at'];
   protected $casts = [
     'current_balance' => 'double',
     'app_user_id' => 'int',
     'target_type_id' => 'int',
-    'is_liquidated' => 'boolean'
+    'is_liquidated' => 'boolean',
+    'interests_withdrawable' => 'boolean',
   ];
 
   public function service_charges()
@@ -390,6 +393,25 @@ class Savings extends Model
     DB::commit();
   }
 
+  public function unprocessedTotalInterestsAmount(): float
+  {
+    return $this->savings_interests()->unprocessed()->sum('amount');
+  }
+
+  public function isDueForInterestsWithdrawal(): bool
+  {
+
+    // check if this savings interests has grown to min treshold for interests withdrawal
+    if ($this->unprocessedTotalInterestsAmount() < config('app.smart_savings_minimum_amount_before_interests_withdrawal')) {
+      return false;
+    }
+    // check if this portfolio is old enough to have interests withdrawn
+    if ($this->funded_at->diffInDays(now()) < config('app.smart_savings_minimum_duration_before_interests_withdrawal')) {
+      return false;
+    }
+    return true;
+  }
+
   public function is_due_for_free_withdrawal(): bool
   {
     /**
@@ -647,21 +669,15 @@ class Savings extends Model
 
   public function initialiseSmartSavingsProfile(InitialiseSmartSavingsValidation $request)
   {
-    $funds = $request->user()->smart_savings()->create([
-      'type' => 'smart',
-      'maturity_date' => now()->addMonths($request->duration)
-    ]);
+    $funds = $request->user()->smart_savings()->create($request->validated());
 
     /**
      * Notify the user that a smart savings account prifile was initialised for him. He can start saving right away
      */
     $request->user()->notify(new SmartSavingsInitialised($request->user()));
 
-    if ($request->isApi()) {
-      return response()->json(['rsp' => $funds], 201);
-    } else {
-      return back()->withFlash(['success' => 'Smart savings portfolio initialised successfully']);
-    }
+    if ($request->isApi()) return response()->json(['rsp' => $funds], 201);
+    return back()->withFlash(['success' => 'Smart savings portfolio initialised successfully']);
   }
 
   public function liquidateSmartSavings(Request $request)

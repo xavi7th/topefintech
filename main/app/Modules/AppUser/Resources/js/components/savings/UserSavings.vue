@@ -114,6 +114,23 @@
               />
               <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
             </div>
+
+            <div class="col-sm-12">
+              <div
+                class="custom-control custom-checkbox d-flex justify-content-start flex-wrap"
+              >
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  v-model="details.interests_withdrawable"
+                  id="interests-withdrawable"
+                />
+                <label class="custom-control-label fs-13" for="interests-withdrawable">
+                  I want to withdraw the interests from time to time
+                </label>
+               <FlashMessage v-if="errors.interests_withdrawable" :msg="errors.interests_withdrawable[0]" />
+              </div>
+            </div>
           </div>
           <div slot="modal-buttons">
             <button type="submit" class="btn btn-success btn-long">

@@ -17,6 +17,7 @@ class InitialiseSmartSavingsValidation extends FormRequest
   {
     return [
       'duration' => 'required|numeric|min:3',
+      'interests_withdrawable' => '',
     ];
   }
 
@@ -60,6 +61,17 @@ class InitialiseSmartSavingsValidation extends FormRequest
         return;
       }
     });
+  }
+
+  public function validated()
+  {
+    /**
+     * Add the type of savings
+     */
+    return array_merge(parent::validated(), [
+      'type' => 'smart',
+      'maturity_date' => now()->addMonths($this->duration)
+    ]);
   }
 
   /**

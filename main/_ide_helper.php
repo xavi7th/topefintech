@@ -1388,6 +1388,16 @@
      */ 
         class Artisan {
                     /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function bootstrap()
+        {
+                        /** @var \App\Console\Kernel $instance */
+                        return $instance->bootstrap();
+        }
+                    /**
          * Run the console application.
          *
          * @param \Symfony\Component\Console\Input\InputInterface $input
@@ -1487,17 +1497,6 @@
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
                         /** @var \App\Console\Kernel $instance */
                         return $instance->output();
-        }
-                    /**
-         * Bootstrap the application for artisan commands.
-         *
-         * @return void 
-         * @static 
-         */ 
-        public static function bootstrap()
-        {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
-                        $instance->bootstrap();
         }
                     /**
          * Set the Artisan application instance.

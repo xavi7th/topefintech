@@ -49,6 +49,7 @@ class SavingsRecordTransformer
       'current_balance' => (float)$savings->current_balance,
       'name' => (string)$savings->target_type->name,
       'type' => (string)$savings->type,
+      'interests_withdrawable' => (bool)$savings->interests_withdrawable,
       'total_duration' => (int)$savings->total_duration,
       'elapsed_duration' => (int)$savings->elapsed_duration,
       'total_unprocessed_interest_amount' => (float)$savings->total_unprocessed_interest_amount(),

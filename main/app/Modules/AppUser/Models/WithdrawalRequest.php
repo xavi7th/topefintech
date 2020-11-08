@@ -13,14 +13,15 @@ use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Admin\Models\ActivityLog;
-use App\Modules\Admin\Transformers\AdminWithdrawalRequestTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\ValidationException;
+use App\Modules\Admin\Transformers\AdminWithdrawalRequestTransformer;
 use App\Modules\AppUser\Notifications\SendAccountVerificationMessage;
 use App\Modules\AppUser\Http\Requests\CreateWithdrawalRequestValidation;
 use App\Modules\AppUser\Notifications\WithdrawalRequestCreatedNotification;
 use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
+use App\Modules\AppUser\Http\Requests\CreateInterestsWithdrawalRequestValidation;
 
 /**
  * App\Modules\AppUser\Models\WithdrawalRequest
@@ -65,6 +66,8 @@ use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
  * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property int $is_interests
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsInterests($value)
  */
 class WithdrawalRequest extends Model
 {
@@ -100,9 +103,11 @@ class WithdrawalRequest extends Model
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
       Route::get('', [self::class, 'getWithdrawalRequests'])->name('appuser.withdraw.requests')->defaults('extras', ['icon' => 'fas fa-money-bill-wave']);
-      Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]);
+      // Route::get('create', [self::class, 'showWithdrawalForm'])->name('appuser.withdraw')->defaults('extras', ['nav_skip' => true]);
       Route::post('{savings}/create', [self::class, 'createWithdrawalRequest'])->name('appuser.withdraw.create');
       Route::post('verify', [self::class, 'verifyWithdrawalRequest'])->name('appuser.withdraw.verify');
+      Route::post('{savings}/interests/create', [self::class, 'createInterestsWithdrawalRequest'])->name('appuser.withdraw_interests.create');
+      Route::post('interests/verify', [self::class, 'verifyInterestsWithdrawalRequest'])->name('appuser.withdraw_interests.verify');
     });
   }
 
@@ -170,6 +175,67 @@ class WithdrawalRequest extends Model
   }
 
   public function verifyWithdrawalRequest(Request $request)
+  {
+    $tokenRecord = DB::table('password_resets')->where('token', $request->otp)->first();
+    if (!$tokenRecord) throw ValidationException::withMessages(['err' => 'Invalid token!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+    $user = AppUser::where('phone', $tokenRecord->phone)->firstOr(function () {
+      throw ValidationException::withMessages(['err' => 'Invalid or stale request. Contact Support for assistance!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+    });
+
+    if (!$user->is($request->user())) throw ValidationException::withMessages(['err' => 'Request not permitted! Contact our support team for more information.'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+    $withdrawalRequest = $user->pendingWithdrawalRequest;
+    if (!$withdrawalRequest) throw ValidationException::withMessages(['err' => 'You currently have no pending withdrawal requests.'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+    DB::transaction(function () use ($withdrawalRequest, $request) {
+      $withdrawalRequest->is_user_verified = true;
+      $withdrawalRequest->save();
+
+      DB::table('password_resets')->where('token', $request->otp)->delete();
+    });
+
+
+    try {
+      $user->notify(new WithdrawalRequestCreatedNotification($withdrawalRequest->amount));
+    } catch (\Throwable $th) {
+      ErrLog::notifyAdmin($user, $th, 'Withdrawal request created notification failed');
+    }
+
+    if ($request->isApi()) return response()->json($withdrawalRequest, 201);
+    return back()->withFlash(['success' => 'Withdrawal request verified. We will update you on the status of your request', 'verifiation_succeded' => true]);
+  }
+
+  public function createInterestsWithdrawalRequest(CreateInterestsWithdrawalRequestValidation $request, Savings $savings)
+  {
+    try {
+      if (!$request->user()->hasUnverifiedWithdrawalRequest()) {
+        DB::beginTransaction();
+
+        /**
+         * Create a withdrawal request
+         */
+        $withdrawal_request = $request->user()->withdrawal_request()->create($request->validated());
+
+        $token = $request->user()->createVerificationToken();
+        $request->user()->notify((new SendAccountVerificationMessage('sms', $token, 'A withdrawal request was initialised on your account for the accrued interests on your ' . $savings->type . ' savings. Use this OTP: ' . $token . 'to verify the request to enable us proceed.'))->onQueue('high'));
+
+        DB::commit();
+      }
+
+      if ($request->isApi()) return response()->json($withdrawal_request, 201);
+      return back()->withFlash([
+        'success' => 'A withdrawal request has been initialised on your account. Use this OTP to verify the request to enable us proceed.',
+        'verification_needed' => 'A withdrawal request has been initialised on your account. Use the OTP sent to your registered phone number to verify the request to enable us proceed.'
+      ]);
+    } catch (\Throwable $th) {
+      ErrLog::notifyAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
+      if ($request->isApi())  return response()->json(['err' => 'Withdrawal request not created'], 500);
+      abort(500, 'An error occured while creating the request');
+    }
+  }
+
+  public function verifyInterestsWithdrawalRequest(Request $request)
   {
     $tokenRecord = DB::table('password_resets')->where('token', $request->otp)->first();
     if (!$tokenRecord) throw ValidationException::withMessages(['err' => 'Invalid token!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);

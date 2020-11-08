@@ -521,6 +521,8 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Savings yieldsInterests()
  * @mixin \Eloquent
+ * @property int $interests_withdrawable
+ * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsWithdrawable($value)
  */
 	class Savings extends \Eloquent {}
 }
@@ -539,7 +541,7 @@ namespace App\Modules\AppUser\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Savings $savings
+ * @property-read \App\Modules\AppUser\Models\Savings $savings
  * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest compounded()
  * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest liquidated()
  * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest locked()
@@ -563,7 +565,6 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|SavingsInterest withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest withdrawn()
  * @method static \Illuminate\Database\Query\Builder|SavingsInterest withoutTrashed()
- * @mixin \Eloquent
  */
 	class SavingsInterest extends \Eloquent {}
 }
@@ -672,6 +673,8 @@ namespace App\Modules\AppUser\Models{
  * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withTrashed()
  * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withoutTrashed()
  * @mixin \Eloquent
+ * @property int $is_interests
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsInterests($value)
  */
 	class WithdrawalRequest extends \Eloquent {}
 }

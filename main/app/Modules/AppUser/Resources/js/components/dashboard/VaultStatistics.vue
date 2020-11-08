@@ -163,8 +163,14 @@
                   <div class="d-flex">
                     <button
                       type="button"
-                      v-if="portfolio.type !== 'target'"
+                      v-if="portfolio.interests_withdrawable"
                       class="justify-content-center mt-10 mt-sm-0 btn btn-shadow btn-warning btn-xs mr-5"
+                        @click="
+                        withdrawInterests(
+                          portfolio,
+                          'Withdraw accrued ' + portfolio.name + ' savings interests'
+                        )
+                      "
                     >
                       Withdraw
                     </button>
@@ -325,6 +331,120 @@
                         preConfirm: (otp) => {
                           return this.$inertia
                             .post(this.$route("appuser.withdraw.verify"), {
+                              otp,
+                            })
+                            .then(() => {
+                              console.log(getErrorString(this.$page.errors));
+                              if (this.$page.flash.success) {
+                                return true;
+                              } else if (
+                                this.$page.flash.error ||
+                                _.size(this.$page.errors) > 0
+                              ) {
+                                throw new Error(
+                                  this.$page.flash.error ||
+                                    getErrorString(this.$page.errors)
+                                );
+                              }
+                            })
+                            .catch((error) => {
+                              swal.showValidationMessage(error);
+                            });
+                        },
+                        allowOutsideClick: () => !swal.isLoading(),
+                      })
+                      .then((result) => {
+                        console.log(result);
+
+                        if (result.value && this.$page.flash.verifiation_succeded) {
+                          swal.fire({
+                            title: `Success`,
+                            html: this.$page.flash.success,
+                            icon: "success",
+                          });
+                        } else if (result.dismiss) {
+                          swal.fire({
+                            title: "Cancelled",
+                            text: "Your withdrawal request cannot be processed without supplying your OTP. If you are yet to receive your OTP, kindly contact our support team",
+                            icon: "info",
+                          });
+                        }
+                      });
+                  });
+              }
+            }
+            this.displayErrors(10000);
+          });
+      },
+      withdrawInterests(savings, description) {
+        swalPreconfirm
+          .fire({
+            confirmButtonText: "Proceed with Request",
+            text:
+              "This will create a request for all your accrued interests till date.",
+            preConfirm: () => {
+              return this.$inertia
+                .post(this.$route("appuser.withdraw_interests.create", savings.id), {
+                  description,
+                })
+                .then((rsp) => {
+                  return true;
+                })
+                .catch((error) => {
+                  if (error.response) {
+                    swal.showValidationMessage(error.response.data.message);
+                  } else {
+                    swal.showValidationMessage(`Request failed: ${error}`);
+                  }
+                });
+            },
+          })
+          .then((val) => {
+            // debugger;
+
+            if (val.isDismissed) {
+              Toast.fire({
+                title: "Canceled",
+                icon: "info",
+                position: "center",
+              });
+            } else if (val.value) {
+              if (this.$page.errors.length) {
+                ToastLarge.fire({
+                  title: "Oops",
+                  html: _.join(this.$page.errors.amount, "<br>"),
+                  position: "bottom",
+                  icon: "error",
+                  timer: 10000,
+                });
+              }
+              this.displayResponse(10000);
+
+              if (this.$page.flash.verification_needed) {
+                swal
+                  .fire({
+                    title: "OTP Required!",
+                    html: this.$page.flash.verification_needed,
+                    icon: "info",
+                  })
+                  .then(() => {
+                    swal
+                      .fire({
+                        title: "Enter Verification OTP",
+                        input: "text",
+                        inputAttributes: {
+                          autocapitalize: "off",
+                          autocomplete: false,
+                          required: true,
+                        },
+                        showCancelButton: false,
+                        focusCancel: false,
+                        allowOutsideClick: false,
+                        confirmButtonText: "Verify Withdrawal",
+                        showLoaderOnConfirm: true,
+                        preConfirm: (otp) => {
+                          return this.$inertia
+                            .post(this.$route("appuser.withdraw_interests.verify"), {
                               otp,
                             })
                             .then(() => {

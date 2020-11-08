@@ -23,6 +23,7 @@ class CreateWithdrawalRequestsTable extends Migration
       $table->boolean('is_user_verified')->default(false);
       $table->boolean('is_processed')->default(false);
       $table->boolean('is_charge_free');
+      $table->boolean('is_interests')->default(false);
       $table->unsignedBigInteger('processed_by')->nullable();
       $table->string('processor_type')->nullable();
 
