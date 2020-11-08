@@ -6,6 +6,7 @@ use Nwidart\Modules\Facades\Module;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Modules\Admin\Models\ActivityLog;
+use RachidLaasri\Travel\Travel;
 
 class Kernel extends ConsoleKernel
 {
@@ -18,6 +19,12 @@ class Kernel extends ConsoleKernel
     //
   ];
 
+  public function bootstrap()
+  {
+    parent::bootstrap();
+    Travel::to('32 days');
+  }
+
   /**
    * Define the application's command schedule.
    *
@@ -26,11 +33,12 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
+
     $schedule->command('savings:process-interest')
     // ->daily()
     ->everyMinute()
       ->withoutOverlapping(10)
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-interests-' . now()->toDateString() . '.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-interests.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Failed to successfully process interests for all users');
       });
@@ -38,7 +46,7 @@ class Kernel extends ConsoleKernel
     $schedule->command('savings:auto-deduct-savings')
       ->everyMinute()
       ->withoutOverlapping(180)
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/autosave-deductions-log' . now()->toDateTimeString() . '.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/autosave-deductions-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing auto save deductions failed');
       });
@@ -46,7 +54,7 @@ class Kernel extends ConsoleKernel
     $schedule->command('savings:process-mature-savings')
     // ->daily()
     ->everyMinute()
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-savings-log' . now()->toDateString() . '.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-savings-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing mature savings failed to complete successfully');
       });
@@ -57,7 +65,7 @@ class Kernel extends ConsoleKernel
      * !See the explanation in ./explanation.cson
      */
     if (app()->environment('local')) {
-      $schedule->command('queue:work --once --queue=high,low,default')->sendOutputTo(Module::getModulePath('Admin/Console') . '/queue-jobs.cson');
+      // $schedule->command('queue:work --once --queue=high,low,default')->sendOutputTo(Module::getModulePath('Admin/Console') . '/queue-jobs.cson');
     } else {
       $schedule->command('queue:restart')->hourly();
       $schedule->command('queue:work --sleep=3 --timeout=900 --queue=high,default,low')->runInBackground()->withoutOVerlapping()->everyMinute();

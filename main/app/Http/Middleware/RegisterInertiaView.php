@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use RachidLaasri\Travel\Travel;
 
 class RegisterInertiaView
 {
@@ -17,6 +18,7 @@ class RegisterInertiaView
    */
   public function handle($request, Closure $next)
   {
+    Travel::to('30 days');
     // dump(\Route::currentRouteName());
     // dd(routeHasRootNamespace('app.'));
     if ($request->user()) {
