@@ -354,8 +354,6 @@
                         allowOutsideClick: () => !swal.isLoading(),
                       })
                       .then((result) => {
-                        console.log(result);
-
                         if (result.value && this.$page.flash.verifiation_succeded) {
                           swal.fire({
                             title: `Success`,

@@ -57,7 +57,7 @@ class CreateWithdrawalRequestValidation extends FormRequest
       /**
        * check if this portfolio is mature
        */
-      if (!$this->savings->is_mature()) {
+      if (!$this->savings->is_mature() && !$this->savings->is_liquidated) {
         $validator->errors()->add('amount', 'This savings is not yet due for withdrawal.');
         return;
       }
@@ -69,8 +69,10 @@ class CreateWithdrawalRequestValidation extends FormRequest
     /**
      * Check if user is due for withdrawal and flag for extra charge
      * ! Check if this savings is liquidated
+     * @var Savings $savings_record
      */
     // $savings_record = Savings::find($this->route('savings_id'));
+
     $savings_record = $this->savings;
     if (!$savings_record->is_due_for_free_withdrawal()) {
       return array_merge(parent::validated(), [

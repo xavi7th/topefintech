@@ -4,6 +4,7 @@ namespace App\Modules\AppUser\Models;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
@@ -14,74 +15,19 @@ use App\Modules\AppUser\Models\TargetType;
 use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\ValidationException;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\PaystackTransaction;
 use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Notifications\TargetSavingsBroken;
+use App\Modules\Admin\Transformers\AdminSavingsTransformer;
 use App\Modules\AppUser\Notifications\TargetSavingsMatured;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 use App\Modules\Admin\Notifications\SavingsMaturedNotification;
-use App\Modules\Admin\Transformers\AdminSavingsTransformer;
 use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
-/**
- * App\Modules\AppUser\Models\Savings
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $type
- * @property int|null $target_type_id
- * @property \Illuminate\Support\Carbon|null $maturity_date
- * @property float $current_balance
- * @property \Illuminate\Support\Carbon|null $funded_at
- * @property bool $is_liquidated
- * @property bool $interests_withdrawable
- * @property string|null $withdrawn_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read AppUser $app_user
- * @property-read int $elapsed_duration
- * @property-read bool $is_withdrawn
- * @property-read int $total_duration
- * @property-read Transaction|null $initial_deposit_transaction
- * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read TargetType|null $target_type
- * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawalRequest
- * @method static \Illuminate\Database\Eloquent\Builder|Savings active()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings matured()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings notWithdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings query()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCurrentBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsWithdrawable($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereIsLiquidated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereTargetTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereWithdrawnAt($value)
- * @method static \Illuminate\Database\Query\Builder|Savings withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings withdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings yieldsInterests()
- * @mixin \Eloquent
- */
 class Savings extends Model
 {
   use SoftDeletes;
@@ -156,7 +102,7 @@ class Savings extends Model
 
   public function belongs_to(AppUser $user): bool
   {
-    return $this->app_user_id === $user->id;
+    return $user->is($this->app_user);
   }
 
   public function is_active(): bool
@@ -365,6 +311,7 @@ class Savings extends Model
     /**
      * Get the previous awarded interests (those that passed the 90 day benchmark cycle)
      * ! Roll it over into the user's smart savings balance
+     * @var float $accruedInterests
      */
     $accruedInterests = $this->savings_interests()->unlocked()->unprocessed()->sum('amount');
     $this->current_balance += $accruedInterests;
@@ -372,12 +319,14 @@ class Savings extends Model
     /**
      * Create a deposit transaction of this rollover for user's records
      */
-    $this->transactions()->create([
-      'type' => 'deposit',
-      'amount' => $accruedInterests,
-      'yields_interests' => false,
-      'description' => 'Rollover of accumulated interests into smart savings balance'
-    ]);
+    if ($accruedInterests > 0) {
+      $this->transactions()->create([
+        'type' => 'deposit',
+        'amount' => $accruedInterests,
+        'yields_interests' => false,
+        'description' => 'Rollover of accumulated interests into smart savings balance'
+      ]);
+    }
 
     $this->is_liquidated = true;
     $this->save();
@@ -447,27 +396,15 @@ class Savings extends Model
   static function appUserRoutes()
   {
     Route::get('savings', [self::class, 'viewUserSavings'])->name('appuser.savings')->defaults('extras', ['icon' => 'fas fa-wallet']);
-
     Route::post('/savings/auto-save/create', [self::class, 'setAutoSaveSettings'])->name('appuser.savings.create-autosave');
-
     Route::delete('/savings/auto-save/{autoSaveSetting}', [self::class, 'deleteAutoSaveSettings'])->name('appuser.savings.delete-autosave');
-
     Route::post('/savings/target-funds/add', [self::class, 'lockMoreFunds'])->name('appuser.savings.target.fund');
-
     Route::get('/savings/{savings}/target-funds/add', [self::class, 'verifyLockMoreFunds'])->name('appuser.savings.target.fund.verify')->defaults('extras', ['nav_skip' => true]);
-
-    Route::get('/savings/{savings}/break', [self::class, 'breakTargetFunds']);
-
     Route::get('/savings/{savings}/verify', [self::class, 'verifySavingsAmount']);
-
     Route::get('/savings/{savings}/check-maturity', [self::class, 'checkSavingsMaturity']);
-
     Route::get('/savings/target-funds/create', [self::class, 'viewTargetList'])->name('appuser.create-target-plan')->defaults('extras', ['icon' => 'far fa-folder']);
-
     Route::post('/savings/target-funds/create', [self::class, 'createNewTargetSavingsProfile'])->name('appuser.savings.target.initialise');
-
     Route::post('/savings/smart-savings/create', [self::class, 'initialiseSmartSavingsProfile'])->name('appuser.savings.smart.initialise');
-
     Route::put('/savings/smart-savings/liquidate', [self::class, 'liquidateSmartSavings'])->name('appuser.savings.smart.liquidate')->defaults('extras', ['nav_skip' => true]);
   }
 
@@ -562,76 +499,6 @@ class Savings extends Model
     }
   }
 
-  public function breakTargetFunds(Request $request, self $savings)
-  {
-    // return $savings;
-    /**
-     * Check if this savings belongs to this user
-     */
-    if (!$savings->belongs_to($request->user())) {
-      $request->user()->logout();
-      $request->session()->invalidate();
-      abort(403, 'Invalid transaction');
-    }
-
-    /**
-     * Check if this is a target fund
-     */
-    if (!$savings->is_target_savings()) {
-      return generate_422_error('This is a ' . $savings->type . ' savings. Only target savings funds can be broken');
-    }
-
-    /**
-     * Check if this savings is more than 30 days old
-     */
-    if ($savings->funded_at->gte(now()->subDays(30))) {
-      return generate_422_error('target savings must be 30 days old before they can be broken');
-    }
-
-    /**
-     * Get deductible percentage of total accrued funds
-     */
-    $service_charge = $savings->total_accrued_interest_amount() * (config('app.lock_break_percentage_charge') / 100);
-
-    DB::beginTransaction();
-    /**
-     * Handle uncleared profits
-     */
-
-    if (is_null($savings->rollover_uncleared_interests($desc = 'Break lock interests rollover'))) {
-      return generate_422_error('There was an error breaking your lock. Try again');
-    }
-
-    /**
-     * Create a service charge transaction for this savings for the lock break charge
-     */
-    $savings->create_service_charge($service_charge, 'Amount deducted for breaking target funds');
-
-    /**
-     * Create a deposit transaction moving the balance of this savings to the smart
-     * ! deduct the charge from it
-     */
-    $user_smart_savings = $savings->app_user->smart_savings;
-    $balance_amount = $savings->current_balance - $service_charge;
-
-    $user_smart_savings->create_deposit_transaction($balance_amount, 'Broken target savings funds rollover');
-
-    /**
-     * Add same amount to the current balance of smart savings
-     */
-    $user_smart_savings->current_balance += $balance_amount;
-    $user_smart_savings->save();
-
-    /**
-     * Delete this savings (so that it leaves the record of the user)
-     */
-    $savings->delete();
-
-    DB::commit();
-
-    return response()->json(['status' => true], 200);
-  }
-
   public function verifySavingsAmount(Savings $savings)
   {
     return response()->json(['verified' => $savings->is_balance_consistent()], 200);
@@ -674,17 +541,18 @@ class Savings extends Model
 
   public function liquidateSmartSavings(Request $request)
   {
+    /**
+     * @var Savings $smartSavings
+     */
     $smartSavings = $request->user()->smart_savings;
 
-    if ($smartSavings->is_target_savings()) {
-      abort(422, 'You can only liquidate your smart savings');
-    }
+    if (!$smartSavings->is_smart_savings()) throw ValidationException::withMessages(['err' => 'You can only liquidate your smart savings'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    if ($smartSavings->funded_at->gte(now()->subDays(config('app.smart_savings_minimum_liquidation_duration')))) {
-      abort(422, 'You can only liquidate your smart savings after ' . config('app.smart_savings_minimum_liquidation_duration') . ' days');
-    }
+    if ($smartSavings->funded_at->gte(now()->subDays(config('app.smart_savings_minimum_liquidation_duration')))) throw ValidationException::withMessages(['err' => 'You can only liquidate your smart savings after ' . config('app.smart_savings_minimum_liquidation_duration') . ' days'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
     $smartSavings->liquidate();
+
+    return back()->withFlash(['success' => 'Smart savings portfolio liquidated']);
   }
 
   public function adminViewUserSavings(Request $request, AppUser $user)

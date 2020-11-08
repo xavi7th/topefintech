@@ -62,7 +62,7 @@ class WithdrawalRequest extends Model
     /**
      * on approval add a withdrawal transaction to clear the savings protfolio
      */
-    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance';
+    $desc = $withdrawalRequest->description ?? ($withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance');
     $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
 
     if (!$withdrawalRequest->is_charge_free) {
@@ -74,7 +74,7 @@ class WithdrawalRequest extends Model
       /**
        * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
        */
-      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings portfolio');
+      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $withdrawalRequest->description ?? ($savingsPortfolio->target_type->name . ' savings portfolio'));
     }
 
     /**
@@ -180,7 +180,6 @@ class WithdrawalRequest extends Model
 
   public function createWithdrawalRequest(CreateWithdrawalRequestValidation $request, Savings $savings)
   {
-
     try {
       if (!$request->user()->hasUnverifiedWithdrawalRequest()) {
         DB::beginTransaction();
