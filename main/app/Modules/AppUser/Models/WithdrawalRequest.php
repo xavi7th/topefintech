@@ -54,6 +54,85 @@ class WithdrawalRequest extends Model
     return $this->belongsTo(Savings::class, 'savings_id');
   }
 
+  public function processSavingsWithdrawal(self $withdrawalRequest): void
+  {
+
+    $savingsPortfolio = $withdrawalRequest->savingsPortfolio;
+
+    /**
+     * on approval add a withdrawal transaction to clear the savings protfolio
+     */
+    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance';
+    $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
+
+    if (!$withdrawalRequest->is_charge_free) {
+      /**
+       * Get deductible percentage of withdrawal request amount
+       */
+      $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+
+      /**
+       * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
+       */
+      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings portfolio');
+    }
+
+    /**
+     * Mark the request as processed
+     */
+    $withdrawalRequest->is_processed = true;
+    $withdrawalRequest->processed_by = request()->user()->id;
+    $withdrawalRequest->processor_type = get_class(request()->user());
+    $withdrawalRequest->save();
+
+    /**
+     * Mark the savings as withdrawn
+     */
+    $savingsPortfolio->withdrawn_at = now();
+    $savingsPortfolio->save();
+  }
+
+  public function processSavingsInterestsWithdrawal(self $withdrawalRequest): void
+  {
+
+    $savingsPortfolio = $withdrawalRequest->savingsPortfolio;
+
+    /**
+     * on approval add a withdrawal transaction to clear the savings protfolio
+     */
+    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings' : 'Charge-deductible withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings';
+    $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
+
+    if (!$withdrawalRequest->is_charge_free) {
+      /**
+       * Get deductible percentage of withdrawal request amount
+       */
+      $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+
+      /**
+       * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
+       */
+      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings accrued interests');
+    }
+
+    /**
+     * Mark the request as processed
+     */
+    $withdrawalRequest->is_processed = true;
+    $withdrawalRequest->processed_by = request()->user()->id;
+    $withdrawalRequest->processor_type = get_class(request()->user());
+    $withdrawalRequest->save();
+
+    /**
+     * Mark the savings interests as withdrawn
+     */
+    $savingsPortfolio->savings_interests()->unprocessed()->update([
+      'is_locked' => false,
+      'processed_at' => now(),
+      'process_type' => 'withdrawn'
+    ]);
+  }
+
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'withdrawal-requests'], function () {
@@ -280,92 +359,21 @@ class WithdrawalRequest extends Model
       throw ValidationException::withMessages(['err' => 'Invalid action!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    $savingsPortfolio = $withdrawalRequest->savingsPortfolio;
-    $appUser = $withdrawalRequest->app_user;
-
     DB::beginTransaction();
 
-    if ($withdrawalRequest->is_interests) {
-
-      /**
-       * on approval add a withdrawal transaction to clear the savings protfolio
-       */
-      $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings' : 'Charge-deductible withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings';
-      $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
-
-      if (!$withdrawalRequest->is_charge_free) {
-        /**
-         * Get deductible percentage of withdrawal request amount
-         */
-        $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
-
-        /**
-         * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
-         */
-        $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings accrued interests');
-      }
-
-      /**
-       * Mark the request as processed
-       */
-      $withdrawalRequest->is_processed = true;
-      $withdrawalRequest->processed_by = $request->user()->id;
-      $withdrawalRequest->processor_type = get_class($request->user());
-      $withdrawalRequest->save();
-
-      /**
-       * Mark the savings interests as withdrawn
-       */
-      $savingsPortfolio->savings_interests()->unprocessed()->update([
-        'is_locked' => false,
-        'processed_at' => now(),
-        'process_type' => 'withdrawn'
-      ]);
-    } else {
-
-      /**
-       * on approval add a withdrawal transaction to clear the savings protfolio
-       */
-      $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance';
-      $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
-
-      if (!$withdrawalRequest->is_charge_free) {
-        /**
-         * Get deductible percentage of withdrawal request amount
-         */
-        $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
-
-        /**
-         * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
-         */
-        $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings portfolio');
-      }
-
-      /**
-       * Mark the request as processed
-       */
-      $withdrawalRequest->is_processed = true;
-      $withdrawalRequest->processed_by = $request->user()->id;
-      $withdrawalRequest->processor_type = get_class($request->user());
-      $withdrawalRequest->save();
-
-      /**
-       * Mark the savings as withdrawn
-       */
-      $savingsPortfolio->withdrawn_at = now();
-      $savingsPortfolio->save();
-    }
-
-    DB::commit();
+    $withdrawalRequest->is_interests ? $this->processSavingsInterestsWithdrawal($withdrawalRequest) : $this->processSavingsWithdrawal($withdrawalRequest);
 
     /**
      * Notify user that his request has been processed
      */
     try {
+      $appUser = $withdrawalRequest->app_user;
       $appUser->notify(new ProcessedWithdrawalRequestNotification($withdrawalRequest));
     } catch (\Throwable $th) {
       ErrLog::notifyAdmin($appUser, $th, 'We could not send a notification of transaction processed to ' . $appUser->full_name);
     }
+
+    DB::commit();
 
     if ($request->isApi()) return response()->json('Withdrawal request marked as processed', 204);
     return back()->withFlash(['success' => 'Withdrawal request marked as processed']);
