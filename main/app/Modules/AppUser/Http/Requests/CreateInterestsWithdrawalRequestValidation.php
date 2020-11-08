@@ -41,6 +41,13 @@ class CreateInterestsWithdrawalRequestValidation extends FormRequest
   {
     $validator->after(function ($validator) {
       /**
+       * Check if this portfolio has savings withdrawble activated
+       */
+      if (!$this->savings->interests_withdrawable) {
+        $validator->errors()->add('amount', 'This portfolio does not have interests withdrawal activated. You must wait for the maturity of the portfolio or liquidate it.');
+      }
+
+      /**
        * Check if bank and bvn are validated
        */
       if (!$this->user()->is_bank_verified) {

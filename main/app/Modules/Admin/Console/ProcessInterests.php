@@ -73,7 +73,7 @@ class ProcessInterests extends Command
       }
     // });
 
-    dump(collect($this->notification)->implode(', \n'));
-    Admin::find(1)->notify(new GenericAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ')));
+    dump(collect($this->notification)->implode(',' . PHP_EOL));
+    Admin::find(1)->notify(new GenericAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ' . PHP_EOL)));
   }
 }

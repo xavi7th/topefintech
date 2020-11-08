@@ -67,16 +67,16 @@ class AppUserController extends Controller
     // Travel::to('4 months 4 days');
     return Inertia::render('AppUser,dashboard/UserDashboard', [
       'userSavings' => function () use ($request) {
-        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->active()->with('target_type')->get(), 'forUserDashboard');
+        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->active()->oldest()->with('target_type')->get(), 'forUserDashboard');
       },
       'userInvestments' => function () use ($request) {
         return [];
       },
       'liquidatedSavings' => function () use ($request) {
-        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->liquidated()->notWithdrawn()->get(), 'forLiquidatedVault');
+        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->liquidated()->notWithdrawn()->oldest()->get(), 'forLiquidatedVault');
       },
       'maturedSavings' => function () use ($request) {
-        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->matured()->notWithdrawn()->get(), 'forUserDashboard');
+        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->matured()->notWithdrawn()->oldest()->get(), 'forUserDashboard');
       },
     ]);
   }

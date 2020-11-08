@@ -28,7 +28,7 @@ class WithdrawalRequest extends Model
   use SoftDeletes;
 
   protected $fillable = [
-    'app_user_id', 'description', 'amount', 'is_charge_free', 'savings_id'
+    'app_user_id', 'description', 'amount', 'is_charge_free', 'savings_id', 'is_interests'
   ];
 
   protected $casts = [

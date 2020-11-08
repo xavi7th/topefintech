@@ -8,7 +8,7 @@ $factory->define(Agent::class, function (Faker $faker) {
     'full_name' => $faker->name,
     'email' => 'collector@amju.com',
     'password' => 'pass',
-    'phone' => '08034411661',
+    'phone' => '07059312514',
     'bvn' => '2567890-98765432',
     'avatar' => $faker->imageUrl(),
     'gender' => $faker->randomElement(['male', 'female']),
