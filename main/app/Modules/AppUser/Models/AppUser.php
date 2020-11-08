@@ -240,11 +240,6 @@ class AppUser extends User
     return $this->transactions()->where('trans_type', 'deposit')->latest();
   }
 
-  public function interestable_deposit_transactions()
-  {
-    return $this->deposit_transactions()->latest()->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')));
-  }
-
   public function get_currency(): string
   {
     switch ($this->currency) {

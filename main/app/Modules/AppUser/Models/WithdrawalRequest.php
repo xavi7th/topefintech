@@ -23,52 +23,6 @@ use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
 use App\Modules\AppUser\Http\Requests\CreateInterestsWithdrawalRequestValidation;
 
-/**
- * App\Modules\AppUser\Models\WithdrawalRequest
- *
- * @property int $id
- * @property int $app_user_id
- * @property int $savings_id
- * @property float|null $amount
- * @property string|null $description
- * @property bool $is_user_verified
- * @property bool $is_processed
- * @property bool $is_charge_free
- * @property int|null $processed_by
- * @property string|null $processor_type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read AppUser $app_user
- * @property-read Model|\Eloquent $processor
- * @property-read Savings $savingsPortfolio
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newQuery()
- * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest processed()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest unprocessed()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userUnverified()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userVerified()
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsChargeFree($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsProcessed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsUserVerified($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereSavingsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withTrashed()
- * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withoutTrashed()
- * @mixin \Eloquent
- * @property int $is_interests
- * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsInterests($value)
- */
 class WithdrawalRequest extends Model
 {
   use SoftDeletes;
@@ -81,6 +35,7 @@ class WithdrawalRequest extends Model
     'is_processed' => 'boolean',
     'is_charge_free' => 'boolean',
     'is_user_verified' => 'boolean',
+    'is_interests' => 'boolean',
     'amount' => 'double',
   ];
 
@@ -330,37 +285,76 @@ class WithdrawalRequest extends Model
 
     DB::beginTransaction();
 
-    /**
-     * on approval add a withdrawal transaction to clear the savings protfolio
-     */
-    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance';
-    $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
-
-    if (!$withdrawalRequest->is_charge_free) {
-      /**
-       * Get deductible percentage of withdrawal request amount
-       */
-      $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+    if ($withdrawalRequest->is_interests) {
 
       /**
-       * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
+       * on approval add a withdrawal transaction to clear the savings protfolio
        */
-      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings portfolio');
+      $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings' : 'Charge-deductible withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings';
+      $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
+
+      if (!$withdrawalRequest->is_charge_free) {
+        /**
+         * Get deductible percentage of withdrawal request amount
+         */
+        $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+
+        /**
+         * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
+         */
+        $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings accrued interests');
+      }
+
+      /**
+       * Mark the request as processed
+       */
+      $withdrawalRequest->is_processed = true;
+      $withdrawalRequest->processed_by = $request->user()->id;
+      $withdrawalRequest->processor_type = get_class($request->user());
+      $withdrawalRequest->save();
+
+      /**
+       * Mark the savings interests as withdrawn
+       */
+      $savingsPortfolio->savings_interests()->unprocessed()->update([
+        'is_locked' => false,
+        'processed_at' => now(),
+        'process_type' => 'withdrawn'
+      ]);
+    } else {
+
+      /**
+       * on approval add a withdrawal transaction to clear the savings protfolio
+       */
+      $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal from ' . $savingsPortfolio->type . ' savings balance' : 'Charge-deductible withdrawal from ' . $savingsPortfolio->type . ' savings balance';
+      $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
+
+      if (!$withdrawalRequest->is_charge_free) {
+        /**
+         * Get deductible percentage of withdrawal request amount
+         */
+        $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+
+        /**
+         * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
+         */
+        $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings portfolio');
+      }
+
+      /**
+       * Mark the request as processed
+       */
+      $withdrawalRequest->is_processed = true;
+      $withdrawalRequest->processed_by = $request->user()->id;
+      $withdrawalRequest->processor_type = get_class($request->user());
+      $withdrawalRequest->save();
+
+      /**
+       * Mark the savings as withdrawn
+       */
+      $savingsPortfolio->withdrawn_at = now();
+      $savingsPortfolio->save();
     }
-
-    /**
-     * Mark the request as processed
-     */
-    $withdrawalRequest->is_processed = true;
-    $withdrawalRequest->processed_by = $request->user()->id;
-    $withdrawalRequest->processor_type = get_class($request->user());
-    $withdrawalRequest->save();
-
-    /**
-     * Mark the savings as withdrawn
-     */
-    $savingsPortfolio->withdrawn_at = now();
-    $savingsPortfolio->save();
 
     DB::commit();
 
@@ -370,7 +364,7 @@ class WithdrawalRequest extends Model
     try {
       $appUser->notify(new ProcessedWithdrawalRequestNotification($withdrawalRequest));
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($appUser, $th, 'ProWe could not send a notification of transaction processed to ' . $appUser->full_name);
+      ErrLog::notifyAdmin($appUser, $th, 'We could not send a notification of transaction processed to ' . $appUser->full_name);
     }
 
     if ($request->isApi()) return response()->json('Withdrawal request marked as processed', 204);

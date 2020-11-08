@@ -47,7 +47,7 @@ class ProcessInterests extends Command
      * !  Optimisation concern
      * ?  Should we eager load the deposit transaction (maybe 100s or 1000s) and then do the sum in the collection
      * // Savings::with(['app_user', 'interestable_deposit_transactions'])->get()
-     * -- $this->interestable_deposit_transactions()->sum('amount') VS $this->interestable_deposit_transactions->sum('amount')
+     * -- $this->transactions()->deposits()->interestable()->sum('amount') VS $this->interestable_deposit_transactions->sum('amount')
      * ?  Or should we run multiple database calls to retrieve the sum of each saving´s deposit transactions
      * -- The issue is multiple single sum queries VS a single select query with potential 1000s rows which is faster
      */

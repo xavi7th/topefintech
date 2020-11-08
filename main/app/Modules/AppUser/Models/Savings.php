@@ -25,64 +25,7 @@ use App\Modules\Admin\Transformers\AdminSavingsTransformer;
 use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
-use RachidLaasri\Travel\Travel;
 
-/**
- * App\Modules\AppUser\Models\Savings
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $type
- * @property int|null $target_type_id
- * @property \Illuminate\Support\Carbon|null $maturity_date
- * @property float $current_balance
- * @property \Illuminate\Support\Carbon|null $funded_at
- * @property bool $is_liquidated
- * @property string|null $withdrawn_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read AppUser $app_user
- * @property-read int $elapsed_duration
- * @property-read bool $is_withdrawn
- * @property-read int $total_duration
- * @property-read Transaction|null $initial_deposit_transaction
- * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read TargetType|null $target_type
- * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawalRequest
- * @method static \Illuminate\Database\Eloquent\Builder|Savings active()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings matured()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings notWithdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings query()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCurrentBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereIsLiquidated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereTargetTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereWithdrawnAt($value)
- * @method static \Illuminate\Database\Query\Builder|Savings withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings withdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings yieldsInterests()
- * @mixin \Eloquent
- * @property int $interests_withdrawable
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsWithdrawable($value)
- */
 class Savings extends Model
 {
   use SoftDeletes;
@@ -138,13 +81,6 @@ class Savings extends Model
   public function initial_deposit_transaction()
   {
     return $this->hasOne(Transaction::class)->oldest();
-  }
-
-  public function interestable_deposit_transactions()
-  {
-    return $this->deposit_transactions()->whereDate('interest_processed_at', '<', now())
-      ->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')))
-      ->where('yields_interests', true);
   }
 
   public function savings_interests()
@@ -218,9 +154,9 @@ class Savings extends Model
      * -- Only smart savings have withdrawals
      */
     if ($this->is_smart_savings()) {
-      return ($this->interestable_deposit_transactions()->sum('amount') - $this->total_withdrawals_sum()) * (config('app.smart_savings_interest_rate') / 100);
+      return $this->transactions()->deposits()->interestable()->sum('amount') * (config('app.smart_savings_interest_rate') / 100);
     } else if ($this->is_target_savings()) {
-      return $this->interestable_deposit_transactions()->sum('amount') * (config('app.target_savings_interest_rate') / 100);
+      return $this->transactions()->deposits()->interestable()->sum('amount') * (config('app.target_savings_interest_rate') / 100);
     }
   }
 
@@ -229,7 +165,7 @@ class Savings extends Model
     /**
      * Mark all interestable transactions as processed
      */
-    return $this->interestable_deposit_transactions()->update(['interest_processed_at' => now()]);
+    return $this->transactions()->deposits()->interestable()->update(['interest_processed_at' => now()]);
   }
 
   public function rollover_uncleared_interests(string $decsription = null): ?float
@@ -697,7 +633,6 @@ class Savings extends Model
 
   public function adminViewUserSavings(Request $request, AppUser $user)
   {
-    Travel::to('4 months 4 days');
     $savings_list = (new AdminSavingsTransformer)->collectionTransformer($user->savings_list->load('target_type'), 'basic');
     // $savings_list = $user->savings_list->load('target_type');
     $auto_save_list = $user->auto_save_settings;
@@ -814,7 +749,7 @@ class Savings extends Model
   }
 
   /**
-   * Scope a query to only include only savings that have not yet been withdrawn
+   * Scope a query to only include only savings that have been withdrawn
    *
    * @param  \Illuminate\Database\Eloquent\Builder  $query
    * @return \Illuminate\Database\Eloquent\Builder

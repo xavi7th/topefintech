@@ -40,6 +40,7 @@ class AdminWithdrawalRequestTransformer
       'id' => (int)$withdrawalRequest->id,
       'description' => (string)$withdrawalRequest->description,
       'amount_requested' => (float)$withdrawalRequest->amount,
+      'is_interests' => (bool)$withdrawalRequest->is_interests,
       'is_charge_free' => (bool)$withdrawalRequest->is_charge_free,
       'is_processed' => (bool)$withdrawalRequest->is_processed,
       'is_user_verified' => (bool)$withdrawalRequest->is_user_verified,

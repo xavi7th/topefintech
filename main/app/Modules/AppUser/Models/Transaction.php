@@ -10,40 +10,6 @@ use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * App\Modules\AppUser\Models\Transaction
- *
- * @property int $id
- * @property int $savings_id
- * @property string $trans_type
- * @property float $amount
- * @property string|null $description
- * @property \Illuminate\Support\Carbon $interest_processed_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Modules\AppUser\Models\Savings $savings
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction deposit()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Transaction onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereInterestProcessedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereSavingsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereTransType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Transaction withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction withdrawals()
- * @method static \Illuminate\Database\Query\Builder|\App\Modules\AppUser\Models\Transaction withoutTrashed()
- * @mixin \Eloquent
- * @property int $yields_interests
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\AppUser\Models\Transaction whereYieldsInterests($value)
- */
 class Transaction extends Model
 {
   use SoftDeletes;
@@ -112,7 +78,7 @@ class Transaction extends Model
    * @param  \Illuminate\Database\Eloquent\Builder  $query
    * @return \Illuminate\Database\Eloquent\Builder
    */
-  public function scopeDeposit($query)
+  public function scopeDeposits($query)
   {
     return $query->where('trans_type', 'deposit');
   }
@@ -126,5 +92,12 @@ class Transaction extends Model
   public function scopeWithdrawals($query)
   {
     return $query->where('trans_type', 'withdrawal');
+  }
+
+  public function scopeInterestable($query)
+  {
+    return $query->whereDate('interest_processed_at', '<', now())
+      ->whereDate('transactions.created_at', '<', now()->subDays(config('app.days_before_interest_starts_counting')))
+      ->where('yields_interests', true);
   }
 }

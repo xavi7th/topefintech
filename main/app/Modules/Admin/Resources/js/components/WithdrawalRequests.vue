@@ -31,6 +31,11 @@
                         >DELETED REQUEST</span
                       >
                       <span
+                        class="badge badge-info"
+                        v-if="withdrawalRequest.is_interests"
+                        >INTERESTS</span
+                      >
+                      <span
                         class="badge badge-danger"
                         v-else-if="!withdrawalRequest.is_user_verified"
                         >WITHDRAWAL OTP NOT VERIFIED</span
