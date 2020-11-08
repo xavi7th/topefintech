@@ -187,7 +187,7 @@ class AppUser extends User
 
   public function smart_savings()
   {
-    return $this->hasOne(Savings::class)->where('type', 'smart');
+    return $this->hasOne(Savings::class)->where('type', 'smart')->latest();
   }
 
   public function smart_savings_interests()

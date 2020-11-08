@@ -65,7 +65,7 @@ class LoginController extends Controller
     Route::get('/login', [self::class, 'showLoginForm'])->middleware('guest:web,agent,admin')->name('app.login')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [self::class, 'login'])->middleware('guest:web,agent,admin')->name('appuser.login');
     // Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
-    Route::match(['GET', 'POST'], 'logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth:web,agent');
+    Route::match(['GET', 'POST'], 'logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth:web,agent')->defaults('extras', ['nav_skip' => true]);
     Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);
     Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
     Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
