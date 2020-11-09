@@ -69,22 +69,24 @@ class CreateWithdrawalRequestValidation extends FormRequest
     /**
      * Check if user is due for withdrawal and flag for extra charge
      * ! Check if this savings is liquidated
-     * @var Savings $savings_record
+     * @var Savings $savingsRecord
      */
-    // $savings_record = Savings::find($this->route('savings_id'));
+    // $savingsRecord = Savings::find($this->route('savings_id'));
 
-    $savings_record = $this->savings;
-    if (!$savings_record->is_due_for_free_withdrawal()) {
+    $savingsRecord = $this->savings;
+    if (!$savingsRecord->is_due_for_free_withdrawal()) {
       return array_merge(parent::validated(), [
         'is_charge_free' => false,
-        'amount' => $savings_record->current_balance,
-        'savings_id' => $savings_record->id
+        'amount' => $savingsRecord->current_balance,
+        'payout_amount' => $savingsRecord->current_balance - $savingsRecord->getServiceCharge(),
+        'savings_id' => $savingsRecord->id
       ]);
     } else {
       return array_merge(parent::validated(), [
         'is_charge_free' => true,
-        'amount' => $savings_record->current_balance,
-        'savings_id' => $savings_record->id
+        'amount' => $savingsRecord->current_balance,
+        'payout_amount' => $savingsRecord->current_balance,
+        'savings_id' => $savingsRecord->id
       ]);
     }
   }

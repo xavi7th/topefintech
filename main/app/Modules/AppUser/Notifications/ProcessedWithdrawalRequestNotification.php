@@ -28,7 +28,7 @@ class ProcessedWithdrawalRequestNotification extends Notification implements Sho
     $this->withdrawalRequest = $withdrawalRequest;
 
     if (!$withdrawalRequest->is_charge_free) {
-      $this->notificationMsg = 'Your withdrawal request of ' . to_naira($this->withdrawalRequest->amount) . ' has been processed and ' . to_naira(($this->withdrawalRequest->amount - ($this->withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100)))) .
+      $this->notificationMsg = 'Your withdrawal request of ' . to_naira($this->withdrawalRequest->amount) . ' has been processed and ' . to_naira(($this->withdrawalRequest->amount - ($this->withdrawalRequest->savingsPortfolio->getServiceCharge()))) .
         ' has been transferred to your account on file. You were charged a fee of ' . config('app.undue_withdrawal_charge_percentage') . '% for the transaction. If there are any issues kindly contact our support team.';
     } else {
       $this->notificationMsg = 'Your withdrawal request has been processed and ' . to_naira($this->withdrawalRequest->amount) . ' has been transferred to your account on file. If there are any issues kindly contact our support team.';

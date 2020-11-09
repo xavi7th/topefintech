@@ -19,6 +19,7 @@ class CreateWithdrawalRequestsTable extends Migration
       $table->foreignId('app_user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->foreignId('savings_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->double('amount')->nullable();
+      $table->double('payout_amount')->nullable();
       $table->string('description')->nullable();
       $table->boolean('is_user_verified')->default(false);
       $table->boolean('is_processed')->default(false);

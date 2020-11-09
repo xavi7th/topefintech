@@ -28,7 +28,7 @@ class WithdrawalRequest extends Model
   use SoftDeletes;
 
   protected $fillable = [
-    'app_user_id', 'description', 'amount', 'is_charge_free', 'savings_id', 'is_interests'
+    'app_user_id', 'description', 'amount', 'payout_amount', 'is_charge_free', 'savings_id', 'is_interests'
   ];
 
   protected $casts = [
@@ -69,7 +69,7 @@ class WithdrawalRequest extends Model
       /**
        * Get deductible percentage of withdrawal request amount
        */
-      $withdrawalCharge = $withdrawalRequest->amount * (config('app.undue_withdrawal_charge_percentage') / 100);
+      $withdrawalCharge = $savingsPortfolio->getServiceCharge();
 
       /**
        * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal

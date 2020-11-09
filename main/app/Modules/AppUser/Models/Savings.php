@@ -285,6 +285,12 @@ class Savings extends Model
     ]);
   }
 
+  public function getServiceCharge(): float
+  {
+    $percDeduction = $this->current_balance * (config('app.undue_withdrawal_charge_percentage') / 100);
+    return $percDeduction < config('app.undue_withdrawal_charge_max_amount') ? $percDeduction : config('app.undue_withdrawal_charge_max_amount');
+  }
+
   public function create_interest_record(float $amount): SavingsInterest
   {
     return $this->savings_interests()->create([

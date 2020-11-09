@@ -55,7 +55,7 @@ class UnlockDueInterests extends Command
       DB::beginTransaction();
 
       if ($savingsRecord->isDueForIntetestsUnlock() && $savingsRecord->unlockSavingsInterests()) {
-        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->target_type->name . ' savings intrested unlocked for withdrawal';
+        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->target_type->name . ' savings interested unlocked for withdrawal';
       }
 
       DB::commit();
