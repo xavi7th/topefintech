@@ -341,13 +341,6 @@ class Savings extends Model
   public function liquidate(): void
   {
     DB::beginTransaction();
-    /**
-     * Liquidate all pending interests
-     */
-    $this->savings_interests()->locked()->unprocessed()->update([
-      'processed_at' => now(),
-      'process_type' => 'liquidated'
-    ]);
 
     /**
      * Get the previous awarded interests (those that passed the 90 day benchmark cycle)
@@ -358,6 +351,14 @@ class Savings extends Model
     $this->current_balance += $accruedInterests;
 
     /**
+     * Liquidate all pending interests
+     */
+    $this->savings_interests()->locked()->unprocessed()->update([
+      'processed_at' => now(),
+      'process_type' => 'liquidated'
+    ]);
+
+    /**
      * Create a deposit transaction of this rollover for user's records
      */
     if ($accruedInterests > 0) {
@@ -365,7 +366,7 @@ class Savings extends Model
         'type' => 'deposit',
         'amount' => $accruedInterests,
         'yields_interests' => false,
-        'description' => 'Rollover of accumulated interests into smart savings balance'
+        'description' => 'Rollover of previously unlocked accumulated interests into smart savings balance on liquidation'
       ]);
     }
 
