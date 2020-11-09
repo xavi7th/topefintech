@@ -50,6 +50,7 @@ return [
     */
 
   'target_savings_interest_rate' => env('TARGET_SAVINGS_INTEREST_RATE', 0.5),
+  'target_savings_minimum_duration_before_interests_compounding' => env('TARGET_SAVINGS_MINIMUM_DURATION_BEFORE_INTERESTS_COMPOUNDING', 90),
 
   /*
     |--------------------------------------------------------------------------

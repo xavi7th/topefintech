@@ -32,7 +32,7 @@ class Savings extends Model
 {
   use SoftDeletes;
 
-  protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount', 'interests_withdrawable'];
+  protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount', 'interests_withdrawable', 'interests_unlocked_at', 'interests_compounded_at'];
   protected $table = 'savings';
   protected $dates = ['funded_at', 'maturity_date', 'withdrawn_at', 'interests_unlocked_at'];
   protected $casts = [
@@ -303,8 +303,33 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
+  public function compoundInterests(): bool
+  {
+    try {
+      $accruedInterests = $this->unprocessedTotalInterestsAmount();
+
+      $this->create_deposit_transaction($accruedInterests, 'Accrued interests compounded into ' . $this->target_type->name . ' savings portfilio');
+
+      $this->savings_interests()->unprocessed()->update([
+        'processed_at' => now(),
+        'process_type' => 'compounded'
+      ]);
+
+      $this->current_balance += $accruedInterests;
+      $this->interests_compounded_at = now();
+      $this->save();
+    } catch (\Throwable $th) {
+      ErrLog::notifyAdminAndFail($this->app_user, $th, 'Failed to compound ' . $this->app_user->fullname . '´s ' . $this->target_type->name . ' savings portfolio');
+      return false;
+    }
+
+    return true;
+  }
+
   public function unlockSavingsInterests(): bool
   {
+    $this->interests_unlocked_at = now();
+    $this->save();
 
     $this->savings_interests()->locked()->unprocessed()->update([
       'is_locked' => false
@@ -702,6 +727,11 @@ class Savings extends Model
     return $query->whereType('investment');
   }
 
+  public function scopeTargetOrInvestment($query)
+  {
+    return $query->where('type', 'investment')->orWhere('type', 'target');
+  }
+
   /**
    * Scope a query to only include only savings where the maturity_date field is in the past
    *
@@ -762,6 +792,16 @@ class Savings extends Model
   public function scopeLiquidated($query)
   {
     return $query->where('is_liquidated', true);
+  }
+
+  public function scopeDueAndNeverCompounded($query)
+  {
+    return $query->whereDate('funded_at', '<', now()->subDays(config('app.target_savings_minimum_duration_before_interests_compounding')))->whereInterestsCompoundedAt(null);
+  }
+
+  public function scopeDueForRecompounding($query)
+  {
+    return $query->whereDate('interests_compounded_at', '<', now()->subDays(config('app.target_savings_minimum_duration_before_interests_compounding')));
   }
 
   /**

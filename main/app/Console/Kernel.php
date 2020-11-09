@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
   public function bootstrap()
   {
     parent::bootstrap();
-    // Travel::to('3 months 61 days 12:00am');
+    // Travel::to('102 days 12:00am');
   }
 
   /**
@@ -52,7 +52,6 @@ class Kernel extends ConsoleKernel
 
     $schedule->command('savings:process-mature-savings')
     ->daily()
-      // ->everyMinute()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-savings-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing mature savings failed to complete successfully');
@@ -62,7 +61,14 @@ class Kernel extends ConsoleKernel
     ->daily()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/unlock-due-interests-log.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Unlocking due interests of savings failed to complete successfully');
+      ActivityLog::notifyAdmins('Unlocking due interests of smart savings failed to complete successfully');
+    });
+
+    $schedule->command('savings:compound-due-interests')
+    ->daily()
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/compound-due-interests-log.cson')
+      ->onFailure(function () {
+        ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
       });
 
     // $schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
