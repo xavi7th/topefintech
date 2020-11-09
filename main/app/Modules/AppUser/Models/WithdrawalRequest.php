@@ -126,8 +126,7 @@ class WithdrawalRequest extends Model
     /**
      * Mark the savings interests as withdrawn
      */
-    $savingsPortfolio->savings_interests()->unprocessed()->update([
-      'is_locked' => false,
+    $savingsPortfolio->savings_interests()->unlocked()->unprocessed()->update([
       'processed_at' => now(),
       'process_type' => 'withdrawn'
     ]);
@@ -270,9 +269,12 @@ class WithdrawalRequest extends Model
 
   public function verifyInterestsWithdrawalRequest(Request $request)
   {
+
     $tokenRecord = DB::table('password_resets')->where('token', $request->otp)->first();
     if (!$tokenRecord) throw ValidationException::withMessages(['err' => 'Invalid token!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
-
+    /**
+     * @var AppUser $user
+     */
     $user = AppUser::where('phone', $tokenRecord->phone)->firstOr(function () {
       throw ValidationException::withMessages(['err' => 'Invalid or stale request. Contact Support for assistance!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     });

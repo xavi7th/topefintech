@@ -41,9 +41,13 @@ class CreateInterestsWithdrawalRequestValidation extends FormRequest
   {
     $validator->after(function ($validator) {
       /**
+       * @var Savings $savingsRecord
+       */
+      $savingsRecord = $this->savings;
+      /**
        * Check if this portfolio has savings withdrawble activated
        */
-      if (!$this->savings->interests_withdrawable) {
+      if (!$savingsRecord->interests_withdrawable) {
         $validator->errors()->add('amount', 'This portfolio does not have interests withdrawal activated. You must wait for the maturity of the portfolio or liquidate it.');
       }
 
@@ -65,7 +69,7 @@ class CreateInterestsWithdrawalRequestValidation extends FormRequest
       /**
        * check if pending withdrawal request
        */
-      if (!$this->savings->isDueForInterestsWithdrawal()) {
+      if (!$savingsRecord->isDueForInterestsWithdrawal()) {
         $validator->errors()->add('amount', 'This portfolio is not yet due for interests withdrawal. Contact our support team for more information');
         return;
       }
@@ -77,20 +81,21 @@ class CreateInterestsWithdrawalRequestValidation extends FormRequest
     /**
      * Check if user is due for withdrawal and flag for extra charge
      * ! Check if this savings is liquidated
+     * @var Savings $savings_record
      */
     // $savings_record = Savings::find($this->route('savings_id'));
     $savings_record = $this->savings;
     if (!$savings_record->is_due_for_free_withdrawal()) {
       return array_merge(parent::validated(), [
         'is_charge_free' => false,
-        'amount' => $savings_record->unprocessedTotalInterestsAmount(),
+        'amount' => $savings_record->unlockedUnprocessedTotalInterestsAmount(),
         'savings_id' => $savings_record->id,
         'is_interests' => true,
       ]);
     } else {
       return array_merge(parent::validated(), [
         'is_charge_free' => true,
-        'amount' => $savings_record->unprocessedTotalInterestsAmount(),
+        'amount' => $savings_record->unlockedUnprocessedTotalInterestsAmount(),
         'savings_id' => $savings_record->id,
         'is_interests' => true,
       ]);

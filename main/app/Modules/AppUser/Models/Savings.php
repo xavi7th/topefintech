@@ -34,7 +34,7 @@ class Savings extends Model
 
   protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount', 'interests_withdrawable'];
   protected $table = 'savings';
-  protected $dates = ['funded_at', 'maturity_date', 'interest_processed_at'];
+  protected $dates = ['funded_at', 'maturity_date', 'withdrawn_at', 'interests_unlocked_at'];
   protected $casts = [
     'current_balance' => 'double',
     'app_user_id' => 'int',
@@ -297,6 +297,16 @@ class Savings extends Model
     return $this->current_balance === ($this->total_deposits_sum() - $this->total_withdrawals_sum());
   }
 
+  public function unlockSavingsInterests(): bool
+  {
+
+    $this->savings_interests()->locked()->unprocessed()->update([
+      'is_locked' => false
+    ]);
+
+    return true;
+  }
+
   public function liquidate(): void
   {
     DB::beginTransaction();
@@ -339,15 +349,36 @@ class Savings extends Model
     return $this->savings_interests()->unprocessed()->sum('amount');
   }
 
+  public function unlockedUnprocessedTotalInterestsAmount(): float
+  {
+    return $this->savings_interests()->unprocessed()->unlocked()->sum('amount');
+  }
+
   public function isDueForInterestsWithdrawal(): bool
   {
-
-    // check if this savings interests has grown to min treshold for interests withdrawal
-    if ($this->unprocessedTotalInterestsAmount() < config('app.smart_savings_minimum_amount_before_interests_withdrawal')) {
+    // check if this portfolio is old enough to have interests withdrawn
+    if ($this->funded_at->diffInDays(now()) > config('app.smart_savings_minimum_duration_before_interests_withdrawal')) {
       return false;
     }
-    // check if this portfolio is old enough to have interests withdrawn
-    if ($this->funded_at->diffInDays(now()) < config('app.smart_savings_minimum_duration_before_interests_withdrawal')) {
+
+    // check if this savings interests has grown to min treshold for interests withdrawal
+    if ($this->unlockedUnprocessedTotalInterestsAmount() < config('app.smart_savings_minimum_amount_before_interests_withdrawal')) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public function isDueForIntetestsUnlock(): bool
+  {
+    if (is_null($this->interests_unlocked_at) && $this->funded_at->diffInDays(now()) > config('app.smart_savings_minimum_duration_before_interests_withdrawal')) {
+      return true;
+    }
+    /**
+     * check if interests was unlocked in the last config('app.smart_savings_minimum_duration_before_interests_withdrawal') days
+     */
+
+    if (optional($this->interests_unlocked_at)->diffInDays(now()) < config('app.smart_savings_minimum_duration_before_interests_withdrawal')) {
       return false;
     }
     return true;
@@ -648,6 +679,21 @@ class Savings extends Model
     return Inertia::render('Admin,AdminNotifications', [
       'notifications' => $notifications
     ]);
+  }
+
+  public function scopeSmart($query)
+  {
+    return $query->whereType('smart');
+  }
+
+  public function scopeTarget($query)
+  {
+    return $query->whereType('target');
+  }
+
+  public function scopeInvestment($query)
+  {
+    return $query->whereType('investment');
   }
 
   /**

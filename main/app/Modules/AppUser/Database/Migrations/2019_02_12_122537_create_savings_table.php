@@ -24,6 +24,7 @@ class CreateSavingsTable extends Migration
       $table->timestamp('funded_at')->nullable();
       $table->boolean('is_liquidated')->default(false);
       $table->boolean('interests_withdrawable')->default(false);
+      $table->timestamp('interests_unlocked_at')->nullable();
       $table->timestamp('withdrawn_at')->nullable();
 
 

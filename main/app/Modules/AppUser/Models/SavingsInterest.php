@@ -12,46 +12,6 @@ use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-/**
- * App\Modules\AppUser\Models\SavingsInterest
- *
- * @property int $id
- * @property int $savings_id
- * @property float $amount
- * @property string|null $description
- * @property string|null $processed_at
- * @property string|null $process_type
- * @property int $is_locked
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Savings $savings
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest compounded()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest locked()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest newQuery()
- * @method static \Illuminate\Database\Query\Builder|SavingsInterest onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest processed()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest query()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest unlocked()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest unprocessed()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereIsLocked($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereProcessType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereProcessedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereSavingsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|SavingsInterest withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest withdrawn()
- * @method static \Illuminate\Database\Query\Builder|SavingsInterest withoutTrashed()
- * @mixin \Eloquent
- */
 class SavingsInterest extends Model
 {
   use SoftDeletes;
