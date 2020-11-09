@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
   public function bootstrap()
   {
     parent::bootstrap();
-    // Travel::to('102 days 12:00am');
+    // Travel::to('12 months 1 day 12:00am');
   }
 
   /**
@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
     $schedule->command('savings:process-interest')
     ->daily()
       ->withoutOverlapping(10)
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-interests.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1process-interests.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Failed to successfully process interests for all users');
       });
@@ -45,28 +45,28 @@ class Kernel extends ConsoleKernel
     $schedule->command('savings:auto-deduct-savings')
       ->everyMinute()
       ->withoutOverlapping(180)
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/autosave-deductions-log.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1autosave-deductions-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing auto save deductions failed');
       });
 
     $schedule->command('savings:process-mature-savings')
     ->daily()
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/process-mature-savings-log.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1process-mature-savings-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing mature savings failed to complete successfully');
       });
 
     $schedule->command('savings:unlock-due-interests')
     ->daily()
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/unlock-due-interests-log.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1unlock-due-interests-log.cson')
       ->onFailure(function () {
       ActivityLog::notifyAdmins('Unlocking due interests of smart savings failed to complete successfully');
     });
 
     $schedule->command('savings:compound-due-interests')
     ->daily()
-      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/compound-due-interests-log.cson')
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1compound-due-interests-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
       });

@@ -53,24 +53,24 @@ class ProcessInterests extends Command
      */
 
     // Travel::to('4 months 4 days', function () {
-      /**
-       * @var Savings $savings_record
-       */
+    /**
+     * @var Savings $savings_record
+     */
     foreach (Savings::active()->with(['app_user', 'target_type'])->cursor() as $savings_record) {
-        $interest_amount = $savings_record->get_due_interest();
-        if ($interest_amount > 0) {
+      $interest_amount = $savings_record->get_due_interest();
+      if ($interest_amount > 0) {
 
         $this->notification[] = $savings_record->app_user->full_name . ' ' . $savings_record->target_type->name . ' savings intrested with ' . to_naira($interest_amount);
-          DB::beginTransaction();
-          $savings_record->create_interest_record($interest_amount);
+        DB::beginTransaction();
+        $savings_record->create_interest_record($interest_amount);
 
-          /**
-           * Mark all interestable transactions as processed
-           */
-          $savings_record->mark_interest_as_processed();
-          DB::commit();
-        }
+        /**
+         * Mark all interestable transactions as processed
+         */
+        $savings_record->mark_interest_as_processed();
+        DB::commit();
       }
+    }
     // });
 
     dump(collect($this->notification)->implode(',' . PHP_EOL));

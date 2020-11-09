@@ -402,6 +402,10 @@ class Savings extends Model
 
   public function isDueForIntetestsUnlock(): bool
   {
+    if (!$this->interests_withdrawable) {
+      return false;
+    }
+
     if (is_null($this->interests_unlocked_at) && $this->funded_at->diffInDays(now()) > config('app.smart_savings_minimum_duration_before_interests_withdrawal')) {
       return true;
     }
