@@ -27,18 +27,18 @@ use App\Modules\Admin\Notifications\SavingsMaturedNotification;
 use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Savings extends Model
 {
   use SoftDeletes;
 
-  protected $fillable = ['type', 'target_type_id', 'maturity_date', 'amount', 'interests_withdrawable', 'interests_unlocked_at', 'interests_compounded_at'];
-  protected $table = 'savings';
+  protected $fillable = ['type', 'portfolio_id', 'portfolio_type', 'maturity_date', 'amount', 'interests_withdrawable', 'interests_unlocked_at', 'interests_compounded_at'];
   protected $dates = ['funded_at', 'maturity_date', 'withdrawn_at', 'interests_unlocked_at'];
   protected $casts = [
     'current_balance' => 'double',
     'app_user_id' => 'int',
-    'target_type_id' => 'int',
+    'portfolio_id' => 'int',
     'is_liquidated' => 'boolean',
     'interests_withdrawable' => 'boolean',
   ];
@@ -58,9 +58,9 @@ class Savings extends Model
     return $this->hasOne(WithdrawalRequest::class)->userVerified();
   }
 
-  public function target_type()
+  public function portfolio()
   {
-    return $this->belongsTo(TargetType::class)->withDefault(function ($user, $post) {
+    return $this->morphTo()->withDefault(function ($user, $post) {
       $user->name = $post->type;
     });
   }
@@ -185,7 +185,7 @@ class Savings extends Model
       /**
        * Add a deposit transaction for this savings with a description for interest roll over
        */
-      $decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->target_type->name . ' savings';
+      $decsription = $decsription ?? 'Quarterly rollover of interest for ' . $this->portfolio->name . ' savings';
 
       $this->create_deposit_transaction($uncleared_interests_sum, $decsription);
 
@@ -308,7 +308,7 @@ class Savings extends Model
     try {
       $accruedInterests = $this->unprocessedTotalInterestsAmount();
 
-      $this->create_deposit_transaction($accruedInterests, 'Accrued interests compounded into ' . $this->target_type->name . ' savings portfilio');
+      $this->create_deposit_transaction($accruedInterests, 'Accrued interests compounded into ' . $this->portfolio->name . ' savings portfilio');
 
       $this->savings_interests()->unprocessed()->update([
         'processed_at' => now(),
@@ -319,7 +319,7 @@ class Savings extends Model
       $this->interests_compounded_at = now();
       $this->save();
     } catch (\Throwable $th) {
-      ErrLog::notifyAdminAndFail($this->app_user, $th, 'Failed to compound ' . $this->app_user->fullname . '´s ' . $this->target_type->name . ' savings portfolio');
+      ErrLog::notifyAdminAndFail($this->app_user, $th, 'Failed to compound ' . $this->app_user->fullname . '´s ' . $this->portfolio->name . ' savings portfolio');
       return false;
     }
 
@@ -479,7 +479,7 @@ class Savings extends Model
   {
     if ($request->isApi()) return $request->user()->savings_list;
     return Inertia::render('AppUser,savings/UserSavings', [
-      'savings_list' => $request->user()->savings_list()->active()->with('target_type')->get(),
+      'savings_list' => $request->user()->savings_list()->active()->with('portfolio')->get(),
       'auto_save_list' => $request->user()->auto_save_settings,
       'target_types' => TargetType::all()
     ]);
@@ -583,7 +583,8 @@ class Savings extends Model
      */
     $funds = $request->user()->target_savings()->create([
       'type' => 'target',
-      'target_type_id' => $request->target_type_id,
+      'portfolio_id' => $request->portfolio_id,
+      'portfolio_type' => TargetType::class,
       'maturity_date' => now()->addMonths($request->duration)
     ]);
     if ($request->isApi()) {
@@ -624,8 +625,8 @@ class Savings extends Model
 
   public function adminViewUserSavings(Request $request, AppUser $user)
   {
-    $savings_list = (new AdminSavingsTransformer)->collectionTransformer($user->savings_list->load('target_type'), 'basic');
-    // $savings_list = $user->savings_list->load('target_type');
+    $savings_list = (new AdminSavingsTransformer)->collectionTransformer($user->savings_list->load('portfolio'), 'basic');
+    // $savings_list = $user->savings_list->load('portfolio');
     $auto_save_list = $user->auto_save_settings;
     // $target_types = TargetType::all();
 

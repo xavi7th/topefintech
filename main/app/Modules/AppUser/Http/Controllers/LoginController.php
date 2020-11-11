@@ -15,6 +15,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\Savings;
+use App\Modules\AppUser\Models\TargetType;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

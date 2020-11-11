@@ -17,7 +17,7 @@ class CreateTargetFundValidation extends FormRequest
   {
     return [
       'duration' => 'required|numeric|min:9|max:480',
-      'target_type_id' => 'required|exists:target_types,id'
+      'portfolio_id' => 'required|exists:target_types,id'
     ];
   }
 

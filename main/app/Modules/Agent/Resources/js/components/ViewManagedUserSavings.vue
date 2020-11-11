@@ -51,7 +51,7 @@
       </modal>
       <modal
         modalId="fundThisSavingsModal"
-        :modalTitle="`Add funds to your ${details.target_type? details.target_type.name: '' } Savings`"
+        :modalTitle="`Add funds to your ${details.portfolio? details.portfolio.name: '' } Savings`"
       >
         <form class="#" @submit.prevent="addFundsToThisSavings">
           <FlashMessage />

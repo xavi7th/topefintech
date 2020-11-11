@@ -72,7 +72,7 @@
               <select
                 class="custom-select"
                 name="target-type"
-                v-model="details.target_type_id"
+                v-model="details.portfolio_id"
               >
                 <option selected>Select</option>
                 <option
@@ -84,8 +84,8 @@
                 </option>
               </select>
               <FlashMessage
-                v-if="errors.target_type_id"
-                :msg="errors.target_type_id[0]"
+                v-if="errors.portfolio_id"
+                :msg="errors.portfolio_id[0]"
               />
             </div>
           </div>
@@ -143,7 +143,7 @@
         <modal
           modalId="fundThisSavingsModal"
           :modalTitle="`Add funds to your ${
-            details.target_type ? details.target_type.name : ''
+            details.portfolio ? details.portfolio.name : ''
           } Savings`"
         >
           <FlashMessage />

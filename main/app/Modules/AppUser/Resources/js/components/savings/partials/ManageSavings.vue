@@ -39,7 +39,7 @@
           <tr v-for="savings in savings_list" :key="savings.id">
             <th scope="row">{{savings.id}}</th>
             <td class="text-capitalize d-flex justify-content-between align-items-center">
-              {{savings.name || savings.target_type.name || 'N/A'}} Savings
+              {{savings.name || savings.portfolio.name || 'N/A'}} Savings
               <span class="badge badge-danger" v-if="savings.is_matured && $page.auth.user.isAdmin">MATURED</span>
               <button
                 type="button"

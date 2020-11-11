@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
   public function bootstrap()
   {
     parent::bootstrap();
-    // Travel::to('12 months 1 day 12:00am');
+    // Travel::to('12 days 12:00am');
   }
 
   /**

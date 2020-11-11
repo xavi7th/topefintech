@@ -43,16 +43,16 @@ class CompoundDueInterests extends Command
    */
   public function handle()
   {
-    foreach (Savings::active()->targetOrInvestment()->where(fn ($query) => $query->dueAndNeverCompounded()->orWhere->dueForRecompounding())->with(['app_user', 'target_type'])->cursor() as $savingsRecord) {
+    foreach (Savings::active()->targetOrInvestment()->where(fn ($query) => $query->dueAndNeverCompounded()->orWhere->dueForRecompounding())->with(['app_user', 'portfolio'])->cursor() as $savingsRecord) {
       DB::beginTransaction();
 
       /**
        * @var Savings $savingsRecord
        */
       if ($savingsRecord->compoundInterests()) {
-        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->target_type->name . ' savings interests compounded successfully';
+        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->portfolio->name . ' savings interests compounded successfully';
       } else {
-        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->target_type->name . ' savings interests FAILED to compound successfully';
+        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->portfolio->name . ' savings interests FAILED to compound successfully';
       }
 
       DB::commit();

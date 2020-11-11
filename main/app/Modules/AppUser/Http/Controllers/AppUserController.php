@@ -67,7 +67,7 @@ class AppUserController extends Controller
     // Travel::to('4 months 4 days');
     return Inertia::render('AppUser,dashboard/UserDashboard', [
       'userSavings' => function () use ($request) {
-        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->active()->oldest()->with('target_type')->get(), 'forUserDashboard');
+        return (new SavingsRecordTransformer)->collectionTransformer($request->user()->savings_list()->active()->oldest()->with('portfolio')->get(), 'forUserDashboard');
       },
       'userInvestments' => function () use ($request) {
         return [];

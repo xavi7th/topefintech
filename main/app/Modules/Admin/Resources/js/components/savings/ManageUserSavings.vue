@@ -66,7 +66,7 @@
             </div>
             <div class="col-12">
               <label for="target-type">Select Target Plan</label>
-              <select class="custom-select" name="target-type" v-model="details.target_type_id">
+              <select class="custom-select" name="target-type" v-model="details.portfolio_id">
                 <option selected>Select</option>
                 <option
                   v-for="target in target_types"
@@ -74,7 +74,7 @@
                   :value="target.id"
                 >{{target.name}}</option>
               </select>
-              <FlashMessage v-if="errors.target_type_id" :msg="errors.target_type_id[0]" />
+              <FlashMessage v-if="errors.portfolio_id" :msg="errors.portfolio_id[0]" />
             </div>
             <div class="col-12">
               <button type="submit" class="btn btn-success btn-long">
@@ -86,7 +86,7 @@
       </modal>
       <modal
         modalId="fundThisSavingsModal"
-        :modalTitle="`Add funds to your ${details.target_type? details.target_type.name: '' } Savings`"
+        :modalTitle="`Add funds to your ${details.portfolio? details.portfolio.name: '' } Savings`"
       >
         <form class="#" @submit.prevent="addFundsToThisSavings">
           <FlashMessage />
@@ -112,7 +112,7 @@
       </modal>
       <modal
         modalId="defundThisSavingsModal"
-        :modalTitle="`Remove funds to this ${details.target_type? details.target_type.name: '' } Savings`"
+        :modalTitle="`Remove funds to this ${details.portfolio? details.portfolio.name: '' } Savings`"
       >
         <form class="#" @submit.prevent="removeFundsFromThisSavings">
           <FlashMessage />

@@ -39,7 +39,7 @@ class AdminSavingsTransformer
       'id' => (int)$savings->id,
       'app_user_id' => (int)$savings->id,
       'current_balance' => (float)$savings->current_balance,
-      'name' => (string)$savings->target_type->name,
+      'name' => (string)$savings->portfolio->name,
       'type' => (string)$savings->type,
       'total_duration' => (int)$savings->total_duration,
       'elapsed_duration' => (int)$savings->elapsed_duration,

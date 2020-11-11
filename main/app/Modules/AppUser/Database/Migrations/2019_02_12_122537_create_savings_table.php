@@ -18,7 +18,8 @@ class CreateSavingsTable extends Migration
       $table->id();
       $table->foreignId('app_user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
       $table->string('type')->default('smart');
-      $table->foreignId('target_type_id')->nullable()->constrained()->onDelete('no action')->onUpdate('cascade');
+      $table->unsignedBigInteger('portfolio_id')->nullable();
+      $table->string('portfolio_type')->nullable();
       $table->timestamp('maturity_date')->nullable();
       $table->double('current_balance')->default(0);
       $table->timestamp('funded_at')->nullable();

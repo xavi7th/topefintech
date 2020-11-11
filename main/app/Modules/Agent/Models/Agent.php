@@ -18,61 +18,7 @@ use App\Modules\Admin\Transformers\AdminUserTransformer;
 use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
-use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
-/**
- * App\Modules\Agent\Models\Agent
- *
- * @property int $id
- * @property string|null $ref_code
- * @property string $full_name
- * @property string $email
- * @property string $password
- * @property string|null $phone
- * @property string|null $bvn
- * @property string|null $avatar
- * @property string|null $gender
- * @property string|null $address
- * @property string|null $city_of_operation
- * @property \Illuminate\Support\Carbon|null $dob
- * @property \Illuminate\Support\Carbon|null $verified_at
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
- * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Agent\Models\AgentWalletTransaction[] $agent_wallet_transactions
- * @property-read int|null $agent_wallet_transactions_count
- * @property-read float $wallet_balance
- * @property-read \Illuminate\Database\Eloquent\Collection|AppUser[] $managed_users
- * @property-read int|null $managed_users_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
- * @property-read int|null $processed_withdrawal_requests_count
- * @method static \Illuminate\Database\Eloquent\Builder|Agent newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Agent newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Agent query()
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereBvn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereCityOfOperation($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereDob($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereFullName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereRefCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereVerifiedAt($value)
- * @mixin \Eloquent
- */
 class Agent extends User
 {
   protected $fillable = [
@@ -154,7 +100,7 @@ class Agent extends User
   {
     $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($appUser) {
       return $appUser->load([
-        'savings_interests.savings.target_type',
+        'savings_interests.savings.portfolio',
         'service_charges',
         'transactions'
       ]);
@@ -176,7 +122,7 @@ class Agent extends User
     if (!$appUser->is_managed_by($request->user())) {
       return back()->withFlash(['error' => 'You are not this user´s smart collector']);
     }
-    $savings_list = $appUser->savings_list->load('target_type');
+    $savings_list = $appUser->savings_list->load('portfolio');
     $target_types = TargetType::all();
 
     return Inertia::render('Agent,ViewManagedUserSavings', compact('appUser', 'savings_list', 'target_types'));
@@ -184,11 +130,11 @@ class Agent extends User
 
   public function agentGetManagedUserSavingsInterests(Request $request, AppUser $appUser)
   {
-    $records = $appUser->savings_interests()->with('savings.target_type')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
+    $records = $appUser->savings_interests()->with('savings.portfolio')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
     // dd($appUser);
     $interests_summary =  transform($records, function ($value) {
       return $value->groupBy('month')->transform(function ($item, $key) {
-        return $item->groupBy('savings.target_type.name')->transform(function ($item, $key) {
+        return $item->groupBy('savings.portfolio.name')->transform(function ($item, $key) {
           return $item->sum('amount');
         });
       })->transform(function ($item) {

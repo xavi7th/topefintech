@@ -10,16 +10,16 @@ class SavingsMaturedNotification extends Notification
 {
   use Queueable;
 
-  private $savings_record;
+  private $savingsRecord;
 
   /**
    * Create a new notification instance.
    *
    * @return void
    */
-  public function __construct(Savings $savings_record)
+  public function __construct(Savings $savingsRecord)
   {
-    $this->savings_record = $savings_record;
+    $this->savingsRecord = $savingsRecord;
   }
 
   /**
@@ -28,7 +28,7 @@ class SavingsMaturedNotification extends Notification
    * @param mixed $notifiable
    * @return array
    */
-  public function via($savings_record)
+  public function via($savingsRecord)
   {
     return ['database'];
   }
@@ -41,7 +41,7 @@ class SavingsMaturedNotification extends Notification
   {
 
     return [
-      'action' => $this->savings_record->app_user->full_name . '´s ' . $this->savings_record->target_type->name . ' savings has matured and is due for payout.'
+      'action' => $this->savingsRecord->app_user->full_name . '´s ' . $this->savingsRecord->portfolio->name . ' savings has matured and is due for payout.'
     ];
   }
 }

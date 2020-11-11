@@ -14,7 +14,6 @@ class CreateTargetTypesTable extends Migration
   public function up()
   {
     Schema::create('target_types', function (Blueprint $table) {
-      $table->engine = 'InnoDB';
       $table->id();
       $table->string('name')->unique();
 

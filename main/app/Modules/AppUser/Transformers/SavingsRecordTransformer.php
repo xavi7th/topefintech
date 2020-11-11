@@ -47,7 +47,7 @@ class SavingsRecordTransformer
     return [
       'id' => (int)$savings->id,
       'current_balance' => (float)$savings->current_balance,
-      'name' => (string)$savings->target_type->name,
+      'name' => (string)$savings->portfolio->name,
       'type' => (string)$savings->type,
       'interests_withdrawable' => (bool)$savings->interests_withdrawable && ($savings->funded_at->diffInDays(now()) > config('app.smart_savings_minimum_duration_before_interests_withdrawal')),
       'total_duration' => (int)$savings->total_duration,
@@ -62,7 +62,7 @@ class SavingsRecordTransformer
     return [
       'id' => (int)$savings->id,
       'current_balance' => (float)$savings->current_balance,
-      'name' => (string)$savings->target_type->name,
+      'name' => (string)$savings->portfolio->name,
       'type' => (string)$savings->type,
       'can_withdraw' => (bool)$savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->lte(now()),
       'locktime_countdown' => (int)$savings->updated_at->addDays(config('app.liquidated_savings_locktime'))->diffInDays(now()) + 1

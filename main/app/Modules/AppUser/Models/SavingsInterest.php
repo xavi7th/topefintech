@@ -12,6 +12,45 @@ use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\Modules\AppUser\Models\SavingsInterest
+ *
+ * @property int $id
+ * @property int $savings_id
+ * @property float $amount
+ * @property string|null $description
+ * @property string|null $processed_at
+ * @property string|null $process_type
+ * @property int $is_locked
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read Savings $savings
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest compounded()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest liquidated()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest locked()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|SavingsInterest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest unlocked()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereIsLocked($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereProcessType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereProcessedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereSavingsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|SavingsInterest withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SavingsInterest withdrawn()
+ * @method static \Illuminate\Database\Query\Builder|SavingsInterest withoutTrashed()
+ * @mixin \Eloquent
+ */
 class SavingsInterest extends Model
 {
   use SoftDeletes;
@@ -32,7 +71,7 @@ class SavingsInterest extends Model
 
   public function getDescriptionAttribute()
   {
-    return str_ordinal($this->created_at->quarter) . ' quarter´s interest on ' . $this->savings->target_type->name . ' savings';
+    return str_ordinal($this->created_at->quarter) . ' quarter´s interest on ' . $this->savings->portfolio->name . ' savings';
   }
 
   static function adminRoutes()
@@ -53,11 +92,11 @@ class SavingsInterest extends Model
 
   public function getSavingsInterests(Request $request)
   {
-    $records = $request->user()->savings_interests()->with('savings.target_type')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
+    $records = $request->user()->savings_interests()->with('savings.portfolio')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
 
     $interests_summary =  transform($records, function ($value) {
       return $value->groupBy('month')->transform(function ($item, $key) {
-        return $item->groupBy('savings.target_type.name')->transform(function ($item, $key) {
+        return $item->groupBy('savings.portfolio.name')->transform(function ($item, $key) {
           return $item->sum('amount');
         });
       })->transform(function ($item) {
@@ -76,7 +115,7 @@ class SavingsInterest extends Model
 
   public function getSavingsInterestsForMonth(Request $request, $month)
   {
-    $records = $request->user()->savings_interests()->with('savings.target_type')
+    $records = $request->user()->savings_interests()->with('savings.portfolio')
       ->whereMonth('savings_interests.created_at', Carbon::parse($month)->month)->orderByDesc('created_at')->get();
 
     $interests_summary = $records->groupBy([
@@ -84,7 +123,7 @@ class SavingsInterest extends Model
         return $item->created_at->toDateString();
       },
     ])->transform(function ($item, $key) {
-      return $item->groupBy('savings.target_type.name')->transform(function ($item, $key) {
+      return $item->groupBy('savings.portfolio.name')->transform(function ($item, $key) {
         return $item->sum('amount');
       });
     })->transform(function ($item) {
@@ -103,11 +142,11 @@ class SavingsInterest extends Model
 
   public function adminGetSavingsInterests(Request $request, AppUser $appUser)
   {
-    $records = $appUser->savings_interests()->with('savings.target_type')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
+    $records = $appUser->savings_interests()->with('savings.portfolio')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
     // dd($appUser);
     $interests_summary =  transform($records, function ($value) {
       return $value->groupBy('month')->transform(function ($item, $key) {
-        return $item->groupBy('savings.target_type.name')->transform(function ($item, $key) {
+        return $item->groupBy('savings.portfolio.name')->transform(function ($item, $key) {
           return $item->sum('amount');
         });
       })->transform(function ($item) {
@@ -127,7 +166,7 @@ class SavingsInterest extends Model
 
   public function adminGetSavingsInterestsForMonth(Request $request, AppUser $appUser, $month)
   {
-    $records = $appUser->savings_interests()->with('savings.target_type')
+    $records = $appUser->savings_interests()->with('savings.portfolio')
       ->whereMonth('savings_interests.created_at', Carbon::parse($month)->month)->orderByDesc('created_at')->get();
 
     $interests_summary = $records->groupBy([
@@ -135,7 +174,7 @@ class SavingsInterest extends Model
         return $item->created_at->toDateString();
       },
     ])->transform(function ($item, $key) {
-      return $item->groupBy('savings.target_type.name')->transform(function ($item, $key) {
+      return $item->groupBy('savings.portfolio.name')->transform(function ($item, $key) {
         return $item->sum('amount');
       });
     })->transform(function ($item) {

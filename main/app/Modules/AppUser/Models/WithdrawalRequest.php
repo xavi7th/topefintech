@@ -23,6 +23,54 @@ use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
 use App\Modules\AppUser\Http\Requests\CreateInterestsWithdrawalRequestValidation;
 
+/**
+ * App\Modules\AppUser\Models\WithdrawalRequest
+ *
+ * @property int $id
+ * @property int $app_user_id
+ * @property int $savings_id
+ * @property float|null $amount
+ * @property float|null $payout_amount
+ * @property string|null $description
+ * @property bool $is_user_verified
+ * @property bool $is_processed
+ * @property bool $is_charge_free
+ * @property bool $is_interests
+ * @property int|null $processed_by
+ * @property string|null $processor_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read AppUser $app_user
+ * @property-read Model|\Eloquent $processor
+ * @property-read Savings $savingsPortfolio
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userUnverified()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userVerified()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAppUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsChargeFree($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsInterests($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsProcessed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsUserVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest wherePayoutAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereSavingsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withoutTrashed()
+ * @mixin \Eloquent
+ */
 class WithdrawalRequest extends Model
 {
   use SoftDeletes;
@@ -74,7 +122,7 @@ class WithdrawalRequest extends Model
       /**
        * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
        */
-      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $withdrawalRequest->description ?? ($savingsPortfolio->target_type->name . ' savings portfolio'));
+      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $withdrawalRequest->description ?? ($savingsPortfolio->portfolio->name . ' savings portfolio'));
     }
 
     /**
@@ -100,7 +148,7 @@ class WithdrawalRequest extends Model
     /**
      * on approval add a withdrawal transaction to clear the savings protfolio
      */
-    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings' : 'Charge-deductible withdrawal of interests accrued on ' . $savingsPortfolio->target_type->name . ' savings';
+    $desc = $withdrawalRequest->is_charge_free ? 'Withdrawal of interests accrued on ' . $savingsPortfolio->portfolio->name . ' savings' : 'Charge-deductible withdrawal of interests accrued on ' . $savingsPortfolio->portfolio->name . ' savings';
     $savingsPortfolio->create_withdrawal_transaction($withdrawalRequest->amount, $desc);
 
     if (!$withdrawalRequest->is_charge_free) {
@@ -112,7 +160,7 @@ class WithdrawalRequest extends Model
       /**
        * Create a service charge transaction for this savings for the withdrawal if it is a chargeable withdrawal
        */
-      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->target_type->name . ' savings accrued interests');
+      $savingsPortfolio->create_service_charge($withdrawalCharge, 'Amount deducted for as withdrawal charge for charge deductible withdrawal on ' . $savingsPortfolio->portfolio->name . ' savings accrued interests');
     }
 
     /**

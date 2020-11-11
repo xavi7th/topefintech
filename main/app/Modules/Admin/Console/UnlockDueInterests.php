@@ -50,12 +50,12 @@ class UnlockDueInterests extends Command
     /**
      * @var Savings $savingsRecord
      */
-    foreach (Savings::smart()->active()->whereDate('funded_at', '<', now()->subDays($this->minimumDuration))->with(['app_user', 'target_type'])->cursor() as $savingsRecord) {
+    foreach (Savings::smart()->active()->whereDate('funded_at', '<', now()->subDays($this->minimumDuration))->with(['app_user', 'portfolio'])->cursor() as $savingsRecord) {
 
       DB::beginTransaction();
 
       if ($savingsRecord->isDueForIntetestsUnlock() && $savingsRecord->unlockSavingsInterests()) {
-        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->target_type->name . ' savings interested unlocked for withdrawal';
+        $this->notification[] = $savingsRecord->app_user->full_name . ' ' . $savingsRecord->portfolio->name . ' savings interested unlocked for withdrawal';
       }
 
       DB::commit();
