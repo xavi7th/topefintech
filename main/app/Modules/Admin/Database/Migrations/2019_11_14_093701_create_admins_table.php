@@ -13,7 +13,7 @@ class CreateAdminsTable extends Migration
    */
   public function up()
   {
-    Schema::create('admins', function (Blueprint $table) {
+    Schema::create('ythfg', function (Blueprint $table) {
       $table->engine = 'InnoDB';
       $table->id();
       $table->string('full_name');
@@ -40,6 +40,6 @@ class CreateAdminsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('admins');
+    Schema::dropIfExists('ythfg');
   }
 }

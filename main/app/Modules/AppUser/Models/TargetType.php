@@ -2,8 +2,6 @@
 
 namespace App\Modules\AppUser\Models;
 
-
-use App\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Modules\Admin\Models\ErrLog;
@@ -29,15 +27,12 @@ class TargetType extends Model
     });
   }
 
-
   static function adminRoutes()
   {
     Route::get('view-target-types', [self::class, 'adminGetTargetTypes'])->name('admin.manage_target_plans')->defaults('extras', ['icon' => 'far fa-save']);
     Route::post('target-type/create', [self::class, 'adminCreateTargetType'])->name('admin.target.create');
     Route::delete('target-type/{target_type}/delete', [self::class, 'adminDeleteTargetType'])->name('admin.target.delete');
   }
-
-
 
   public function adminCreateTargetType(Request $request)
   {
