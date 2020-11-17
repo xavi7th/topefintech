@@ -24,6 +24,7 @@ return [
 
 
   'balance_before_bvn_validation' => env('BALANCE_BEFORE_BVN_VALIDATION', 5000),
+  'minimum_investment_amount' => env('MINIMUM_INVESTMENT_AMOUNT'),
 
   /*
     |--------------------------------------------------------------------------

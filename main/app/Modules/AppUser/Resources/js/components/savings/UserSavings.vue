@@ -37,7 +37,7 @@
           <ManageSavings
             :savings_list="savings_list"
             @fund-savings="details = $event"
-          ></ManageSavings>
+          />
         </div>
         <div
           class="tab-pane fade"
@@ -45,48 +45,42 @@
           role="tabpanel"
           aria-labelledby="profilePillsSliding-tab"
         >
-          <ManageAutoSaveSettings
-            :auto_save_list="auto_save_list"
-          ></ManageAutoSaveSettings>
+          <ManageAutoSaveSettings :auto_save_list="auto_save_list" />
         </div>
       </div>
     </div>
     <template v-slot:modals>
-      <form class="#" @submit.prevent="createTargetSavings">
+      <form class="#" @submit.prevent="createInvestmentSavings">
         <modal modalId="newInvestmentModal" modalTitle="Create New Investment">
-          <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
-              <label for="duration">Duration (Months)</label>
+              <label for="investment-duration">Duration (Months)</label>
               <input
                 type="text"
                 class="form-control"
-                id="duration"
+                id="investment-duration"
                 v-model="details.duration"
+                readonly
                 placeholder="Enter duration of savings"
               />
-              <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
             </div>
             <div class="col-12">
-              <label for="target-type">Select Target Plan</label>
+              <label for="investment-type">Select Investment Plan</label>
               <select
                 class="custom-select"
-                name="target-type"
-                v-model="details.portfolio_id"
+                name="investment-type"
+                v-model="details.selected_investment"
+                @change="() => {details.duration = details.selected_investment.duration; details.portfolio_id = details.selected_investment.id}"
               >
-                <option selected>Select</option>
+                <option :value="undefined">Select</option>
                 <option
-                  v-for="target in target_types"
-                  :key="target.id"
-                  :value="target.id"
+                  v-for="investment in investment_types"
+                  :key="investment.name"
+                  :value="investment"
                 >
-                  {{ target.name }}
+                  {{ investment.name }} ({{investment.interest_rate}}% in {{investment.duration}} months)
                 </option>
               </select>
-              <FlashMessage
-                v-if="errors.portfolio_id"
-                :msg="errors.portfolio_id[0]"
-              />
             </div>
           </div>
           <div slot="modal-buttons">
@@ -169,10 +163,16 @@
                   v-model="details.interests_withdrawable"
                   id="interests-withdrawable"
                 />
-                <label class="custom-control-label fs-13" for="interests-withdrawable">
+                <label
+                  class="custom-control-label fs-13"
+                  for="interests-withdrawable"
+                >
                   I want to withdraw the interests from time to time
                 </label>
-               <FlashMessage v-if="errors.interests_withdrawable" :msg="errors.interests_withdrawable[0]" />
+                <FlashMessage
+                  v-if="errors.interests_withdrawable"
+                  :msg="errors.interests_withdrawable[0]"
+                />
               </div>
             </div>
           </div>
@@ -224,7 +224,7 @@
   export default {
     name: "UserSavings",
     mixins: [mixins],
-    props: ["target_types", "savings_list", "auto_save_list"],
+    props: ["target_types", 'investment_types', "savings_list", "auto_save_list"],
     components: {
       Layout,
       ManageSavings,
@@ -243,6 +243,25 @@
           .post(this.$route("appuser.savings.smart.initialise"), {
             ...this.details,
           })
+          .then(() => {
+            if (this.flash.success) {
+              this.details = {};
+            }
+            swal.close();
+          });
+      },
+      createInvestmentSavings() {
+        BlockToast.fire({ text: "Initializing a new investment portfolio ..." });
+        this.$inertia
+          .post(
+            this.$route("appuser.savings.investment.initialise"),
+            {
+              ...this.details,
+            },
+            {
+              preserveState: true,
+            }
+          )
           .then(() => {
             if (this.flash.success) {
               this.details = {};

@@ -18,6 +18,7 @@ use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\AppUser\Http\Controllers\LoginController;
 use App\Modules\AppUser\Http\Controllers\RegisterController;
 use App\Modules\AppUser\Http\Controllers\VerificationController;
+use App\Modules\AppUser\Models\InvestmentType;
 use App\Modules\AppUser\Transformers\SavingsRecordTransformer;
 use RachidLaasri\Travel\Travel;
 
@@ -44,18 +45,13 @@ class AppUserController extends Controller
         Route::get('dashboard', [self::class, 'loadDashboard'])->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);
 
         Savings::appUserRoutes();
-
         SavingsInterest::appUserRoutes();
-
         DebitCard::appUserRoutes();
-
         WithdrawalRequest::appUserRoutes();
-
         TargetType::appUserRoutes();
-
         Transaction::appUserRoutes();
-
         AppUser::routes();
+        InvestmentType::appUserRoutes();
 
         // Route::get('messages', [self::class, 'loadUserApp'])->name('appuser.messages')->defaults('extras', ['icon' => 'fas fa-mail-bulk']);
       });

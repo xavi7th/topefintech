@@ -179,25 +179,6 @@
               </div>
             </div>
           </template>
-
-          <div class="swiper-slide" v-if="!userInvestments.length">
-            <div class="rui-widget rui-widget-chart">
-              <div class="rui-chartjs-container">
-                <div
-                  class="rui-chartist rui-chartist-donut"
-                  data-width="200"
-                  data-height="200"
-                  :data-chartist-series="`1,200`"
-                  data-chartist-width="4"
-                  data-chartist-gradient="#ff8ebc;#ef2b5a"
-                ></div>
-              </div>
-              <div class="rui-widget-chart-info">
-                <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                <small class="rui-widget-subtitle">No Investments</small>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div class="swiper-button-next">
@@ -226,7 +207,6 @@
     name: "VaultStatistics",
     mixins: [errorHandlers],
     props: {
-      userInvestments: Array,
       userSavings: Array,
       liquidatedSavings: Array,
       maturedSavings: Array,

@@ -6,8 +6,7 @@
       id="liveAccountStatistics"
       data-swiper-initialslide="0"
       :data-swiper-loop="
-        (!!userSavings.length && userSavings.length > 3) ||
-        !!userInvestments.length
+        (!!userSavings.length && userSavings.length > 3)
       "
       data-swiper-grabcursor="true"
       data-swiper-center="false"
@@ -61,7 +60,7 @@
                     {{ portfolio.current_balance | Naira }}
                   </div>
                   <small class="rui-widget-subtitle text-capitalize"
-                    >{{ portfolio.name }} Savings Balance</small
+                    >{{ portfolio.name }} {{portfolio.type == 'investment' ? 'Investment' : 'Savings' }} Balance</small
                   >
                   <div class="d-flex">
                     <button
@@ -86,25 +85,6 @@
               </div>
             </div>
           </template>
-
-          <div class="swiper-slide" v-if="!userInvestments.length">
-            <div class="rui-widget rui-widget-chart">
-              <div class="rui-widget-chart-info">
-                <div class="rui-widget-title h2">{{ 0 | Naira }}</div>
-                <small class="rui-widget-subtitle">NO INVESTMENTS</small>
-              </div>
-              <div class="rui-chartjs-container">
-                <div
-                  class="rui-chartist rui-chartist-donut"
-                  data-width="200"
-                  data-height="200"
-                  data-chartist-series="1,25"
-                  data-chartist-width="4"
-                  data-chartist-gradient="#ff8ebc;#ef2b5a"
-                ></div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div class="swiper-button-next">
@@ -133,9 +113,6 @@ import { getErrorString } from '@dashboard-assets/js/config';
   export default {
     name: "LivePortfolioStatistics",
     props: {
-      userInvestments: {
-        type: Array,
-      },
       userSavings: {
         type: Array,
       },

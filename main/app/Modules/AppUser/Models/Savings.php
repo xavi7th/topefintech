@@ -537,6 +537,10 @@ class Savings extends Model
       return generate_422_error('Invalid savings selected');
     }
 
+    if ($savings->is_investment() && $request->amount < config('app.minimum_investment_amount')) {
+      return generate_422_error('The minimum investment amount is ' . to_naira(config('app.minimum_investment_amount')));
+    }
+
     return PaystackTransaction::initializeTransaction($request, $request->amount, 'Fund ' . $savings->type . ' savings', route('appuser.savings.target.fund.verify', $savings->id));
   }
 
