@@ -27,7 +27,6 @@ use App\Modules\Admin\Notifications\SavingsMaturedNotification;
 use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Savings extends Model
 {
@@ -118,6 +117,11 @@ class Savings extends Model
   public function is_target_savings(): bool
   {
     return $this->type == 'target';
+  }
+
+  public function is_investment(): bool
+  {
+    return $this->type == 'investment';
   }
 
   public function total_deposits_sum(): float
@@ -481,7 +485,8 @@ class Savings extends Model
     return Inertia::render('AppUser,savings/UserSavings', [
       'savings_list' => $request->user()->savings_list()->active()->with('portfolio')->get(),
       'auto_save_list' => $request->user()->auto_save_settings,
-      'target_types' => TargetType::all()
+      'target_types' => TargetType::all(),
+      'investment_types' => InvestmentType::all(),
     ]);
   }
 

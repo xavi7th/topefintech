@@ -12,7 +12,7 @@
           data-toggle="modal"
           data-target="#createSmartSavings"
           v-if="!$page.auth.user.has_smart_savings && !$page.auth.user.isAdmin"
-        >Create Smart Savings</button>
+        >New Smart Savings</button>
         <button
           type="button"
           class="btn btn-primary mb-10"
@@ -20,6 +20,13 @@
           data-target="#newTargetModal"
           v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent"
         >New Target Savings</button>
+        <button
+          type="button"
+          class="btn btn-info mb-10"
+          data-toggle="modal"
+          data-target="#newInvestmentModal"
+          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent"
+        >New Investment Savings</button>
       </div>
     </div>
 
@@ -32,7 +39,6 @@
             <th scope="col">Current Balance</th>
             <th scope="col">Start Date</th>
             <th scope="col">Maturity Date</th>
-            <!-- <th scope="col">Action</th> -->
           </tr>
         </thead>
         <tbody>

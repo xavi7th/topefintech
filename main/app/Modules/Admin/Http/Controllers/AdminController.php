@@ -2,7 +2,6 @@
 
 namespace App\Modules\Admin\Http\Controllers;
 
-use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\AppUser\Models\TargetType;
+use App\Modules\AppUser\Models\InvestmentType;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Admin\Http\Controllers\LoginController;
@@ -49,6 +49,7 @@ class AdminController extends Controller
         AppUser::adminRoutes();
         TargetType::adminRoutes();
         Savings::adminRoutes();
+        InvestmentType::adminRoutes();
         SavingsInterest::adminRoutes();
         WithdrawalRequest::adminRoutes();
         ErrLog::routes();

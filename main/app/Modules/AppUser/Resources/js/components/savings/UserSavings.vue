@@ -53,6 +53,50 @@
     </div>
     <template v-slot:modals>
       <form class="#" @submit.prevent="createTargetSavings">
+        <modal modalId="newInvestmentModal" modalTitle="Create New Investment">
+          <FlashMessage />
+          <div class="row vertical-gap sm-gap">
+            <div class="col-12">
+              <label for="duration">Duration (Months)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="duration"
+                v-model="details.duration"
+                placeholder="Enter duration of savings"
+              />
+              <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
+            </div>
+            <div class="col-12">
+              <label for="target-type">Select Target Plan</label>
+              <select
+                class="custom-select"
+                name="target-type"
+                v-model="details.portfolio_id"
+              >
+                <option selected>Select</option>
+                <option
+                  v-for="target in target_types"
+                  :key="target.id"
+                  :value="target.id"
+                >
+                  {{ target.name }}
+                </option>
+              </select>
+              <FlashMessage
+                v-if="errors.portfolio_id"
+                :msg="errors.portfolio_id[0]"
+              />
+            </div>
+          </div>
+          <div slot="modal-buttons">
+            <button type="submit" class="btn btn-success btn-long">
+              <span class="text">Initialise</span>
+            </button>
+          </div>
+        </modal>
+      </form>
+      <form class="#" @submit.prevent="createTargetSavings">
         <modal modalId="newTargetModal" modalTitle="Create New Target Savings">
           <FlashMessage />
           <div class="row vertical-gap sm-gap">
