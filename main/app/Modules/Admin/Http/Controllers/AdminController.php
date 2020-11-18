@@ -8,7 +8,6 @@ use Illuminate\Http\Response;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\Agent\Models\Agent;
 use App\Http\Controllers\Controller;
-use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\Savings;

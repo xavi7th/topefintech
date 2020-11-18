@@ -4,6 +4,7 @@ namespace App\Modules\SuperAdmin\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Modules\Agent\Models\Agent;
 use App\Http\Controllers\Controller;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,7 @@ class SuperAdminController extends Controller
         Route::get('/', [SuperAdminController::class, 'loadSuperAdminApp'])->name('superadmin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
         SuperAdmin::superAdminRoutes();
+        Agent::superAdminRoutes();
         ErrLog::routes();
       });
     });

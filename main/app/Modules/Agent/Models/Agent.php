@@ -7,6 +7,7 @@ use App\User;
 use Inertia\Inertia;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\AppUser\Models\TargetType;
+use Illuminate\Validation\ValidationException;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
 use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
@@ -132,12 +134,20 @@ class Agent extends User
     });
   }
 
+  static function superAdminRoutes()
+  {
+    Route::group([], function () {
+      Route::get('agents', [self::class, 'superAdminGetAgents'])->name('superadmin.view_agents')->defaults('extras', ['icon' => 'fas fa-user-tie']);
+      Route::delete('agent/{agent}/suspend', [self::class, 'suspendAgent'])->name('superadmin.suspend_agent');
+      // Route::post('agent/{agent}/fund', [self::class, 'fundAgent'])->name('admin.fund_agent');
+    });
+  }
+
   static function adminRoutes()
   {
     Route::group([], function () {
       Route::get('agents', [self::class, 'getAgents'])->name('admin.view_agents')->defaults('extras', ['icon' => 'fas fa-user-tie']);
       Route::post('agent/create', [self::class, 'createAgent'])->name('admin.create_agent');
-      Route::post('agent/{agent}/fund', [self::class, 'fundAgent'])->name('admin.fund_agent');
     });
   }
 
@@ -373,6 +383,26 @@ class Agent extends User
     }
   }
 
+  public function suspendAgent(Request $request, self $agent)
+  {
+    if ($agent->managed_users()->exists()) throw ValidationException::withMessages(['err' => 'This agent cannot be suspended. They have clients that they are currently managing'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+    $agent->delete();
+    return back()->withFlash(['success' => 'Agent Account suspended ']);
+  }
+
+
+  public function superAdminGetAgents(Request $request)
+  {
+
+    $agents = Cache::rememberForever('allAgents', function () {
+      return (new AdminUserTransformer)->collectionTransformer(self::all(), 'transformForAdminViewAgents');
+    });
+
+    if ($request->isApi()) return $agents;
+    return Inertia::render('SuperAdmin,ManageAgents', compact('agents'));
+  }
+
   /**
    * The "booted" method of the model.
    *
@@ -384,6 +414,9 @@ class Agent extends User
       $user->ref_code = unique_random('agents', 'ref_code', 'SMC-', '9');
     });
     static::saved(function ($user) {
+      Cache::forget('allAgents');
+    });
+    static::deleting(function ($user) {
       Cache::forget('allAgents');
     });
   }
