@@ -2,5 +2,6 @@
     "Admin": true,
     "BasicSite": true,
     "AppUser": true,
-    "Agent": true
+    "Agent": true,
+    "SuperAdmin": true
 }
