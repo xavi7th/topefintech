@@ -61,9 +61,9 @@ class ProcessMatureSavings extends Command
        * ? $savings_record->$savings->is_balance_consistent()
        */
       if ($savings_record->complete_mature_savings()) {
-        dump($savings_record->app_user->full_name . '´s ' . $savings_record->portfolio->name . ' savings has matured and is due for payout.');
         Admin::send_notification(new SavingsMaturedNotification($savings_record));
         optional($savings_record->app_user->smart_collector)->notify(new SavingsMaturedNotification($savings_record));
+        dump($savings_record->app_user->full_name . '´s ' . $savings_record->portfolio->name . ' savings has matured and is due for payout.');
       }
     }
     // });

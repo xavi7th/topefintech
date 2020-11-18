@@ -760,6 +760,11 @@ class Savings extends Model
     return $query->whereDate('maturity_date', '<', now());
   }
 
+  public function scopeMaturingSoon($query)
+  {
+    return $query->whereDate('maturity_date', now()->addDays(7))->orWhereDate('maturity_date', now()->addDays(6));
+  }
+
   /**
    * Scope a query to only include only savings that have not yet been withdrawn
    *

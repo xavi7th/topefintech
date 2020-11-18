@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
   public function bootstrap()
   {
     parent::bootstrap();
-    // Travel::to('12months 12:00am');
+    // Travel::to('11months 25 days 12:00am');
   }
 
   /**
@@ -48,6 +48,13 @@ class Kernel extends ConsoleKernel
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1autosave-deductions-log.cson')
       ->onFailure(function () {
         ActivityLog::notifyAdmins('Processing auto save deductions failed');
+      });
+
+    $schedule->command('savings:notify-about-to-mature-savings')
+    ->daily()
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1notify-about-to-mature-savings-log.cson')
+      ->onFailure(function () {
+        ActivityLog::notifyAdmins('Processing about to mature savings notifications failed to complete successfully');
       });
 
     $schedule->command('savings:process-mature-savings')
