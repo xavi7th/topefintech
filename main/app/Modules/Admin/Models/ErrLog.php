@@ -47,11 +47,8 @@ class ErrLog extends Model
 
   public function getErrorLogs(Request $request)
   {
-    if (auth('admin')->check()) {
-      $errors = (new ErrLogTransformer)->collectionTransformer(ErrLog::latest()->get(), 'basicTransform')['error_logs'];
+    $errors = (new ErrLogTransformer)->collectionTransformer(ErrLog::latest()->get(), 'basicTransform');
 
-      if ($request->isApi()) return $errors;
-      return Inertia::render('Admin,ErrorLogs', compact('errors'));
-    }
+    return Inertia::render('SuperAdmin,ErrorLogs', compact('errors'));
   }
 }

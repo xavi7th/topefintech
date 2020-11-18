@@ -27,11 +27,9 @@ class ErrLogTransformer
 				})
 			];
 		} catch (\Throwable $e) {
-			return [
-				'error_logs' => $collection->map(function ($v) use ($transformerMethod) {
+      return $collection->map(function ($v) use ($transformerMethod) {
 					return $this->$transformerMethod($v);
-				})
-			];
+      });
 		}
 	}
 

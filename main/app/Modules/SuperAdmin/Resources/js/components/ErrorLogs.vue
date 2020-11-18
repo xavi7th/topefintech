@@ -37,7 +37,7 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@admin-assets/js/AdminAppComponent";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
   export default {
     name: "ErrLogs",
     mixins: [mixins],
