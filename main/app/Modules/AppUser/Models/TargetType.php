@@ -9,6 +9,24 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\Savings;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Modules\AppUser\Models\TargetType
+ *
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $savings
+ * @property-read int|null $savings_count
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TargetType whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class TargetType extends Model
 {
   protected $fillable = ['name'];
@@ -56,7 +74,7 @@ class TargetType extends Model
 
       return back()->withFlash(['success' => 'Target Plan created']);
     } catch (\Throwable $e) {
-      ErrLog::notifyAdmin($request->user(), $e, 'Target not created');
+      ErrLog::notifySuperAdmin($request->user(), $e, 'Target not created');
       if ($request->isApi())  return response()->json(['rsp' => $e->getMessage()], 500);
 
       return back()->withFlash(['error' => 'Target not created. Check error logs']);

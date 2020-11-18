@@ -19852,3 +19852,10 @@ namespace App\Modules\Admin\Models {
     */
     class AdminFactoryBuilder extends \Illuminate\Database\Eloquent\FactoryBuilder {}
 }
+namespace App\Modules\SuperAdmin\Models {
+    /**
+    * @method \Illuminate\Database\Eloquent\Collection|SuperAdmin[]|SuperAdmin create($attributes = [])
+    * @method \Illuminate\Database\Eloquent\Collection|SuperAdmin[]|SuperAdmin make($attributes = [])
+    */
+    class SuperAdminFactoryBuilder extends \Illuminate\Database\Eloquent\FactoryBuilder {}
+}

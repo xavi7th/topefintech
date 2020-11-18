@@ -3,9 +3,9 @@
 namespace App\Modules\SuperAdmin\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 
-class SuperAdminDatabaseSeeder extends Seeder
+class SuperAdminsTableSeeder extends Seeder
 {
   /**
    * Run the database seeds.
@@ -14,8 +14,6 @@ class SuperAdminDatabaseSeeder extends Seeder
    */
   public function run()
   {
-    Model::unguard();
-
-    $this->call(SuperAdminsTableSeeder::class);
+    factory(SuperAdmin::class, 1)->create();
   }
 }

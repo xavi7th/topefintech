@@ -3,7 +3,8 @@
     "alias": "superadmin",
     "description": "",
     "keywords": [],
-    "order": 0,
+    "order": 4,
+    "active": 1,
     "providers": [
         "App\\Modules\\SuperAdmin\\Providers\\SuperAdminServiceProvider"
     ],

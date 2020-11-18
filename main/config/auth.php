@@ -3,6 +3,7 @@
 use App\Modules\Admin\Models\Admin;
 use App\Modules\Agent\Models\Agent;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 
 return [
 
@@ -48,6 +49,10 @@ return [
       'driver' => 'jwt',
       'provider' => 'users',
     ],
+    'superadmin' => [
+      'driver' => 'session',
+      'provider' => 'superadmins',
+    ],
     'admin' => [
       'driver' => 'session',
       'provider' => 'admins',
@@ -83,6 +88,10 @@ return [
     'users' => [
       'driver' => 'eloquent',
       'model' => AppUser::class,
+    ],
+    'superadmins' => [
+      'driver' => 'eloquent',
+      'model' => SuperAdmin::class,
     ],
     'admins' => [
       'driver' => 'eloquent',

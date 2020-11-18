@@ -5,12 +5,12 @@ namespace App;
 use Illuminate\Support\Str;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\Agent\Models\Agent;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use App\Modules\Admin\Models\ActivityLog;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\Agent\Transformers\AgentTransformer;
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
+use App\Modules\SuperAdmin\Transformers\SuperAdminUserTransformer;
 
 /**
  * App\User
@@ -126,6 +127,8 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
       return get_related_routes('agent.', ['GET']);
     } elseif ($this->isAdmin()) {
       return get_related_routes('admin.', ['GET']);
+    } elseif ($this->isSuperAdmin()) {
+      return get_related_routes('superadmin.', ['GET']);
     } else {
       return get_related_routes('app.', ['GET']);
     }
@@ -137,6 +140,8 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
       return  'appuser.dashboard';
     } else if ($this->isAdmin()) {
       return 'admin.dashboard';
+    } else if ($this->isSuperAdmin()) {
+      return 'superadmin.dashboard';
     } else if ($this->isAgent()) {
       return 'agent.dashboard';
     } else {
@@ -147,6 +152,11 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
   static function hasRouteNamespace($namespace = 'app.'): bool
   {
     return Str::startsWith(Route::currentRouteName(), $namespace);
+  }
+
+  public function isSuperAdmin(): bool
+  {
+    return $this instanceof SuperAdmin;
   }
 
   public function isAdmin(): bool
@@ -172,6 +182,8 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
       return (new AgentTransformer)->fullTransform($this);
     } elseif ($this->isAdmin()) {
       return (new AdminUserTransformer)->transformForAdminViewAdmins($this);
+    } elseif ($this->isSuperAdmin()) {
+      return (new SuperAdminUserTransformer)->transformForSuperAdminViewSuperAdmins($this);
     }
   }
 

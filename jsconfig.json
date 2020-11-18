@@ -9,7 +9,9 @@
       "@basicsite-components/*": [ "main/app/Modules/BasicSite/Resources/js/components/*" ],
       "@basicsite-assets/*": [ "main/app/Modules/BasicSite/Resources/*" ],
       "@admin-components/*": [ "main/app/Modules/Admin/Resources/js/components/*" ],
-      "@admin-assets/*": [ "main/app/Modules/Admin/Resources/*" ]
+      "@admin-assets/*": [ "main/app/Modules/Admin/Resources/*" ],
+      "@superadmin-components/*": [ "main/app/Modules/SuperAdmin/Resources/js/components/*" ],
+      "@superadmin-assets/*": [ "main/app/Modules/SuperAdmin/Resources/*" ]
     }
   },
   "exclude": [ "**/node_modules/*", "main/vendor/*", "main/storage/*", "public_html/*" ]

@@ -23,6 +23,54 @@ use App\Modules\AppUser\Notifications\DeclinedWithdrawalRequestNotification;
 use App\Modules\AppUser\Notifications\ProcessedWithdrawalRequestNotification;
 use App\Modules\AppUser\Http\Requests\CreateInterestsWithdrawalRequestValidation;
 
+/**
+ * App\Modules\AppUser\Models\WithdrawalRequest
+ *
+ * @property int $id
+ * @property int $app_user_id
+ * @property int $savings_id
+ * @property float|null $amount
+ * @property float|null $payout_amount
+ * @property string|null $description
+ * @property bool $is_user_verified
+ * @property bool $is_processed
+ * @property bool $is_charge_free
+ * @property bool $is_interests
+ * @property int|null $processed_by
+ * @property string|null $processor_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read AppUser $app_user
+ * @property-read Model|\Eloquent $processor
+ * @property-read Savings $savingsPortfolio
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest processed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest unprocessed()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userUnverified()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest userVerified()
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereAppUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsChargeFree($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsInterests($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsProcessed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereIsUserVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest wherePayoutAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereProcessorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereSavingsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|WithdrawalRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|WithdrawalRequest withoutTrashed()
+ * @mixin \Eloquent
+ */
 class WithdrawalRequest extends Model
 {
   use SoftDeletes;
@@ -200,7 +248,7 @@ class WithdrawalRequest extends Model
         'verification_needed' => 'A withdrawal request has been initialised on your account. Use the OTP sent to your registered phone number to verify the request to enable us proceed.'
       ]);
     } catch (\Throwable $th) {
-      ErrLog::notifyAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
+      ErrLog::notifySuperAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
       if ($request->isApi())  return response()->json(['err' => 'Withdrawal request not created'], 500);
       abort(500, 'An error occured while creating the request');
     }
@@ -231,7 +279,7 @@ class WithdrawalRequest extends Model
     try {
       $user->notify(new WithdrawalRequestCreatedNotification($withdrawalRequest->amount));
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($user, $th, 'Withdrawal request created notification failed');
+      ErrLog::notifySuperAdminAndFail($user, $th, 'Withdrawal request created notification failed');
     }
 
     if ($request->isApi()) return response()->json($withdrawalRequest, 201);
@@ -261,7 +309,7 @@ class WithdrawalRequest extends Model
         'verification_needed' => 'A withdrawal request has been initialised on your account. Use the OTP sent to your registered phone number to verify the request to enable us proceed.'
       ]);
     } catch (\Throwable $th) {
-      ErrLog::notifyAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
+      ErrLog::notifySuperAdminAndFail(auth()->user(), $th, 'Withdrawal request NOT created');
       if ($request->isApi())  return response()->json(['err' => 'Withdrawal request not created'], 500);
       abort(500, 'An error occured while creating the request');
     }
@@ -295,7 +343,7 @@ class WithdrawalRequest extends Model
     try {
       $user->notify(new WithdrawalRequestCreatedNotification($withdrawalRequest->amount));
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($user, $th, 'Withdrawal request created notification failed');
+      ErrLog::notifySuperAdminAndFail($user, $th, 'Withdrawal request created notification failed');
     }
 
     if ($request->isApi()) return response()->json($withdrawalRequest, 201);
@@ -332,7 +380,7 @@ class WithdrawalRequest extends Model
       try {
         $withdrawalRequest->app_user->notify(new DeclinedWithdrawalRequestNotification($withdrawalRequest));
       } catch (\Throwable $th) {
-        ErrLog::notifyAdmin($withdrawalRequest->app_user, $th, 'Declined withdrawal notification failed');
+        ErrLog::notifySuperAdminAndFail($withdrawalRequest->app_user, $th, 'Declined withdrawal notification failed');
         if ($request->isApi()) return response()->json('Declined withdrawal notification failed', 500);
         return back()->withFlash(['error' => 'Withdrawal Request NOT DELETED! <br> We could not send the user a notfication and the actions was canceled. Check the logs for more details']);
       }
@@ -351,12 +399,12 @@ class WithdrawalRequest extends Model
   public function approveWithdrawalRequest(Request $request, self $withdrawalRequest)
   {
     if ($withdrawalRequest->is_processed) {
-      ActivityLog::notifyAdmins($request->user()->email . ' attempted to approve an already processed request: ' . $withdrawalRequest->id);
+      ActivityLog::notifySuperAdminAndFails($request->user()->email . ' attempted to approve an already processed request: ' . $withdrawalRequest->id);
       throw ValidationException::withMessages(['err' => 'This request has been processed already!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     if (!$withdrawalRequest->is_user_verified) {
-      ActivityLog::notifyAdmins($request->user()->email . ' attempted to approve a request that has not been verified by the user: ' . $withdrawalRequest->id);
+      ActivityLog::notifySuperAdminAndFails($request->user()->email . ' attempted to approve a request that has not been verified by the user: ' . $withdrawalRequest->id);
       throw ValidationException::withMessages(['err' => 'Invalid action!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -371,7 +419,7 @@ class WithdrawalRequest extends Model
       $appUser = $withdrawalRequest->app_user;
       $appUser->notify(new ProcessedWithdrawalRequestNotification($withdrawalRequest));
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($appUser, $th, 'We could not send a notification of transaction processed to ' . $appUser->full_name);
+      ErrLog::notifySuperAdminAndFail($appUser, $th, 'We could not send a notification of transaction processed to ' . $appUser->full_name);
     }
 
     DB::commit();
@@ -405,7 +453,7 @@ class WithdrawalRequest extends Model
     parent::boot();
 
     static::created(function (self $withdrawalRequest) {
-      ActivityLog::notifyAdmins(auth()->user()->email . ' requested a withdrawal request of ' . to_naira($withdrawalRequest->amount));
+      ActivityLog::notifySuperAdminAndFails(auth()->user()->email . ' requested a withdrawal request of ' . to_naira($withdrawalRequest->amount));
     });
 
     static::saved(function (self $withdrawalRequest) {
@@ -415,7 +463,7 @@ class WithdrawalRequest extends Model
     static::deleting(function ($withdrawal_request) {
       Cache::forget('withdrawalRequests');
       if (!$withdrawal_request->isForceDeleting()) {
-        ActivityLog::notifyAdmins(auth()->user()->email . ' declined ' . $withdrawal_request->app_user->email . '\'s withdrawal request of ' . to_naira($withdrawal_request->amount));
+        ActivityLog::notifySuperAdminAndFails(auth()->user()->email . ' declined ' . $withdrawal_request->app_user->email . '\'s withdrawal request of ' . to_naira($withdrawal_request->amount));
       }
     });
 
@@ -424,7 +472,7 @@ class WithdrawalRequest extends Model
       // dd($withdrawal_request->toArray());
 
       if ($withdrawal_request->is_processed) {
-        ActivityLog::notifyAdmins(auth()->user()->email . ' processed ' . $withdrawal_request->app_user->full_name . '\'s withdrawal request of ' . $withdrawal_request->amount);
+        ActivityLog::notifySuperAdminAndFails(auth()->user()->email . ' processed ' . $withdrawal_request->app_user->full_name . '\'s withdrawal request of ' . $withdrawal_request->amount);
       }
     });
   }

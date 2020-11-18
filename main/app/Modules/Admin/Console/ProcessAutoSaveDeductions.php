@@ -146,7 +146,7 @@ class ProcessAutoSaveDeductions extends Command
         Admin::find(1)->notify(new GenericAdminNotification('Auto Deduct Failure', $app_user->full_name . ' has no default card to auto deduct'));
         logger()->notice($app_user->full_name . ' has no default card to auto deduct');
       } catch (\Throwable $th) {
-        ErrLog::notifyAdmin($app_user, $th, 'failure to notify user that default card not found');
+        ErrLog::notifySuperAdmin($app_user, $th, 'failure to notify user that default card not found');
       }
       return false;
     }
@@ -227,7 +227,7 @@ class ProcessAutoSaveDeductions extends Command
       Admin::find(1)->notify(new GenericAdminNotification('Successful Auto Debit', "Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan"));
       logger()->notice("Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan");
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of card debit success');
+      ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of card debit success');
     }
     dump('Debit Success');
 
@@ -242,7 +242,7 @@ class ProcessAutoSaveDeductions extends Command
       Admin::find(1)->notify(new GenericAdminNotification('Autosave Successful', "Autosave successful for $app_user->full_name. Amount: " . $amount));
       logger()->notice("Autosave successful for $app_user->full_name. Amount: " . $amount);
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of autosave success');
+      ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of autosave success');
     }
   }
 
@@ -265,7 +265,7 @@ class ProcessAutoSaveDeductions extends Command
       Admin::find(1)->notify(new GenericAdminNotification('Failed AutoDebit', "There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan"));
       logger()->notice("There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan");
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of card debit failure');
+      ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of card debit failure');
     }
 
     dump('Debit failure');
@@ -290,7 +290,7 @@ class ProcessAutoSaveDeductions extends Command
       Admin::find(1)->notify(new GenericAdminNotification($app_user->full_name . ' autosave failed.', $reason));
       logger()->notice($app_user->full_name . ' autosave failed. Reason: ' . $reason);
     } catch (\Throwable $th) {
-      ErrLog::notifyAdmin($app_user, $th, 'Failure to notify user of auto save failure');
+      ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of auto save failure');
     }
 
     dump('Autosave failure: ' . $reason);

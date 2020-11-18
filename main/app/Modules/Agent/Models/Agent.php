@@ -19,6 +19,59 @@ use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 
+/**
+ * App\Modules\Agent\Models\Agent
+ *
+ * @property int $id
+ * @property string|null $ref_code
+ * @property string $full_name
+ * @property string $email
+ * @property string $password
+ * @property string|null $phone
+ * @property string|null $bvn
+ * @property string|null $avatar
+ * @property string|null $gender
+ * @property string|null $address
+ * @property string|null $city_of_operation
+ * @property \Illuminate\Support\Carbon|null $dob
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
+ * @property-read int|null $activities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Agent\Models\AgentWalletTransaction[] $agent_wallet_transactions
+ * @property-read int|null $agent_wallet_transactions_count
+ * @property-read float $wallet_balance
+ * @property-read \Illuminate\Database\Eloquent\Collection|AppUser[] $managed_users
+ * @property-read int|null $managed_users_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
+ * @property-read int|null $processed_withdrawal_requests_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereBvn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereCityOfOperation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereDob($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereRefCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereVerifiedAt($value)
+ * @mixin \Eloquent
+ */
 class Agent extends User
 {
   protected $fillable = [
@@ -221,7 +274,7 @@ class Agent extends User
       if ($th->getCode() == 422) {
         return generate_422_error($th->getMessage());
       } else {
-        ErrLog::notifyAdminAndFail($request->user(), $th, 'Fund user savings failed');
+        ErrLog::notifySuperAdminAndFail($request->user(), $th, 'Fund user savings failed');
         return back()->withFlash(['error' => 'Fund user savings failed']);
       }
     };
@@ -280,7 +333,7 @@ class Agent extends User
       return back()->withFlash(['success' => 'Agent account created. They will be required to set a password on their first login']);
     } catch (\Throwable $e) {
 
-      ErrLog::notifyAdminAndFail($request->user(), $e, 'Error creating agent account');
+      ErrLog::notifySuperAdminAndFail($request->user(), $e, 'Error creating agent account');
 
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
       return back()->withFlash(['error' => 'An error occurred. Check the error logs']);
@@ -313,7 +366,7 @@ class Agent extends User
       return back()->withFlash(['success' => 'Funding successful']);
     } catch (\Throwable $e) {
 
-      ErrLog::notifyAdminAndFail($request->user(), $e, 'Error funding agent account');
+      ErrLog::notifySuperAdminAndFail($request->user(), $e, 'Error funding agent account');
 
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
       return back()->withFlash(['error' => 'An error occurred. Check the error logs']);

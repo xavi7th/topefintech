@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\SuperAdmin\Http\Controllers\SuperAdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +12,10 @@
 |
 */
 
-Route::prefix('superadmin')->group(function() {
-    Route::get('/', 'SuperAdminController@index');
-});
+SuperAdminController::routes();
+
+
+
+// if (!app()->routesAreCached()) {
+//     require __DIR__ . '/Http/routes.php';
+// }

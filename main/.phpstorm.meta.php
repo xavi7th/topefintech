@@ -2009,6 +2009,7 @@ namespace PHPSTORM_META {
             'App\Modules\AppUser\Models\DebitCard' => \App\Modules\AppUser\Models\DebitCardFactoryBuilder::class,
             'App\Modules\AppUser\Models\AppUser' => \App\Modules\AppUser\Models\AppUserFactoryBuilder::class,
             'App\Modules\Admin\Models\Admin' => \App\Modules\Admin\Models\AdminFactoryBuilder::class,
+            'App\Modules\SuperAdmin\Models\SuperAdmin' => \App\Modules\SuperAdmin\Models\SuperAdminFactoryBuilder::class,
         ]));
 
     override(\Illuminate\Support\Arr::add(0), type(0));

@@ -13,6 +13,35 @@ use App\Modules\AppUser\Notifications\NewInvestmentInitialised;
 use App\Modules\Admin\Http\Requests\CreteInvestmentTypeValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseInvestmentSavingsValidation;
 
+/**
+ * App\Modules\AppUser\Models\InvestmentType
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $duration
+ * @property float $interest_rate
+ * @property float $daily_interest_rate
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $savings
+ * @property-read int|null $savings_count
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType newQuery()
+ * @method static \Illuminate\Database\Query\Builder|InvestmentType onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereDailyInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvestmentType whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|InvestmentType withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|InvestmentType withoutTrashed()
+ * @mixin \Eloquent
+ */
 class InvestmentType extends Model
 {
   use SoftDeletes;
@@ -69,7 +98,7 @@ class InvestmentType extends Model
       if ($request->isApi()) return response()->json($investment_type, 201);
       return back()->withFlash(['success' => 'Investment Plan created']);
     } catch (\Throwable $e) {
-      ErrLog::notifyAdmin($request->user(), $e, 'Investment not created');
+      ErrLog::notifySuperAdmin($request->user(), $e, 'Investment not created');
 
       if ($request->isApi())  return response()->json(['rsp' => $e->getMessage()], 500);
       return back()->withFlash(['error' => 'Investment not created. Check error logs']);
@@ -85,7 +114,7 @@ class InvestmentType extends Model
       if ($request->isApi()) return response()->json($investmentType, 201);
       return back()->withFlash(['success' => 'Investment Plan updated']);
     } catch (\Throwable $e) {
-      ErrLog::notifyAdmin($request->user(), $e, 'Investment not updated');
+      ErrLog::notifySuperAdmin($request->user(), $e, 'Investment not updated');
 
       if ($request->isApi())  return response()->json(['rsp' => $e->getMessage()], 500);
       return back()->withFlash(['error' => 'Investment not updated. Check error logs']);

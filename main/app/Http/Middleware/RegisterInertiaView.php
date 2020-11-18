@@ -23,6 +23,8 @@ class RegisterInertiaView
     // dd(routeHasRootNamespace('app.'));
     if ($request->user()) {
       Inertia::setRootView(strtolower($request->user()->getType()) . '::app');
+    } elseif (Str::containsAll(\Route::currentRouteName(), ['super', 'admin', 'login'])) {
+      Inertia::setRootView('superadmin::app');
     } elseif (Str::containsAll(\Route::currentRouteName(), ['admin', 'login'])) {
       Inertia::setRootView('admin::app');
     } elseif (Str::contains(\Route::currentRouteName(), ['login', 'register'])) {

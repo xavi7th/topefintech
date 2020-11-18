@@ -1,5 +1,5 @@
 {
-    "name": "minds&machines/superadmin",
+    "name": "minds&machines/super-admin",
     "description": "",
     "authors": [
         {
@@ -9,7 +9,9 @@
     ],
     "extra": {
         "laravel": {
-            "providers": [],
+            "providers": [
+                "App\\Modules\\SuperAdmin\\Providers\\SuperAdminServiceProvider"
+            ],
             "aliases": {
 
             }

@@ -2,6 +2,9 @@
 
 return [
   'groups' => [
+    'superadmin' => [
+      'superadmin.*',
+    ],
     'admin' => [
       'admin.*',
     ],

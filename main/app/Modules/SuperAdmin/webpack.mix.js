@@ -1,14 +1,13 @@
-const dotenvExpand = require('dotenv-expand');
-dotenvExpand(require('dotenv').config({ path: '../../.env'/*, debug: true*/}));
+const mix = require( 'laravel-mix' )
 
-const mix = require('laravel-mix');
-require('laravel-mix-merge-manifest');
+mix.webpackConfig( {
+    resolve: {
+        extensions: [ '.js', '.vue', '.json' ],
+        alias: {
+            '@superadmin-components': __dirname + '/Resources/js/components',
+            '@superadmin-assets': __dirname + '/Resources'
+        },
+    },
+} )
 
-mix.setPublicPath('../../public').mergeManifest();
-
-mix.js(__dirname + '/Resources/assets/js/app.js', 'js/superadmin.js')
-    .sass( __dirname + '/Resources/assets/sass/app.scss', 'css/superadmin.css');
-
-if (mix.inProduction()) {
-    mix.version();
-}
+mix.js( __dirname + '/Resources/js/app.js', 'js/superadmin-app.js' )
