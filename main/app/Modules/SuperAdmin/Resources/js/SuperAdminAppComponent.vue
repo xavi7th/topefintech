@@ -5,10 +5,10 @@
     data-offset="140"
     class="rui-no-transition rui-navbar-autohide rui-section-lines body-wrap"
   >
-    <admin-nav></admin-nav>
+    <super-admin-nav></super-admin-nav>
     <div class="rui-yaybar-bg"></div>
 
-    <admin-header></admin-header>
+    <super-admin-header></super-admin-header>
     <super-admin-mobile-header></super-admin-mobile-header>
     <div class="rui-navbar-bg"></div>
 

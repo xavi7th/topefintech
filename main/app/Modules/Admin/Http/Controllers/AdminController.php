@@ -42,7 +42,7 @@ class AdminController extends Controller
       LoginController::routes();
 
       Route::group(['middleware' => ['auth:admin', 'admins']], function () {
-        Route::get('/', [AdminController::class, 'loadAdminApp'])->name('admin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
+        Route::get('/', [self::class, 'loadAdminApp'])->name('admin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
         Admin::adminRoutes();
         Agent::adminRoutes();
@@ -52,7 +52,7 @@ class AdminController extends Controller
         InvestmentType::adminRoutes();
         SavingsInterest::adminRoutes();
         WithdrawalRequest::adminRoutes();
-        ErrLog::routes();
+
       });
     });
   }
@@ -60,9 +60,9 @@ class AdminController extends Controller
   public function loadAdminApp(Request $request)
   {
     return Inertia::render('Admin,AdminDashboard', [
-      'total_savings_amount' => Savings::sum('current_balance'),
-      'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),
-      'total_cleared_interests_amount' => SavingsInterest::processed()->sum('amount')
+      // 'total_savings_amount' => Savings::sum('current_balance'),
+      // 'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),
+      // 'total_cleared_interests_amount' => SavingsInterest::processed()->sum('amount')
     ]);
   }
 }

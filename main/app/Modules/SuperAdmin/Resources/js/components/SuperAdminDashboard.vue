@@ -602,7 +602,7 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent.vue";
 
   export default {
     name: "SuperAdminDashboard",

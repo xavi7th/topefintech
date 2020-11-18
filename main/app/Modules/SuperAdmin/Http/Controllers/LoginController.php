@@ -51,7 +51,7 @@ class LoginController extends Controller
     Route::get('login', [self::class, 'showLoginForm'])->name('superadmin.login.show')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [self::class, 'login'])->name('superadmin.login');
     // Route::post('first-time', [self::class, 'newSuperAdminSetPassword'])->name('superadmin.password.new');
-    Route::match(['get', 'post'], 'logout', [self::class, 'logout'])->name('superadmin.logout');
+    Route::match(['get', 'post'], 'logout', [self::class, 'logout'])->name('superadmin.logout')->defaults('extras', ['nav_skip' => true]);
   }
 
   /**
@@ -85,11 +85,7 @@ class LoginController extends Controller
     }
 
     if ($this->attemptLogin($request)) {
-
-      $this->apiToken = $this->apiGuard()->attempt($this->credentials($request));
-
       ActivityLog::notifySuperAdmins($this->guard()->user()->email  . ' logged into the super admin dashboard');
-
       return $this->sendLoginResponse($request);
     }
 
@@ -129,16 +125,8 @@ class LoginController extends Controller
     $this->guard()->logout();
 
     $request->session()->invalidate();
-
-    try {
-      $this->apiGuard()->logout();
-    } catch (\Throwable $th) {
-    }
-
     return redirect()->route('superadmin.login');
   }
-
-
 
   protected function validateLogin(Request $request)
   {
@@ -159,9 +147,6 @@ class LoginController extends Controller
   {
     if ($user->isSuperAdmin()) {
       if ($user->is_verified()) {
-        if ($request->isApi())
-          return response()->json($this->respondWithToken(), 202);
-
         return redirect()->route($user->dashboardRoute());
       } else {
         $this->logout($request);
@@ -195,33 +180,6 @@ class LoginController extends Controller
    */
   protected function guard()
   {
-    return Auth::guard('admin');
-  }
-
-  /**
-   * Get the guard to be used during authentication.
-   *
-   * @return \Illuminate\Contracts\Auth\StatefulGuard
-   */
-  protected function apiGuard(): JWTGuard
-  {
-    return Auth::guard('admin_api');
-  }
-
-  /**
-   * Get the token array structure.
-   *
-   * @param  string $token
-   *
-   * @return array api jwt token details
-   */
-  protected function respondWithToken(): array
-  {
-    return [
-      'access_token' => $this->apiToken,
-      'token_type' => 'bearer',
-      'expires_in' => $this->apiGuard()->factory()->getTTL() * 60,
-      'status' => true
-    ];
+    return Auth::guard('superadmin');
   }
 }

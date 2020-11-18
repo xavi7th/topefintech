@@ -20,7 +20,7 @@
                       <b class="rui-task-title">{{ notif.data.action }}</b>
                       <small
                         class="rui-task-subtitle"
-                      >Sent on {{ new Date(notif.created_at).toDateString() }} {{ new Date(notif.created_at).toLocaleTimeString() }}</small>
+                      >Sent on {{ new Date(notif.created_at).toLocaleString() }} </small>
                     </div>
                   </td>
                 </tr>
