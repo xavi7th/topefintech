@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\Admin\Notifications\GenericAdminNotification;
-use RachidLaasri\Travel\Travel;
 
 class CompoundDueInterests extends Command
 {
@@ -43,7 +42,7 @@ class CompoundDueInterests extends Command
    */
   public function handle()
   {
-    foreach (Savings::active()->targetOrInvestment()->where(fn ($query) => $query->dueAndNeverCompounded()->orWhere->dueForRecompounding())->with(['app_user', 'portfolio'])->cursor() as $savingsRecord) {
+    foreach (Savings::active()->target()->where(fn ($query) => $query->dueAndNeverCompounded()->orWhere->dueForRecompounding())->with(['app_user', 'portfolio'])->cursor() as $savingsRecord) {
       DB::beginTransaction();
 
       /**

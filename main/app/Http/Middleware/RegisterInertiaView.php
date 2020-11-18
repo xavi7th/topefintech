@@ -18,7 +18,7 @@ class RegisterInertiaView
    */
   public function handle($request, Closure $next)
   {
-    // Travel::to('12 months 1 day');
+    // Travel::to('12months');
     // dump(\Route::currentRouteName());
     // dd(routeHasRootNamespace('app.'));
     if ($request->user()) {

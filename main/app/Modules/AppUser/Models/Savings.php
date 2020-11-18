@@ -163,6 +163,8 @@ class Savings extends Model
       return $this->transactions()->deposits()->interestable()->sum('amount') * (config('app.smart_savings_interest_rate') / 100);
     } else if ($this->is_target_savings()) {
       return $this->transactions()->deposits()->interestable()->sum('amount') * (config('app.target_savings_interest_rate') / 100);
+    } else if ($this->is_investment()) {
+      return $this->transactions()->deposits()->interestable()->sum('amount') * ($this->portfolio->daily_interest_rate / 100);
     }
   }
 
