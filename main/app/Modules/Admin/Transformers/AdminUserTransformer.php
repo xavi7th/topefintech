@@ -66,19 +66,6 @@ class AdminUserTransformer
     ];
   }
 
-  public function transformForAdminViewAdmins(Admin $user)
-  {
-    return [
-      'id' => (int)$user->id,
-      'full_name' => (string)$user->full_name,
-      'created_at' => (string)$user->created_at,
-      'email' => (string)$user->email,
-      'id_card' => (string)$user->id_card,
-      'is_verified' => (bool)$user->is_verified(),
-      'isAdmin' => (bool)$user->isAdmin(),
-    ];
-  }
-
   public function transformForAdminViewAgents(Agent $user)
   {
     return [

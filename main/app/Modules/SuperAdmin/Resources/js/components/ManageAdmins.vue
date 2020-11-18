@@ -100,15 +100,15 @@
 </template>
 
 <script>
-  import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@admin-assets/js/AdminAppComponent";
+  import { mixins, errorHandlers } from "@dashboard-assets/js/config";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
   export default {
     name: "ManageAdmins",
     props: {
       admins: Array,
     },
     components: { Layout },
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
     data: () => ({
       users: [],
       details: {},
@@ -121,17 +121,11 @@
         });
 
         this.$inertia
-          .post(this.$route("admin.create"), { ...this.details })
+          .post(this.$route("superadmin.create_admin"), { ...this.details })
           .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: `They will be required to set a password on their first login`,
-                type: "success",
-              });
-            } else {
-              swal.close();
-            }
+            this.displayResponse()
+            this.displayErrors()
+            this.details={}
           });
       },
     },
