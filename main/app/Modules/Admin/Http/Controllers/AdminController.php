@@ -58,6 +58,8 @@ class AdminController extends Controller
   public function loadAdminApp(Request $request)
   {
     return Inertia::render('Admin,AdminDashboard', [
+      'totalTransactions' => $request->user()->wallet_transactions()->withdrawals()->count(),
+      'walletBalance' => $request->user()->wallet_balance,
       // 'total_savings_amount' => Savings::sum('current_balance'),
       // 'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),
       // 'total_cleared_interests_amount' => SavingsInterest::processed()->sum('amount')

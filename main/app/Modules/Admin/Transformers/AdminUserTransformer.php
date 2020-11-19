@@ -74,7 +74,6 @@ class AdminUserTransformer
       'created_at' => (string)$user->created_at,
       'email' => (string)$user->email,
       'phone' => (string)$user->phone,
-      'wallet_balance' => (float)$user->wallet_balance,
       'ref_code' => (string)$user->ref_code,
       'city_of_operation' => (string)$user->city_of_operation,
       'avatar' => (string)$user->avatar,

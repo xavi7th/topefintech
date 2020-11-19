@@ -21,6 +21,9 @@
                 <tr class="list-group-item p-0" v-for="(admin, idx) in admins" :key="idx">
                   <td class="rui-changelog d-block">
                     <h3 class="rui-changelog-title">{{ admin.full_name }}</h3>
+                     <h4
+                      class="rui-changelog-title"
+                    >Wallet Balance: {{ admin.wallet_balance | Naira }}</h4>
                     <div class="rui-changelog-subtitle">
                       <a href="#">Created On:</a>
                       {{ new Date(admin.created_at).toDateString() }} {{ new Date(admin.created_at).toLocaleTimeString() }}
@@ -35,9 +38,18 @@
                         </div>
                       </li>
                     </ul>
-                    <!-- <div class="col-12 text-right">
+                    <div class="col-12 text-right">
                       <button class="btn btn-sm btn-danger">Delete</button>
-                    </div>-->
+
+                      <button
+                        class="btn btn-sm btn-brand"
+                        data-toggle="modal"
+                        data-target="#fundAdminModal"
+                        @click="adminToFund = admin"
+                      >Fund Admin</button>
+
+                    </div>
+
                   </td>
                 </tr>
               </tbody>
@@ -47,6 +59,29 @@
       </div>
     </div>
     <template v-slot:modals>
+     <modal modalId="fundAdminModal" :modalTitle="`Fund Admin's wallet`">
+        <form class="m-25">
+          <FlashMessage />
+
+          <div class="form-group mb-5" :class="{'has-error': errors.amount}">
+            <label for="form-amount">
+              <strong>Amount</strong>
+            </label>
+            <input
+              type="text"
+              class="form-control form-control-pill"
+              id="form-amount"
+              v-model="details.amount"
+              name="amount"
+            />
+            <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
+          </div>
+
+          <div class="form-group mt-20 text-center">
+            <button type="button" class="btn btn-brand" @click="fundAdmin">Fund Admin's Account</button>
+          </div>
+        </form>
+      </modal>
       <modal modalId="createAdminModal" :modalTitle="`Create a new admin account`">
         <form class="m-25">
           <FlashMessage />
@@ -112,6 +147,7 @@
     data: () => ({
       users: [],
       details: {},
+      adminToFund: null,
     }),
 
     methods: {
@@ -126,6 +162,29 @@
             this.displayResponse()
             this.displayErrors()
             this.details={}
+          });
+      },
+       fundAdmin() {
+        BlockToast.fire({
+          text: "Funding admin...",
+        });
+
+        this.$inertia
+          .post(this.$route("superadmin.fund_admin", this.adminToFund.id), {
+            amount: this.details.amount,
+          })
+          .then(() => {
+            if (this.flash.success) {
+              this.details.amount = null;
+
+              ToastLarge.fire({
+                title: "Success",
+                html: this.flash.success,
+                icon: "success",
+              });
+            } else {
+              swal.close();
+            }
           });
       },
     },

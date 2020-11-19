@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Modules\Agent\Models\Agent;
 use App\Http\Controllers\Controller;
+use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
@@ -29,6 +30,7 @@ class SuperAdminController extends Controller
         SuperAdmin::superAdminRoutes();
         Agent::superAdminRoutes();
         AppUser::superAdminRoutes();
+        Admin::superAdminRoutes();
         Savings::superAdminRoutes();
         InvestmentType::superAdminRoutes();
         SavingsInterest::superAdminRoutes();

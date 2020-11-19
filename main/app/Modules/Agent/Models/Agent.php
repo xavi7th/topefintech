@@ -12,68 +12,13 @@ use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
-use App\Modules\AppUser\Models\Savings;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\AppUser\Models\TargetType;
 use Illuminate\Validation\ValidationException;
 use App\Modules\Admin\Transformers\AdminUserTransformer;
-use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
 
-/**
- * App\Modules\Agent\Models\Agent
- *
- * @property int $id
- * @property string|null $ref_code
- * @property string $full_name
- * @property string $email
- * @property string $password
- * @property string|null $phone
- * @property string|null $bvn
- * @property string|null $avatar
- * @property string|null $gender
- * @property string|null $address
- * @property string|null $city_of_operation
- * @property \Illuminate\Support\Carbon|null $dob
- * @property \Illuminate\Support\Carbon|null $verified_at
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
- * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Agent\Models\AgentWalletTransaction[] $agent_wallet_transactions
- * @property-read int|null $agent_wallet_transactions_count
- * @property-read float $wallet_balance
- * @property-read \Illuminate\Database\Eloquent\Collection|AppUser[] $managed_users
- * @property-read int|null $managed_users_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\WithdrawalRequest[] $processed_withdrawal_requests
- * @property-read int|null $processed_withdrawal_requests_count
- * @method static \Illuminate\Database\Eloquent\Builder|Agent newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Agent newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Agent query()
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereBvn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereCityOfOperation($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereDob($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereFullName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereRefCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Agent whereVerifiedAt($value)
- * @mixin \Eloquent
- */
 class Agent extends User
 {
   protected $fillable = [
@@ -82,8 +27,6 @@ class Agent extends User
 
   protected $dates = ['dob', 'verified_at'];
 
-  protected $appends = ['wallet_balance'];
-
   const DASHBOARD_ROUTE_PREFIX = 'smart-collectors';
 
   public function managed_users()
@@ -91,19 +34,9 @@ class Agent extends User
     return $this->hasMany(AppUser::class);
   }
 
-  public function agent_wallet_transactions()
-  {
-    return $this->hasMany(AgentWalletTransaction::class);
-  }
-
   static function findByRefCode(?string $refCode): self
   {
     return self::whereRefCode($refCode)->firstOrNew();
-  }
-
-  public function getWalletBalanceAttribute(): float
-  {
-    return $this->agent_wallet_transactions()->deposits()->sum('amount') - $this->agent_wallet_transactions()->withdrawals()->sum('amount');
   }
 
   public function is_email_verified(): bool
@@ -130,7 +63,7 @@ class Agent extends User
       Route::get('user/{appUser:phone}/statement', [self::class, 'agentGetManagedUserAccountStatement'])->name('agent.user.statement')->defaults('extras', ['nav_skip' => true]);
       Route::get('{appUser:phone}/savings-interest', [self::class, 'agentGetManagedUserSavingsInterests'])->name('agent.user.interest')->defaults('extras', ['nav_skip' => true]);
       Route::post('{appUser:phone}/smart-savings/initialise', [self::class, 'initialiseSmartSavingsProfile'])->name('agent.savings.smart.initialise');
-      Route::post('{appUser:phone}/savings/target-funds/add', [self::class, 'fundManagedUser'])->name('agent.user_savings.target.fund');
+
     });
   }
 
@@ -139,7 +72,7 @@ class Agent extends User
     Route::group([], function () {
       Route::get('agents', [self::class, 'superAdminGetAgents'])->name('superadmin.view_agents')->defaults('extras', ['icon' => 'fas fa-user-tie']);
       Route::delete('agent/{agent}/suspend', [self::class, 'suspendAgent'])->name('superadmin.suspend_agent');
-      // Route::post('agent/{agent}/fund', [self::class, 'fundAgent'])->name('admin.fund_agent');
+
     });
   }
 
@@ -240,56 +173,6 @@ class Agent extends User
     return back()->withFlash(['success' => 'Smart savings portfolio initialised successfully']);
   }
 
-  public function fundManagedUser(Request $request, AppUser $appUser)
-  {
-    if (!$request->savings_id) {
-      return generate_422_error('Invalid savings selected');
-    }
-    if (!$request->amount || $request->amount <= 0) {
-      return generate_422_error('You need to specify an amount to add to this savings');
-    }
-
-    if ($request->amount > $request->user()->wallet_balance) {
-      return generate_422_error('The specified amount is greater than your wallet balance');
-    }
-
-    $savings = Savings::find($request->savings_id);
-
-    if (is_null($savings)) {
-      return generate_422_error('Invalid savings selected');
-    }
-
-    try {
-      DB::beginTransaction();
-
-      $request->user()->agent_wallet_transactions()->create([
-        'trans_type' => 'withdrawal',
-        'amount' => $request->amount,
-        'description' => 'Smart collector account funding for ' . $appUser->full_name
-      ]);
-
-      if ($savings->type == 'smart') {
-        $appUser->fund_smart_savings($request->amount);
-      } else {
-        return generate_422_error('Smart collectors can only fund smart savings');
-      }
-
-      $appUser->notify(new NewSavingsSuccess($request->amount));
-
-      DB::commit();
-
-      if ($request->isApi()) return response()->json(['rsp' => 'Created'], 201);
-      return back()->withFlash(['success' => 'Congrats! Funds added to user´s savings']);
-    } catch (\Throwable $th) {
-      if ($th->getCode() == 422) {
-        return generate_422_error($th->getMessage());
-      } else {
-        ErrLog::notifySuperAdminAndFail($request->user(), $th, 'Fund user savings failed');
-        return back()->withFlash(['error' => 'Fund user savings failed']);
-      }
-    };
-  }
-
 
   public function getAgentNotifications(Request $request)
   {
@@ -344,39 +227,6 @@ class Agent extends User
     } catch (\Throwable $e) {
 
       ErrLog::notifySuperAdminAndFail($request->user(), $e, 'Error creating agent account');
-
-      if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
-      return back()->withFlash(['error' => 'An error occurred. Check the error logs']);
-    }
-  }
-
-  public function fundAgent(Request $request, self $agent)
-  {
-    $validator = Validator::make($request->all(), [
-      'amount' => 'required|numeric',
-    ]);
-
-    if ($validator->fails()) {
-      return back()
-        ->withErrors($validator);
-    }
-
-    // dd($validator->validated());
-
-    Cache::forget('allAgents');
-
-    try {
-      $agent->agent_wallet_transactions()->create([
-        'amount' => $request->amount,
-        'trans_type' => 'deposit',
-        'description' => 'Agent Wallet top-up',
-      ]);
-
-      if ($request->isApi()) return response()->json(['rsp' => $agent], 201);
-      return back()->withFlash(['success' => 'Funding successful']);
-    } catch (\Throwable $e) {
-
-      ErrLog::notifySuperAdminAndFail($request->user(), $e, 'Error funding agent account');
 
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
       return back()->withFlash(['error' => 'An error occurred. Check the error logs']);

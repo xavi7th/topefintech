@@ -51,24 +51,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="swiper-slide">
-                  <div class="rui-widget rui-widget-chart">
-                    <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">{{ totalTransactions }}</div>
-                      <small class="rui-widget-subtitle">Total Transactions</small>
-                    </div>
-                    <div class="rui-chartjs-container">
-                      <div
-                        class="rui-chartist rui-chartist-donut"
-                        data-width="200"
-                        data-height="200"
-                        :data-chartist-series="`3,8`"
-                        data-chartist-width="4"
-                        data-chartist-gradient="#8e9fff;#2bb7ef"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </div>
             <div class="swiper-button-next">
@@ -300,7 +283,7 @@
   export default {
     props: {
       totalClients: Number,
-      totalTransactions: Number,
+
       latestNotifications: Array,
     },
     mixins: [mixins],

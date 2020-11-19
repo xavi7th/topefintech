@@ -21,9 +21,6 @@
                 <tr class="list-group-item p-0" v-for="(agent, idx) in agents" :key="idx">
                   <td class="rui-changelog d-block">
                     <h3 class="rui-changelog-title">{{ agent.full_name }}</h3>
-                    <h4
-                      class="rui-changelog-title"
-                    >Wallet Balance: {{ agent.wallet_balance | Naira }}</h4>
                     <div class="rui-changelog-subtitle">
                       <a href="#">Created On:</a>
                       {{ new Date(agent.created_at).toDateString() }} {{ new Date(agent.created_at).toLocaleTimeString() }}
@@ -66,14 +63,7 @@
                         </div>
                       </li>
                     </ul>
-                    <div class="col-12 text-right">
-                      <button
-                        class="btn btn-sm btn-danger"
-                        data-toggle="modal"
-                        data-target="#fundAgentModal"
-                        @click="agentToFund = agent"
-                      >Fund Agent</button>
-                    </div>
+
                   </td>
                 </tr>
               </tbody>
@@ -83,29 +73,7 @@
       </div>
     </div>
     <template v-slot:modals>
-      <modal modalId="fundAgentModal" :modalTitle="`Fund Agent's wallet`">
-        <form class="m-25">
-          <FlashMessage />
 
-          <div class="form-group mb-5" :class="{'has-error': errors.amount}">
-            <label for="form-amount">
-              <strong>Amount</strong>
-            </label>
-            <input
-              type="text"
-              class="form-control form-control-pill"
-              id="form-amount"
-              v-model="details.amount"
-              name="amount"
-            />
-            <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
-          </div>
-
-          <div class="form-group mt-20 text-center">
-            <button type="button" class="btn btn-brand" @click="fundAgent">Fund Agent's Account</button>
-          </div>
-        </form>
-      </modal>
       <modal modalId="createAgentModal" :modalTitle="`Create a new agent account`">
         <form class="m-25">
           <FlashMessage />
@@ -183,7 +151,7 @@
     mixins: [mixins],
     data: () => ({
       details: {},
-      agentToFund: null,
+
     }),
 
     methods: {
@@ -200,29 +168,6 @@
                 title: "Success",
                 html: `They will be required to set a password on their first login`,
                 type: "success",
-              });
-            } else {
-              swal.close();
-            }
-          });
-      },
-      fundAgent(agent) {
-        BlockToast.fire({
-          text: "Funding agent...",
-        });
-
-        this.$inertia
-          .post(this.$route("admin.fund_agent", this.agentToFund.id), {
-            amount: this.details.amount,
-          })
-          .then(() => {
-            if (this.flash.success) {
-              this.details.amount = null;
-
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                icon: "success",
               });
             } else {
               swal.close();

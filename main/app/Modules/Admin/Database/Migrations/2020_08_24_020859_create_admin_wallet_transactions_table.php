@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAgentWalletTransactionsTable extends Migration
+class CreateAdminWalletTransactionsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,10 +13,9 @@ class CreateAgentWalletTransactionsTable extends Migration
    */
   public function up()
   {
-    Schema::create('agent_wallet_transactions', function (Blueprint $table) {
-      $table->engine = 'InnoDB';
+    Schema::create('admin_wallet_transactions', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('agent_id')->constrained()->onDelete('cascade');
+      $table->foreignId('admin_id')->constrained('ythfg')->onDelete('cascade');
       $table->double('amount');
       $table->string('trans_type');
       $table->string('description');
@@ -33,6 +32,6 @@ class CreateAgentWalletTransactionsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('agent_wallet_transactions');
+    Schema::dropIfExists('admin_wallet_transactions');
   }
 }

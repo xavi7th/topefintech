@@ -31,7 +31,6 @@ class AgentController extends Controller
   {
     return Inertia::render('Agent,AgentDashboard', [
       'totalClients' => $request->user()->managed_users()->count(),
-      'totalTransactions' => $request->user()->agent_wallet_transactions()->withdrawals()->count(),
       'latestNotifications' => $request->user()->notifications()->latest()->take(3)->get()
     ]);
   }

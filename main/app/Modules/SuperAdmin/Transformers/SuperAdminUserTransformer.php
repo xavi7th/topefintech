@@ -85,6 +85,7 @@ class SuperAdminUserTransformer
     return [
       'id' => (int)$user->id,
       'full_name' => (string)$user->full_name,
+      'wallet_balance' => (string)$user->wallet_balance,
       'created_at' => (string)$user->created_at,
       'email' => (string)$user->email,
       'id_card' => (string)$user->id_card,
