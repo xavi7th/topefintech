@@ -527,6 +527,16 @@ class Savings extends Model
     return optional($this->maturity_date)->diffInDays(now());
   }
 
+  static function superAdminRoutes()
+  {
+    Route::name('superadmin.')->group(function () {
+      Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
+      Route::post('{appUser}/savings/target-funds/add', [self::class, 'lockMoreUserFunds'])->name('user_savings.target.fund');
+      Route::post('{appUser}/savings/target-funds/deduct', [self::class, 'deductUserFunds'])->name('user_savings.target.defund');
+      Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
+    });
+  }
+
   static function adminRoutes()
   {
     Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('admin.user_savings')->defaults('extras', ['nav_skip' => true]);

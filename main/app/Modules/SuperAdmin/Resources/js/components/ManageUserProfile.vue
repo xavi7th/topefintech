@@ -301,7 +301,7 @@
 
 <script>
   import { mixins, errorHandlers } from "@dashboard-assets/js/config";
-  import Layout from "@admin-assets/js/AdminAppComponent";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
   export default {
     name: "ManageUserProfile",
     mixins: [mixins, errorHandlers],
@@ -329,13 +329,6 @@
         this.details.id_card = this.$refs.id_card.files[0];
       },
       resetUserDetails() {
-        // this.$inertia.reload({
-        //   method: "get",
-        //   data: {},
-        //   preserveState: false,
-        //   preserveScroll: true,
-        //   only: [],
-        // });
          this.details = {
           ..._.omit(this.user_details, ["id_card"]),
           acc_type: "savings",
@@ -356,7 +349,7 @@
         });
 
         this.$inertia
-          .post(this.$route("admin.user.profile.edit", this.user_details.phone), formData, {
+          .post(this.$route("superadmin.user.profile.edit", this.user_details.phone), formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },

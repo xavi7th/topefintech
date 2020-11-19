@@ -181,7 +181,7 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     } elseif ($this->isAgent()) {
       return (new AgentTransformer)->fullTransform($this);
     } elseif ($this->isAdmin()) {
-      return (new AdminUserTransformer)->transformForAdminViewAdmins($this);
+      return (new SuperAdminUserTransformer)->transformForSuperAdminViewAdmins($this);
     } elseif ($this->isSuperAdmin()) {
       return (new SuperAdminUserTransformer)->transformForSuperAdminViewSuperAdmins($this);
     }

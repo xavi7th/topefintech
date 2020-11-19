@@ -599,6 +599,17 @@ class AppUser extends User
     return Str::of($this->id_card)->replace(Str::of($this->id_card)->dirname(), Str::of($this->id_card)->dirname() . '/thumbs');
   }
 
+  static function superAdminRoutes()
+  {
+    Route::name('superadmin.')->group(function () {
+      Route::get('users', [self::class, 'getListOfUsers'])->name('manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
+      Route::put('user/{user}/verify', [self::class, 'verifyUser'])->name('user.verify');
+      Route::get('user/{appUser}/statement', [self::class, 'adminGetUserAccountStatement'])->name('user.statement')->defaults('extras', ['nav_skip' => true]);
+      Route::get('user/{appUser:phone}/profile', [self::class, 'superAdminViewUserProfile'])->name('user.profile')->defaults('extras', ['nav_skip' => true]);
+      Route::put('user/{appUser:phone}/profile', [self::class, 'adminEditUserProfile'])->name('user.profile.edit')->defaults('extras', ['nav_skip' => true]);
+    });
+  }
+
   static function adminRoutes()
   {
     Route::get('users', [self::class, 'getListOfUsers'])->name('admin.manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
@@ -742,10 +753,10 @@ class AppUser extends User
   public function getListOfUsers(Request $request)
   {
     $users = (new AdminUserTransformer)->collectionTransformer(AppUser::all(), 'transformForAdminViewUsers');
-    if ($request->isApi())
-      return $users;
+    if ($request->isApi()) return $users;
 
-    return Inertia::render('Admin,ManageUsers', compact('users'));
+    if ($request->user()->isAdmin()) return Inertia::render('Admin,ManageUsers', compact('users'));
+    if ($request->user()->isSuperAdmin()) return Inertia::render('SuperAdmin,ManageUsers', compact('users'));
   }
 
   public function verifyUser(Request $request, self $user)
@@ -753,9 +764,7 @@ class AppUser extends User
     $user->verified_at = now();
     $user->save();
 
-    if ($request->isApi())
-      return response()->json([], 204);
-
+    if ($request->isApi()) return response()->json([], 204);
     return back()->withFlash(['success' => 'User verified. They will be able to access their dashboard now']);
   }
 
@@ -844,13 +853,14 @@ class AppUser extends User
     return (new AdminTransactionTransformer)->collectionTransformer($transactions, 'transformForAdminViewTransactions');
   }
 
-  public function verifyAuth()
+  public function superAdminViewUserProfile(Request $request, self $appUser)
   {
-    if (Auth::check()) {
-      return ['LOGGED_IN' => true, 'user' => Auth::user()];
-    } else {
-      return ['LOGGED_IN' => false, 'user' => []];
-    }
+    if ($request->isApi()) return (new AppUserTransformer)->detailed($appUser);
+
+    return Inertia::render('SuperAdmin,ManageUserProfile', [
+      'banks' => fn () => $this->getBanksList(),
+      'user_details' => (new AppUserTransformer)->detailed($appUser)
+    ]);
   }
 
   protected function getBanksList(): array
