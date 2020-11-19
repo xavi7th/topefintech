@@ -76,7 +76,7 @@ class SavingsInterest extends Model
 
   static function superAdminRoutes()
   {
-    Route::name('superadmin.')->group(function () {
+    Route::name('superadmin.')->prefix('savings-interests')->group(function () {
       Route::get('{appUser}/', [self::class, 'adminGetSavingsInterests'])->name('user.interest')->defaults('extras', ['nav_skip' => true]);
       Route::get('{appUser}/{month}', [self::class, 'adminGetSavingsInterestsForMonth'])->name('user.interest.details')->defaults('extras', ['nav_skip' => true]);
     });

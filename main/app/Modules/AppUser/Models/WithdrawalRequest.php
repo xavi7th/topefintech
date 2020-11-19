@@ -196,6 +196,13 @@ class WithdrawalRequest extends Model
   {
     Route::prefix('withdrawal-requests')->name('admin.')->group(function () {
       Route::get('', [self::class, 'adminGetWithdrawalRequests'])->name('withdrawal_requests')->defaults('extras', ['icon' => 'fa fa-x-ray']);
+    });
+  }
+
+  static function superAdminRoutes()
+  {
+    Route::name('superadmin.')->prefix('withdrawal-requests')->group(function () {
+      Route::get('', [self::class, 'adminGetWithdrawalRequests'])->name('withdrawal_requests')->defaults('extras', ['icon' => 'fa fa-x-ray']);
       Route::post('/{withdrawalRequest}/mark-complete', [self::class, 'approveWithdrawalRequest'])->name('withdrawal_request.mark_complete');
       Route::delete('/{withdrawalRequestId}/cancel', [self::class, 'cancelWithdrawalRequest'])->name('withdrawal_request.delete');
     });
@@ -359,7 +366,8 @@ class WithdrawalRequest extends Model
     $withdrawal_requests = Cache::rememberForever('withdrawalRequests', fn () => (new AdminWithdrawalRequestTransformer)->collectionTransformer(self::with(['processor', 'app_user.smart_collector', 'savingsPortfolio'])->withTrashed()->get(), 'detailed'));
 
     if ($request->isApi()) return $withdrawal_requests;
-    return Inertia::render('Admin,WithdrawalRequests', compact('withdrawal_requests'));
+    if ($request->user()->isAdmin()) return Inertia::render('Admin,WithdrawalRequests', compact('withdrawal_requests'));
+    if ($request->user()->isSuperAdmin()) return Inertia::render('SuperAdmin,WithdrawalRequests', compact('withdrawal_requests'));
   }
 
   public function cancelWithdrawalRequest(Request $request, $withdrawalRequestId)
@@ -399,12 +407,12 @@ class WithdrawalRequest extends Model
   public function approveWithdrawalRequest(Request $request, self $withdrawalRequest)
   {
     if ($withdrawalRequest->is_processed) {
-      ActivityLog::notifySuperAdminAndFails($request->user()->email . ' attempted to approve an already processed request: ' . $withdrawalRequest->id);
+      ActivityLog::notifySuperAdmins($request->user()->email . ' attempted to approve an already processed request: ' . $withdrawalRequest->id);
       throw ValidationException::withMessages(['err' => 'This request has been processed already!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     if (!$withdrawalRequest->is_user_verified) {
-      ActivityLog::notifySuperAdminAndFails($request->user()->email . ' attempted to approve a request that has not been verified by the user: ' . $withdrawalRequest->id);
+      ActivityLog::notifySuperAdmins($request->user()->email . ' attempted to approve a request that has not been verified by the user: ' . $withdrawalRequest->id);
       throw ValidationException::withMessages(['err' => 'Invalid action!'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -453,7 +461,7 @@ class WithdrawalRequest extends Model
     parent::boot();
 
     static::created(function (self $withdrawalRequest) {
-      ActivityLog::notifySuperAdminAndFails(auth()->user()->email . ' requested a withdrawal request of ' . to_naira($withdrawalRequest->amount));
+      ActivityLog::notifySuperAdmins(auth()->user()->email . ' requested a withdrawal request of ' . to_naira($withdrawalRequest->amount));
     });
 
     static::saved(function (self $withdrawalRequest) {
@@ -463,7 +471,7 @@ class WithdrawalRequest extends Model
     static::deleting(function ($withdrawal_request) {
       Cache::forget('withdrawalRequests');
       if (!$withdrawal_request->isForceDeleting()) {
-        ActivityLog::notifySuperAdminAndFails(auth()->user()->email . ' declined ' . $withdrawal_request->app_user->email . '\'s withdrawal request of ' . to_naira($withdrawal_request->amount));
+        ActivityLog::notifySuperAdmins(auth()->user()->email . ' declined ' . $withdrawal_request->app_user->email . '\'s withdrawal request of ' . to_naira($withdrawal_request->amount));
       }
     });
 
@@ -472,7 +480,7 @@ class WithdrawalRequest extends Model
       // dd($withdrawal_request->toArray());
 
       if ($withdrawal_request->is_processed) {
-        ActivityLog::notifySuperAdminAndFails(auth()->user()->email . ' processed ' . $withdrawal_request->app_user->full_name . '\'s withdrawal request of ' . $withdrawal_request->amount);
+        ActivityLog::notifySuperAdmins(auth()->user()->email . ' processed ' . $withdrawal_request->app_user->full_name . '\'s withdrawal request of ' . $withdrawal_request->amount);
       }
     });
   }

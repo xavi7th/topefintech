@@ -529,8 +529,8 @@ class Savings extends Model
 
   static function superAdminRoutes()
   {
-    Route::name('superadmin.')->group(function () {
-      Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
+    Route::name('superadmin.')->prefix('savings')->group(function () {
+      Route::get('{user}/list', [self::class, 'adminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
       Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
     });
   }

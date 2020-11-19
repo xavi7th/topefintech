@@ -135,6 +135,30 @@
                       >
                         View Full Details
                       </button>
+                      <button
+                        class="btn btn-danger btn-xs text-nowrap"
+                        type="button"
+                        @click="deleteWithdrawalRequest(withdrawalRequest)"
+                        v-if="!withdrawalRequest.is_processed && !withdrawalRequest.is_user_verified && !withdrawalRequest.is_declined"
+                      >
+                        DELETE REQUEST
+                      </button>
+                      <button
+                        class="btn btn-danger btn-xs text-nowrap"
+                        type="button"
+                        @click="deleteWithdrawalRequest(withdrawalRequest)"
+                        v-if="withdrawalRequest.is_declined"
+                      >
+                        PURGE REQUEST
+                      </button>
+                      <button
+                        class="btn btn-success btn-xs text-nowrap"
+                        type="button"
+                        v-if="!withdrawalRequest.is_processed && withdrawalRequest.is_user_verified"
+                        @click="markWithdrawalRequestAsProcessed(withdrawalRequest)"
+                      >
+                        MARK PROCESSED
+                      </button>
                     </div>
                     <div
                       class="collapse"
@@ -320,14 +344,53 @@
 </template>
 
 <script>
-  import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@admin-assets/js/AdminAppComponent";
+  import { mixins, errorHandlers } from "@dashboard-assets/js/config";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
   export default {
     name: "WithdrawalRequests",
     props: {
       withdrawal_requests: Array,
     },
     components: { Layout },
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
+    data: () => ({}),
+
+    methods: {
+      markWithdrawalRequestAsProcessed(withdrawalRequest) {
+        BlockToast.fire({
+          text: "working ...",
+        });
+
+        this.$inertia
+          .post(this.$route("superadmin.withdrawal_request.mark_complete", withdrawalRequest.id), null, {
+             preserveState: true,
+              preserveScroll: true,
+              only: ['flash','errors', 'withdrawal_requests'],
+          })
+          .then(() => {
+            this.displayResponse();
+           this.displayErrors();
+          });
+      },
+      deleteWithdrawalRequest(withdrawalRequest) {
+        BlockToast.fire({
+          text: "Deleting Request...",
+        });
+
+        this.$inertia
+          .delete(
+            this.$route("superadmin.withdrawal_request.delete", withdrawalRequest.id),
+            {
+              preserveState: true,
+              preserveScroll: true,
+              only: ['flash','errors', 'withdrawal_requests'],
+            }
+          )
+          .then(() => {
+           this.displayResponse();
+           this.displayErrors();
+          });
+      },
+    },
   };
 </script>
