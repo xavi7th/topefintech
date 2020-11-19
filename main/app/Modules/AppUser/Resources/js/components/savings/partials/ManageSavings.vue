@@ -47,7 +47,7 @@
                 type="button"
                 class="btn btn-success btn-uniform btn-round btn-xs"
                 @click="fundThisSavings(savings) "
-                v-if="!savings.is_matured && !$page.auth.user.isSuperAdmin"
+                v-if="!savings.is_matured && !$page.auth.user.isAgent"
               >
                 <span class="icon">
                   <span data-feather="plus" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -57,7 +57,7 @@
                 type="button"
                 class="btn btn-danger btn-uniform btn-round btn-xs"
                 @click="defundThisSavings(savings)"
-                v-if="$page.auth.user.isAdmin && !savings.is_matured"
+                v-if="$page.auth.user.isSuperAdmin && !savings.is_matured"
               >
                 <span class="icon">
                   <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>

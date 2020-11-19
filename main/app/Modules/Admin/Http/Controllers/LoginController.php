@@ -52,7 +52,7 @@ class LoginController extends Controller
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('admin.login.show')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [LoginController::class, 'login'])->name('admin.login');
     // Route::post('first-time', [LoginController::class, 'newAdminSetPassword'])->name('admin.password.new');
-    Route::match(['get', 'post'], 'logout', [LoginController::class, 'logout'])->name('admin.logout');
+    Route::match(['get', 'post'], 'logout', [LoginController::class, 'logout'])->name('admin.logout')->defaults('extras', ['nav_skip' => true]);
   }
 
   /**

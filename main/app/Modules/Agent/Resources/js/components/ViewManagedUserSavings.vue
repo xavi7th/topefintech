@@ -11,7 +11,7 @@
             role="tab"
             aria-controls="homePillsSliding"
             aria-selected="true"
-          >Add to Savings</a>
+          >View Managed Users' Savings</a>
         </li>
       </ul>
       <div class="tab-content">
@@ -119,10 +119,8 @@
       addFundsToThisSavings() {
         BlockToast.fire({ text: "Adding funds to savings ..." });
 
-        let url = this.$page.auth.user.isAdmin
-          ? this.$route("admin.user_savings.target.fund", this.appUser.id)
-          : this.$page.auth.user.isAgent
-          ? this.$route("agent.user_savings.target.fund", this.appUser.phone)
+        let url = this.$page.auth.user.isSuperAdmin
+          ? this.$route("superadmin.user_savings.target.fund", this.appUser.id)
           : this.$route("appuser.savings.target.fund");
 
         this.$inertia

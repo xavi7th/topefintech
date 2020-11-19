@@ -28,75 +28,6 @@ use App\Modules\AppUser\Http\Requests\CreateTargetFundValidation;
 use App\Modules\AppUser\Http\Requests\SetAutoSaveSettingsValidation;
 use App\Modules\AppUser\Http\Requests\InitialiseSmartSavingsValidation;
 
-/**
- * App\Modules\AppUser\Models\Savings
- *
- * @property int $id
- * @property int $app_user_id
- * @property string $type
- * @property int|null $portfolio_id
- * @property string|null $portfolio_type
- * @property \Illuminate\Support\Carbon|null $maturity_date
- * @property float $current_balance
- * @property \Illuminate\Support\Carbon|null $funded_at
- * @property bool $is_liquidated
- * @property bool $interests_withdrawable
- * @property \Illuminate\Support\Carbon|null $interests_unlocked_at
- * @property string|null $interests_compounded_at
- * @property \Illuminate\Support\Carbon|null $withdrawn_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read AppUser $app_user
- * @property-read int $elapsed_duration
- * @property-read bool $is_withdrawn
- * @property-read int $total_duration
- * @property-read Transaction|null $initial_deposit_transaction
- * @property-read Model|\Eloquent $portfolio
- * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
- * @property-read int|null $savings_interests_count
- * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
- * @property-read int|null $service_charges_count
- * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @property-read \App\Modules\AppUser\Models\WithdrawalRequest|null $withdrawalRequest
- * @method static \Illuminate\Database\Eloquent\Builder|Savings active()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings dueAndNeverCompounded()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings dueForRecompounding()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings investment()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings liquidated()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings matured()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings maturingSoon()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings notWithdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings query()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings smart()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings target()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings targetOrInvestment()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereAppUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereCurrentBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereFundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsCompoundedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsUnlockedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereInterestsWithdrawable($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereIsLiquidated($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereMaturityDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings wherePortfolioId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings wherePortfolioType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Savings whereWithdrawnAt($value)
- * @method static \Illuminate\Database\Query\Builder|Savings withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings withdrawn()
- * @method static \Illuminate\Database\Query\Builder|Savings withoutTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Savings yieldsInterests()
- * @mixin \Eloquent
- */
 class Savings extends Model
 {
   use SoftDeletes;
@@ -531,6 +462,8 @@ class Savings extends Model
   {
     Route::name('superadmin.')->prefix('savings')->group(function () {
       Route::get('{user}/list', [self::class, 'adminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
+      Route::post('{appUser}/savings/target-funds/add', [self::class, 'lockMoreUserFunds'])->name('admin.user_savings.target.fund');
+      Route::post('{appUser}/savings/target-funds/deduct', [self::class, 'deductUserFunds'])->name('admin.user_savings.target.defund');
       Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
     });
   }
@@ -538,8 +471,6 @@ class Savings extends Model
   static function adminRoutes()
   {
     Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('admin.user_savings')->defaults('extras', ['nav_skip' => true]);
-    Route::post('{appUser}/savings/target-funds/add', [self::class, 'lockMoreUserFunds'])->name('admin.user_savings.target.fund');
-    Route::post('{appUser}/savings/target-funds/deduct', [self::class, 'deductUserFunds'])->name('admin.user_savings.target.defund');
     Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('admin.view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
   }
 
@@ -745,18 +676,21 @@ class Savings extends Model
         $appUser->fund_target_savings($savings, $request->amount);
       }
 
-      $appUser->notify(new NewSavingsSuccess($request->amount));
-
-      if ($request->isApi()) {
-        return response()->json(['rsp' => 'Created'], 201);
-      } else {
-        return back()->withFlash(['success' => 'Congrats! Funds added to user´s savings']);
+      try {
+        $appUser->notify(new NewSavingsSuccess($request->amount));
+      } catch (\Throwable $th) {
+        ErrLog::notifySuperAdmin(auth()->user(), $th, 'NewSavingsSavings failed to send');
       }
+
+      if ($request->isApi()) return response()->json(['rsp' => 'Created'], 201);
+      return back()->withFlash(['success' => 'Funds added to user´s savings']);
     } catch (\Throwable $th) {
-      if ($th->getCode() == 422) {
+
+     if ($th->getCode() == 422) {
         return generate_422_error($th->getMessage());
       } else {
         ErrLog::notifySuperAdmin(auth()->user(), $th, 'Add more funds to savings failed');
+        return generate_422_error($th->getMessage());
       }
     };
   }

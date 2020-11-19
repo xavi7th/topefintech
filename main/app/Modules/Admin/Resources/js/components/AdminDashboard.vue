@@ -36,7 +36,7 @@
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">{{ walletBalance }}</div>
+                      <div class="rui-widget-title h2">{{ walletBalance | Naira }}</div>
                       <small class="rui-widget-subtitle">Wallet Balance</small>
                     </div>
                     <div class="rui-chartjs-container">
@@ -58,6 +58,78 @@
             </div>
             <div class="swiper-button-prev">
               <span data-feather="chevron-left" class="rui-icon rui-icon-stroke-1_5"></span>
+            </div>
+          </div>
+          <div class="rui-gap-2"></div>
+
+          <div class="row vertical-gap">
+            <div class="col-lg-4">
+              <div class="rui-widget rui-widget-actions">
+                <div class="rui-widget-head">
+                  <h4 class="rui-widget-title">Latest Wallet Funding</h4>
+                  <div class="dropdown dropdown-hover dropdown-triangle dropdown-keep-open ml-auto">
+                    <a
+                      class="dropdown-item mnr-8"
+                      href="#"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      data-offset="10,12"
+                    >
+                      <span class="btn btn-custom-round">
+                        <span data-feather="more-vertical" class="rui-icon rui-icon-stroke-1_5"></span>
+                      </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li>
+                        <a class="dropdown-item" href="#">Export to XLS</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Export to PDF</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Export to XML</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="rui-widget-content">
+                  <ul class="list-group list-group-flush rui-widget-list">
+                    <li class="list-group-item">
+                      <div class="media media-filled">
+                        <a href="#" class="media-link">
+                          <span class="media-img bg-transparent">
+                            <img src="/img/icon-zip.svg" class="icon-file" alt />
+                          </span>
+                          <span class="media-body">
+                            <span class="media-title">
+                              Added banner archive
+                              <span class="media-time">08:31</span>
+                            </span>
+                            <small class="media-subtitle">Commerce</small>
+                          </span>
+                        </a>
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      <div class="media media-filled">
+                        <a href="#" class="media-link">
+                          <span class="media-img bg-transparent">
+                            <img src="/img/icon-zip.svg" class="icon-file" alt />
+                          </span>
+                          <span class="media-body">
+                            <span class="media-title">
+                              Sensific-1.2.0.zip
+                              <span class="media-time">10:24</span>
+                            </span>
+                            <small class="media-subtitle">Template</small>
+                          </span>
+                        </a>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
 

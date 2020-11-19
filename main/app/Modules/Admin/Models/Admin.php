@@ -5,10 +5,14 @@ namespace App\Modules\Admin\Models;
 use App\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\Savings;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\Admin\Models\AdminWalletTransaction;
+use App\Modules\AppUser\Notifications\NewSavingsSuccess;
 
 class Admin extends User
 {
@@ -44,7 +48,7 @@ class Admin extends User
   static function adminRoutes()
   {
     Route::group([], function () {
-      Route::post('{appUser:phone}/savings/target-funds/add', [self::class, 'fundManagedUser'])->name('agent.user_savings.target.fund');
+      Route::post('{appUser:phone}/savings/target-funds/add', [self::class, 'fundManagedUser'])->name('admin.user_savings.target.fund');
       Route::get('notifications', [self::class, 'getAdminNotifications'])->name('admin.notifications')->defaults('extras', ['nav_skip' => true]);
     });
   }
@@ -82,16 +86,20 @@ class Admin extends User
       $request->user()->wallet_transactions()->create([
         'trans_type' => 'withdrawal',
         'amount' => $request->amount,
-        'description' => 'Smart collector account funding for ' . $appUser->full_name
+        'description' => 'Admin account funding for ' . $appUser->full_name
       ]);
 
       if ($savings->type == 'smart') {
         $appUser->fund_smart_savings($request->amount);
       } else {
-        return generate_422_error('Smart collectors can only fund smart savings');
+        $appUser->fund_target_savings($savings, $request->amount);
       }
 
-      $appUser->notify(new NewSavingsSuccess($request->amount));
+      try {
+        $appUser->notify(new NewSavingsSuccess($request->amount));
+      } catch (\Throwable $th) {
+        ErrLog::notifySuperAdmin($request->user(), $th, 'Failed to notify user of account funding');
+      }
 
       DB::commit();
 

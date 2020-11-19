@@ -89,7 +89,6 @@
         :modalTitle="`Add funds to your ${details.portfolio? details.portfolio.name: '' } Savings`"
       >
         <form class="#" @submit.prevent="addFundsToThisSavings">
-          <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
               <label for="fund-amount">Amount to fund</label>
@@ -164,14 +163,14 @@
 </template>
 
 <script>
-  import { mixins, toOrdinalSuffix } from "@dashboard-assets/js/config";
+  import { errorHandlers, mixins, toOrdinalSuffix } from "@dashboard-assets/js/config";
   import axios from "axios";
   import Layout from "@admin-assets/js/AdminAppComponent";
   import ManageSavings from "@dashboard-assets/js/components/savings/partials/ManageSavings.vue";
   import ManageAutoSaveSettings from "@dashboard-assets/js/components/savings/partials/ManageAutoSaveSettings";
   export default {
-    name: "AdminManageUserSavings",
-    mixins: [mixins],
+    name: "ManageUserSavings",
+    mixins: [mixins, errorHandlers],
     props: ["target_types", "savings_list", "auto_save_list", "user"],
     components: {
       Layout,
@@ -188,8 +187,8 @@
       addFundsToThisSavings() {
         BlockToast.fire({ text: "Adding funds to savings ..." });
 
-        let url = this.$page.auth.user.isAdmin
-          ? this.$route("admin.user_savings.target.fund", this.user.id)
+        let url = this.$page.auth.user.isSuperAdmin ? this.$route("superadmin.user_savings.target.fund", this.user.id)
+          : this.$page.auth.user.isAdmin ? this.$route("admin.user_savings.target.fund", this.user.phone)
           : this.$route("appuser.savings.target.fund");
 
         this.$inertia
@@ -206,7 +205,8 @@
             if (this.flash.success) {
               $("#fundThisSavingsModal").modal("hide");
             }
-            swal.close();
+            this.displayResponse()
+            this.displayErrors(7000)
           });
       },
       removeFundsFromThisSavings() {
@@ -214,7 +214,7 @@
 
         this.$inertia
           .post(
-            this.$route("admin.user_savings.target.defund", this.user.id),
+            this.$route("superadmin.user_savings.target.defund", this.user.id),
             {
               ...this.details
             },

@@ -104,7 +104,7 @@
                     <div class="col-12 text-right">
                       <button
                         class="btn btn-sm btn-warning"
-                        @click="veryfyUser(user.id)"
+                        @click="verifyUser(user.id)"
                         v-if="!user.verified_at"
                       >Verify</button>
                       <inertia-link
@@ -157,7 +157,7 @@
       details: {}
     }),
     methods: {
-      veryfyUser(id) {
+      verifyUser(id) {
         BlockToast.fire({
           text: "Manually verifying user ..."
         });
