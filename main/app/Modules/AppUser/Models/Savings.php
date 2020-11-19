@@ -748,6 +748,11 @@ class Savings extends Model
     }
   }
 
+  public function scopeToday($query)
+  {
+    return $query->whereDate('created_at', today());
+  }
+
   public function scopeSmart($query)
   {
     return $query->whereType('smart');

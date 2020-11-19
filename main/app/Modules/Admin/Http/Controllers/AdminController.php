@@ -58,11 +58,12 @@ class AdminController extends Controller
   public function loadAdminApp(Request $request)
   {
     return Inertia::render('Admin,AdminDashboard', [
-      'totalTransactions' => $request->user()->wallet_transactions()->withdrawals()->count(),
-      'walletBalance' => $request->user()->wallet_balance,
-      // 'total_savings_amount' => Savings::sum('current_balance'),
-      // 'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),
-      // 'total_cleared_interests_amount' => SavingsInterest::processed()->sum('amount')
+      'totalTransactions' => (int) $request->user()->wallet_transactions()->withdrawals()->count(),
+      'walletBalance' => (float) $request->user()->wallet_balance,
+      'dailySmartSavingsAmount' => (float)Savings::smart()->today()->sum('current_balance'),
+      'dailyTargetSavingsAmount' => (float)Savings::target()->today()->sum('current_balance'),
+      'matureSavingsCount' => (int)Savings::matured()->notWithdrawn()->count(),
+      'dailyAgentSignupCount' => (int) AppUser::whereDate('created_at', today())->where('agent_id', '<>', null)->count(),
     ]);
   }
 }

@@ -6,7 +6,7 @@
           <div
             class="rui-swiper"
             data-swiper-initialslide="1"
-            data-swiper-loop="true"
+            data-swiper-loop="false"
             data-swiper-grabcursor="true"
             data-swiper-center="true"
             data-swiper-slides="auto"
@@ -15,24 +15,82 @@
           >
             <div class="swiper-container">
               <div class="swiper-wrapper">
+
+                <div class="swiper-slide rui-swiper-slide-total">
+                  <div class="rui-widget rui-widget-chart rui-widget-total">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h1">{{total_savings_amount | Naira}}</div>
+                      <small class="rui-widget-subtitle">Total Income</small>
+                    </div>
+                    <div class="rui-widget-total-chart">
+                      <canvas
+                        class="rui-chartjs rui-chartjs-line rui-chartjs-total"
+                        data-height="50"
+                        data-chartjs-interval="3000"
+                        data-chartjs-line-color="#8e9fff"
+                      ></canvas>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">{{total_savings_amount | Naira}}</div>
-                      <small class="rui-widget-subtitle">Total Savings</small>
+                      <div class="rui-widget-title h2">{{total_smart_savings_amount | Naira}}</div>
+                      <small class="rui-widget-subtitle">Total Smart Savings</small>
                     </div>
                     <div class="rui-chartjs-container">
                       <div
                         class="rui-chartist rui-chartist-donut"
                         data-width="200"
                         data-height="200"
-                        data-chartist-series="5,2"
+                        :data-chartist-series="`${total_smart_savings_amount},${total_savings_amount}`"
                         data-chartist-width="4"
                         data-chartist-gradient="#8e9fff;#2bb7ef"
                       ></div>
                     </div>
                   </div>
                 </div>
+
+
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{total_target_savings_amount | Naira}}</div>
+                      <small class="rui-widget-subtitle">Total Target Savings</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_target_savings_amount},${total_savings_amount}`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{total_investment_savings_amount | Naira}}</div>
+                      <small class="rui-widget-subtitle">Total Investments</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_investment_savings_amount},${total_savings_amount}`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
@@ -53,6 +111,7 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
@@ -71,58 +130,83 @@
                     </div>
                   </div>
                 </div>
-                <!-- <div class="swiper-slide rui-swiper-slide-total">
-                  <div class="rui-widget rui-widget-chart rui-widget-total">
-                    <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h1">$1371.24</div>
-                      <small class="rui-widget-subtitle">Total Income</small>
-                    </div>
-                    <div class="rui-widget-total-chart">
-                      <canvas
-                        class="rui-chartjs rui-chartjs-line rui-chartjs-total"
-                        data-height="50"
-                        data-chartjs-interval="3000"
-                        data-chartjs-line-color="#8e9fff"
-                      ></canvas>
-                    </div>
-                  </div>
-                </div>
+
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">+14%</div>
-                      <small class="rui-widget-subtitle">Users Today</small>
+                      <div class="rui-widget-title h2">{{ total_daily_credits | Naira }}</div>
+                      <small class="rui-widget-subtitle">Total Daily Credits</small>
                     </div>
                     <div class="rui-chartjs-container">
                       <div
                         class="rui-chartist rui-chartist-donut"
-                        data-width="150"
-                        data-height="150"
-                        data-chartist-series="8,1"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_daily_credits},${total_uncleared_interests_amount}`"
                         data-chartist-width="4"
                         data-chartist-gradient="#8e9fff;#2bb7ef"
                       ></div>
                     </div>
                   </div>
                 </div>
+
                 <div class="swiper-slide">
                   <div class="rui-widget rui-widget-chart">
                     <div class="rui-widget-chart-info">
-                      <div class="rui-widget-title h2">+10%</div>
-                      <small class="rui-widget-subtitle">Session</small>
+                      <div class="rui-widget-title h2">{{ total_daily_payouts | Naira }}</div>
+                      <small class="rui-widget-subtitle">Total Daily Payouts</small>
                     </div>
                     <div class="rui-chartjs-container">
                       <div
                         class="rui-chartist rui-chartist-donut"
-                        data-width="150"
-                        data-height="150"
-                        data-chartist-series="5,5"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_daily_payouts},${total_uncleared_interests_amount}`"
                         data-chartist-width="4"
                         data-chartist-gradient="#8e9fff;#2bb7ef"
                       ></div>
                     </div>
                   </div>
-                </div>-->
+                </div>
+
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ total_users  }}</div>
+                      <small class="rui-widget-subtitle">Total Users</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_users},${total_uncleared_interests_amount}`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ total_independent_users }}</div>
+                      <small class="rui-widget-subtitle">Total Independent Users</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`${total_independent_users},${total_uncleared_interests_amount}`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
             <div class="swiper-button-next">
@@ -609,7 +693,14 @@
     props: {
       total_savings_amount: Number,
       total_uncleared_interests_amount: Number,
-      total_cleared_interests_amount: Number
+      total_cleared_interests_amount: Number,
+      total_daily_credits: Number,
+      total_daily_payouts: Number,
+      total_users: Number,
+      total_independent_users: Number,
+      total_smart_savings_amount: Number,
+      total_target_savings_amount: Number,
+      total_investment_savings_amount: Number
     },
     mixins: [mixins],
     components: { Layout },

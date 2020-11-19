@@ -14,6 +14,7 @@ use App\Modules\AppUser\Models\InvestmentType;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\AppUser\Models\SavingsInterest;
+use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\WithdrawalRequest;
 use App\Modules\SuperAdmin\Http\Controllers\LoginController;
 
@@ -43,9 +44,16 @@ class SuperAdminController extends Controller
   public function loadSuperAdminApp(Request $request)
   {
     return Inertia::render('SuperAdmin,SuperAdminDashboard', [
-      'total_savings_amount' => Savings::sum('current_balance'),
-      'total_uncleared_interests_amount' => SavingsInterest::unprocessed()->sum('amount'),
-      'total_cleared_interests_amount' => SavingsInterest::processed()->sum('amount')
+      'total_savings_amount' => (float) Savings::sum('current_balance'),
+      'total_smart_savings_amount' => (float) Savings::smart()->sum('current_balance'),
+      'total_target_savings_amount' => (float) Savings::target()->sum('current_balance'),
+      'total_investment_savings_amount' => (float) Savings::investment()->sum('current_balance'),
+      'total_uncleared_interests_amount' => (float) SavingsInterest::unprocessed()->sum('amount'),
+      'total_cleared_interests_amount' => (float) SavingsInterest::processed()->sum('amount'),
+      'total_daily_credits' => (float) Transaction::deposits()->today()->sum('amount'),
+      'total_daily_payouts' => (float) Transaction::withdrawals()->today()->sum('amount'),
+      'total_users' => (int) AppUser::count(),
+      'total_independent_users' => (int) AppUser::whereAgentId(null)->count(),
     ]);
   }
 }

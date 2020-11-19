@@ -51,6 +51,78 @@
                     </div>
                   </div>
                 </div>
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ dailySmartSavingsAmount | Naira }}</div>
+                      <small class="rui-widget-subtitle">Daily Smart Savings Amount</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`3,17`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ dailyTargetSavingsAmount | Naira }}</div>
+                      <small class="rui-widget-subtitle">Daily Target Savings Amount</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`6,10`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ dailyAgentSignupCount }}</div>
+                      <small class="rui-widget-subtitle">Total Agent Daily Signups</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`7,17`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="rui-widget rui-widget-chart">
+                    <div class="rui-widget-chart-info">
+                      <div class="rui-widget-title h2">{{ matureSavingsCount }}</div>
+                      <small class="rui-widget-subtitle">Total Accounts Due For Payouts</small>
+                    </div>
+                    <div class="rui-chartjs-container">
+                      <div
+                        class="rui-chartist rui-chartist-donut"
+                        data-width="200"
+                        data-height="200"
+                        :data-chartist-series="`7,17`"
+                        data-chartist-width="4"
+                        data-chartist-gradient="#8e9fff;#2bb7ef"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="swiper-button-next">
@@ -148,6 +220,10 @@
     props: {
       totalTransactions: Number,
       walletBalance: Number,
+      dailySmartSavingsAmount: Number,
+      dailyTargetSavingsAmount: Number,
+      dailyAgentSignupCount: Number,
+      matureSavingsCount: Number,
     },
     mixins: [mixins],
     components: { Layout },
