@@ -530,9 +530,7 @@ class Savings extends Model
   static function superAdminRoutes()
   {
     Route::name('superadmin.')->group(function () {
-      Route::get('{user}/savings', [self::class, 'superAdminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
-      Route::post('{appUser}/savings/target-funds/add', [self::class, 'lockMoreUserFunds'])->name('user_savings.target.fund');
-      Route::post('{appUser}/savings/target-funds/deduct', [self::class, 'deductUserFunds'])->name('user_savings.target.defund');
+      Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
       Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
     });
   }
@@ -720,7 +718,9 @@ class Savings extends Model
     $auto_save_list = $user->auto_save_settings;
     // $target_types = TargetType::all();
 
-    return Inertia::render('Admin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+    if ($request->user()->isAdmin()) return Inertia::render('Admin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+
+    if ($request->user()->isSuperAdmin()) return Inertia::render('SuperAdmin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
   }
 
   public function lockMoreUserFunds(Request $request, AppUser $appUser)
@@ -803,17 +803,15 @@ class Savings extends Model
     $notifications = Admin::find(1)->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
 
     if ($request->isApi()) return $notifications;
+    if ($request->user()->isAdmin()) {
     return Inertia::render('Admin,AdminNotifications', [
       'notifications' => $notifications
     ]);
-  }
-
-  public function superAdminViewUserSavings(Request $request, AppUser $user)
-  {
-    $savings_list = (new AdminSavingsTransformer)->collectionTransformer($user->savings_list->load('portfolio'), 'basic');
-    $auto_save_list = $user->auto_save_settings;
-
-    return Inertia::render('SuperAdmin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
+    } elseif ($request->user()->isSuperAdmin()) {
+      return Inertia::render('SuperAdmin,SuperAdminNotifications', [
+        'notifications' => $notifications
+      ]);
+    }
   }
 
   public function scopeSmart($query)

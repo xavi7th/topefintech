@@ -48,7 +48,6 @@ class AdminController extends Controller
         AppUser::adminRoutes();
         TargetType::adminRoutes();
         Savings::adminRoutes();
-        InvestmentType::adminRoutes();
         SavingsInterest::adminRoutes();
         WithdrawalRequest::adminRoutes();
 

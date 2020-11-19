@@ -61,9 +61,9 @@ class InvestmentType extends Model
     return $this->morphMany(Savings::class, 'portfolio');
   }
 
-  static function adminRoutes()
+  static function superAdminRoutes()
   {
-    Route::name('admin.')->prefix('investment-types')->group(function () {
+    Route::name('superadmin.')->prefix('investment-types')->group(function () {
       Route::get('', [self::class, 'adminGetInvestmentTypes'])->name('manage_investment_plans')->defaults('extras', ['icon' => 'far fa-save']);
       Route::post('create', [self::class, 'adminCreateInvestmentType'])->name('investment_plan.create');
       Route::put('{investmentType}/update', [self::class, 'adminUpdateInvestmentType'])->name('investment_plan.update');
@@ -83,7 +83,7 @@ class InvestmentType extends Model
   {
     if ($request->isApi()) return InvestmentType::all();
 
-    return Inertia::render('Admin,ManageInvestmentPlans', [
+    return Inertia::render('SuperAdmin,ManageInvestmentPlans', [
       'investment_list' => function () {
         return InvestmentType::withCount('savings')->get();
       }

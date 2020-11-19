@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Admin\Models\ErrLog;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\InvestmentType;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\AppUser\Models\SavingsInterest;
@@ -28,6 +29,7 @@ class SuperAdminController extends Controller
         Agent::superAdminRoutes();
         AppUser::superAdminRoutes();
         Savings::superAdminRoutes();
+        InvestmentType::superAdminRoutes();
         SavingsInterest::superAdminRoutes();
         ErrLog::routes();
       });

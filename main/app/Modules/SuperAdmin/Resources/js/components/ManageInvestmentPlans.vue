@@ -160,7 +160,7 @@
 
 <script>
   import { mixins, errorHandlers } from "@dashboard-assets/js/config";
-  import Layout from "@admin-assets/js/AdminAppComponent.vue";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent.vue";
   export default {
     name: "ManageInvestmentPlans",
     mixins: [mixins, errorHandlers],
@@ -184,7 +184,7 @@
 
         this.$inertia
           .post(
-            this.$route("admin.investment_plan.create"),
+            this.$route("superadmin.investment_plan.create"),
             this.investmentType,
             {
               preserveState: true,
@@ -204,7 +204,7 @@
         });
 
         this.$inertia
-          .put(this.$route("admin.investment_plan.update", this.details.id), this.details, {
+          .put(this.$route("superadmin.investment_plan.update", this.details.id), this.details, {
             preserveState: true,
             preserveScroll: true,
             only: ["investment_list", "errors", "flash"],
@@ -221,7 +221,7 @@
         });
 
         this.$inertia
-          .delete(this.$route("admin.investment_plan.delete", id), {
+          .delete(this.$route("superadmin.investment_plan.delete", id), {
             preserveState: true,
             preserveScroll: true,
             only: ["investment_list", "errors", "flash"],
