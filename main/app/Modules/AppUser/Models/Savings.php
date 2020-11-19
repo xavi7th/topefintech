@@ -530,7 +530,7 @@ class Savings extends Model
   static function superAdminRoutes()
   {
     Route::name('superadmin.')->group(function () {
-      Route::get('{user}/savings', [self::class, 'adminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
+      Route::get('{user}/savings', [self::class, 'superAdminViewUserSavings'])->name('user_savings')->defaults('extras', ['nav_skip' => true]);
       Route::post('{appUser}/savings/target-funds/add', [self::class, 'lockMoreUserFunds'])->name('user_savings.target.fund');
       Route::post('{appUser}/savings/target-funds/deduct', [self::class, 'deductUserFunds'])->name('user_savings.target.defund');
       Route::get('notifications/matured-savings', [self::class, 'getMaturedSavingsNotifications'])->name('view_matured_savings')->defaults('extras', ['icon' => 'fas fa-clipboard-list']);
@@ -806,6 +806,14 @@ class Savings extends Model
     return Inertia::render('Admin,AdminNotifications', [
       'notifications' => $notifications
     ]);
+  }
+
+  public function superAdminViewUserSavings(Request $request, AppUser $user)
+  {
+    $savings_list = (new AdminSavingsTransformer)->collectionTransformer($user->savings_list->load('portfolio'), 'basic');
+    $auto_save_list = $user->auto_save_settings;
+
+    return Inertia::render('SuperAdmin,savings/ManageUserSavings', compact('user', 'savings_list', 'auto_save_list'));
   }
 
   public function scopeSmart($query)

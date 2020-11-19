@@ -1,31 +1,27 @@
 <template>
   <div class="col-lg-12 col-xl-12">
     <div class="col-12">
-      <!-- <button type="button" class="btn btn-success btn-long">
-						<span class="text">Proceed to Payment</span>
-      </button>&nbsp;-->
-
       <div class="col-12 col-md justify-content-between">
         <button
           type="button"
           class="btn btn-brand mb-10"
           data-toggle="modal"
           data-target="#createSmartSavings"
-          v-if="!$page.auth.user.has_smart_savings && !$page.auth.user.isAdmin"
+          v-if="!$page.auth.user.has_smart_savings && !$page.auth.user.isAdmin && !$page.auth.user.isSuperAdmin"
         >New Smart Savings</button>
         <button
           type="button"
           class="btn btn-primary mb-10"
           data-toggle="modal"
           data-target="#newTargetModal"
-          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent"
+          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent && !$page.auth.user.isSuperAdmin"
         >New Target Savings</button>
         <button
           type="button"
           class="btn btn-info mb-10"
           data-toggle="modal"
           data-target="#newInvestmentModal"
-          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent"
+          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent && !$page.auth.user.isSuperAdmin"
         >New Investment Savings</button>
       </div>
     </div>
@@ -46,12 +42,12 @@
             <th scope="row">{{savings.id}}</th>
             <td class="text-capitalize d-flex justify-content-between align-items-center">
               {{savings.name || savings.portfolio.name || 'N/A'}} {{savings.type == 'investment' ? 'Investment' : 'Savings'}}
-              <span class="badge badge-danger" v-if="savings.is_matured && $page.auth.user.isAdmin">MATURED</span>
+              <span class="badge badge-danger" v-if="savings.is_matured && ($page.auth.user.isAdmin || $page.auth.user.isSuperAdmin)">MATURED</span>
               <button
                 type="button"
-                v-if="!savings.is_matured"
                 class="btn btn-success btn-uniform btn-round btn-xs"
-                @click="fundThisSavings(savings)"
+                @click="fundThisSavings(savings) "
+                v-if="!savings.is_matured && !$page.auth.user.isSuperAdmin"
               >
                 <span class="icon">
                   <span data-feather="plus" class="rui-icon rui-icon-stroke-1_5"></span>
