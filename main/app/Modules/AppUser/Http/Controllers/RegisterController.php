@@ -113,7 +113,7 @@ class RegisterController extends Controller
    */
   protected function registered(Request $request, AppUser $user)
   {
-    ActivityLog::notifyAdmins($user->phone   . ' registered an account on the site.');
+    ActivityLog::notifySuperAdmins($user->phone   . ' registered an account on the site.');
 
     $token = $user->createVerificationToken();
     $user->notify((new SendAccountVerificationMessage('sms', $token))->onQueue('high'));
