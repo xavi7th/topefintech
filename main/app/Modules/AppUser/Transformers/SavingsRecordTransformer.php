@@ -49,7 +49,7 @@ class SavingsRecordTransformer
       'current_balance' => (float)$savings->current_balance,
       'name' => (string)$savings->portfolio->name,
       'type' => (string)$savings->type,
-      'interests_withdrawable' => (bool)$savings->interests_withdrawable && ($savings->funded_at->diffInDays(now()) > config('app.smart_savings_minimum_duration_before_interests_withdrawal')),
+      'interests_withdrawable' => (bool)$savings->funded_at ? $savings->interests_withdrawable && ($savings->funded_at->diffInDays(now()) > config('app.smart_savings_minimum_duration_before_interests_withdrawal')) : false,
       'total_duration' => (int)$savings->total_duration,
       'elapsed_duration' => (int)$savings->elapsed_duration,
       'total_unprocessed_interest_amount' => (float)$savings->total_unprocessed_interest_amount(),
