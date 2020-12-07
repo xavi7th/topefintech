@@ -107,7 +107,7 @@ class SuperAdmin extends User
       $admin = Admin::create(Arr::collapse([
         $validator->validated(),
         [
-          'password' => bcrypt('pass')
+          'password' => 'pass'
         ]
       ]));
 
