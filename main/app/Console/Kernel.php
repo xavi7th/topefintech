@@ -78,6 +78,13 @@ class Kernel extends ConsoleKernel
         ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
       });
 
+    $schedule->command('database:backup')
+    ->daily()
+      ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1database-backup-log.cson')
+      ->onFailure(function () {
+        ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
+      });
+
     // $schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
 
     /**
