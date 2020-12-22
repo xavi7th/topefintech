@@ -10,7 +10,7 @@
                   ? $route('admin.dashboard')
                   : $route('agent.dashboard')
               "
-              >Smart Monie</inertia-link
+              >SmartMonie</inertia-link
             >
           </li>
         </ol>

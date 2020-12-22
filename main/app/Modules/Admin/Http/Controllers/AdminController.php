@@ -38,6 +38,7 @@ class AdminController extends Controller
   public static function routes()
   {
     Route::group(['middleware' => 'web', 'prefix' => Admin::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Admin\Http\Controllers'], function () {
+
       LoginController::routes();
 
       Route::group(['middleware' => ['auth:admin', 'admins']], function () {

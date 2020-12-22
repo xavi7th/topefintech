@@ -18,14 +18,14 @@
           <div class="row">
             <div class="col-lg-6 col-md-6 faqPdRight">
               <div class="singleFaq">
-                <h3>01. What is Smart Monie?</h3>
-                <p>-Smart Monie is an online Cooperative Society that encourages her members to save quarterly/monthly/weekly/daily in other to reach achieve their financial goals. Savings attract interest daily.</p>
+                <h3>01. What is SmartMonie?</h3>
+                <p>-SmartMonie is an online Cooperative Society that encourages her members to save quarterly/monthly/weekly/daily in other to reach achieve their financial goals. Savings attract interest daily.</p>
               </div>
             </div>
             <div class="col-lg-6 col-md-6">
               <div class="singleFaq">
-                <h3>02. What is Smart Monie?</h3>
-                <p>-Smart Monie is an online Cooperative Society that encourages her members to save quarterly/monthly/weekly/daily in other to reach achieve their financial goals. Savings attract interest daily.</p>
+                <h3>02. What is SmartMonie?</h3>
+                <p>-SmartMonie is an online Cooperative Society that encourages her members to save quarterly/monthly/weekly/daily in other to reach achieve their financial goals. Savings attract interest daily.</p>
               </div>
             </div>
           </div>

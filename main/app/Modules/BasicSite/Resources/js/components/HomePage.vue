@@ -1,5 +1,5 @@
 <template>
-  <layout title="Welcome to Smart Monie">
+  <layout title="Welcome to SmartMonie">
     <Hero />
     <Highlights />
     <AboutUs />

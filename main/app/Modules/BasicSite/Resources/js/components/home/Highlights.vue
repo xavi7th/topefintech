@@ -5,8 +5,7 @@
         <div class="col-lg-12 text-center">
           <h2 class="sec_title">High grade security layers</h2>
           <p class="sec_desc">
-            Smart Monie uses the highest levels of Internet Security, and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.
-            We are here to help you when you need your financial support, then we are help you.
+            SmartMonie uses the highest levels of Internet Security, and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.
           </p>
         </div>
       </div>

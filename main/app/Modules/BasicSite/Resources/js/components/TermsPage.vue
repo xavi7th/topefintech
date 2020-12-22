@@ -20,7 +20,7 @@
           <div class="row">
             <div class="col-lg-12 col-md-12 faqPdRight">
               <div class="termsPage pt-0">
-                <h1>THE BYE-LAWS OF SMART MONIE LIMITED</h1>
+                <h1>THE BYE-LAWS OF SmartMonie LIMITED</h1>
                 <b>REGISTRATION NUMBER: 000000000000</b>
                 <b>INTERPRETATION:</b>
                 <p>All words used in these Bye-Laws and defined by Section 57 of the Nigerian Cooperative Societies Act Cap. N98 law of the Federation of Nigeria (LFN) 2004 assigned to them in the above named Section. The following words or expressions shall have the meaning respectively assigned to them below;</p>

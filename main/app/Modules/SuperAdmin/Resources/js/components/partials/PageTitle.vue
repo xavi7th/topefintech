@@ -8,7 +8,7 @@
               :href="
                 $route('superadmin.dashboard')
               "
-              >Smart Monie</inertia-link
+              >SmartMonie</inertia-link
             >
           </li>
         </ol>

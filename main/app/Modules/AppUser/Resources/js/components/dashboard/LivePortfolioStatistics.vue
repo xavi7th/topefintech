@@ -129,7 +129,6 @@ import { getErrorString } from '@dashboard-assets/js/config';
               return this.$inertia
                 .put(this.$route("appuser.savings.smart.liquidate"))
                 .then(() => {
-                  console.log(getErrorString(this.$page.errors));
                   if (this.$page.flash.success) {
                     return true;
                   } else if (

@@ -24,7 +24,7 @@
               <div class="privacyPage pt-0">
                 <h3>Accessing Your Information</h3>
                 <p>
-                  You must notify us of any change in your Personal Information by updating your Smart Monie
+                  You must notify us of any change in your Personal Information by updating your SmartMonie
                   account profile through our Services. Any changes will affect only future uses of your Personal
                   Information.
                 </p>

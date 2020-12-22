@@ -1,7 +1,7 @@
 <template>
   <footer class="rui-footer">
     <div class="container-fluid">
-      <p class="mb-0">2020 &copy; Smart Monie.</p>
+      <p class="mb-0">2020 &copy; SmartMonie.</p>
     </div>
   </footer>
 </template>
