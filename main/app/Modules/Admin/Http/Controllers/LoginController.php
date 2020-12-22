@@ -44,14 +44,14 @@ class LoginController extends Controller
   {
     $this->middleware('throttle:5,1')->except(['admin.login.show']);
     $this->middleware('guest:web,agent,admin')->only(['showLoginForm', 'login']);
-    $this->middleware('auth:admin')->only(['logout', 'newAdminSetPassword']);
+    $this->middleware('auth:admin')->only(['logout']);
   }
 
   static function routes()
   {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('admin.login.show')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [LoginController::class, 'login'])->name('admin.login');
-    // Route::post('first-time', [LoginController::class, 'newAdminSetPassword'])->name('admin.password.new');
+    Route::post('first-time', [LoginController::class, 'newAdminSetPassword'])->name('admin.password.new');
     Route::match(['get', 'post'], 'logout', [LoginController::class, 'logout'])->name('admin.logout')->defaults('extras', ['nav_skip' => true]);
   }
 
@@ -112,9 +112,9 @@ class LoginController extends Controller
 
       DB::commit();
 
-      $this->guard()->login($admin);
+      // $this->guard()->login($admin);
 
-      return redirect()->route($admin->dashboardRoute())->withFlash(['success' => 'Password set']);
+      return redirect()->back()->withFlash(['success' => 'Password set! You may now log in using your new password']);
     }
     return back()->withFlash(['error' => 'Unauthorised']);
   }

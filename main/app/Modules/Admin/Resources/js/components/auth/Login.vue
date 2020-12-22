@@ -56,9 +56,9 @@
 
 <script>
   import Layout from "@dashboard-assets/js/AppComponent";
-  import { mixins } from "@dashboard-assets/js/config";
+  import { errorHandlers, mixins } from "@dashboard-assets/js/config";
   export default {
-    mixins: [mixins],
+    mixins: [mixins, errorHandlers],
     // props: ["errors", "flash"],
     components: { Layout },
     data: () => ({
@@ -120,11 +120,9 @@
                         console.log(result);
 
                         if (result.value) {
-                          swal.fire({
-                            title: `Success`,
-                            text: "Password set successfully!",
-                            icon: "success"
-                          });
+                          this.displayResponse()
+                          this.displayErrors()
+
                         } else if (result.dismiss) {
                           swal.fire({
                             title: "Cancelled",
