@@ -148,7 +148,7 @@
                 class="form-control"
                 id="lock-duration"
                 v-model="details.duration"
-                placeholder="Enter duration to lock funds"
+                placeholder="Enter duration to save funds"
               />
               <FlashMessage v-if="errors.duration" :msg="errors.duration[0]" />
             </div>
@@ -199,7 +199,7 @@
                 class="form-control"
                 id="fund-amount"
                 v-model="details.amount"
-                placeholder="Amount to add to funds"
+                placeholder="Enter amount to save"
               />
               <FlashMessage v-if="errors.amount" :msg="errors.amount[0]" />
             </div>
@@ -234,6 +234,10 @@
       return {
         details: {},
       };
+    },
+    beforeDestroy(){
+      $('.modal').modal('hide');
+      $('.modal-backdrop').remove();
     },
 
     methods: {
