@@ -1,6 +1,6 @@
 <template>
   <transition name="nav-transition" mode="out-in">
-    <div class="page">
+    <div class="page" :class="{'other-pages': !isHome}">
       <site-header></site-header>
 
       <slot></slot>
@@ -15,13 +15,17 @@
   import SiteFooter from "@basicsite-components/partials/FooterComponent";
 
   export default {
-    name: "Layout",
+    name: "BasicsiteAppComponent",
     components: {
       SiteHeader,
       SiteFooter
     },
     props: {
       title: String,
+      isHome:{
+        type:Boolean,
+        default:false
+      },
       app: Object
     },
     created() {

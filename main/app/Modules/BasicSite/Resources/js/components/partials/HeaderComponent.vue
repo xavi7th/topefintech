@@ -49,7 +49,7 @@
 
 <script>
   export default {
-    name: "Header",
+    name: "HeaderComponent",
     computed: {
       routes() {
         return _.filter(this.$page.routes, x => !x.nav_skip);

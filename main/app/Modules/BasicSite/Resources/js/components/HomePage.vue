@@ -1,5 +1,5 @@
 <template>
-  <layout title="Welcome to SmartMonie">
+  <layout title="Welcome to SmartMonie" :isHome="true">
     <Hero />
     <Highlights />
     <AboutUs />
