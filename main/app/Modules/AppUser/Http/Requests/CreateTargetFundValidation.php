@@ -16,7 +16,7 @@ class CreateTargetFundValidation extends FormRequest
   public function rules()
   {
     return [
-      'duration' => 'required|numeric|min:9|max:480',
+      'duration' => 'required|numeric|min:' . config('app.target_savings_minimum_duration') . '|max:480',
       'portfolio_id' => 'required|exists:target_types,id'
     ];
   }
@@ -41,7 +41,7 @@ class CreateTargetFundValidation extends FormRequest
   public function messages()
   {
     return [
-      'duration.min' => 'Target Savings duration must be a minimum of 9 months',
+      'duration.min' => 'Target Savings duration must be a minimum of ' . config('app.target_savings_minimum_duration') . ' months',
       'duration.max' => 'Target Savings duration must be a minimum of 480 months (40 years)',
     ];
   }

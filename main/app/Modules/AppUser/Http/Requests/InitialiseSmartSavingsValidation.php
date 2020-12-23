@@ -16,7 +16,7 @@ class InitialiseSmartSavingsValidation extends FormRequest
   public function rules()
   {
     return [
-      'duration' => 'required|numeric|min:3',
+      'duration' => 'required|numeric|min:' . config('app.smart_savings_minimum_duration'),
       'interests_withdrawable' => '',
     ];
   }
@@ -42,7 +42,7 @@ class InitialiseSmartSavingsValidation extends FormRequest
   {
     return [
       'duration.required' => 'Tell us how long you´d like to save for',
-      'duration.min' => 'Smart savings duration must be a minimum of 3 months',
+      'duration.min' => 'Smart savings duration must be a minimum of ' . config('app.smart_savings_minimum_duration') . ' months',
     ];
   }
 
