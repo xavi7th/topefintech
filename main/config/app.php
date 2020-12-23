@@ -21,6 +21,8 @@ return [
   'facebook' => env('APP_FACEBOOK', null),
   'instagram' => env('APP_INSTAGRAM', null),
   'twitter' => env('APP_TWITTER', null),
+  'opening_days' => env('APP_OPENING_DAYS', null),
+  'opening_hours' => env('APP_OPENING_HOURS', null),
 
 
   'balance_before_bvn_validation' => env('BALANCE_BEFORE_BVN_VALIDATION', 5000),

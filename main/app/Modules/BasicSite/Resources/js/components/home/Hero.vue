@@ -10,8 +10,8 @@
         <div class="col-md-6 order-md-1">
           <div class="welcome_area">
             <div class="welcome_text">
-              <h1>Save with SmartMonie.</h1>
-              <p>SmartMonie helps you attain financial freedom by enabling you save money and provide interest based loans to SMEs on the go. Earn 10% - 13% interests on savings</p>
+              <h1>The Better Way To Learn And Grow</h1>
+              <p>SmartMonie bridges the knowledge gap in personal finance and offer smarter ways to save and invest</p>
             </div>
             <div class="welcome_button">
               <a href="#" class="common_btn">Contact Us</a>

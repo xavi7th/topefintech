@@ -14,6 +14,74 @@
 @import './vendor/responsive';
 @import './vendor/nprogress';
 
+body,
+html {
+    font-size: 16px;
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+    }
+}
+
+.header_bg_1 .welcome_text h1,
+.header_bg_2 .welcome_text h1 {
+    font-size: 2.5rem;
+    line-height: 3rem;
+}
+
+.homeService_2 .sec_title,
+.teamProcess .sec_title {
+    font-size: 2rem;
+    line-height: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.homeService_2 .sec_desc {
+    line-height: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.singleService_4 {
+    h1 {
+        font-size: 3.8rem;
+        line-height: 3rem;
+    }
+
+    h5,
+    p {
+        line-height: 1.8rem;
+    }
+}
+
+.helpingPost .loanDesc {
+    p {
+        word-break: normal;
+    }
+
+    ul {
+        display: flex;
+        justify-content: space-between;
+        width: 40%;
+        padding: 0 !important;
+
+        a {
+            color: #606378;
+        }
+    }
+
+    @media (max-width: 767px) and (min-width: 320px) {
+        h5 {
+            min-width: 0;
+        }
+
+        p {
+            display: inline;
+        }
+    }
+
+
+}
+
 .slide-left-enter-active,
 .slide-left-leave-active,
 .slide-right-enter-active,

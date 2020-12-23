@@ -7,7 +7,9 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\BasicSite\Models\Message;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\BasicSite\Http\Requests\ContactFormValidation;
+use App\Modules\AppUser\Notifications\NewContactFormMessageNotification;
 
 class BasicSiteController extends Controller
 {
@@ -67,7 +69,10 @@ class BasicSiteController extends Controller
 
   public function sendContactMessage(ContactFormValidation $request)
   {
-    Message::create($request->all());
-    return response()->json(['status' => true], 201);
+    Message::create($request->validated());
+    SuperAdmin::find(1)->notify(new NewContactFormMessageNotification((object)$request->validated()));
+    if ($request->isApi()) return response()->json(['status' => true], 201);
+
+    return back()->withFlash(['success' => 'Message sent!']);
   }
 }

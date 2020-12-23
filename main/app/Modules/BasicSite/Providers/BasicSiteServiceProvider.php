@@ -56,6 +56,8 @@ class BasicSiteServiceProvider extends ServiceProvider
         'facebook' => config('app.facebook'),
         'instagram' => config('app.instagram'),
         'twitter' => config('app.twitter'),
+        'opening_days' => config('app.opening_days'),
+        'opening_hours' => config('app.opening_hours'),
       ],
       'routes' => function (Request $request) {
         return $request->route() ? (Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? []) : (object)[];
