@@ -14,7 +14,7 @@
               <p>SmartMonie bridges the knowledge gap in personal finance and offer smarter ways to save and invest</p>
             </div>
             <div class="welcome_button">
-              <a href="#" class="common_btn">Contact Us</a>
+              <a href="/register" class="common_btn">Get Started</a>
             </div>
           </div>
         </div>

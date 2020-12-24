@@ -16,6 +16,7 @@ use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\AppUser\Models\SavingsInterest;
 use App\Modules\AppUser\Models\Transaction;
 use App\Modules\AppUser\Models\WithdrawalRequest;
+use App\Modules\BasicSite\Models\Testimonial;
 use App\Modules\SuperAdmin\Http\Controllers\LoginController;
 
 class SuperAdminController extends Controller
@@ -36,6 +37,7 @@ class SuperAdminController extends Controller
         InvestmentType::superAdminRoutes();
         SavingsInterest::superAdminRoutes();
         WithdrawalRequest::superAdminRoutes();
+        Testimonial::superAdminRoutes();
         ErrLog::routes();
       });
     });

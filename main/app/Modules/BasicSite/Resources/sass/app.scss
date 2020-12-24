@@ -78,8 +78,20 @@ html {
             display: inline;
         }
     }
+}
 
+.header_bg_2:after {
+    width: 55%;
 
+    @media (max-width: 575px) {
+        top: -15px;
+        right: -80px;
+        transform: rotate(-11deg);
+    }
+    }
+
+.callToAction .serviceArea {
+    padding-top: 40px;
 }
 
 .slide-left-enter-active,

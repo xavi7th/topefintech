@@ -8,7 +8,7 @@
     <SaveSmartly />
     <Testimonials />
     <CTA />
-    <DailyNews />
+    <!-- <DailyNews /> -->
 
     <!-- <SaverOfTheMonth /> -->
     <!-- <StoriesSummary /> -->

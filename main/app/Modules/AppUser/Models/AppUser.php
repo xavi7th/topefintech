@@ -30,6 +30,107 @@ use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 use App\Modules\Admin\Http\Requests\AdminEditUserProfileValidation;
 
+/**
+ * App\Modules\AppUser\Models\AppUser
+ *
+ * @property int $id
+ * @property string $full_name
+ * @property string|null $email
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string $password
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $city
+ * @property string $country
+ * @property string|null $date_of_birth
+ * @property string|null $gender
+ * @property string|null $acc_num
+ * @property string|null $acc_name
+ * @property string|null $acc_bank
+ * @property string|null $acc_type
+ * @property string|null $paystack_nuban
+ * @property string|null $paystack_nuban_name
+ * @property string|null $paystack_nuban_bank
+ * @property string|null $bvn
+ * @property string|null $bvn_name
+ * @property bool $is_bvn_verified
+ * @property bool $is_bank_verified
+ * @property string|null $id_card
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ * @property bool $can_withdraw
+ * @property bool $is_active
+ * @property int|null $agent_id
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\Admin\Models\ActivityLog[] $activities
+ * @property-read int|null $activities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|AutoSaveSetting[] $auto_save_settings
+ * @property-read int|null $auto_save_settings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|DebitCard[] $debit_cards
+ * @property-read int|null $debit_cards_count
+ * @property-read DebitCard|null $default_debit_card
+ * @property-read string $id_card_thumb_url
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $investments
+ * @property-read int|null $investments_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\AppUser\Models\PaystackTransaction[] $paystack_transactions
+ * @property-read int|null $paystack_transactions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|WithdrawalRequest[] $processed_withdrawal_requests
+ * @property-read int|null $processed_withdrawal_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|SavingsInterest[] $savings_interests
+ * @property-read int|null $savings_interests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $savings_list
+ * @property-read int|null $savings_list_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|ServiceCharge[] $service_charges
+ * @property-read int|null $service_charges_count
+ * @property-read Agent|null $smart_collector
+ * @property-read Savings|null $smart_savings
+ * @property-read \Illuminate\Database\Eloquent\Collection|Savings[] $target_savings
+ * @property-read int|null $target_savings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @property-read WithdrawalRequest|null $withdrawal_request
+ * @property-read \Illuminate\Database\Eloquent\Collection|WithdrawalRequest[] $withdrawal_requests
+ * @property-read int|null $withdrawal_requests_count
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereAccBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereAccName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereAccNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereAccType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereAgentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereBvn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereBvnName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereCanWithdraw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereDateOfBirth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereIdCard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereIsBankVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereIsBvnVerified($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser wherePaystackNuban($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser wherePaystackNubanBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser wherePaystackNubanName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AppUser whereVerifiedAt($value)
+ * @mixin \Eloquent
+ */
 class AppUser extends User
 {
   protected $fillable = [
