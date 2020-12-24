@@ -7,8 +7,10 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\BasicSite\Models\Message;
+use App\Modules\BasicSite\Models\Testimonial;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\BasicSite\Http\Requests\ContactFormValidation;
+use App\Modules\BasicSite\Transformers\TestimonialTransformer;
 use App\Modules\AppUser\Notifications\NewContactFormMessageNotification;
 
 class BasicSiteController extends Controller
@@ -37,7 +39,7 @@ class BasicSiteController extends Controller
   public function index()
   {
     return Inertia::render('BasicSite,HomePage', [
-      // 'testimonials' => (new TestimonialTransformer)->collectionTransformer(Testimonial::all(), 'transformForHomePage'),
+      'testimonials' => (new TestimonialTransformer)->collectionTransformer(Testimonial::all(), 'transformForHomePage'),
       // 'team_members' => (new TeamMemberTransformer)->collectionTransformer(TeamMember::all(), 'transformForHomePage')
     ]);
   }

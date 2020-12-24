@@ -23,11 +23,10 @@ class TestimonialTransformer
 	public function transformForHomePage(Testimonial $testimonial)
 	{
 		return [
-			'id' => (int)$testimonial->id,
 			'name' => (string)$testimonial->name,
 			'city' => (string)$testimonial->city,
 			'country' => (string)$testimonial->country,
-			'img' => (string)$testimonial->img,
+			'thumb_url' => (string)$testimonial->thumb_url,
 			'testimonial' => (string)$testimonial->testimonial,
 		];
 	}

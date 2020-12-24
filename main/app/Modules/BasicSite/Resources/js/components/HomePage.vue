@@ -1,12 +1,12 @@
 <template>
   <layout title="Welcome to SmartMonie" :isHome="true">
     <Hero />
-    <Highlights />
-    <AboutUs />
+    <!-- <AboutUs /> -->
     <RegistrationSteps />
-    <InterestCalculator />
-    <SaveSmartly />
-    <Testimonials />
+    <FinancialFreedom />
+    <!-- <InterestCalculator /> -->
+    <Testimonials :testimonials=testimonials />
+    <SaveSecurely />
     <CTA />
     <!-- <DailyNews /> -->
 
@@ -17,10 +17,10 @@
 
 <script>
   import Hero from "@basicsite-components/home/Hero";
-  import Highlights from "@basicsite-components/home/Highlights";
+  import FinancialFreedom from "@basicsite-components/home/FinancialFreedom";
   import InterestCalculator from "@basicsite-components/home/InterestCalculator";
   import AboutUs from "@basicsite-components/home/AboutUs";
-  import SaveSmartly from "@basicsite-components/home/SaveSmartly";
+  import SaveSecurely from "@basicsite-components/home/SaveSecurely";
   import RegistrationSteps from "@basicsite-components/home/RegistrationSteps";
   import SaverOfTheMonth from "@basicsite-components/home/SaverOfTheMonth";
   import StoriesSummary from "@basicsite-components/home/StoriesSummary";
@@ -33,14 +33,15 @@
     name: "HomePage",
     mixins: [mixins],
     props: {
-      app: Object
+      app: Object,
+      testimonials:Array
     },
     components: {
       Hero,
-      Highlights,
+      FinancialFreedom,
       InterestCalculator,
       AboutUs,
-      SaveSmartly,
+      SaveSecurely,
       RegistrationSteps,
       SaverOfTheMonth,
       StoriesSummary,
