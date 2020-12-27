@@ -2,7 +2,7 @@
   <layout title="Welcome to SmartMonie" :isHome="true">
     <Hero />
     <!-- <AboutUs /> -->
-    <RegistrationSteps />
+    <PackagesOffered />
     <FinancialFreedom />
     <!-- <InterestCalculator /> -->
     <Testimonials :testimonials=testimonials />
@@ -21,7 +21,7 @@
   import InterestCalculator from "@basicsite-components/home/InterestCalculator";
   import AboutUs from "@basicsite-components/home/AboutUs";
   import SaveSecurely from "@basicsite-components/home/SaveSecurely";
-  import RegistrationSteps from "@basicsite-components/home/RegistrationSteps";
+  import PackagesOffered from "@basicsite-components/home/PackagesOffered";
   import SaverOfTheMonth from "@basicsite-components/home/SaverOfTheMonth";
   import StoriesSummary from "@basicsite-components/home/StoriesSummary";
   import Testimonials from "@basicsite-components/home/Testimonials";
@@ -42,7 +42,7 @@
       InterestCalculator,
       AboutUs,
       SaveSecurely,
-      RegistrationSteps,
+      PackagesOffered,
       SaverOfTheMonth,
       StoriesSummary,
       Testimonials,

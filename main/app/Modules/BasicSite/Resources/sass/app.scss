@@ -29,6 +29,43 @@ html {
     line-height: 3rem;
 }
 
+.service_border{
+  background-position: 50% 40%;
+}
+
+.singleProcess_3 {
+  .back,.front{
+    .bg_number{
+      h1{
+        font-size: 1.7rem;
+
+        span{
+          font-size: 50%;
+          display: block;
+          line-height: 1;
+          margin-top: -10px;
+        }
+      }
+    }
+
+    p{
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+
+    h6{
+      color: white;
+      text-align: right;
+      margin-top: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      margin-bottom: 0;
+    }
+
+  }
+}
+
 .homeService_2 .sec_title,
 .teamProcess .sec_title {
     font-size: 2.5rem;
@@ -37,15 +74,19 @@ html {
     }
 
     .applicatioProces_2 {
-        &:after {
-            background: url(/img/bg/9.png) no-repeat 0 0;
-            position: absolute;
-            left: 0;
-            top: 0;
-            content: "";
-            width: 100%;
-            height: 736px;
+      &:after {
+        background: url(/img/bg/9.png) no-repeat 0 0;
+        position: absolute;
+        left: 0;
+        top: -30px;
+        content: "";
+        width: 100%;
+        height: 736px;
+
+        @media (max-width: 767px) {
+          background: none;
         }
+      }
     }
 
     .homeService_2 {
