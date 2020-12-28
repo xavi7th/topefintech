@@ -49,9 +49,9 @@
     },
     data: function() {
       return {
-        interestSummary: this.$page.interests_summary,
-        month: this.$page.month,
-        user: this.$page.user
+        interestSummary: this.$page.props.interests_summary,
+        month: this.$page.props.month,
+        user: this.$page.props.user
       };
     }
   };

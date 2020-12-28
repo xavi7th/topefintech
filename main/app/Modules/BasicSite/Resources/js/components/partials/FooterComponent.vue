@@ -10,10 +10,10 @@
 
               <p>
                 <i class="fa fa-phone"></i>
-                {{ $page.app.phone }}
+                {{ $page.props.app.phone }}
               </p>
 
-              <a :href="`mailto:${$page.app.email}`">{{ $page.app.email }}</a>
+              <a :href="`mailto:${$page.props.app.email}`">{{ $page.props.app.email }}</a>
 
               <h5>Recources</h5>
 
@@ -45,22 +45,22 @@
           <div class="col-lg-4 col-md-6">
             <aside class="widget subscribe_widgets">
               <h4>Find us at:</h4>
-              <p class="text-black">{{$page.app.address}}</p>
+              <p class="text-black">{{$page.props.app.address}}</p>
 
               <h5 class="mt-5">Our Community</h5>
               <ul class="social">
-                <li v-if="$page.app.facebook">
-                  <a target="_blank" :href="$page.app.facebook">
+                <li v-if="$page.props.app.facebook">
+                  <a target="_blank" :href="$page.props.app.facebook">
                     <i class="fa fa-facebook"></i>
                   </a>
                 </li>
-                <li v-if="$page.app.instagram">
-                  <a target="_blank" :href="$page.app.instagram">
+                <li v-if="$page.props.app.instagram">
+                  <a target="_blank" :href="$page.props.app.instagram">
                     <i class="fa fa-twitter"></i>
                   </a>
                 </li>
-                <li v-if="$page.app.twitter">
-                  <a target="_blank" :href="$page.app.twitter">
+                <li v-if="$page.props.app.twitter">
+                  <a target="_blank" :href="$page.props.app.twitter">
                     <i class="fa fa-instagram"></i>
                   </a>
                 </li>

@@ -6,7 +6,7 @@
           <div class="serviceArea pt-5 text-justify">
             <h3>Your money is well protected</h3>
             <p>
-              With <b>bank-grade security</b>. Our payment processors are PCIDSS compliant to ensure optimum security of your data electronically. Also {{$page.app.name}} uses the highest levels of Internet Security,
+              With <b>bank-grade security</b>. Our payment processors are PCIDSS compliant to ensure optimum security of your data electronically. Also {{$page.props.app.name}} uses the highest levels of Internet Security,
               and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.
             </p>
             <p>
@@ -14,7 +14,7 @@
               by investing in pre-vetted investment opportunities.
             </p>
             <h5>
-              Never out of funds when you need it the most. Saving and investing money with {{$page.app.name}} means your money works hard all day, everyday.
+              Never out of funds when you need it the most. Saving and investing money with {{$page.props.app.name}} means your money works hard all day, everyday.
             </h5>
           </div>
         </div>

@@ -54,7 +54,7 @@
       title: {
         immediate: true,
         handler(title) {
-          document.title = `${title} - ${this.$page.app.name}`;
+          document.title = `${title} - ${this.$page.props.app.name}`;
         }
       }
     }
@@ -62,5 +62,5 @@
 </script>
 
 <style lang="scss">
-  @import "~@dashboard-assets/sass/app";
+  // @import "~@dashboard-assets/sass/app";
 </style>

@@ -22,31 +22,17 @@ mix.babelConfig( {
   ],
 } );
 
+// mix.alias({
+//     ziggy: path.resolve('./main/vendor/tightenco/ziggy/dist'),
+// });
+
 mix.webpackConfig( {
   output: {
     //   chunkFilename: '[name].js?id=[chunkhash]',
     filename: "[name].[chunkhash].js",
     chunkFilename: "[name].[chunkhash].js",
   },
-  resolve: {
-    alias: {
-      ziggy: path.resolve( './main/vendor/tightenco/ziggy/src/js/route.js' ),
-    },
-  },
   plugins: [
-
-    /**
-     * All files inside webpack's output.path directory will be removed once, but the
-     * directory itself will not be. If using webpack 4+'s default configuration,
-     * everything under <PROJECT_DIR>/dist/ will be removed.
-     * Use cleanOnceBeforeBuildPatterns to override this behavior.
-     *
-     * During rebuilds, all webpack assets that are not used anymore
-     * will be removed automatically.
-     *
-     * See `Options and Defaults` for information
-     */
-
     new CleanWebpackPlugin( {
       dry: false,
       cleanOnceBeforeBuildPatterns: [ 'js/*', 'css/*', '/img/*', 'fonts/*', 'robots.txt', 'mix-manifest.json' ]
@@ -57,6 +43,7 @@ mix.webpackConfig( {
 
 mix
   .options( {
+    processCssUrls :false,
     fileLoaderDirs: {
       images: 'img',
     },
@@ -110,4 +97,9 @@ mix
 
 if ( !mix.inProduction() ) {
   mix.sourceMaps();
+
+}
+
+if ( mix.inProduction() ) {
+  mix.version();
 }

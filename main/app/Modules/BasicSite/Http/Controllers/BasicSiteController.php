@@ -25,14 +25,14 @@ class BasicSiteController extends Controller
    */
   public static function routes()
   {
-    Route::group(['middleware' => 'web', 'namespace' => 'App\\Modules\BasicSite\Http\Controllers'], function () {
-      Route::get('/', [BasicSiteController::class, 'index'])->name('app.home');
-      Route::get('/frequently-asked-questions', [BasicSiteController::class, 'faqs'])->name('app.faqs');
-      Route::get('/careers', [BasicSiteController::class, 'careers'])->name('app.career')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/privacy', [BasicSiteController::class, 'showPrivacyPage'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/terms-and-conditions', [BasicSiteController::class, 'showTermsPage'])->name('app.terms')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/contact-us', [BasicSiteController::class, 'showContactForm'])->name('app.contact_us');
-      Route::post('/contact', [BasicSiteController::class, 'sendContactMessage'])->name('app.contact');
+    Route::group(['middleware' => 'web'], function () {
+      Route::get('/', [self::class, 'index'])->name('app.home');
+      Route::get('/frequently-asked-questions', [self::class, 'faqs'])->name('app.faqs');
+      Route::get('/careers', [self::class, 'careers'])->name('app.career')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/privacy', [self::class, 'showPrivacyPage'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/terms-and-conditions', [self::class, 'showTermsPage'])->name('app.terms')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/contact-us', [self::class, 'showContactForm'])->name('app.contact_us');
+      Route::post('/contact', [self::class, 'sendContactMessage'])->name('app.contact');
     });
   }
 

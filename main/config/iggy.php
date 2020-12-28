@@ -1,6 +1,7 @@
 <?php
 
 return [
+  'except' => ['_debugbar.*', 'horizon.*', 'admin.*', 'superadmin.*'],
   'groups' => [
     'superadmin' => [
       'superadmin.*',

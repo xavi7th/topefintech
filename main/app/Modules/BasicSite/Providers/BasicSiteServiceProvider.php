@@ -2,14 +2,8 @@
 
 namespace App\Modules\BasicSite\Providers;
 
-use Inertia\Inertia;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-use App\Modules\AppUser\Transformers\AppUserTransformer;
 
 class BasicSiteServiceProvider extends ServiceProvider
 {
@@ -35,49 +29,7 @@ class BasicSiteServiceProvider extends ServiceProvider
   public function register()
   {
     $this->app->register(RouteServiceProvider::class);
-    $this->registerInertia();
   }
-
-
-
-  public function registerInertia()
-  {
-    Inertia::version(function () {
-      return md5_file(public_path('mix-manifest.json'));
-    });
-
-    Inertia::share([
-      'app' => [
-        'name' => config('app.name'),
-        'whatsapp' => config('app.whatsapp'),
-        'address' => config('app.address'),
-        'phone' => config('app.phone'),
-        'email' => config('app.email'),
-        'facebook' => config('app.facebook'),
-        'instagram' => config('app.instagram'),
-        'twitter' => config('app.twitter'),
-        'opening_days' => config('app.opening_days'),
-        'opening_hours' => config('app.opening_hours'),
-      ],
-      'routes' => function (Request $request) {
-        return $request->route() ? (Str::of($request->route()->getName())->before('.')->is('app') ? get_related_routes('app.', ['GET']) : optional($request->user())->get_navigation_routes() ?? []) : (object)[];
-      },
-      'isInertiaRequest' => (bool)request()->header('X-Inertia'),
-      'auth' => function (Request $request) {
-        return [
-          'user' => Auth::user() ? $request->user()->getDetails() : (object)[],
-          'notification_count' => Auth::user() ? $request->user()->unreadNotifications()->count() : null
-        ];
-      },
-      'flash' => fn () => Session::get('flash') ?? (object)[],
-      'errors' => function () {
-        return Session::get('errors')
-          ? Session::get('errors')->getBag('default')->getMessages()
-          : (object)[];
-      },
-    ]);
-  }
-
 
   /**
    * Register config.

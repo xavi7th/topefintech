@@ -9,7 +9,7 @@
                 <div class="col-auto">
                   <div class="rui-profile-img">
                     <img
-                      :src="$page.auth.user.id_card_thumb_url || `/img/avatar.png`"
+                      :src="$page.props.auth.user.id_card_thumb_url || `/img/avatar.png`"
                       alt="user id card"
                     />
                   </div>
@@ -17,17 +17,17 @@
                 <div class="col">
                   <div class="rui-profile-info">
                     <h3 class="rui-profile-info-title h4">
-                      {{ $page.auth.user.full_name }}
+                      {{ $page.props.auth.user.full_name }}
                     </h3>
                     <small class="text-grey-6 mt-2 mb-15"
-                      >Registered: {{ $page.auth.user.num_of_days_active }} days
+                      >Registered: {{ $page.props.auth.user.num_of_days_active }} days
                       ago</small
                     >
                     <a class="rui-profile-info-mail" href="#">{{
-                      $page.auth.user.email
+                      $page.props.auth.user.email
                     }}</a>
                     <a class="rui-profile-info-phone" href="#">{{
-                      $page.auth.user.phone
+                      $page.props.auth.user.phone
                     }}</a>
                   </div>
                 </div>
@@ -38,7 +38,7 @@
                   <div class="col-auto">
                     <div class="rui-profile-number text-center">
                       <h4 class="rui-profile-number-title h2 text-capitalize">
-                        {{ $page.auth.user.gender }}
+                        {{ $page.props.auth.user.gender }}
                       </h4>
                       <small class="text-grey-6">Gender</small>
                     </div>
@@ -47,7 +47,7 @@
                   <div class="col-auto">
                     <div class="rui-profile-number text-center">
                       <h4 class="rui-profile-number-title h2">
-                        {{ $page.auth.user.date_of_birth }}
+                        {{ $page.props.auth.user.date_of_birth }}
                       </h4>
                       <small class="text-grey-6">Date of Birth</small>
                     </div>
@@ -151,16 +151,16 @@
                         class="form-control"
                         readonly
                         :class="{
-                          'is-invalid': $page.errors.full_name,
-                          'is-valid': !$page.errors.full_name,
+                          'is-invalid': $page.props.errors.full_name,
+                          'is-valid': !$page.props.errors.full_name,
                         }"
                         v-model="details.full_name"
                         id="full_name"
                         placeholder="Your Full Name"
                       />
                       <FlashMessage
-                        v-if="$page.errors.full_name"
-                        :msg="$page.errors.full_name[0]"
+                        v-if="$page.props.errors.full_name"
+                        :msg="$page.props.errors.full_name[0]"
                       />
                     </div>
                     <div class="col-4">
@@ -171,8 +171,8 @@
                         class="form-control"
                         v-model="details.gender"
                         :class="{
-                          'is-invalid': $page.errors.gender,
-                          'is-valid': !$page.errors.gender,
+                          'is-invalid': $page.props.errors.gender,
+                          'is-valid': !$page.props.errors.gender,
                         }"
                       >
                         <option :value="null">Gender</option>
@@ -181,8 +181,8 @@
                       </select>
 
                       <FlashMessage
-                        v-if="$page.errors.gender"
-                        :msg="$page.errors.gender[0]"
+                        v-if="$page.props.errors.gender"
+                        :msg="$page.props.errors.gender[0]"
                       />
                     </div>
 
@@ -192,16 +192,16 @@
                         type="email"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.email,
-                          'is-valid': !$page.errors.email,
+                          'is-invalid': $page.props.errors.email,
+                          'is-valid': !$page.props.errors.email,
                         }"
                         v-model="details.email"
                         id="email"
                         placeholder="Your Email"
                       />
                       <FlashMessage
-                        v-if="$page.errors.email"
-                        :msg="$page.errors.email[0]"
+                        v-if="$page.props.errors.email"
+                        :msg="$page.props.errors.email[0]"
                       />
                     </div>
 
@@ -214,13 +214,13 @@
                         id="phone"
                         placeholder="Your Phone"
                         :class="{
-                          'is-invalid': $page.errors.phone,
-                          'is-valid': !$page.errors.phone,
+                          'is-invalid': $page.props.errors.phone,
+                          'is-valid': !$page.props.errors.phone,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.phone"
-                        :msg="$page.errors.phone[0]"
+                        v-if="$page.props.errors.phone"
+                        :msg="$page.props.errors.phone[0]"
                       />
                     </div>
 
@@ -232,14 +232,14 @@
                         rows="1"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.address,
-                          'is-valid': !$page.errors.address,
+                          'is-invalid': $page.props.errors.address,
+                          'is-valid': !$page.props.errors.address,
                         }"
                         v-model="details.address"
                       ></textarea>
                       <FlashMessage
-                        v-if="$page.errors.address"
-                        :msg="$page.errors.address[0]"
+                        v-if="$page.props.errors.address"
+                        :msg="$page.props.errors.address[0]"
                       />
                     </div>
 
@@ -251,13 +251,13 @@
                         id="city"
                         placeholder="Your city"
                         :class="{
-                          'is-invalid': $page.errors.city,
-                          'is-valid': !$page.errors.city,
+                          'is-invalid': $page.props.errors.city,
+                          'is-valid': !$page.props.errors.city,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.city"
-                        :msg="$page.errors.city[0]"
+                        v-if="$page.props.errors.city"
+                        :msg="$page.props.errors.city[0]"
                       />
                     </div>
 
@@ -269,13 +269,13 @@
                         id="country"
                         placeholder="Your country"
                         :class="{
-                          'is-invalid': $page.errors.country,
-                          'is-valid': !$page.errors.country,
+                          'is-invalid': $page.props.errors.country,
+                          'is-valid': !$page.props.errors.country,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.country"
-                        :msg="$page.errors.country[0]"
+                        v-if="$page.props.errors.country"
+                        :msg="$page.props.errors.country[0]"
                       />
                     </div>
 
@@ -288,14 +288,14 @@
                         id="date_of_birth"
                         placeholder="Your date_of_birth"
                         :class="{
-                          'is-invalid': $page.errors.date_of_birth,
-                          'is-valid': !$page.errors.date_of_birth,
+                          'is-invalid': $page.props.errors.date_of_birth,
+                          'is-valid': !$page.props.errors.date_of_birth,
                         }"
                       />
 
                       <FlashMessage
-                        v-if="$page.errors.date_of_birth"
-                        :msg="$page.errors.date_of_birth[0]"
+                        v-if="$page.props.errors.date_of_birth"
+                        :msg="$page.props.errors.date_of_birth[0]"
                       />
                     </div>
 
@@ -311,13 +311,13 @@
                         id="id_card"
                         placeholder="Your id_card"
                         :class="{
-                          'is-invalid': $page.errors.id_card,
-                          'is-valid': !$page.errors.id_card,
+                          'is-invalid': $page.props.errors.id_card,
+                          'is-valid': !$page.props.errors.id_card,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.id_card"
-                        :msg="$page.errors.id_card[0]"
+                        v-if="$page.props.errors.id_card"
+                        :msg="$page.props.errors.id_card[0]"
                       />
                     </div>
 
@@ -358,19 +358,19 @@
                     <div class="col-12">
                       <label for="acc_num">Account Name</label>
                       <input
-                        v-if="!$page.auth.user.is_bank_verified"
+                        v-if="!$page.props.auth.user.is_bank_verified"
                         class="form-control"
                         :value="details.acc_name"
                         id="acc_name"
                         disabled
                       />
                       <span v-else class="d-block form-control">{{
-                        $page.auth.user.account_name
+                        $page.props.auth.user.account_name
                       }}</span>
 
                       <FlashMessage
-                        v-if="$page.errors.acc_name"
-                        :msg="$page.errors.acc_name[0]"
+                        v-if="$page.props.errors.acc_name"
+                        :msg="$page.props.errors.acc_name[0]"
                       />
                     </div>
 
@@ -378,35 +378,35 @@
                       <label for="acc_num">Account Number</label>
                       <input
                         class="form-control"
-                        v-if="!$page.auth.user.is_bank_verified"
+                        v-if="!$page.props.auth.user.is_bank_verified"
                         :class="{
-                          'is-invalid': $page.errors.acc_num,
-                          'is-valid': !$page.errors.acc_num,
+                          'is-invalid': $page.props.errors.acc_num,
+                          'is-valid': !$page.props.errors.acc_num,
                         }"
                         v-model="details.acc_num"
                         id="acc_num"
                         placeholder="Account Number"
                       />
                       <span v-else class="d-block form-control">{{
-                        $page.auth.user.account_number
+                        $page.props.auth.user.account_number
                       }}</span>
 
                       <FlashMessage
-                        v-if="$page.errors.acc_num"
-                        :msg="$page.errors.acc_num[0]"
+                        v-if="$page.props.errors.acc_num"
+                        :msg="$page.props.errors.acc_num[0]"
                       />
                     </div>
 
                     <div class="col-12">
                       <label for="acc_bank">Bank Name</label>
                       <select
-                        v-if="!$page.auth.user.is_bank_verified"
+                        v-if="!$page.props.auth.user.is_bank_verified"
                         class="form-control"
                         v-model="details.acc_bank"
                         id="acc_bank"
                         :class="{
-                          'is-invalid': $page.errors.acc_bank,
-                          'is-valid': !$page.errors.acc_bank,
+                          'is-invalid': $page.props.errors.acc_bank,
+                          'is-valid': !$page.props.errors.acc_bank,
                         }"
                       >
                         <option :value="null">Select</option>
@@ -415,11 +415,11 @@
                         </option>
                       </select>
                       <span v-else class="d-block form-control">{{
-                        $page.auth.user.bank
+                        $page.props.auth.user.bank
                       }}</span>
                       <FlashMessage
-                        v-if="$page.errors.acc_bank"
-                        :msg="$page.errors.acc_bank[0]"
+                        v-if="$page.props.errors.acc_bank"
+                        :msg="$page.props.errors.acc_bank[0]"
                       />
                     </div>
 
@@ -429,7 +429,7 @@
                         type="button"
                         @click="validateBankName"
                         :disabled="!details.acc_num && !details.acc_bank"
-                        v-if="!$page.auth.user.is_bank_verified"
+                        v-if="!$page.props.auth.user.is_bank_verified"
                       >
                         Validate Account
                       </button>
@@ -439,7 +439,7 @@
                         type="button"
                         @click="updateUserProfile"
                         :disabled="!details.acc_num"
-                        v-if="!$page.auth.user.is_bank_verified"
+                        v-if="!$page.props.auth.user.is_bank_verified"
                       >
                         Update
                       </button>
@@ -467,16 +467,16 @@
                         type="password"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.current_password,
-                          'is-valid': !$page.errors.current_password,
+                          'is-invalid': $page.props.errors.current_password,
+                          'is-valid': !$page.props.errors.current_password,
                         }"
                         v-model="details.current_password"
                         id="current_password"
                         placeholder="Current Password"
                       />
                       <FlashMessage
-                        v-if="$page.errors.current_password"
-                        :msg="$page.errors.current_password[0]"
+                        v-if="$page.props.errors.current_password"
+                        :msg="$page.props.errors.current_password[0]"
                       />
                     </div>
 
@@ -486,16 +486,16 @@
                         type="password"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.password,
-                          'is-valid': !$page.errors.password,
+                          'is-invalid': $page.props.errors.password,
+                          'is-valid': !$page.props.errors.password,
                         }"
                         v-model="details.password"
                         id="password"
                         placeholder="Your password"
                       />
                       <FlashMessage
-                        v-if="$page.errors.password"
-                        :msg="$page.errors.password[0]"
+                        v-if="$page.props.errors.password"
+                        :msg="$page.props.errors.password[0]"
                       />
                     </div>
 
@@ -510,13 +510,13 @@
                         id="password_confirmation"
                         placeholder="Confirm Password"
                         :class="{
-                          'is-invalid': $page.errors.password_confirmation,
-                          'is-valid': !$page.errors.password_confirmation,
+                          'is-invalid': $page.props.errors.password_confirmation,
+                          'is-valid': !$page.props.errors.password_confirmation,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.password_confirmation"
-                        :msg="$page.errors.password_confirmation[0]"
+                        v-if="$page.props.errors.password_confirmation"
+                        :msg="$page.props.errors.password_confirmation[0]"
                       />
                     </div>
 
@@ -546,7 +546,7 @@
                   <div
                     class="row vertical-gap sm-gap justify-content-end"
                     :class="{ 'was-validated': formSubmitted }"
-                    v-if="!$page.auth.user.is_bvn_verified"
+                    v-if="!$page.props.auth.user.is_bvn_verified"
                   >
                     <div class="col-12">
                       <label for="bvn">Enter BVN for Verification</label>
@@ -554,16 +554,16 @@
                         type="text"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.bvn,
-                          'is-valid': !$page.errors.bvn,
+                          'is-invalid': $page.props.errors.bvn,
+                          'is-valid': !$page.props.errors.bvn,
                         }"
                         v-model="details.bvn"
                         id="bvn"
                         placeholder="Enter your BVN Number"
                       />
                       <FlashMessage
-                        v-if="$page.errors.bvn"
-                        :msg="$page.errors.bvn[0]"
+                        v-if="$page.props.errors.bvn"
+                        :msg="$page.props.errors.bvn[0]"
                       />
                       <img
                         src="/img/paystack_preview.png"
@@ -622,7 +622,7 @@
     data() {
       return {
         details: {
-          ..._.omit(this.$page.auth.user, ["id_card"]),
+          ..._.omit(this.$page.props.auth.user, ["id_card"]),
           acc_type: "savings",
         },
         formSubmitted: false,
@@ -700,10 +700,10 @@
             preserveScroll: true,
           })
           .then((rsp) => {
-            if (_.size(this.$page.errors) > 0) {
+            if (_.size(this.$page.props.errors) > 0) {
               this.formSubmitted = true;
             }
-            else if (this.$page.flash.success) {
+            else if (this.$page.props.flash.success) {
               this.formSubmitted = false;
             }
 

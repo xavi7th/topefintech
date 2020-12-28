@@ -1,18 +1,17 @@
 @import './vendor/_presets.scss';
 
-@import './vendor/bootstrap.min';
-@import './vendor/font-awesome.min';
-@import './vendor/payloan-icon';
-@import './vendor/icofont';
-@import './vendor/animate';
-@import './vendor/settings';
-@import './vendor/slick';
-@import './vendor/owl.theme';
-@import './vendor/owl.carousel';
-@import './vendor/preset';
-@import './vendor/theme';
-@import './vendor/responsive';
-@import './vendor/nprogress';
+@import './vendor/bootstrap.min.scss';
+@import './vendor/font-awesome.scss';
+@import './vendor/payloan-icon.scss';
+@import './vendor/icofont.scss';
+@import './vendor/animate.scss';
+@import './vendor/settings.scss';
+@import './vendor/slick.scss';
+@import './vendor/owl.theme.scss';
+@import './vendor/owl.carousel.scss';
+@import './vendor/preset.scss';
+@import './vendor/theme.scss';
+@import './vendor/responsive.scss';
 
 body,
 html {

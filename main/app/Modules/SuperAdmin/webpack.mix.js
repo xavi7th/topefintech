@@ -10,4 +10,4 @@ mix.webpackConfig( {
     },
 } )
 
-mix.js( __dirname + '/Resources/js/app.js', 'js/superadmin-app.js' )
+mix.js( __dirname + '/Resources/js/app.js', 'js/superadmin-app.js' ).vue()

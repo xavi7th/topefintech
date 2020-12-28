@@ -52,8 +52,8 @@
     },
     data: function() {
       return {
-        interestSummary: this.$page.interests_summary,
-        user: this.$page.user
+        interestSummary: this.$page.props.interests_summary,
+        user: this.$page.props.user
       };
     }
   };

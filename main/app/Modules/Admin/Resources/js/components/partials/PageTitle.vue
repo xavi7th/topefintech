@@ -19,7 +19,7 @@
         {{ title }}
         <span>{{
           $urlExists("agent.dashboard")
-            ? "REF CODE: " + $page.auth.user.ref_code
+            ? "REF CODE: " + $page.props.auth.user.ref_code
             : null
         }}</span>
       </h1>

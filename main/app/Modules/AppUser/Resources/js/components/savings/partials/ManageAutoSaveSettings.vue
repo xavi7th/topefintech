@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-lg-4 col-xl-4" v-if="!$page.auth.user.isAdmin && !$page.auth.user.isSuperAdmin">
+    <div class="col-lg-4 col-xl-4" v-if="!$page.props.auth.user.isAdmin && !$page.props.auth.user.isSuperAdmin">
       <div class="d-flex align-items-center justify-content-between mb-25">
         <h2 class="mnb-2" id="formBase">My AutoSave Settings</h2>
       </div>
@@ -10,9 +10,9 @@
         :class="{'was-validated': formSubmitted}"
       >
         <FlashMessage />
-        <template v-if="$page.errors">
+        <template v-if="$page.props.errors">
           <div class="d-flex align-items-center justify-content-between flex-column mb-25">
-            <FlashMessage v-for="err in $page.errors" :msg="err[0]" :key="err[0]" />
+            <FlashMessage v-for="err in $page.props.errors" :msg="err[0]" :key="err[0]" />
           </div>
         </template>
         <div class="row vertical-gap sm-gap">
@@ -24,7 +24,7 @@
               id="amount"
               placeholder="Enter amount to auto save"
               v-model="details.amount"
-              :class="{'is-invalid': $page.errors.amount, 'is-valid': !$page.errors.amount}"
+              :class="{'is-invalid': $page.props.errors.amount, 'is-valid': !$page.props.errors.amount}"
             />
           </div>
           <div class="col-12">
@@ -37,7 +37,7 @@
                 class="custom-control-input"
                 v-model="details.frequency"
                 value="daily"
-                :class="{'is-invalid': $page.errors.frequency, 'is-valid': !$page.errors.frequency}"
+                :class="{'is-invalid': $page.props.errors.frequency, 'is-valid': !$page.props.errors.frequency}"
               />
               <label class="custom-control-label" for="daily_frequency">Daily</label>
             </div>
@@ -49,7 +49,7 @@
                 class="custom-control-input"
                 v-model="details.frequency"
                 value="weekly"
-                :class="{'is-invalid': $page.errors.frequency, 'is-valid': !$page.errors.frequency}"
+                :class="{'is-invalid': $page.props.errors.frequency, 'is-valid': !$page.props.errors.frequency}"
               />
               <label class="custom-control-label" for="weekly_frequency">Weekly</label>
             </div>
@@ -61,7 +61,7 @@
                 class="custom-control-input"
                 v-model="details.frequency"
                 value="monthly"
-                :class="{'is-invalid': $page.errors.frequency, 'is-valid': !$page.errors.frequency}"
+                :class="{'is-invalid': $page.props.errors.frequency, 'is-valid': !$page.props.errors.frequency}"
               />
               <label class="custom-control-label" for="monthly_frequency">Monthly</label>
             </div>
@@ -73,7 +73,7 @@
                 class="custom-control-input"
                 v-model="details.frequency"
                 value="quarterly"
-                :class="{'is-invalid': $page.errors.frequency, 'is-valid': !$page.errors.frequency}"
+                :class="{'is-invalid': $page.props.errors.frequency, 'is-valid': !$page.props.errors.frequency}"
               />
               <label class="custom-control-label" for="quarterly_frequency">Every Quarter</label>
             </div>
@@ -89,7 +89,7 @@
               data-datetimepicker-date="false"
               @blur="setTime"
               ref="timeField"
-              :class="{'is-invalid': $page.errors.time, 'is-valid': !$page.errors.time}"
+              :class="{'is-invalid': $page.props.errors.time, 'is-valid': !$page.props.errors.time}"
             />
           </div>
           <div class="col-12" v-show="details.frequency == `monthly`">
@@ -98,7 +98,7 @@
               class="custom-select"
               name="month"
               v-model="details.date"
-              :class="{'is-invalid': $page.errors.date, 'is-valid': !$page.errors.date}"
+              :class="{'is-invalid': $page.props.errors.date, 'is-valid': !$page.props.errors.date}"
             >
               <option selected>Select</option>
               <option v-for="n in 31" :key="n" :value="n">Every {{ suffix(n) }}</option>
@@ -110,7 +110,7 @@
               class="custom-select"
               name="week"
               v-model="details.weekday"
-              :class="{'is-invalid': $page.errors.weekday, 'is-valid': !$page.errors.weekday}"
+              :class="{'is-invalid': $page.props.errors.weekday, 'is-valid': !$page.props.errors.weekday}"
             >
               <option selected>Select</option>
               <option value="Monday">On Mondays</option>
@@ -176,7 +176,7 @@
                   type="button"
                   class="btn btn-danger btn-uniform btn-round btn-xs"
                   @click="deleteAutoSave(asv)"
-                  v-if="!$page.auth.user.isAdmin && !$page.auth.user.isSuperAdmin"
+                  v-if="!$page.props.auth.user.isAdmin && !$page.props.auth.user.isSuperAdmin"
                 >
                   <span class="icon">
                     <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -232,19 +232,19 @@
           )
           .then(() => {
             this.formSubmitted = true;
-            if (this.$page.flash.success) {
+            if (this.$page.props.flash.success) {
               this.formSubmitted = false;
               this.details = {};
               Toast.fire({
                 title: "Success!",
-                text: this.$page.flash.success,
+                text: this.$page.props.flash.success,
                 icon: "success",
                 position: "center"
               });
-            } else if (this.$page.flash.error) {
+            } else if (this.$page.props.flash.error) {
               Toast.fire({
                 title: "Error!",
-                text: this.$page.flash.error,
+                text: this.$page.props.flash.error,
                 icon: "error",
                 position: "center"
               });
@@ -272,17 +272,17 @@
             preserveState: true
           })
           .then(() => {
-            if (this.$page.flash.success) {
+            if (this.$page.props.flash.success) {
               Toast.fire({
                 title: "Success!",
-                text: this.$page.flash.success,
+                text: this.$page.props.flash.success,
                 icon: "success",
                 position: "center"
               });
-            } else if (this.$page.flash.error) {
+            } else if (this.$page.props.flash.error) {
               Toast.fire({
                 title: "Error!",
-                text: this.$page.flash.error,
+                text: this.$page.props.flash.error,
                 icon: "error",
                 position: "center"
               });

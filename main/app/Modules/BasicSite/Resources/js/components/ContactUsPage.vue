@@ -108,36 +108,36 @@
                   <div class="col-12 ml-md-5">
                     <div class="loanDesc">
                       <h5>Call Center:</h5>:
-                      <p>{{ $page.app.phone }}</p>
+                      <p>{{ $page.props.app.phone }}</p>
                     </div>
                     <div class="loanDesc">
-                      <h5><i class="fa fa-envelope-o"></i></h5>:<p>{{ $page.app.email }}</p>
+                      <h5><i class="fa fa-envelope-o"></i></h5>:<p>{{ $page.props.app.email }}</p>
                     </div>
                     <div class="loanDesc">
-                      <h5><i class="fa fa-user"></i></h5>:<p>{{ $page.app.opening_days }}</p>
+                      <h5><i class="fa fa-user"></i></h5>:<p>{{ $page.props.app.opening_days }}</p>
                     </div>
                     <div class="loanDesc">
-                      <h5><i class="fa fa-clock-o"></i></h5>:<p>{{ $page.app.opening_hours }}</p>
+                      <h5><i class="fa fa-clock-o"></i></h5>:<p>{{ $page.props.app.opening_hours }}</p>
                     </div>
                     <div class="loanDesc">
-                      <h5><i class="fa fa-flag"></i></h5>:<p>{{ $page.app.address }}</p>
+                      <h5><i class="fa fa-flag"></i></h5>:<p>{{ $page.props.app.address }}</p>
                     </div>
 
                     <div class="loanDesc">
                       <h5 class="mt-md-4">Our Community</h5>
                       <ul class="social">
-                        <li v-if="$page.app.facebook">
-                          <a target="_blank" :href="$page.app.facebook">
+                        <li v-if="$page.props.app.facebook">
+                          <a target="_blank" :href="$page.props.app.facebook">
                             <i class="fa fa-facebook"></i>
                           </a>
                         </li>
-                        <li v-if="$page.app.instagram">
-                          <a target="_blank" :href="$page.app.instagram">
+                        <li v-if="$page.props.app.instagram">
+                          <a target="_blank" :href="$page.props.app.instagram">
                             <i class="fa fa-twitter"></i>
                           </a>
                         </li>
-                        <li v-if="$page.app.twitter">
-                          <a target="_blank" :href="$page.app.twitter">
+                        <li v-if="$page.props.app.twitter">
+                          <a target="_blank" :href="$page.props.app.twitter">
                             <i class="fa fa-instagram"></i>
                           </a>
                         </li>

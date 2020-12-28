@@ -119,7 +119,7 @@
       addFundsToThisSavings() {
         BlockToast.fire({ text: "Adding funds to savings ..." });
 
-        let url = this.$page.auth.user.isSuperAdmin
+        let url = this.$page.props.auth.user.isSuperAdmin
           ? this.$route("superadmin.user_savings.target.fund", this.appUser.id)
           : this.$route("appuser.savings.target.fund");
 

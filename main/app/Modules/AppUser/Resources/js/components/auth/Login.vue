@@ -4,7 +4,7 @@
       <div class="row vertical-gap sm-gap justify-content-center">
         <div class="header-logo logo-type no-margin col-12 display-3 text-center">
           <a :href="$route('app.home')">
-            <img src="/img/logo.png" :alt="`${$page.app.name} logo`" width="50%" />
+            <img src="/img/logo.png" :alt="`${$page.props.app.name} logo`" width="50%" />
           </a>
         </div>
         <div class="col-12">
@@ -111,8 +111,8 @@
           .post(this.$route("appuser.login"), { ...this.details })
           .then((rsp) => {
 
-            if (this.$page.flash.error) {
-              if (this.$page.flash.error === 416) {
+            if (this.$page.props.flash.error) {
+              if (this.$page.props.flash.error === 416) {
                 swalPreconfirm
                   .fire({
                     title: "Enter OTP",
@@ -150,10 +150,10 @@
                         position: "center",
                       });
                     } else if (val.value) {
-                      if (this.$page.flash.success) {
+                      if (this.$page.props.flash.success) {
                         ToastLarge.fire({
                           title: "Success",
-                          html: this.$page.flash.success,
+                          html: this.$page.props.flash.success,
                           icon: "success",
                         });
                       }
@@ -211,14 +211,14 @@
               } else {
                 ToastLarge.fire({
                   title: "Oops!",
-                  html: this.$page.flash.error,
+                  html: this.$page.props.flash.error,
                   icon: "error",
                   timer: 10000,
                   footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`,
                 });
               }
             }
-            else if (_.size(this.$page.errors)) {
+            else if (_.size(this.$page.props.errors)) {
               swal.close();
               this.formSubmitted = true;
             }
@@ -226,7 +226,7 @@
               swal.close();
               location.reload();
             }
-            this.$page.flash.error = null;
+            this.$page.props.flash.error = null;
           });
       },
     },

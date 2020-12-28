@@ -227,7 +227,7 @@
             this.displayResponse();
             this.displayErrors(10000);
           }).then(() => {
-            if (this.$page.flash.success) {
+            if (this.$page.props.flash.success) {
               this.details = {}
             }
           });
@@ -258,7 +258,7 @@
             this.displayResponse(10000);
             this.displayErrors(10000);
           }).then(() => {
-            if (this.$page.flash.success) {
+            if (this.$page.props.flash.success) {
               this.details = {}
             }
           })

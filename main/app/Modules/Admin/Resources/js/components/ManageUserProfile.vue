@@ -99,16 +99,16 @@
                       <input
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.full_name,
-                          'is-valid': !$page.errors.full_name,
+                          'is-invalid': $page.props.errors.full_name,
+                          'is-valid': !$page.props.errors.full_name,
                         }"
                         v-model="details.full_name"
                         id="full_name"
                         placeholder="Your Full Name"
                       />
                       <FlashMessage
-                        v-if="$page.errors.full_name"
-                        :msg="$page.errors.full_name[0]"
+                        v-if="$page.props.errors.full_name"
+                        :msg="$page.props.errors.full_name[0]"
                       />
                     </div>
                     <div class="col-4">
@@ -119,8 +119,8 @@
                         class="form-control"
                         v-model="details.gender"
                         :class="{
-                          'is-invalid': $page.errors.gender,
-                          'is-valid': !$page.errors.gender,
+                          'is-invalid': $page.props.errors.gender,
+                          'is-valid': !$page.props.errors.gender,
                         }"
                       >
                         <option :value="null">Gender</option>
@@ -129,8 +129,8 @@
                       </select>
 
                       <FlashMessage
-                        v-if="$page.errors.gender"
-                        :msg="$page.errors.gender[0]"
+                        v-if="$page.props.errors.gender"
+                        :msg="$page.props.errors.gender[0]"
                       />
                     </div>
 
@@ -140,16 +140,16 @@
                         type="email"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.email,
-                          'is-valid': !$page.errors.email,
+                          'is-invalid': $page.props.errors.email,
+                          'is-valid': !$page.props.errors.email,
                         }"
                         v-model="details.email"
                         id="email"
                         placeholder="Your Email"
                       />
                       <FlashMessage
-                        v-if="$page.errors.email"
-                        :msg="$page.errors.email[0]"
+                        v-if="$page.props.errors.email"
+                        :msg="$page.props.errors.email[0]"
                       />
                     </div>
 
@@ -162,13 +162,13 @@
                         id="phone"
                         placeholder="Your Phone"
                         :class="{
-                          'is-invalid': $page.errors.phone,
-                          'is-valid': !$page.errors.phone,
+                          'is-invalid': $page.props.errors.phone,
+                          'is-valid': !$page.props.errors.phone,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.phone"
-                        :msg="$page.errors.phone[0]"
+                        v-if="$page.props.errors.phone"
+                        :msg="$page.props.errors.phone[0]"
                       />
                     </div>
 
@@ -180,14 +180,14 @@
                         rows="1"
                         class="form-control"
                         :class="{
-                          'is-invalid': $page.errors.address,
-                          'is-valid': !$page.errors.address,
+                          'is-invalid': $page.props.errors.address,
+                          'is-valid': !$page.props.errors.address,
                         }"
                         v-model="details.address"
                       ></textarea>
                       <FlashMessage
-                        v-if="$page.errors.address"
-                        :msg="$page.errors.address[0]"
+                        v-if="$page.props.errors.address"
+                        :msg="$page.props.errors.address[0]"
                       />
                     </div>
 
@@ -199,13 +199,13 @@
                         id="city"
                         placeholder="Your city"
                         :class="{
-                          'is-invalid': $page.errors.city,
-                          'is-valid': !$page.errors.city,
+                          'is-invalid': $page.props.errors.city,
+                          'is-valid': !$page.props.errors.city,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.city"
-                        :msg="$page.errors.city[0]"
+                        v-if="$page.props.errors.city"
+                        :msg="$page.props.errors.city[0]"
                       />
                     </div>
 
@@ -217,13 +217,13 @@
                         id="country"
                         placeholder="Your country"
                         :class="{
-                          'is-invalid': $page.errors.country,
-                          'is-valid': !$page.errors.country,
+                          'is-invalid': $page.props.errors.country,
+                          'is-valid': !$page.props.errors.country,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.country"
-                        :msg="$page.errors.country[0]"
+                        v-if="$page.props.errors.country"
+                        :msg="$page.props.errors.country[0]"
                       />
                     </div>
 
@@ -236,14 +236,14 @@
                         id="date_of_birth"
                         placeholder="Your date_of_birth"
                         :class="{
-                          'is-invalid': $page.errors.date_of_birth,
-                          'is-valid': !$page.errors.date_of_birth,
+                          'is-invalid': $page.props.errors.date_of_birth,
+                          'is-valid': !$page.props.errors.date_of_birth,
                         }"
                       />
 
                       <FlashMessage
-                        v-if="$page.errors.date_of_birth"
-                        :msg="$page.errors.date_of_birth[0]"
+                        v-if="$page.props.errors.date_of_birth"
+                        :msg="$page.props.errors.date_of_birth[0]"
                       />
                     </div>
 
@@ -259,13 +259,13 @@
                         id="id_card"
                         placeholder="Your id_card"
                         :class="{
-                          'is-invalid': $page.errors.id_card,
-                          'is-valid': !$page.errors.id_card,
+                          'is-invalid': $page.props.errors.id_card,
+                          'is-valid': !$page.props.errors.id_card,
                         }"
                       />
                       <FlashMessage
-                        v-if="$page.errors.id_card"
-                        :msg="$page.errors.id_card[0]"
+                        v-if="$page.props.errors.id_card"
+                        :msg="$page.props.errors.id_card[0]"
                       />
                     </div>
 
@@ -367,7 +367,7 @@
           })
           .then((rsp) => {
 
-            if (_.size(this.$page.errors) > 0) {
+            if (_.size(this.$page.props.errors) > 0) {
               this.formSubmitted = true;
             }
 

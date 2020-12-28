@@ -10,8 +10,6 @@ mix.webpackConfig( {
     },
 } )
 
-mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
-mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );
 
 mix.scripts( [
     __dirname + '/Resources/js/vendor/jquery.js',
@@ -25,5 +23,11 @@ mix.scripts( [
     __dirname + '/Resources/js/vendor/owl.carousel.js',
 ], 'public_html/js/site-app-vendor.js' );
 
+mix.js( __dirname + '/Resources/js/app.js', 'js/site-app.js' ).vue()
+
+mix.sass(__dirname + '/Resources/sass/app.scss', 'css/app.css')
+
 mix.copy( __dirname + '/Resources/js/vendor/theme.js', 'public_html/js/main.js' );
-mix.js( __dirname + '/Resources/js/app.js', 'js/site-app.js' )
+
+mix.copyDirectory( __dirname + '/Resources/img', 'public_html/img' );
+mix.copyDirectory( __dirname + '/Resources/fonts', 'public_html/fonts' );

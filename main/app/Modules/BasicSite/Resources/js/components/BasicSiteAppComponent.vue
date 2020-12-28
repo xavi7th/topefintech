@@ -25,29 +25,25 @@
       isHome:{
         type:Boolean,
         default:false
-      },
-      app: Object
+      }
     },
     created() {
-      if (this.$isCurrentUrl("app.home")) {
-        let bodyElem = document.querySelector("body");
-        bodyElem.classList.remove("bg_right");
-      } else {
-        let bodyElem = document.querySelector("body");
-        bodyElem.classList.add("bg_right");
-      }
+      // console.log();
+      // if (this.$isCurrentUrl("app.home")) {
+      //   let bodyElem = document.querySelector("body");
+      //   bodyElem.classList.remove("bg_right");
+      // } else {
+      //   let bodyElem = document.querySelector("body");
+      //   bodyElem.classList.add("bg_right");
+      // }
     },
     watch: {
       title: {
         immediate: true,
         handler(title) {
-          document.title = `${title} - ${this.$page.app.name}`;
+          document.title = `${title} - ${this.$page.props.app.name}`;
         }
       }
     }
   };
 </script>
-
-<style lang="scss">
-  @import "~@basicsite-assets/sass/app";
-</style>

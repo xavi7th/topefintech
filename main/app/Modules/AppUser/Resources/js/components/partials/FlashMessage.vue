@@ -6,8 +6,8 @@
     },
     mounted() {
       setTimeout(() => {
-        this.$page.flash.error = null;
-        this.$page.flash.success = null;
+        this.$page.props.flash.error = null;
+        this.$page.props.flash.success = null;
       }, 3000);
     }
   };
@@ -38,8 +38,8 @@
 
   <div v-else>
     <transition name="slide-left">
-      <div class="alert alert-danger" v-if="$page.flash.error">{{$page.flash.error}}</div>
-      <div class="alert alert-success" v-else-if="$page.flash.success">{{$page.flash.success}}</div>
+      <div class="alert alert-danger" v-if="$page.props.flash.error">{{$page.props.flash.error}}</div>
+      <div class="alert alert-success" v-else-if="$page.props.flash.success">{{$page.props.flash.success}}</div>
     </transition>
   </div>
 </template>

@@ -8,7 +8,7 @@
       <div class="row vertical-gap sm-gap justify-content-center">
         <div class="header-logo logo-type no-margin col-12 display-3 text-center">
           <a :href="$route('app.home')">
-            <img src="/img/logo.png" :alt="`${$page.app.name} logo`" width="50%" />
+            <img src="/img/logo.png" :alt="`${$page.props.app.name} logo`" width="50%" />
           </a>
         </div>
         <div class="col-12">
@@ -66,14 +66,14 @@
           .then(rsp => {
             if (_.size(this.errors)) {
               this.formSubmitted = true;
-            } else if (this.$page.flash.success) {
+            } else if (this.$page.props.flash.success) {
               ToastLarge.fire({
                 title: "Done",
                 icon: "info",
-                html: this.$page.flash.success,
+                html: this.$page.props.flash.success,
                 timer: 10000
               }).then(() => {
-                this.$page.flash.success = null;
+                this.$page.props.flash.success = null;
               });
             } else {
               swal.close();

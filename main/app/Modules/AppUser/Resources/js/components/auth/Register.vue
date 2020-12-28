@@ -4,7 +4,7 @@
       <div class="row vertical-gap sm-gap justify-content-center">
         <div class="header-logo logo-type no-margin col-12 display-3 text-center">
           <a :href="$route('app.home')">
-            <img src="/img/logo.png" :alt="`${$page.app.name} logo`" width="50%" />
+            <img src="/img/logo.png" :alt="`${$page.props.app.name} logo`" width="50%" />
           </a>
         </div>
         <div class="col-12">
@@ -195,16 +195,6 @@
             },
           })
           .then((rsp) => {
-            if (_.size(this.errors) == 0) {
-              ToastLarge.fire({
-                title: "Congrats",
-                html:
-                  "Your account has been created. A OTP has been sent to your registered phone number.",
-                timer: 20000,
-              });
-            } else {
-              swal.close();
-            }
             this.formSubmitted = true;
           });
       },

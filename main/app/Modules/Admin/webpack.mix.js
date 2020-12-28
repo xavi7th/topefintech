@@ -10,4 +10,5 @@ mix.webpackConfig( {
     },
 } )
 
-mix.js( __dirname + '/Resources/js/app.js', 'js/admin-app.js' )
+mix.js( __dirname + '/Resources/js/app.js', 'js/admin-app.js' ).vue()
+mix.sass(__dirname + '/Resources/sass/app.scss', 'css/admin-app.css')

@@ -7,21 +7,21 @@
           class="btn btn-brand mb-10"
           data-toggle="modal"
           data-target="#createSmartSavings"
-          v-if="!$page.auth.user.has_smart_savings && !$page.auth.user.isAdmin && !$page.auth.user.isSuperAdmin"
+          v-if="!$page.props.auth.user.has_smart_savings && !$page.props.auth.user.isAdmin && !$page.props.auth.user.isSuperAdmin"
         >New Smart Savings</button>
         <button
           type="button"
           class="btn btn-primary mb-10"
           data-toggle="modal"
           data-target="#newTargetModal"
-          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent && !$page.auth.user.isSuperAdmin"
+          v-if="!$page.props.auth.user.isAdmin && !$page.props.auth.user.isAgent && !$page.props.auth.user.isSuperAdmin"
         >New Target Savings</button>
         <button
           type="button"
           class="btn btn-info mb-10"
           data-toggle="modal"
           data-target="#newInvestmentModal"
-          v-if="!$page.auth.user.isAdmin && !$page.auth.user.isAgent && !$page.auth.user.isSuperAdmin"
+          v-if="!$page.props.auth.user.isAdmin && !$page.props.auth.user.isAgent && !$page.props.auth.user.isSuperAdmin"
         >New Investment Savings</button>
       </div>
     </div>
@@ -42,12 +42,12 @@
             <th scope="row">{{savings.id}}</th>
             <td class="text-capitalize d-flex justify-content-between align-items-center">
               {{savings.name || savings.portfolio.name || 'N/A'}} {{savings.type == 'investment' ? 'Investment' : 'Savings'}}
-              <span class="badge badge-danger" v-if="savings.is_matured && ($page.auth.user.isAdmin || $page.auth.user.isSuperAdmin)">MATURED</span>
+              <span class="badge badge-danger" v-if="savings.is_matured && ($page.props.auth.user.isAdmin || $page.props.auth.user.isSuperAdmin)">MATURED</span>
               <button
                 type="button"
                 class="btn btn-success btn-uniform btn-round btn-xs"
                 @click="fundThisSavings(savings) "
-                v-if="!savings.is_matured && !$page.auth.user.isAgent"
+                v-if="!savings.is_matured && !$page.props.auth.user.isAgent"
               >
                 <span class="icon">
                   <span data-feather="plus" class="rui-icon rui-icon-stroke-1_5"></span>
@@ -57,7 +57,7 @@
                 type="button"
                 class="btn btn-danger btn-uniform btn-round btn-xs"
                 @click="defundThisSavings(savings)"
-                v-if="$page.auth.user.isSuperAdmin && !savings.is_matured"
+                v-if="$page.props.auth.user.isSuperAdmin && !savings.is_matured"
               >
                 <span class="icon">
                   <span data-feather="credit-card" class="rui-icon rui-icon-stroke-1_5"></span>

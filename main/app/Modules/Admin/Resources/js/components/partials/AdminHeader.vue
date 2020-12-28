@@ -41,8 +41,8 @@
                   <span>Notifications</span>
                   <span
                     class="badge badge-circle badge-brand"
-                    v-if="$page.auth.notification_count"
-                  >{{ $page.auth.notification_count }}</span>
+                    v-if="$page.props.auth.notification_count"
+                  >{{ $page.props.auth.notification_count }}</span>
                   <span class="rui-nav-circle"></span>
                 </inertia-link>
               </li>

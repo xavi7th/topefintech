@@ -4,13 +4,8 @@ namespace App\Exceptions;
 
 use Throwable;
 use Inertia\Inertia;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
-use App\Modules\SuperAdmin\Models\ErrLog;
-use App\Modules\SuperAdmin\Models\SuperAdmin;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -59,17 +54,19 @@ class Handler extends ExceptionHandler
   public function render($request, Throwable $exception)
   {
     //   dd($exception);
-    $response = parent::render($request, $exception);
+    return $response = parent::render($request, $exception);
 
     if (in_array($response->status(), [500, 503, 404, 403, 429])) {
-      if ($this->is404($exception)) {
-        $this->log404($request);
-      }
+
 
       /**
        * ! Handle API request errors
        */
       if ($request->isApi()) {
+        if ($this->is404($exception)) {
+          $this->log404($request);
+        }
+
         return $response;
       }
 
@@ -83,8 +80,9 @@ class Handler extends ExceptionHandler
           dd('Handler Error: ', $th);
         }
       }
-    } elseif (in_array($response->status(), [419])) {
-      throw ValidationException::withMessages(['error' => 'Your session has expired. Please try again'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+    } elseif ($response->status() === 419) {
+      return back()->withFlash(['error' => 'The page expired, please try again.',]);
+      // throw ValidationException::withMessages(['error' => 'Your session has expired. Please try again'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     return $response;

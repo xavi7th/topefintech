@@ -10,4 +10,4 @@ mix.webpackConfig( {
     },
 } )
 
-mix.js( __dirname + '/Resources/js/app.js', 'js/agent-app.js' )
+mix.js( __dirname + '/Resources/js/app.js', 'js/agent-app.js' ).vue()

@@ -129,14 +129,14 @@ import { getErrorString } from '@dashboard-assets/js/config';
               return this.$inertia
                 .put(this.$route("appuser.savings.smart.liquidate"))
                 .then(() => {
-                  if (this.$page.flash.success) {
+                  if (this.$page.props.flash.success) {
                     return true;
                   } else if (
-                    this.$page.flash.error ||
-                    _.size(this.$page.errors) > 0
+                    this.$page.props.flash.error ||
+                    _.size(this.$page.props.errors) > 0
                   ) {
                     throw new Error(
-                      this.$page.flash.error || getErrorString(this.$page.errors)
+                      this.$page.props.flash.error || getErrorString(this.$page.props.errors)
                     );
                   }
                 })
@@ -147,10 +147,10 @@ import { getErrorString } from '@dashboard-assets/js/config';
             },
           })
           .then((result) => {
-            if (result.value && this.$page.flash.verifiation_succeded) {
+            if (result.value && this.$page.props.flash.verifiation_succeded) {
               swal.fire({
                 title: `Success`,
-                html: this.$page.flash.success,
+                html: this.$page.props.flash.success,
                 icon: "success",
               });
             } else if (result.dismiss) {

@@ -187,8 +187,8 @@
       addFundsToThisSavings() {
         BlockToast.fire({ text: "Adding funds to savings ..." });
 
-        let url = this.$page.auth.user.isSuperAdmin ? this.$route("superadmin.user_savings.target.fund", this.user.id)
-          : this.$page.auth.user.isAdmin ? this.$route("admin.user_savings.target.fund", this.user.phone)
+        let url = this.$page.props.auth.user.isSuperAdmin ? this.$route("superadmin.user_savings.target.fund", this.user.id)
+          : this.$page.props.auth.user.isAdmin ? this.$route("admin.user_savings.target.fund", this.user.phone)
           : this.$route("appuser.savings.target.fund");
 
         this.$inertia
@@ -232,7 +232,7 @@
       addFundsToSavings() {
         BlockToast.fire({ text: "Adding funds to this savings ..." });
 
-        let url = this.$page.auth.user.isAdmin
+        let url = this.$page.props.auth.user.isAdmin
           ? this.$route("admin.user_savings.fund", this.user.id)
           : this.$route("appuser.savings.fund");
 

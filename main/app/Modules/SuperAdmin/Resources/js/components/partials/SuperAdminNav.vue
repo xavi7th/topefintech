@@ -30,7 +30,7 @@
     name: "SuperAdminNav",
     computed: {
       routes() {
-        return _.filter(this.$page.routes, x => !x.nav_skip);
+        return _.filter(this.$page.props.routes, x => !x.nav_skip);
       }
     }
   };

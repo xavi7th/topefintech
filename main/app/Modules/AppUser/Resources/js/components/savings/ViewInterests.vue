@@ -52,7 +52,7 @@
     },
     data: function() {
       return {
-        interestSummary: this.$page.interests_summary
+        interestSummary: this.$page.props.interests_summary
       };
     }
   };

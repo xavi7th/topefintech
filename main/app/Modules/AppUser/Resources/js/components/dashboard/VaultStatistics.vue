@@ -275,10 +275,10 @@
                 position: "center",
               });
             } else if (val.value) {
-              if (this.$page.errors.length) {
+              if (this.$page.props.errors.length) {
                 ToastLarge.fire({
                   title: "Oops",
-                  html: _.join(this.$page.errors.amount, "<br>"),
+                  html: _.join(this.$page.props.errors.amount, "<br>"),
                   position: "bottom",
                   icon: "error",
                   timer: 10000,
@@ -286,11 +286,11 @@
               }
               this.displayResponse(10000);
 
-              if (this.$page.flash.verification_needed) {
+              if (this.$page.props.flash.verification_needed) {
                 swal
                   .fire({
                     title: "OTP Required!",
-                    html: this.$page.flash.verification_needed,
+                    html: this.$page.props.flash.verification_needed,
                     icon: "info",
                   })
                   .then(() => {
@@ -314,16 +314,16 @@
                               otp,
                             })
                             .then(() => {
-                              console.log(getErrorString(this.$page.errors));
-                              if (this.$page.flash.success) {
+                              console.log(getErrorString(this.$page.props.errors));
+                              if (this.$page.props.flash.success) {
                                 return true;
                               } else if (
-                                this.$page.flash.error ||
-                                _.size(this.$page.errors) > 0
+                                this.$page.props.flash.error ||
+                                _.size(this.$page.props.errors) > 0
                               ) {
                                 throw new Error(
-                                  this.$page.flash.error ||
-                                    getErrorString(this.$page.errors)
+                                  this.$page.props.flash.error ||
+                                    getErrorString(this.$page.props.errors)
                                 );
                               }
                             })
@@ -334,10 +334,10 @@
                         allowOutsideClick: () => !swal.isLoading(),
                       })
                       .then((result) => {
-                        if (result.value && this.$page.flash.verifiation_succeded) {
+                        if (result.value && this.$page.props.flash.verifiation_succeded) {
                           swal.fire({
                             title: `Success`,
-                            html: this.$page.flash.success,
+                            html: this.$page.props.flash.success,
                             icon: "success",
                           });
                         } else if (result.dismiss) {
@@ -387,10 +387,10 @@
                 position: "center",
               });
             } else if (val.value) {
-              if (this.$page.errors.length) {
+              if (this.$page.props.errors.length) {
                 ToastLarge.fire({
                   title: "Oops",
-                  html: _.join(this.$page.errors.amount, "<br>"),
+                  html: _.join(this.$page.props.errors.amount, "<br>"),
                   position: "bottom",
                   icon: "error",
                   timer: 10000,
@@ -398,11 +398,11 @@
               }
               this.displayResponse(10000);
 
-              if (this.$page.flash.verification_needed) {
+              if (this.$page.props.flash.verification_needed) {
                 swal
                   .fire({
                     title: "OTP Required!",
-                    html: this.$page.flash.verification_needed,
+                    html: this.$page.props.flash.verification_needed,
                     icon: "info",
                   })
                   .then(() => {
@@ -426,16 +426,16 @@
                               otp,
                             })
                             .then(() => {
-                              console.log(getErrorString(this.$page.errors));
-                              if (this.$page.flash.success) {
+                              console.log(getErrorString(this.$page.props.errors));
+                              if (this.$page.props.flash.success) {
                                 return true;
                               } else if (
-                                this.$page.flash.error ||
-                                _.size(this.$page.errors) > 0
+                                this.$page.props.flash.error ||
+                                _.size(this.$page.props.errors) > 0
                               ) {
                                 throw new Error(
-                                  this.$page.flash.error ||
-                                    getErrorString(this.$page.errors)
+                                  this.$page.props.flash.error ||
+                                    getErrorString(this.$page.props.errors)
                                 );
                               }
                             })
@@ -448,10 +448,10 @@
                       .then((result) => {
                         console.log(result);
 
-                        if (result.value && this.$page.flash.verifiation_succeded) {
+                        if (result.value && this.$page.props.flash.verifiation_succeded) {
                           swal.fire({
                             title: `Success`,
-                            html: this.$page.flash.success,
+                            html: this.$page.props.flash.success,
                             icon: "success",
                           });
                         } else if (result.dismiss) {

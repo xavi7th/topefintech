@@ -26,7 +26,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img :src="$page.auth.user.id_card_thumb_url || '/img/avatar.png'" alt />
+              <img :src="$page.props.auth.user.id_card_thumb_url || '/img/avatar.png'" alt />
             </a>
             <ul class="nav dropdown-menu">
               <li>
@@ -35,8 +35,8 @@
                   <span>Notifications</span>
                   <span
                     class="badge badge-circle badge-brand"
-                    v-if="$page.auth.notification_count"
-                  >{{ $page.auth.notification_count }}</span>
+                    v-if="$page.props.auth.notification_count"
+                  >{{ $page.props.auth.notification_count }}</span>
                   <span class="rui-nav-circle"></span>
                 </inertia-link>
               </li>

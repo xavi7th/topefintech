@@ -15,7 +15,7 @@
       <div class="row vertical-gap">
         <div
           class="col-md-4"
-          v-for="(debit_card,idx) in $page.debit_cards.data"
+          v-for="(debit_card,idx) in $page.props.debit_cards.data"
           :key="debit_card.id"
         >
           <div class="card">
@@ -142,7 +142,7 @@
     },
     data: function() {
       return {
-        debit_cards: this.$page.debit_cards,
+        debit_cards: this.$page.props.debit_cards,
         details: {
           month: null,
           year: null
