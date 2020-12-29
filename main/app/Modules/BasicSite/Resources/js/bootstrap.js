@@ -1,3 +1,14 @@
+import Vue from 'vue'
+import Vue2Filters from 'vue2-filters'
+import { Inertia } from "@inertiajs/inertia";
+import { App, plugin } from '@inertiajs/inertia-vue'
+import { InertiaProgress } from '@inertiajs/progress'
+import Dayjs from '@dashboard-assets/js/timeFormat';
+import LoadScript from 'vue-plugin-load-script'
+
+import Modal from '@dashboard-components/partials/Modal'
+import FlashMessage from '@dashboard-components/partials/FlashMessage'
+
 window._ = require( 'lodash' )
 window.swal = require( 'sweetalert2' )
 
@@ -9,39 +20,22 @@ window.Toast = swal.mixin( {
     icon: "success"
 } );
 
-let timerInterval;
-
 window.ToastLarge = swal.mixin( {
-    icon: "success",
-    title: 'To be implemented!',
-    html: 'I will close in <b></b> milliseconds.',
-    timer: 3000,
-    timerProgressBar: true,
-    onBeforeOpen: () => {
-        swal.showLoading()
-        // timerInterval = setInterval( () => {
-        //     const content = swal.getContent()
-        //     if ( content ) {
-        //         const b = content.querySelector( 'b' )
-        //         if ( b ) {
-        //             b.textContent = Swal.getTimerLeft()
-        //         }
-        //     }
-        // }, 100 )
-    },
-    // onClose: () => {
-    //     clearInterval( timerInterval )
-    // }
+  icon: "success",
+  title: 'To be implemented!',
+  html: 'To be implemented',
+  timer: 3000,
+  timerProgressBar: true,
+  onBeforeOpen: () => { swal.showLoading() },
+  onClose: () => {}
 } )
 
 window.BlockToast = swal.mixin( {
-    showConfirmButton: true,
-    onBeforeOpen: () => {
-        swal.showLoading()
-    },
-    showCloseButton: false,
-    allowOutsideClick: false,
-    allowEscapeKey: false
+  showConfirmButton: true,
+  onBeforeOpen: () => { swal.showLoading()},
+  showCloseButton: false,
+  allowOutsideClick: false,
+  allowEscapeKey: false
 } );
 
 window.swalPreconfirm = swal.mixin( {
@@ -62,42 +56,6 @@ window.swalPreconfirm = swal.mixin( {
     },
 } )
 
-
-import { App, plugin } from '@inertiajs/inertia-vue'
-import { InertiaProgress } from '@inertiajs/progress'
-import Vue from 'vue'
-import Vue2Filters from 'vue2-filters'
-import LoadScript from 'vue-plugin-load-script'
-// import route from 'ziggy';
-import FlashMessage from '@dashboard-components/partials/FlashMessage'
-import Modal from '@dashboard-components/partials/Modal'
-import Dayjs from '@dashboard-assets/js/timeFormat';
-import { Inertia } from "@inertiajs/inertia";
-
-Vue.prototype.$route = ( ...args ) => 'console.log(...args)';//route( ...args ).url()
-Vue.prototype.$isCurrentUrl = ( ...args ) => 'console.log(...args)' //route().current( ...args )
-Vue.prototype.$urlExists = ( ...args ) => 'console.log(...args)' // route().check( ...args )
-
-// Vue.mixin({ methods: { route }});
-
-Vue.component( 'FlashMessage', FlashMessage );
-Vue.component( 'Modal', Modal );
-
-Vue.use(plugin)
-Vue.use( Vue2Filters )
-Vue.use( LoadScript )
-Vue.use( Dayjs );
-
-/** ADD A NEW CURRENCY FILTER **/
-Vue.filter( 'Naira', function ( value, symbol ) {
-    let currency = Vue.filter( 'currency' )
-    symbol = '₦'
-    return currency( value, symbol, 2, {
-        thousandsSeparator: ',',
-        decimalSeparator: '.'
-    } )
-} )
-
 InertiaProgress.init({
   // The delay after which the progress bar will
   // appear during navigation, in milliseconds.
@@ -112,7 +70,6 @@ InertiaProgress.init({
   // Whether the NProgress spinner will be shown.
   showSpinner: true,
 })
-
 
 Inertia.on('progress', (event) => {
   console.log(event);
@@ -177,6 +134,28 @@ Inertia.on('finish', (event) => {
   console.log(event);
 })
 
+Vue.component( 'FlashMessage', FlashMessage );
+Vue.component( 'Modal', Modal );
+
+Vue.use(plugin)
+Vue.use( Vue2Filters )
+Vue.use( LoadScript )
+Vue.use( Dayjs );
+
+Vue.filter( 'Naira', function ( value, symbol ) {
+    let currency = Vue.filter( 'currency' )
+    symbol = '₦'
+    return currency( value, symbol, 2, {
+        thousandsSeparator: ',',
+        decimalSeparator: '.'
+    } )
+} )
+
+Vue.prototype.$route = ( ...args ) => route( ...args )
+Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
+Vue.prototype.$urlExists = ( ...args ) => route().has( ...args )
+Vue.prototype.$urlParams = route().params
+
 const el = document.getElementById('app')
 
 new Vue( {
@@ -191,15 +170,6 @@ new Vue( {
             /* webpackPrefetch: true */
             `../../../${module}/Resources/js/components/${component}.vue` )
           .then( module => module.default )
-          .catch( err => {
-            if ( err.code == "MODULE_NOT_FOUND" ) {
-              console.error( err );
-              // debugger
-              // location.href = route( 'app.home' ).url()
-            } else {
-              console.error( err );
-            }
-          } )
       },
     },
   } )

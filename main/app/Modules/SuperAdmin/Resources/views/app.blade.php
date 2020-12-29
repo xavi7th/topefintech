@@ -191,10 +191,6 @@
 
   @routes(['superadmin', 'basic'])
 
-  <script src="{{ mix('js/dashboard-app-vendor.js') }}" defer></script>
-  <script src="{{ mix('js/manifest.js') }}" defer></script>
-  <script src="{{ mix('js/vendor.js') }}" defer></script>
-  <script src="{{ mix('js/superadmin-app.js') }}" defer></script>
 </head>
 
 <body>
@@ -208,7 +204,14 @@
       <div></div>
     </div>
   </div>
+
   @inertia
+
+  <link rel="stylesheet" href="{{ mix('css/user-app.css') }}">
+  <script src="{{ mix('js/dashboard-app-vendor.js') }}" async defer></script>
+  <script src="{{ mix('js/manifest.js') }}" defer></script>
+  <script src="{{ mix('js/vendor.js') }}" defer></script>
+  <script src="{{ mix('js/superadmin-app.js') }}" defer></script>
 </body>
 
 </html>
