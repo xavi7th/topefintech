@@ -130,7 +130,7 @@ class DebitCard extends Model
     dump($paystackRsp);
     dump($this->app_user->id);
 
-    if ($paystackRsp['status']) {
+    if ($paystackRsp['data']['status'] == 'success') {
       // Model::unguard();
       // $this->app_user->paystack_transactions()->create(['transaction_reference' => $paystackRsp['data'][ 'reference'], 'amount' => $amount, 'description' => 'Autosave deduction', 'paystack_response' => $paystackRsp, 'is_processed' => true]);
       // Model::reguard();
@@ -140,13 +140,24 @@ class DebitCard extends Model
       $paystackTrx->app_user_id = $this->app_user->id;
       $paystackTrx->transaction_reference = $paystackRsp['data']['reference'];
       $paystackTrx->amount = $amount;
-      $paystackTrx->description = 'Autosave deduction';
+      $paystackTrx->description = $paystackRsp['data']['gateway_response'] . ' Autosave deduction';
       $paystackTrx->paystack_response = json_encode($paystackRsp);
       $paystackTrx->is_processed = true;
       $paystackTrx->save();
 
       return true;
     } else {
+
+
+      $paystackTrx = new PaystackTransaction;
+      $paystackTrx->app_user_id = $this->app_user->id;
+      $paystackTrx->transaction_reference = $paystackRsp['data']['reference'];
+      $paystackTrx->amount = $amount;
+      $paystackTrx->description =  'Autosave deduction ' . $paystackRsp['data']['gateway_response'];
+      $paystackTrx->paystack_response = json_encode($paystackRsp);
+      $paystackTrx->is_processed = true;
+      $paystackTrx->save();
+
       return false;
     }
   }
