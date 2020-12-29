@@ -3,7 +3,8 @@
 namespace App\Modules\Admin\Console;
 
 use Illuminate\Console\Command;
-use App\Modules\Admin\Models\Admin;
+use Illuminate\Support\Facades\Storage;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\Admin\Notifications\GenericAdminNotification;
 
 class DatabaseBackup extends Command
@@ -43,13 +44,15 @@ class DatabaseBackup extends Command
 
     $filename = "backup-" . now()->format('Y-m-d') . ".gz";
 
-    $command = "mysqldump --user=" . env('DB_USERNAME') . " --password=" . env('DB_PASSWORD') . " --host=" . env('DB_HOST') . " " . env('DB_DATABASE') . "  | gzip > " . storage_path() . "/app/backup/" . $filename;
+    Storage::makeDirectory('backup/', 0777);
+
+    $command = "mysqldump --user=" . config('database.connections.mysql.username') . " --password=" . config('database.connections.mysql.password') . " --host=" . config('database.connections.mysql.host') . " " . config('database.connections.mysql.database') . "  | gzip > " . storage_path() . "/app/backup/" . $filename;
     $returnVar = NULL;
     $output  = NULL;
 
     exec($command, $output, $returnVar);
 
     dump(collect($this->notification)->implode(',' . PHP_EOL));
-    Admin::find(1)->notify(new GenericAdminNotification('Processed database backup', collect($this->notification)->implode(', ' . PHP_EOL)));
+    SuperAdmin::find(1)->notify(new GenericAdminNotification('Processed database backup', collect($this->notification)->implode(', ' . PHP_EOL)));
   }
 }

@@ -4,10 +4,10 @@ namespace App\Modules\Admin\Console;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\DebitCard;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\AppUser\Models\AutoSaveSetting;
 use App\Modules\AppUser\Notifications\CardDebitFailure;
 use App\Modules\AppUser\Notifications\CardDebitSuccess;
@@ -40,7 +40,7 @@ class ProcessAutoSaveDeductions extends Command
   public function __construct()
   {
     parent::__construct();
-    Carbon::setWeekStartsAt(Carbon::SUNDAY);
+    Carbon::setLocale('en_US');
   }
 
   /**
@@ -143,7 +143,7 @@ class ProcessAutoSaveDeductions extends Command
     if (is_null($debit_card_to_deduct)) {
       try {
         $app_user->notify(new DefaultDebitCardNotFound());
-        Admin::find(1)->notify(new GenericAdminNotification('Auto Deduct Failure', $app_user->full_name . ' has no default card to auto deduct'));
+        SuperAdmin::find(1)->notify(new GenericAdminNotification('Auto Deduct Failure', $app_user->full_name . ' has no default card to auto deduct'));
         logger()->notice($app_user->full_name . ' has no default card to auto deduct');
       } catch (\Throwable $th) {
         ErrLog::notifySuperAdmin($app_user, $th, 'failure to notify user that default card not found');
@@ -224,7 +224,7 @@ class ProcessAutoSaveDeductions extends Command
      */
     try {
       $app_user->notify(new CardDebitSuccess($deducted_debit_card, $amount));
-      Admin::find(1)->notify(new GenericAdminNotification('Successful Auto Debit', "Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan"));
+      SuperAdmin::find(1)->notify(new GenericAdminNotification('Successful Auto Debit', "Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan"));
       logger()->notice("Successful debit of  $amount from $app_user->fullname. Card:  $deducted_debit_card->pan");
     } catch (\Throwable $th) {
       ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of card debit success');
@@ -239,7 +239,7 @@ class ProcessAutoSaveDeductions extends Command
 
     try {
       $app_user->notify(new AutoSaveSavingsSuccess($amount));
-      Admin::find(1)->notify(new GenericAdminNotification('Autosave Successful', "Autosave successful for $app_user->full_name. Amount: " . $amount));
+      SuperAdmin::find(1)->notify(new GenericAdminNotification('Autosave Successful', "Autosave successful for $app_user->full_name. Amount: " . $amount));
       logger()->notice("Autosave successful for $app_user->full_name. Amount: " . $amount);
     } catch (\Throwable $th) {
       ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of autosave success');
@@ -262,7 +262,7 @@ class ProcessAutoSaveDeductions extends Command
      */
     try {
       $app_user->notify(new CardDebitFailure($failed_debit_card, $amount));
-      Admin::find(1)->notify(new GenericAdminNotification('Failed AutoDebit', "There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan"));
+      SuperAdmin::find(1)->notify(new GenericAdminNotification('Failed AutoDebit', "There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan"));
       logger()->notice("There was a failed attempt to deduct  $amount from $app_user->full_name. Card:   $failed_debit_card->pan");
     } catch (\Throwable $th) {
       ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of card debit failure');
@@ -287,7 +287,7 @@ class ProcessAutoSaveDeductions extends Command
      */
     try {
       $app_user->notify(new AutoSaveSavingsFailure($amount, $reason));
-      Admin::find(1)->notify(new GenericAdminNotification($app_user->full_name . ' autosave failed.', $reason));
+      SuperAdmin::find(1)->notify(new GenericAdminNotification($app_user->full_name . ' autosave failed.', $reason));
       logger()->notice($app_user->full_name . ' autosave failed. Reason: ' . $reason);
     } catch (\Throwable $th) {
       ErrLog::notifySuperAdmin($app_user, $th, 'Failure to notify user of auto save failure');

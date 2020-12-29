@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Modules\AppUser\Models\TargetType;
 use App\Modules\Admin\Models\ServiceCharge;
 use App\Modules\AppUser\Models\Transaction;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\ValidationException;
 use App\Modules\AppUser\Models\SavingsInterest;
@@ -804,7 +805,8 @@ class Savings extends Model
 
   public function getMaturedSavingsNotifications(Request $request)
   {
-    $notifications = Admin::find(1)->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
+    $user = $request->user()->isSuperAdmin() ? SuperAdmin::find(1) : Admin::find(1);
+    $notifications = $user->unreadNotifications()->whereType(SavingsMaturedNotification::class)->get();
 
     if ($request->isApi()) return $notifications;
     if ($request->user()->isAdmin()) {
