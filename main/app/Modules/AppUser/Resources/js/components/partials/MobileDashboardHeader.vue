@@ -68,7 +68,7 @@
             </a>
           </li>-->
           <li>
-            <inertia-link method="post" :href="$route('appuser.logout')" class="nav-link">
+            <inertia-link :href="$route('appuser.logout')" method="post" as="button" type="button" class="nav-link btn-link">
               <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
               <span>Logout</span>
               <span class="rui-nav-circle"></span>

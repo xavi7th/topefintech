@@ -68,11 +68,11 @@
                 </a>
               </li>-->
               <li>
-                <a :href="$route('superadmin.logout')" class="nav-link">
+                <inertia-link :href="$route('superadmin.logout')" method="post" as="button" type="button" class="nav-link btn-link  text-capitalize">
                   <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Logout</span>
                   <span class="rui-nav-circle"></span>
-                </a>
+                </inertia-link>
               </li>
             </ul>
           </li>
@@ -83,9 +83,6 @@
 </template>
 <script>
   export default {
-    name: "AdminDashboardHeader",
+    name: "SuperAdminHeader",
   };
 </script>
-
-<style lang="scss" scoped>
-</style>

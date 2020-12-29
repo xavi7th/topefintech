@@ -74,7 +74,7 @@
             </a>
           </li>-->
           <li>
-            <inertia-link method="post" :href="$urlExists('admin.logout') ? $route('admin.logout') : '/logout'" class="nav-link">
+            <inertia-link :href="$urlExists('admin.logout') ? $route('admin.logout') : '/logout'" method="post" as="button" type="button" class="nav-link btn-link text-capitalize">
               <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
               <span>Logout</span>
               <span class="rui-nav-circle"></span>
