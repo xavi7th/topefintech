@@ -89,13 +89,12 @@
                 <label for="testimonial">
                   Testimonial Details
                 </label>
-                <textarea
-                  type="text"
-                  class="form-control"
-                  id="testimonial"
-                  v-model="details.testimonial"
-                  placeholder="User's testimonial"
-                />
+                 <ckeditor
+                    :editor="editor"
+                    v-model="details.testimonial"
+                    :config="editorConfig"
+                    tag-name="textarea"
+                  ></ckeditor>
               </div>
 
               <div class="col-12">
@@ -157,12 +156,19 @@
 
             <div class="col-12">
               <label for="update-testimonial"> Testimonial</label>
-              <textarea
+              <!-- <textarea
                 type="text"
                 class="form-control"
                 id="update-testimonial"
                 v-model="details.testimonial"
-              ></textarea>
+              ></textarea> -->
+              <ckeditor
+                :editor="editor"
+                v-model="details.testimonial"
+                :config="editorConfig"
+                tag-name="textarea"
+              ></ckeditor>
+
             </div>
           </div>
           <div slot="modal-buttons">
@@ -185,18 +191,21 @@
 <script>
   import { mixins, errorHandlers } from "@dashboard-assets/js/config";
   import Layout from "@superadmin-assets/js/SuperAdminAppComponent.vue";
+  import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+  import { editorConfig } from "@basicsite-assets/js/bootstrap";
+
   export default {
-    name: "ManageTestimonialPlans",
+    name: "ManageTestimonials",
     mixins: [mixins, errorHandlers],
-    props: {
-      testimonials: Array,
-    },
-    components: {
-      Layout,
-    },
+    props: { testimonials: Array },
+    components: { Layout },
     data: () => {
       return {
-        details: {},
+        editor: ClassicEditor,
+        editorConfig,
+        details: {
+          testimonial:''
+        },
       };
     },
     methods: {

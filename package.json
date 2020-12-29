@@ -26,6 +26,8 @@
     "vue-template-compiler": "^2.6.12"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^24.0.0",
+    "@ckeditor/ckeditor5-vue2": "^1.0.5",
     "@inertiajs/inertia": "~0.8.0",
     "@inertiajs/inertia-vue": "~0.5.0",
     "@inertiajs/progress": "^0.2.4",

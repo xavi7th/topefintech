@@ -3,11 +3,79 @@ import Vue2Filters from 'vue2-filters'
 import { Inertia } from "@inertiajs/inertia";
 import { App, plugin } from '@inertiajs/inertia-vue'
 import { InertiaProgress } from '@inertiajs/progress'
-import Dayjs from '@dashboard-assets/js/timeFormat';
 import LoadScript from 'vue-plugin-load-script'
+import CKEditor from '@ckeditor/ckeditor5-vue2';
+import Dayjs from '@dashboard-assets/js/timeFormat';
+import { getErrorString } from '@dashboard-assets/js/config';
 
 import Modal from '@dashboard-components/partials/Modal'
 import FlashMessage from '@dashboard-components/partials/FlashMessage'
+
+export const editorConfig = {
+  toolbar: {
+    items: [
+      'heading',
+      '|',
+      'bold',
+      'italic',
+      'link',
+      'underline',
+      'superscript',
+      'subscript',
+      'bulletedList',
+      'numberedList',
+      '|',
+      'indent',
+      'outdent',
+      'alignment',
+      'horizontalLine',
+      '|',
+      'imageUpload',
+      'blockQuote',
+      'insertTable',
+      'mediaEmbed',
+      'undo',
+      'redo'
+    ]
+  },
+  image: {
+    toolbar: [
+      'imageTextAlternative',
+      'imageStyle:full',
+      'imageStyle:side',
+      'imageResize'
+    ],
+    table: {
+      contentToolbar: [
+        'tableColumn',
+        'tableRow',
+        'mergeTableCells'
+      ]
+    },
+    styles: ["full", "side"],
+    resizeUnit: "%",
+    resizeOptions: [
+      {
+        name: "imageResize:original",
+        value: null,
+      },
+      {
+        name: "imageResize:50",
+        value: "50",
+      },
+      {
+        name: "imageResize:75",
+        value: "75",
+      },
+    ],
+  },
+  simpleUpload: {
+    uploadUrl: "http://example.com",
+
+    // Enable the XMLHttpRequest.withCredentials property.
+    withCredentials: false,
+  },
+}
 
 window._ = require( 'lodash' )
 window.swal = require( 'sweetalert2' )
@@ -18,7 +86,7 @@ window.Toast = swal.mixin( {
     showConfirmButton: false,
     timer: 5000,
     icon: "success"
-} );
+})
 
 window.ToastLarge = swal.mixin( {
   icon: "success",
@@ -28,7 +96,7 @@ window.ToastLarge = swal.mixin( {
   timerProgressBar: true,
   onBeforeOpen: () => { swal.showLoading() },
   onClose: () => {}
-} )
+})
 
 window.BlockToast = swal.mixin( {
   showConfirmButton: true,
@@ -36,7 +104,7 @@ window.BlockToast = swal.mixin( {
   showCloseButton: false,
   allowOutsideClick: false,
   allowEscapeKey: false
-} );
+})
 
 window.swalPreconfirm = swal.mixin( {
     title: 'Are you sure?',
@@ -54,7 +122,7 @@ window.swalPreconfirm = swal.mixin( {
     preConfirm: () => {
         /** Implement this when you call the mixin */
     },
-} )
+})
 
 InertiaProgress.init({
   // The delay after which the progress bar will
@@ -78,33 +146,33 @@ Inertia.on('progress', (event) => {
   }
 })
 
-Inertia.on('success', (event) => {
-  console.log(event);
-  console.log(`Successfully made a visit to ${event.detail.page.url}`)
-  if (event.detail.page.props.flash.success) {
+Inertia.on('success', (e) => {
+  console.log(e);
+  console.log(`Successfully made a visit to ${e.detail.page.url}`)
+  if (e.detail.page.props.flash.success) {
     ToastLarge.fire( {
       title: "Success",
-      html: event.detail.page.props.flash.success,
+      html: e.detail.page.props.flash.success,
       icon: "success",
       timer: 3000
     } );
   }
-  else if (event.detail.page.props.flash.error) {
+  else if (e.detail.page.props.flash.error) {
     ToastLarge.fire( {
       title: "Error",
-      html: event.detail.page.props.flash.error,
+      html: e.detail.page.props.flash.error,
       icon: "error",
       timer: 3000
     } );
   }
 })
 
-Inertia.on('error', (errors) => {
+Inertia.on('error', (e) => {
   console.log(`There were errors on your visit`)
-  console.log(errors)
+  console.log(e)
   ToastLarge.fire( {
     title: "Error",
-    html: getErrorString( errors ),
+    html: getErrorString( e.detail.errors ),
     icon: "error",
     timer:10000 //milliseconds
   } );
@@ -130,8 +198,8 @@ Inertia.on('exception', (event) => {
   console.log(event.detail.error)
 })
 
-Inertia.on('finish', (event) => {
-  console.log(event);
+Inertia.on('finish', (e) => {
+  // console.log(e);
 })
 
 Vue.component( 'FlashMessage', FlashMessage );
@@ -141,6 +209,7 @@ Vue.use(plugin)
 Vue.use( Vue2Filters )
 Vue.use( LoadScript )
 Vue.use( Dayjs );
+Vue.use( CKEditor )
 
 Vue.filter( 'Naira', function ( value, symbol ) {
     let currency = Vue.filter( 'currency' )
@@ -149,7 +218,7 @@ Vue.filter( 'Naira', function ( value, symbol ) {
         thousandsSeparator: ',',
         decimalSeparator: '.'
     } )
-} )
+})
 
 Vue.prototype.$route = ( ...args ) => route( ...args )
 Vue.prototype.$isCurrentUrl = ( ...args ) => route().current( ...args )
@@ -172,8 +241,8 @@ new Vue( {
           .then( module => module.default )
       },
     },
-  } )
-} ).$mount( el )
+  })
+}).$mount( el )
 
 /**
  *! Cause back() and forward() buttons of the browser to refresh the browser state

@@ -22,10 +22,6 @@ mix.babelConfig( {
   ],
 } );
 
-// mix.alias({
-//     ziggy: path.resolve('./main/vendor/tightenco/ziggy/dist'),
-// });
-
 mix.webpackConfig( {
   output: {
     //   chunkFilename: '[name].js?id=[chunkhash]',
@@ -53,6 +49,10 @@ mix
         'calc': false
       } ),
     ],
+    notifications: {
+      onFailure: true,
+      onSuccess: false
+    }
   } )
   .extract()
   .then( () => {
