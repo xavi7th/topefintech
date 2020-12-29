@@ -9,8 +9,8 @@ export const getErrorString = errors => {
         var errs = errors;
     } else if ( _.size( errors ) == 1 ) {
         var errs = _.reduce( errors, function ( val, n ) {
-            return val.join( "<br>" ) + "<br>" + n;
-        } )[ 0 ];
+            return val;
+        } );
     } else {
         var errs = _.reduce( errors, function ( val, n ) {
             return ( _.isString( val ) ? val : val.join( "<br>" ) ) + "<br>" + n;
@@ -25,14 +25,14 @@ export const getErrorString = errors => {
  */
 const displayResponse = function ( duration = null ) {
 
-    if ( this.$page.flash.error ) {
+    if ( this.$page.props.flash.error ) {
         ToastLarge.fire( {
             title: "Error",
             html: this.$page.flash.error,
             icon: "error",
             timer: duration || 3000
         } )
-    } else if ( this.$page.flash.success ) {
+    } else if ( this.$page.props.flash.success ) {
         ToastLarge.fire( {
             title: "Success",
             html: this.$page.flash.success,
@@ -49,10 +49,10 @@ const displayResponse = function ( duration = null ) {
  * @param {Number} duration The duration in milliseconds to keep the errors page open
  */
 const displayErrors = function ( duration = null ) {
-    if ( _.size( this.$page.errors ) ) {
+    if ( _.size( this.$page.props.errors ) ) {
         ToastLarge.fire( {
             title: "Error",
-            html: getErrorString( this.$page.errors ),
+            html: getErrorString( this.$page.props.errors ),
             icon: "error",
             timer: duration || 3000 //milliseconds
         } );
