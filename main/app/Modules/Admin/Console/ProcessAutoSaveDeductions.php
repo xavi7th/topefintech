@@ -309,7 +309,8 @@ class ProcessAutoSaveDeductions extends Command
       $app_user->fund_smart_savings($amount, 'Smart savings funding from Auto Save deduction');
     } else {
       /** NOTE: uses transactions */
-      dd('fund a user´s particular savings');
+      $app_user->fund_smart_savings($amount, 'Smart savings funding from Auto Save deduction');
+      // dd('fund a user´s particular savings');
     }
     dump('Savings funding success');
   }
