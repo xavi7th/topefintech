@@ -8,7 +8,7 @@
             <div class="col-lg-12">
               <div class="bannerTitle text-left">
                 <h2>Privacy Policy</h2>
-                <small>Last updated: {{ privacy_policy.updated_at }}</small>
+                <small>Last updated: {{ new Date(privacy_policy.updated_at ).toLocaleString() }}</small>
               </div>
             </div>
           </div>

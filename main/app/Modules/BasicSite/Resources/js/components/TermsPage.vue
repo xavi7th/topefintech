@@ -8,7 +8,7 @@
             <div class="col-lg-12">
               <div class="bannerTitle text-left">
                 <h2>Terms and Conditions</h2>
-                <small>Last updated: {{ new Date(terms_of_use.updated_at) }}</small>
+                <small>Last updated: {{ new Date(terms_of_use.updated_at).toLocaleString() }}</small>
               </div>
             </div>
           </div>

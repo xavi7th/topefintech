@@ -45,12 +45,12 @@
   export default {
     name: "ManageTermsOfUse",
     mixins: [mixins, errorHandlers],
-    props: { terms_of_use: String },
+    props: { terms_of_use: String, csrf_token: String },
     components: { Layout },
     data: function() {
       return {
         editor: ClassicEditor,
-        editorConfig,
+        editorConfig: editorConfig(route('superadmin.manage_site_contents.image.upload'), this.csrf_token),
         editorDisabled:true,
         details: {
           terms_of_use: this.terms_of_use || 'Terms of Use not yet specified'

@@ -22,6 +22,14 @@ html {
     }
 }
 
+.ck.ck-editor {
+    max-width: 100%;
+}
+.ck-editor__editable_inline {
+    min-height: 200px;
+    max-height: 90vh;
+}
+
 /**
 * ! Make images that are aligned to the side in CK Editor align in the final html
 */
@@ -29,6 +37,12 @@ html {
   float: right !important;
   margin-left: 15px;
 
+  img{
+    max-width: 100% !important;
+  }
+}
+
+figure.image{
   img{
     max-width: 100% !important;
   }

@@ -98,7 +98,8 @@ class SiteContent extends Model
   public function superAdminGetTermsOfUse(Request $request)
   {
     return Inertia::render('SuperAdmin,ManageTermsOfUse', [
-      'terms_of_use' => self::getTermnsOfUse()->content
+      'terms_of_use' => self::getTermnsOfUse()->content,
+      'csrf_token' => csrf_token()
     ]);
   }
 

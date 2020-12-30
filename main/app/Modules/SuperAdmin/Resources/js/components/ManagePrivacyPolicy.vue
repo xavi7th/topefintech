@@ -78,11 +78,5 @@
 </script>
 
 <style lang="scss">
-.ck.ck-editor {
-    max-width: 100%;
-}
-.ck-editor__editable_inline {
-    min-height: 200px;
-    max-height: 90vh;
-}
+
 </style>
