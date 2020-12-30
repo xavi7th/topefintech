@@ -28,7 +28,7 @@ class SuperAdminController extends Controller
       LoginController::routes();
 
       Route::group(['middleware' => ['auth:superadmin']], function () {
-        Route::get('/', [SuperAdminController::class, 'loadSuperAdminApp'])->name('superadmin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
+        Route::get('/', [self::class, 'loadSuperAdminApp'])->name('superadmin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
         SuperAdmin::superAdminRoutes();
         Agent::superAdminRoutes();

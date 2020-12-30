@@ -11,70 +11,87 @@ import { getErrorString } from '@dashboard-assets/js/config';
 import Modal from '@dashboard-components/partials/Modal'
 import FlashMessage from '@dashboard-components/partials/FlashMessage'
 
-export const editorConfig = {
-  toolbar: {
-    items: [
-      'heading',
-      '|',
-      'bold',
-      'italic',
-      'link',
-      'underline',
-      'superscript',
-      'subscript',
-      'bulletedList',
-      'numberedList',
-      '|',
-      'indent',
-      'outdent',
-      'alignment',
-      'horizontalLine',
-      '|',
-      'imageUpload',
-      'blockQuote',
-      'insertTable',
-      'mediaEmbed',
-      'undo',
-      'redo'
-    ]
-  },
-  image: {
-    toolbar: [
-      'imageTextAlternative',
-      'imageStyle:full',
-      'imageStyle:side',
-      'imageResize'
-    ],
-    table: {
-      contentToolbar: [
-        'tableColumn',
-        'tableRow',
-        'mergeTableCells'
+export const editorConfig = (uploadUrl, csrfToken = null) => {
+  return {
+    toolbar: {
+      items: [
+        'heading',
+        '|',
+        'bold',
+        'italic',
+        'link',
+        'underline',
+        'superscript',
+        'subscript',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'indent',
+        'outdent',
+        'alignment',
+        'horizontalLine',
+        '|',
+        'imageUpload',
+        'blockQuote',
+        'insertTable',
+        'mediaEmbed',
+        'undo',
+        'redo'
       ]
     },
-    styles: ["full", "side"],
-    resizeUnit: "%",
-    resizeOptions: [
-      {
-        name: "imageResize:original",
-        value: null,
+     placeholder: 'Type the content here!',
+    wordCount: {
+      onUpdate: stats => {
+        // Prints the current content statistics.
+        console.log( `Characters: ${ stats.characters }\nWords: ${ stats.words }` );
+      }
+    },
+    image: {
+      toolbar: [
+        'imageTextAlternative',
+        'imageStyle:full',
+        'imageStyle:side',
+        'imageResize'
+      ],
+      table: {
+        contentToolbar: [
+          'tableColumn',
+          'tableRow',
+          'mergeTableCells'
+        ]
       },
-      {
-        name: "imageResize:50",
-        value: "50",
-      },
-      {
-        name: "imageResize:75",
-        value: "75",
-      },
-    ],
-  },
-  simpleUpload: {
-    uploadUrl: "http://example.com",
+      styles: ["full", "side"],
+      resizeUnit: "%",
+      resizeOptions: [
+        {
+          name: "imageResize:original",
+          value: null,
+        },
+        {
+          name: "imageResize:25",
+          value: "25",
+        },
+        {
+          name: "imageResize:50",
+          value: "50",
+        },
+        {
+          name: "imageResize:75",
+          value: "75",
+        },
+      ],
+    },
+    simpleUpload: {
+      uploadUrl,
 
-    // Enable the XMLHttpRequest.withCredentials property.
-    withCredentials: false,
-  },
+      // Enable the XMLHttpRequest.withCredentials property.
+      withCredentials: false,
+      headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        // Authorization: 'Bearer <JSON Web Token>'
+      }
+    },
+  }
 }
 
 window._ = require( 'lodash' )

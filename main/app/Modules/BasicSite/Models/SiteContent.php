@@ -89,6 +89,10 @@ class SiteContent extends Model
       Route::get('', [self::class, 'superAdminGetPrivacyPolicy'])->name('')->defaults('extras', ['icon' => 'fas fa-wrench']);
       Route::post('update', [self::class, 'updatePrivacyPolicy'])->name('.update');
     });
+
+    Route::prefix('site-contents/embeded-content-image-upload')->name('superadmin.manage_site_contents.')->group(function () {
+      Route::post('', [self::class, 'handleContentImageUpload'])->name('image.upload')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
+    });
   }
 
   public function superAdminGetTermsOfUse(Request $request)
@@ -112,7 +116,8 @@ class SiteContent extends Model
   public function superAdminGetPrivacyPolicy(Request $request)
   {
     return Inertia::render('SuperAdmin,ManagePrivacyPolicy', [
-      'privacy_policy' => self::getPrivacyPolicy()
+      'privacy_policy' => self::getPrivacyPolicy(),
+      'csrf_token' => csrf_token()
     ]);
   }
 
@@ -125,6 +130,24 @@ class SiteContent extends Model
     self::setPrivacyPolicy($validatedData['privacy_policy']);
 
     return back()->withFlash(['success'=> 'Successfully set the privacy policy on the site. ']);
+  }
+
+
+  public function handleContentImageUpload(Request $request)
+  {
+    $request->validate([
+      'upload' => 'required|file|image'
+    ]);
+
+    $urls = compress_image_upload('upload', 'content-images/', 'content-images/thumb/', 1920, true, 300);
+
+    return response()->json(['urls' => [
+      'default' => $urls['thumb_url'],
+      '300' => $urls['thumb_url'],
+      '800' => $urls['img_url'],
+      '1200' => $urls['img_url'],
+      '1920' => $urls['img_url'],
+    ]], 200);
   }
 
 

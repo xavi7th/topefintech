@@ -45,12 +45,15 @@
   export default {
     name: "ManagePrivacy",
     mixins: [mixins, errorHandlers],
-    props: { privacy_policy: String },
+    props: {
+      privacy_policy: String,
+      csrf_token: String
+    },
     components: { Layout },
     data: function() {
       return {
         editor: ClassicEditor,
-        editorConfig,
+        editorConfig: editorConfig(route('superadmin.manage_site_contents.image.upload'), this.csrf_token),
         editorDisabled:true,
         details: {
           privacy_policy: this.privacy_policy || 'Privacy Policy not yet specified'
