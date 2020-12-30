@@ -43,14 +43,14 @@ class LoginController extends Controller
   {
     $this->middleware('throttle:5,1')->except(['superadmin.login.show']);
     $this->middleware('guest:web,agent,admin,superadmin')->only(['showLoginForm', 'login']);
-    $this->middleware('auth:superadmin')->only(['logout', 'newSuperAdminSetPassword']);
+    $this->middleware('auth:superadmin')->only(['logout']);
   }
 
   static function routes()
   {
     Route::get('login', [self::class, 'showLoginForm'])->name('superadmin.login.show')->defaults('extras', ['nav_skip' => true]);
     Route::post('login', [self::class, 'login'])->name('superadmin.login');
-    // Route::post('first-time', [self::class, 'newSuperAdminSetPassword'])->name('superadmin.password.new');
+    Route::post('first-time', [self::class, 'newSuperAdminSetPassword'])->name('superadmin.password.new');
     Route::match(['get', 'post'], 'logout', [self::class, 'logout'])->name('superadmin.logout')->defaults('extras', ['nav_skip' => true]);
   }
 

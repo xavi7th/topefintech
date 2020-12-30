@@ -21,7 +21,7 @@
             name="email"
             placeholder="Email"
           />
-          <FlashMessage v-if="errors.email" :msg="errors.email[0]" />
+          <FlashMessage v-if="errors.email" :msg="errors.email" />
         </div>
         <div class="col-12">
           <input
@@ -33,7 +33,7 @@
             name="password"
             placeholder="Password"
           />
-          <FlashMessage v-if="errors.password" :msg="errors.password[0]" />
+          <FlashMessage v-if="errors.password" :msg="errors.password" />
         </div>
         <div class="col-sm-6">
           <div class="custom-control custom-checkbox d-flex justify-content-start">
@@ -103,7 +103,7 @@
                           showLoaderOnConfirm: true,
                           preConfirm: pw => {
                             return this.$inertia
-                              .post(this.$route("admin.password.new"), {
+                              .post(this.$route("superadmin.password.new"), {
                                 pw,
                                 email: this.details.email
                               },{
