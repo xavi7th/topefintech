@@ -162,8 +162,8 @@ Inertia.on('progress', (event) => {
 
 Inertia.on('success', (e) => {
   console.log(e);
-  console.log(`Successfully made a visit to ${e.detail.page.url}`)
   if (e.detail.page.props.flash.success) {
+    console.log(`Successfully made a visit to ${e.detail.page.url}`)
     ToastLarge.fire( {
       title: "Success",
       html: e.detail.page.props.flash.success,
@@ -172,6 +172,7 @@ Inertia.on('success', (e) => {
     } );
   }
   else if (e.detail.page.props.flash.error) {
+    console.log(`Successfully made a visit to ${e.detail.page.url} but there was an error`)
     ToastLarge.fire( {
       title: "Error",
       html: e.detail.page.props.flash.error,
@@ -258,6 +259,7 @@ new Vue( {
             `../../../${module}/Resources/js/components/${component}.vue` )
           .then( module => module.default )
       },
+      resolveErrors: page => (page.props.errors || page.props.flash.error || {}),
     },
   })
 }).$mount( el )

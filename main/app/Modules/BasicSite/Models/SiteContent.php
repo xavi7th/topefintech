@@ -12,6 +12,22 @@ use Illuminate\Support\Collection as TransformedCollection;
 use App\Modules\BasicSite\Transformers\TeamMemberTransformer;
 use App\Modules\BasicSite\Transformers\TestimonialTransformer;
 
+/**
+ * App\Modules\BasicSite\Models\SiteContent
+ *
+ * @property string $type
+ * @property string $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SiteContent whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class SiteContent extends Model
 {
     protected $fillable = ['type','content'];

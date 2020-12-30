@@ -9,7 +9,7 @@
         </div>
         <div class="col-12">
           <h2 class="display-4 mb-10 text-center">Sign In</h2>
-          <p>Login to SmartMonie</p>
+          <!-- <p>Login to SmartMonie</p> -->
         </div>
         <div class="col-12">
           <input
@@ -110,7 +110,7 @@
         this.$inertia
           .post(this.$route("appuser.login"), { ...this.details },{
             onSuccess: page => {
-               if (page.props.flash.error === 416) {
+              if (page.props.flash.error === 416) {
                 swalPreconfirm
                   .fire({
                     title: "Enter OTP",
@@ -124,20 +124,8 @@
                     preConfirm: (otp) => {
                       return this.$inertia
                         .post(this.$route("appuser.otp.verify"), { otp },{
-                          onFinish:()=>true
+                          onSuccess: () => true,
                         })
-
-                        .catch((error) => {
-                          if (error.response) {
-                            swal.showValidationMessage(
-                              `Error: ${error.response.data.message}`
-                            );
-                          } else {
-                            swal.showValidationMessage(
-                              `Request failed: ${error}`
-                            );
-                          }
-                        });
                     },
                   })
                   .then((val) => {
@@ -194,7 +182,7 @@
               }
             },
             onFinish:()=>{
-              location.reload();
+              // location.reload();
               this.$page.props.flash.error = null;
             },
             onError: () => {
