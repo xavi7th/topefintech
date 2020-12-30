@@ -157,12 +157,12 @@
                         showLoaderOnConfirm: true,
                         preConfirm: (pw) => {
                           return this.$inertia
-                            .post(this.$route("app.password.new"), {
+                            .post(this.$route("app.agent.password.new"), {
                               pw,
                               phone: this.details.phone,
                             },{
-                              OnSuccess:() => swal.close(),
-                              OnFinish:() => { rsp: true },
+                              onSuccess:() => location.reload(),
+                              onFinish:() => { rsp: true },
                             })
                         },
                         allowOutsideClick: () => !swal.isLoading(),
@@ -179,6 +179,9 @@
                         }
                       });
                   });
+              }
+              else if(_.startsWith(page.component, 'Agent')){
+                location.reload()
               }
             },
             onFinish:()=>{

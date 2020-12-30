@@ -68,7 +68,7 @@
                 </a>
               </li>-->
               <li>
-                <inertia-link :href="$urlExists('admin.logout') ? $route('admin.logout') : '/logout'" method="post" as="button" type="button" class="nav-link btn-link">
+                <inertia-link :href="$urlExists('admin.logout') ? $route('admin.logout') : '/logout'" method="post" as="button" type="button" class="nav-link btn-link" @click="reloadPage">
                   <span data-feather="log-out" class="rui-icon rui-icon-stroke-1_5"></span>
                   <span>Logout</span>
                   <span class="rui-nav-circle"></span>
@@ -84,6 +84,15 @@
 <script>
   export default {
     name: "AdminHeader",
+    methods:{
+      reloadPage(){
+        if (!this.$urlExists('admin.logout')){
+          setTimeout(() => {
+            location.reload()
+          }, 300);
+        }
+      }
+    }
   };
 </script>
 
