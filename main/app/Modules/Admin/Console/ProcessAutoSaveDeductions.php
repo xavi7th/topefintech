@@ -121,6 +121,7 @@ class ProcessAutoSaveDeductions extends Command
         }
       } else {
         $this->fireAutoSaveFailureAction($app_user, $deduction_request->amount, 'Deducting default card failed or there was no default card set');
+        $this->markRequestAsProcessed($deduction_request);
       }
     }
   }
