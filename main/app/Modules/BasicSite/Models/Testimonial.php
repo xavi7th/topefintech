@@ -52,18 +52,18 @@ class Testimonial extends Model
 
   static function superAdminRoutes()
   {
-    Route::prefix('testimonials')->name('superadmin.testimonial.')->group(function () {
-      Route::get('', [self::class, 'superAdminGetTestimonials'])->name('manage_testimonials')->defaults('extras', ['icon' => 'fas fa-comment']);
-      Route::post('create', [self::class, 'createTestimonial'])->name('create')->defaults('extras', ['icon' => 'fas fa-comment']);
-      Route::put('{testimonial}/update', [self::class, 'updateTestimonial'])->name('update')->defaults('extras', ['icon' => 'fas fa-comment']);
-      Route::delete('{testimonial}/delete', [self::class, 'deleteTestimonial'])->name('delete');
+    Route::prefix('site-contents/testimonials')->name('superadmin.manage_site_contents.')->group(function () {
+      Route::get('', [self::class, 'superAdminGetTestimonials'])->name('manage_testimonials')->defaults('extras', ['icon' => 'fas fa-wrench']);
+      Route::post('create', [self::class, 'createTestimonial'])->name('testimonial.create')->defaults('extras', ['icon' => 'fas fa-comment']);
+      Route::put('{testimonial}/update', [self::class, 'updateTestimonial'])->name('testimonial.update')->defaults('extras', ['icon' => 'fas fa-comment']);
+      Route::delete('{testimonial}/delete', [self::class, 'deleteTestimonial'])->name('testimonial.delete');
     });
   }
 
   public function superAdminGetTestimonials(Request $request)
   {
     return Inertia::render('SuperAdmin,ManageTestimonials', [
-      'testimonials' => self::get(['id', 'name', 'img', 'city', 'testimonial'])
+      'testimonials' => SiteContent::getTestimonialsForSuperAdmin()
     ]);
   }
 

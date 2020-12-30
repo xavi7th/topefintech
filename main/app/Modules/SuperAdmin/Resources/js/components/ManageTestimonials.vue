@@ -224,7 +224,7 @@
 
         this.$inertia
           .post(
-            this.$route("superadmin.testimonial.create"),
+            this.$route("superadmin.manage_site_contents.testimonial.create"),
             formData,
             {
               preserveState: true,
@@ -244,7 +244,7 @@
          this.details._method = 'PUT';
 
         this.$inertia
-          .post(this.$route("superadmin.testimonial.update", this.details.id), this.details, {
+          .post(this.$route("superadmin.manage_site_contents.testimonial.update", this.details.id), this.details, {
             preserveState: true,
             preserveScroll: true,
             only: ["testimonials", "errors", "flash"],
@@ -259,7 +259,7 @@
         });
 
         this.$inertia
-          .delete(this.$route("superadmin.testimonial.delete", id), {
+          .delete(this.$route("superadmin.manage_site_contents.testimonial.delete", id), {
             preserveState: true,
             preserveScroll: true,
             only: ["testimonials", "errors", "flash"],
