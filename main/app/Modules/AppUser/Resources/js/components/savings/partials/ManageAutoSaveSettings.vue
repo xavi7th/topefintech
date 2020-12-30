@@ -230,33 +230,6 @@
               preserveState: true
             }
           )
-          .then(() => {
-            this.formSubmitted = true;
-            if (this.$page.props.flash.success) {
-              this.formSubmitted = false;
-              this.details = {};
-              Toast.fire({
-                title: "Success!",
-                text: this.$page.props.flash.success,
-                icon: "success",
-                position: "center"
-              });
-            } else if (this.$page.props.flash.error) {
-              Toast.fire({
-                title: "Error!",
-                text: this.$page.props.flash.error,
-                icon: "error",
-                position: "center"
-              });
-            } else {
-              Toast.fire({
-                title: "Error!",
-                text: "An error occured",
-                icon: "error",
-                position: "center"
-              });
-            }
-          });
       },
       deleteAutoSave(asv) {
         Toast.fire({
@@ -271,30 +244,6 @@
           .delete(this.$route("appuser.savings.delete-autosave", asv.id), {
             preserveState: true
           })
-          .then(() => {
-            if (this.$page.props.flash.success) {
-              Toast.fire({
-                title: "Success!",
-                text: this.$page.props.flash.success,
-                icon: "success",
-                position: "center"
-              });
-            } else if (this.$page.props.flash.error) {
-              Toast.fire({
-                title: "Error!",
-                text: this.$page.props.flash.error,
-                icon: "error",
-                position: "center"
-              });
-            } else {
-              Toast.fire({
-                title: "Error!",
-                text: "An error occured",
-                icon: "error",
-                position: "center"
-              });
-            }
-          });
       }
     }
   };

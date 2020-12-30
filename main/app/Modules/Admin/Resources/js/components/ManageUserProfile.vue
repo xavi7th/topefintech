@@ -329,13 +329,6 @@
         this.details.id_card = this.$refs.id_card.files[0];
       },
       resetUserDetails() {
-        // this.$inertia.reload({
-        //   method: "get",
-        //   data: {},
-        //   preserveState: false,
-        //   preserveScroll: true,
-        //   only: [],
-        // });
          this.details = {
           ..._.omit(this.user_details, ["id_card"]),
           acc_type: "savings",
@@ -363,17 +356,9 @@
             replace: false,
             preserveState: true,
             preserveScroll: true,
-            only:['errors', 'flash', 'user_details']
+            only:['errors', 'flash', 'user_details'],
+            onError: () => this.formSubmitted = true
           })
-          .then((rsp) => {
-
-            if (_.size(this.$page.props.errors) > 0) {
-              this.formSubmitted = true;
-            }
-
-            this.displayResponse();
-            this.displayErrors();
-          });
       },
     },
   };

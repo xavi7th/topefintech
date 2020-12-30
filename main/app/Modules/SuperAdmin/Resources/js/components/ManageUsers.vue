@@ -168,18 +168,6 @@
             preserveScroll: true,
             only: ["errors", "flash", "users"]
           })
-          .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                icon: "success",
-                timer: 5000
-              });
-            } else {
-              swal.close();
-            }
-          });
       }
     }
   };

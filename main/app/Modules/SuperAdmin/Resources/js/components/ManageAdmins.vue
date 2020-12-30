@@ -157,12 +157,10 @@
         });
 
         this.$inertia
-          .post(this.$route("superadmin.create_admin"), { ...this.details })
-          .then(() => {
-            this.displayResponse()
-            this.displayErrors()
-            this.details={}
-          });
+          .post(this.$route("superadmin.create_admin"), { ...this.details },{
+            onFinish:() => this.details={}
+          })
+
       },
        fundAdmin() {
         BlockToast.fire({
@@ -172,20 +170,9 @@
         this.$inertia
           .post(this.$route("superadmin.fund_admin", this.adminToFund.id), {
             amount: this.details.amount,
+          },{
+            onSuccess:() => this.details.amount = null
           })
-          .then(() => {
-            if (this.flash.success) {
-              this.details.amount = null;
-
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                icon: "success",
-              });
-            } else {
-              swal.close();
-            }
-          });
       },
     },
   };

@@ -156,34 +156,11 @@
         });
 
         this.$inertia
-          .visit(this.$route("appuser.cards.authorize", debitCard.id), {
-            method: "get",
-            data: {},
+          .get(this.$route("appuser.cards.authorize", debitCard.id),{}, {
             replace: false,
             preserveState: false,
             preserveScroll: false
           })
-          .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                position: "bottom",
-                icon: "success",
-                timer: 5000
-              });
-            } else if (this.flash.error) {
-              ToastLarge.fire({
-                title: "Error",
-                html: this.flash.error,
-                position: "bottom",
-                icon: "error",
-                timer: 10000
-              });
-            } else {
-              swal.close();
-            }
-          });
       },
       markDefaultCard(debitCard) {
         BlockToast.fire({
@@ -201,19 +178,6 @@
               preserveScroll: false
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                position: "bottom",
-                icon: "success",
-                timer: 10000
-              });
-            } else {
-              swal.close();
-            }
-          });
       },
       addCard() {
         BlockToast.fire({
@@ -222,25 +186,12 @@
 
         this.$inertia
           .post(
-            this.$route("appuser.cards.add"),
-            { ...this.details },
+            this.$route("appuser.cards.add"), { ...this.details },
             {
               preserveState: true,
               preserveScroll: false
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              this.details = {};
-              Toast.fire({
-                title: "Success",
-                text: this.flash.success,
-                position: "center bottom"
-              });
-            } else {
-              swal.close();
-            }
-          });
       },
       deleteCard(debitCard) {
         swalPreconfirm
@@ -273,19 +224,19 @@
               });
             } else if (val.value) {
               this.$inertia.reload({
-                method: "get",
-                data: {},
                 preserveState: false,
-                preserveScroll: true,
-                only: ["debit_cards"]
+                only: ["debit_cards"],
+                onFinish:()=>{
+                  ToastLarge.fire({
+                    title: "Success",
+                    html: `Debit Card <b>${debitCard.pan}</b> has been deleted from your account`,
+                    position: "bottom",
+                    icon: "success",
+                    timer: 10000
+                  });
+                }
               });
-              ToastLarge.fire({
-                title: "Success",
-                html: `Debit Card <b>${debitCard.pan}</b> has been deleted from your account`,
-                position: "bottom",
-                icon: "success",
-                timer: 10000
-              });
+
             }
           });
       }

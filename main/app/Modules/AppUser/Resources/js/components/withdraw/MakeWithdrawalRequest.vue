@@ -85,18 +85,6 @@
 
         this.$inertia
           .post(this.$route("appuser.withdraw.create"), { amount: this.amount })
-          .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: this.flash.success,
-                position: "center",
-                timer: 5000
-              });
-            } else {
-              swal.close();
-            }
-          });
       }
     }
   };

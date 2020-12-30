@@ -367,10 +367,6 @@
               preserveScroll: true,
               only: ['flash','errors', 'withdrawal_requests'],
           })
-          .then(() => {
-            this.displayResponse();
-           this.displayErrors();
-          });
       },
       deleteWithdrawalRequest(withdrawalRequest) {
         BlockToast.fire({
@@ -386,10 +382,6 @@
               only: ['flash','errors', 'withdrawal_requests'],
             }
           )
-          .then(() => {
-           this.displayResponse();
-           this.displayErrors();
-          });
       },
     },
   };

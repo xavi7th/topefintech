@@ -73,13 +73,9 @@
           .put(this.$route("appuser.password_reset.change_password"), {
             ...this.details,
             token: this.token
+          },{
+            onError:() => this.formSubmitted = true
           })
-          .then(rsp => {
-            if (_.size(this.errors)) {
-              this.formSubmitted = true;
-            }
-            swal.close();
-          });
       }
     }
   };

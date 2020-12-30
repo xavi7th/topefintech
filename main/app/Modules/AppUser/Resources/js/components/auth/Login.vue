@@ -108,11 +108,9 @@
         });
 
         this.$inertia
-          .post(this.$route("appuser.login"), { ...this.details })
-          .then((rsp) => {
-
-            if (this.$page.props.flash.error) {
-              if (this.$page.props.flash.error === 416) {
+          .post(this.$route("appuser.login"), { ...this.details },{
+            onSuccess: page => {
+               if (page.props.flash.error === 416) {
                 swalPreconfirm
                   .fire({
                     title: "Enter OTP",
@@ -125,10 +123,10 @@
                     confirmButtonText: "Validate",
                     preConfirm: (otp) => {
                       return this.$inertia
-                        .post(this.$route("appuser.otp.verify"), { otp })
-                        .then((rsp) => {
-                          return true;
+                        .post(this.$route("appuser.otp.verify"), { otp },{
+                          onFinish:()=>true
                         })
+
                         .catch((error) => {
                           if (error.response) {
                             swal.showValidationMessage(
@@ -149,14 +147,6 @@
                         icon: "info",
                         position: "center",
                       });
-                    } else if (val.value) {
-                      if (this.$page.props.flash.success) {
-                        ToastLarge.fire({
-                          title: "Success",
-                          html: this.$page.props.flash.success,
-                          icon: "success",
-                        });
-                      }
                     }
                   });
               } else if (this.flash.error === 406) {
@@ -182,24 +172,17 @@
                             .post(this.$route("app.password.new"), {
                               pw,
                               phone: this.details.phone,
+                            },{
+                              OnSuccess:() => swal.close(),
+                              OnFinish:() => { rsp: true },
                             })
-                            .then(() => {
-                              swal.close();
-                              return { rsp: true };
-                            });
                         },
                         allowOutsideClick: () => !swal.isLoading(),
                       })
                       .then((result) => {
                         console.log(result);
 
-                        if (result.value) {
-                          swal.fire({
-                            title: `Success`,
-                            text: "Password set successfully!",
-                            icon: "success",
-                          });
-                        } else if (result.dismiss) {
+                        if (result.dismiss) {
                           swal.fire({
                             title: "Cancelled",
                             text: "You can´t login without setting a password",
@@ -208,26 +191,16 @@
                         }
                       });
                   });
-              } else {
-                ToastLarge.fire({
-                  title: "Oops!",
-                  html: this.$page.props.flash.error,
-                  icon: "error",
-                  timer: 10000,
-                  footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`,
-                });
               }
-            }
-            else if (_.size(this.$page.props.errors)) {
-              swal.close();
-              this.formSubmitted = true;
-            }
-            else {
-              swal.close();
+            },
+            onFinish:()=>{
               location.reload();
+              this.$page.props.flash.error = null;
+            },
+            onError: () => {
+              this.formSubmitted = true
             }
-            this.$page.props.flash.error = null;
-          });
+          })
       },
     },
   };

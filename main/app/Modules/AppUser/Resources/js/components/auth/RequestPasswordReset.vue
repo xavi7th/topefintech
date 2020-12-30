@@ -60,25 +60,9 @@
         });
 
         this.$inertia
-          .post(this.$route("appuser.password_reset.request"), {
-            ...this.details
+          .post(this.$route("appuser.password_reset.request"), {...this.details},{
+            onError:( )=> this.formSubmitted = true
           })
-          .then(rsp => {
-            if (_.size(this.errors)) {
-              this.formSubmitted = true;
-            } else if (this.$page.props.flash.success) {
-              ToastLarge.fire({
-                title: "Done",
-                icon: "info",
-                html: this.$page.props.flash.success,
-                timer: 10000
-              }).then(() => {
-                this.$page.props.flash.success = null;
-              });
-            } else {
-              swal.close();
-            }
-          });
       }
     }
   };

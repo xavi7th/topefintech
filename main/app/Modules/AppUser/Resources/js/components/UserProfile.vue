@@ -642,10 +642,7 @@
       },
       resetUserDetails() {
         this.$inertia.reload({
-          method: "get",
-          data: {},
           preserveState: false,
-          preserveScroll: true,
           only: [],
         });
       },
@@ -667,49 +664,29 @@
               preserveState: true,
               preserveScroll: true,
               only: ["account_name", "flash", "errors"],
+              onFinish: () =>{
+                this.formSubmitted = true;
+                this.details.acc_name = this.account_name;
+                swal.close();
+              }
             }
           )
-          .then((rsp) => {
-            this.formSubmitted = true;
-            this.details.acc_name = this.account_name;
-            swal.close();
-          });
       },
       updateUserProfile() {
         BlockToast.fire({
           text: "Updating profile ...",
         });
-        this.formSubmitted = false;
-
-        let formData = new FormData();
-
-        this.details._method = "PUT";
-
-        _.forEach(this.details, (val, key) => {
-          formData.append(key, val);
-        });
 
         this.$inertia
-          .post(this.$route("appuser.profile.edit"), formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-
-            replace: false,
+          .post(this.$route("appuser.profile.edit"), this.details, {
             preserveState: true,
             preserveScroll: true,
-          })
-          .then((rsp) => {
-            if (_.size(this.$page.props.errors) > 0) {
-              this.formSubmitted = true;
-            }
-            else if (this.$page.props.flash.success) {
+            onBefore:() =>{
               this.formSubmitted = false;
-            }
-
-            this.displayResponse()
-            this.displayErrors()
-          });
+              this.details._method = "PUT";
+            },
+            onSuccess:() => this.formSubmitted = false
+          })
       },
     },
   };

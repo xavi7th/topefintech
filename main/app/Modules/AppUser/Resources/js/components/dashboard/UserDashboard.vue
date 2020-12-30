@@ -145,9 +145,6 @@
               preserveState: true,
             }
           )
-          .then(() => {
-            this.displayResponse();
-          });
       },
     },
   };

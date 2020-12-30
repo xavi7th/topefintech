@@ -92,41 +92,13 @@
         BlockToast.fire({
           text: "Creating ..."
         });
-
-        this.$inertia
-          .post(this.$route("admin.target.create"), { name: this.name })
-          .then(() => {
-            console.log(this.flash);
-
-            if (this.flash.success) {
-              Toast.fire({
-                title: "Success",
-                text: this.flash.success,
-                position: "center"
-              });
-            } else {
-              swal.close();
-            }
-          });
+        this.$inertia.post(this.$route("admin.target.create"), { name: this.name })
       },
       deleteTarget(id) {
         BlockToast.fire({
           text: "Deleting ..."
         });
-
-        this.$inertia.delete(this.$route("admin.target.delete", id)).then(() => {
-          console.log(this.flash);
-
-          if (this.flash.success) {
-            Toast.fire({
-              title: "Success",
-              text: this.flash.success,
-              position: "center"
-            });
-          } else {
-            swal.close();
-          }
-        });
+        this.$inertia.delete(this.$route("admin.target.delete", id))
       }
     }
   };

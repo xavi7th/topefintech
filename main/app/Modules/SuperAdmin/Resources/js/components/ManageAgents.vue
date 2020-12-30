@@ -95,10 +95,6 @@
         });
         this.$inertia
           .delete(this.$route("superadmin.suspend_agent", agent.id))
-          .then(() => {
-            this.displayResponse()
-            this.displayErrors(10000)
-          });
       },
     }
   };

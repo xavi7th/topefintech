@@ -73,72 +73,67 @@
         });
 
         this.$inertia
-          .post(this.$route("superadmin.login"), { ...this.details })
-          .then(rsp => {
-            if (_.size(this.errors)) {
-              this.formSubmitted = true;
-              swal.close();
-            } else if (this.flash.error) {
-              if (this.flash.error.suspended) {
-                swal.fire({
-                  title: "Suspended Account",
-                  text: this.flash.error.suspended,
-                  icon: "warning"
-                });
-              } else if (this.flash.error.unverified) {
-                swal
-                  .fire({
-                    title: "One more thing!",
-                    text: `This seems to be your first login. You need to supply a password`,
-                    icon: "info"
-                  })
-                  .then(() => {
-                    swal
-                      .fire({
-                        title: "Enter a password",
-                        input: "text",
-                        inputAttributes: {
-                          autocapitalize: "off"
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: "Set Password",
-                        showLoaderOnConfirm: true,
-                        preConfirm: pw => {
-                          return this.$inertia
-                            .post(this.$route("admin.password.new"), {
-                              pw,
-                              email: this.details.email
-                            })
-                            .then(() => {
-                              swal.close();
-                              return { rsp: true };
-                            });
-                        },
-                        allowOutsideClick: () => !swal.isLoading()
-                      })
-                      .then(result => {
-                        console.log(result);
-
-                        if (result.value) {
-                          swal.fire({
-                            title: `Success`,
-                            text: "Password set successfully!",
-                            icon: "success"
-                          });
-                        } else if (result.dismiss) {
-                          swal.fire({
-                            title: "Cancelled",
-                            text: "You can´t login without setting a password",
-                            icon: "info"
-                          });
-                        }
-                      });
+          .post(this.$route("superadmin.login"), { ...this.details },{
+            onError:() => this.formSubmitted = true,
+            onSuccess: page =>{
+              if (page.props.flash.error) {
+                if (page.props.flash.error.suspended) {
+                  swal.fire({
+                    title: "Suspended Account",
+                    text: page.props.flash.error.suspended,
+                    icon: "warning"
                   });
+                } else if (page.props.flash.error.unverified) {
+                  swal
+                    .fire({
+                      title: "One more thing!",
+                      text: `This seems to be your first login. You need to supply a password`,
+                      icon: "info"
+                    })
+                    .then(() => {
+                      swal
+                        .fire({
+                          title: "Enter a password",
+                          input: "text",
+                          inputAttributes: {
+                            autocapitalize: "off"
+                          },
+                          showCancelButton: true,
+                          confirmButtonText: "Set Password",
+                          showLoaderOnConfirm: true,
+                          preConfirm: pw => {
+                            return this.$inertia
+                              .post(this.$route("admin.password.new"), {
+                                pw,
+                                email: this.details.email
+                              },{
+                                onFinish: () => {rsp:true}
+                              })
+                          },
+                          allowOutsideClick: () => !swal.isLoading()
+                        })
+                        .then(result => {
+                          console.log(result);
+
+                          if (result.value) {
+                            swal.fire({
+                              title: `Success`,
+                              text: "Password set successfully!",
+                              icon: "success"
+                            });
+                          } else if (result.dismiss) {
+                            swal.fire({
+                              title: "Cancelled",
+                              text: "You can´t login without setting a password",
+                              icon: "info"
+                            });
+                          }
+                        });
+                    });
+                }
               }
-            } else {
-              swal.close();
             }
-          });
+          })
       }
     }
   };

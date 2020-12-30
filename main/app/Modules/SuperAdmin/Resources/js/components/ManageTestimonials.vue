@@ -230,16 +230,9 @@
               preserveState: true,
               preserveScroll: true,
               only: ["testimonials", "errors", "flash"],
+              onSuccess: ()=>this.details={}
             }
           )
-          .then(() => {
-            this.displayResponse();
-            this.displayErrors(10000);
-          }).then(() => {
-            if (this.$page.props.flash.success) {
-              this.details = {}
-            }
-          });
       },
 
       updateTestimonial() {
@@ -250,28 +243,14 @@
          this.details.img = this.$refs.updateUserImage.files[0];
          this.details._method = 'PUT';
 
-          let formData = new FormData();
-
-        _.forEach(this.details, (val, key) => {
-          formData.append(key, val);
-        });
-
-
         this.$inertia
-          .post(this.$route("superadmin.testimonial.update", this.details.id), formData, {
+          .post(this.$route("superadmin.testimonial.update", this.details.id), this.details, {
             preserveState: true,
             preserveScroll: true,
             only: ["testimonials", "errors", "flash"],
+            onSuccess:() => this.details={},
+            onFinish:() => jQuery('#updateTestimonialModal').modal('hide')
           })
-          .then(() => {
-            this.displayResponse(10000);
-            this.displayErrors(10000);
-          }).then(() => {
-            if (this.$page.props.flash.success) {
-              this.details = {}
-            }
-          })
-          jQuery('#updateTestimonialModal').modal('hide');
       },
 
       deleteTestimonial(id) {
@@ -285,10 +264,6 @@
             preserveScroll: true,
             only: ["testimonials", "errors", "flash"],
           })
-          .then(() => {
-            this.displayResponse(10000);
-            this.displayErrors(10000);
-          });
       },
     },
   };

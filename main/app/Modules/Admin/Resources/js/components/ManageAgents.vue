@@ -160,19 +160,7 @@
           text: "Creating agent...",
         });
 
-        this.$inertia
-          .post(this.$route("admin.create_agent"), { ...this.details })
-          .then(() => {
-            if (this.flash.success) {
-              ToastLarge.fire({
-                title: "Success",
-                html: `They will be required to set a password on their first login`,
-                type: "success",
-              });
-            } else {
-              swal.close();
-            }
-          });
+        this.$inertia.post(this.$route("admin.create_agent"), { ...this.details })
       },
     },
   };

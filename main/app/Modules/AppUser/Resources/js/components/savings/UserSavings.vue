@@ -246,13 +246,11 @@
         this.$inertia
           .post(this.$route("appuser.savings.smart.initialise"), {
             ...this.details,
-          })
-          .then(() => {
-            if (this.flash.success) {
+          },{
+            onSuccess:() =>{
               this.details = {};
             }
-            swal.close();
-          });
+          })
       },
       createInvestmentSavings() {
         BlockToast.fire({ text: "Initializing a new investment portfolio ..." });
@@ -264,14 +262,11 @@
             },
             {
               preserveState: true,
+              onSuccess:() =>{
+                this.details = {};
+              }
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              this.details = {};
-            }
-            swal.close();
-          });
       },
       createTargetSavings() {
         BlockToast.fire({ text: "creating..." });
@@ -283,14 +278,11 @@
             },
             {
               preserveState: true,
+              onSuccess:() =>{
+                this.details = {};
+              }
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              this.details = {};
-            }
-            swal.close();
-          });
       },
       addFundsToThisSavings() {
         BlockToast.fire({ text: "Adding funds to your savings ..." });
@@ -302,14 +294,11 @@
             },
             {
               preserveState: true,
+              onSuccess:() =>{
+                $("#fundThisSavingsModal").modal("hide");
+              }
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              $("#fundThisSavingsModal").modal("hide");
-            }
-            swal.close();
-          });
       },
     },
   };

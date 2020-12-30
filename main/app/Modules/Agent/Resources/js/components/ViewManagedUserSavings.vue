@@ -107,14 +107,11 @@
             this.$route("agent.savings.smart.initialise", this.appUser.phone),
             {
               ...this.details,
+            },{
+              OnSuccess:() => this.details = {},
+              OnFinish:() =>swal.close(),
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              this.details = {};
-            }
-            swal.close();
-          });
       },
       addFundsToThisSavings() {
         BlockToast.fire({ text: "Adding funds to savings ..." });
@@ -131,14 +128,10 @@
             },
             {
               preserveState: true,
+              OnSuccess:() => $("#fundThisSavingsModal").modal("hide"),
+              OnFinish:() => swal.close(),
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              $("#fundThisSavingsModal").modal("hide");
-            }
-            swal.close();
-          });
       },
     },
   };

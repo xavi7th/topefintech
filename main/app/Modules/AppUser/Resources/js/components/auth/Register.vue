@@ -182,21 +182,11 @@
         BlockToast.fire({
           text: "Setting up your account...",
         });
-        let formData = new FormData();
-
-        _.forEach(this.details, (val, key) => {
-          formData.append(key, val);
-        });
 
         this.$inertia
-          .post(this.$route("appuser.register"), formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
+          .post(this.$route("appuser.register"), this.details, {
+           onFinish:()=> this.formSubmitted = true,
           })
-          .then((rsp) => {
-            this.formSubmitted = true;
-          });
       },
     },
   };

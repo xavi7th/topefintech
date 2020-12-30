@@ -225,22 +225,17 @@
           text: "Initialising transaction ...",
         });
         this.$inertia
-          .visit(this.$route("appuser.paystack.initialise"), {
-            method: "get",
-            data: {
+          .get(this.$route("appuser.paystack.initialise"), {
               amount: amount || this.details.amount,
               description:
-                "Fund savings into account of " +
-                this.$options.filters.Naira(amount),
+                "Fund savings into account of " + this.$options.filters.Naira(amount),
             },
+            {
             replace: false,
             preserveState: false,
             preserveScroll: true,
             only: ["errors", "flash"],
           })
-          .then(() => {
-            displayResponse();
-          });
       },
       withdrawSavings(savings, description) {
         swalPreconfirm
@@ -252,9 +247,10 @@
               return this.$inertia
                 .post(this.$route("appuser.withdraw.create", savings.id), {
                   description,
-                })
-                .then((rsp) => {
-                  return true;
+                },{
+                  onSuccess:() =>{
+                    return true
+                  }
                 })
                 .catch((error) => {
                   if (error.response) {
@@ -266,7 +262,6 @@
             },
           })
           .then((val) => {
-            // debugger;
 
             if (val.isDismissed) {
               Toast.fire({
@@ -275,16 +270,6 @@
                 position: "center",
               });
             } else if (val.value) {
-              if (this.$page.props.errors.length) {
-                ToastLarge.fire({
-                  title: "Oops",
-                  html: _.join(this.$page.props.errors.amount, "<br>"),
-                  position: "bottom",
-                  icon: "error",
-                  timer: 10000,
-                });
-              }
-              this.displayResponse(10000);
 
               if (this.$page.props.flash.verification_needed) {
                 swal
@@ -314,7 +299,6 @@
                               otp,
                             })
                             .then(() => {
-                              console.log(getErrorString(this.$page.props.errors));
                               if (this.$page.props.flash.success) {
                                 return true;
                               } else if (
@@ -351,7 +335,6 @@
                   });
               }
             }
-            this.displayErrors(10000);
           });
       },
       withdrawInterests(savings, description) {

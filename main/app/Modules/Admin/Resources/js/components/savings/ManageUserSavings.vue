@@ -198,16 +198,10 @@
               ...this.details
             },
             {
-              preserveState: true
+              preserveState: true,
+              onSuccess: () => $("#fundThisSavingsModal").modal("hide")
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              $("#fundThisSavingsModal").modal("hide");
-            }
-            this.displayResponse()
-            this.displayErrors(7000)
-          });
       },
       removeFundsFromThisSavings() {
         BlockToast.fire({ text: "Removing funds from this savings ..." });
@@ -219,15 +213,11 @@
               ...this.details
             },
             {
-              preserveState: true
+              preserveState: true,
+              onSuccess: () => $("#defundThisSavingsModal").modal("hide"),
+              onFinish:() => swal.close()
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              $("#defundThisSavingsModal").modal("hide");
-            }
-            swal.close();
-          });
       },
       addFundsToSavings() {
         BlockToast.fire({ text: "Adding funds to this savings ..." });
@@ -243,16 +233,14 @@
               ...this.details
             },
             {
-              preserveState: true
+              preserveState: true,
+              onSuccess:() => $("#fundSavingsModal").modal("hide"),
+              onFinish:() => {
+                this.details = {}
+                // swal.close();
+              }
             }
           )
-          .then(() => {
-            if (this.flash.success) {
-              this.details = {};
-              $("#fundSavingsModal").modal("hide");
-            }
-            swal.close();
-          });
       }
     }
   };

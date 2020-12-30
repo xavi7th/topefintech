@@ -192,10 +192,6 @@
               only: ["investment_list", "errors", "flash"],
             }
           )
-          .then(() => {
-            this.displayResponse(10000);
-            this.displayErrors(10000);
-          });
       },
 
       updateInvestmentPlan() {
@@ -209,10 +205,6 @@
             preserveScroll: true,
             only: ["investment_list", "errors", "flash"],
           })
-          .then(() => {
-            this.displayResponse(10000);
-            this.displayErrors(10000);
-          });
       },
 
       deleteInvestment(id) {
@@ -226,10 +218,6 @@
             preserveScroll: true,
             only: ["investment_list", "errors", "flash"],
           })
-          .then(() => {
-            this.displayResponse(10000);
-            this.displayErrors(10000);
-          });
       },
     },
   };

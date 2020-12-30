@@ -356,17 +356,11 @@
             replace: false,
             preserveState: true,
             preserveScroll: true,
-            only:['errors', 'flash', 'user_details']
-          })
-          .then((rsp) => {
-
-            if (_.size(this.$page.props.errors) > 0) {
+            only:['errors', 'flash', 'user_details'],
+            onError:()=>{
               this.formSubmitted = true;
             }
-
-            this.displayResponse();
-            this.displayErrors();
-          });
+          })
       },
     },
   };

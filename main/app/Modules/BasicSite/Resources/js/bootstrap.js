@@ -165,6 +165,9 @@ Inertia.on('success', (e) => {
       timer: 3000
     } );
   }
+  else {
+    swal.close();
+  }
 })
 
 Inertia.on('error', (e) => {
@@ -174,7 +177,8 @@ Inertia.on('error', (e) => {
     title: "Error",
     html: getErrorString( e.detail.errors ),
     icon: "error",
-    timer:10000 //milliseconds
+    timer:10000, //milliseconds
+    footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmoniehq.org">hello@smartmoniehq.org</a>`,
   } );
 })
 
