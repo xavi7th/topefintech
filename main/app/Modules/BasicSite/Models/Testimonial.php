@@ -53,7 +53,7 @@ class Testimonial extends Model
   static function superAdminRoutes()
   {
     Route::prefix('site-contents/testimonials')->name('superadmin.manage_site_contents.')->group(function () {
-      Route::get('', [self::class, 'superAdminGetTestimonials'])->name('manage_testimonials')->defaults('extras', ['icon' => 'fas fa-wrench']);
+      Route::get('', [self::class, 'superAdminGetTestimonials'])->name('testimonials')->defaults('extras', ['icon' => 'fas fa-wrench']);
       Route::post('create', [self::class, 'createTestimonial'])->name('testimonial.create')->defaults('extras', ['icon' => 'fas fa-comment']);
       Route::put('{testimonial}/update', [self::class, 'updateTestimonial'])->name('testimonial.update')->defaults('extras', ['icon' => 'fas fa-comment']);
       Route::delete('{testimonial}/delete', [self::class, 'deleteTestimonial'])->name('testimonial.delete');

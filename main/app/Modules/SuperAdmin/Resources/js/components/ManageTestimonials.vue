@@ -89,12 +89,12 @@
                 <label for="testimonial">
                   Testimonial Details
                 </label>
-                 <ckeditor
-                    :editor="editor"
-                    v-model="details.testimonial"
-                    :config="editorConfig"
-                    tag-name="textarea"
-                  ></ckeditor>
+                <textarea
+                  type="text"
+                  class="form-control"
+                  id="testimonial"
+                  v-model="details.testimonial"
+                ></textarea>
               </div>
 
               <div class="col-12">
@@ -156,19 +156,12 @@
 
             <div class="col-12">
               <label for="update-testimonial"> Testimonial</label>
-              <!-- <textarea
+              <textarea
                 type="text"
                 class="form-control"
                 id="update-testimonial"
                 v-model="details.testimonial"
-              ></textarea> -->
-              <ckeditor
-                :editor="editor"
-                v-model="details.testimonial"
-                :config="editorConfig"
-                tag-name="textarea"
-              ></ckeditor>
-
+              ></textarea>
             </div>
           </div>
           <div slot="modal-buttons">
@@ -191,8 +184,6 @@
 <script>
   import { mixins, errorHandlers } from "@dashboard-assets/js/config";
   import Layout from "@superadmin-assets/js/SuperAdminAppComponent.vue";
-  import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-  import { editorConfig } from "@basicsite-assets/js/bootstrap";
 
   export default {
     name: "ManageTestimonials",
@@ -201,8 +192,6 @@
     components: { Layout },
     data: () => {
       return {
-        editor: ClassicEditor,
-        editorConfig,
         details: {
           testimonial:''
         },
@@ -216,16 +205,10 @@
 
         this.details.img = this.$refs.userImage.files[0];
 
-          let formData = new FormData();
-
-        _.forEach(this.details, (val, key) => {
-          formData.append(key, val);
-        });
-
         this.$inertia
           .post(
             this.$route("superadmin.manage_site_contents.testimonial.create"),
-            formData,
+            this.details,
             {
               preserveState: true,
               preserveScroll: true,

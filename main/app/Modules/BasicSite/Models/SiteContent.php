@@ -2,6 +2,8 @@
 
 namespace App\Modules\BasicSite\Models;
 
+use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\BasicSite\Models\TeamMember;
@@ -20,27 +22,41 @@ class SiteContent extends Model
 
      static function getFAQs():string
      {
-       return self::whereType('faqs')->first()->content;
+       return optional(self::whereType('faqs')->first())->content;
      }
 
      static function setFAQs(string $content):void
      {
        self::updateOrCreate([
-         'name' => 'faqs'
+         'type' => 'faqs'
        ],[
          'content' => $content
        ]);
      }
 
-     static function getPrivacy(): string
+     static function getPrivacyPolicy(): ?string
      {
-       return self::whereType('privacy_policy')->first()->content;
+       return optional(self::whereType('privacy_policy')->first())->content;
      }
 
-     static function setPrivacy(string $content):void
+     static function setPrivacyPolicy(string $content):void
      {
        self::updateOrCreate([
-         'name' => 'privacy_policy'
+         'type' => 'privacy_policy'
+       ],[
+         'content' => $content
+       ]);
+     }
+
+     static function getTermnsOfUse(): ?string
+     {
+       return optional(self::whereType('terms_of_use')->first())->content;
+     }
+
+     static function setTermsOfUse(string $content):void
+     {
+       self::updateOrCreate([
+         'type' => 'terms_of_use'
        ],[
          'content' => $content
        ]);
@@ -64,12 +80,52 @@ class SiteContent extends Model
 
   static function superAdminRoutes()
   {
-    Route::prefix('site-contents/faqs')->name('superadmin.manage_site_contents.')->group(function () {
-      Route::get('', [self::class, 'superAdminGetTestimonials'])->name('manage_faqs')->defaults('extras', ['icon' => 'fas fa-wrench']);
-      Route::post('create', [self::class, 'createTestimonial'])->name('create')->defaults('extras', ['icon' => 'fas fa-wrench']);
-      Route::put('{testimonial}/update', [self::class, 'updateTestimonial'])->name('update')->defaults('extras', ['icon' => 'fas fa-wrench']);
-      Route::delete('{testimonial}/delete', [self::class, 'deleteTestimonial'])->name('delete');
+    Route::prefix('site-contents/terms-of-use')->name('superadmin.manage_site_contents.terms_of_use')->group(function () {
+      Route::get('', [self::class, 'superAdminGetTermsOfUse'])->name('')->defaults('extras', ['icon' => 'fas fa-wrench']);
+      Route::post('update', [self::class, 'updateTermsOfUse'])->name('.update');
+    });
+
+    Route::prefix('site-contents/privacy-policy')->name('superadmin.manage_site_contents.privacy_policy')->group(function () {
+      Route::get('', [self::class, 'superAdminGetPrivacyPolicy'])->name('')->defaults('extras', ['icon' => 'fas fa-wrench']);
+      Route::post('update', [self::class, 'updatePrivacyPolicy'])->name('.update');
     });
   }
+
+  public function superAdminGetTermsOfUse(Request $request)
+  {
+    return Inertia::render('SuperAdmin,ManageTermsOfUse', [
+      'terms_of_use' => self::getTermnsOfUse()
+    ]);
+  }
+
+  public function updateTermsOfUse(Request $request)
+  {
+    $validatedData = $request->validate([
+      'terms_of_use' => 'required|string'
+    ]);
+
+    self::setTermsOfUse($validatedData['terms_of_use']);
+
+    return back()->withFlash(['success'=> 'Successfully set the terms of use on the site. ']);
+  }
+
+  public function superAdminGetPrivacyPolicy(Request $request)
+  {
+    return Inertia::render('SuperAdmin,ManagePrivacyPolicy', [
+      'privacy_policy' => self::getPrivacyPolicy()
+    ]);
+  }
+
+  public function updatePrivacyPolicy(Request $request)
+  {
+    $validatedData = $request->validate([
+      'privacy_policy' => 'required|string'
+    ]);
+
+    self::setPrivacyPolicy($validatedData['privacy_policy']);
+
+    return back()->withFlash(['success'=> 'Successfully set the privacy policy on the site. ']);
+  }
+
 
 }
