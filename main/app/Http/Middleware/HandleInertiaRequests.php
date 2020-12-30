@@ -40,7 +40,7 @@ class HandleInertiaRequests extends Middleware
   public function share(Request $request)
   {
     return array_merge(parent::share($request), [
-      'app' => [
+      'app' => fn() => [
         'name' => config('app.name'),
         'whatsapp' => config('app.whatsapp'),
         'address' => config('app.address'),
@@ -63,11 +63,6 @@ class HandleInertiaRequests extends Middleware
         ];
       },
       'flash' => fn () => Session::get('flash') ?? (object)[],
-      // 'errors' => function () {
-      //   return Session::get('errors')
-      //     ? Session::get('errors')->getBag('default')->getMessages()
-      //     : (object)[];
-      // },
     ]);
   }
 

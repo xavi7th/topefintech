@@ -141,9 +141,6 @@ InertiaProgress.init({
 
 Inertia.on('progress', (event) => {
   console.log(event);
-  if (event.detail.progress.percentage) {
-    NProgress.set((event.detail.progress.percentage / 100) * 0.9)
-  }
 })
 
 Inertia.on('success', (e) => {

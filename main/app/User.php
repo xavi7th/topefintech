@@ -128,7 +128,7 @@ class User extends Authenticatable implements JWTSubject //implements MustVerify
     } elseif ($this->isAdmin()) {
       return get_related_routes('admin.', ['GET']);
     } elseif ($this->isSuperAdmin()) {
-      return get_related_routes('superadmin.', ['GET']);
+      return (object)get_heirachical_related_routes('superadmin.', ['GET'], true);
     } else {
       return get_related_routes('app.', ['GET']);
     }
