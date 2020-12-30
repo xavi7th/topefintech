@@ -47,7 +47,7 @@
           <div class="row">
             <div class="col-12">
               <div class="serDetailContent noMar">
-                <p>To apply, kindly send a copy of your curriculum vitae (CV) to jobs@smartmonie.org. State your job title of interest.</p>
+                <p>To apply, kindly send a copy of your curriculum vitae (CV) to jobs@smartmonie.ng. State your job title of interest.</p>
                 <h5>NB</h5>
                 <p>
                   <br />* We are an equal opportunity employer.

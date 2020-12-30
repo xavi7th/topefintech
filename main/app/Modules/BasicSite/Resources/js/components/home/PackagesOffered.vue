@@ -3,8 +3,8 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="sec_title">
-           3 ways to build your savings
+          <h2 class="sec_title text-capitalize">
+           Three ways to grow your money
           </h2>
           <!-- <p class="sec_desc">
             Simply import the sample files we ship with the theme and the core structure for your site is already

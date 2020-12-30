@@ -10,11 +10,10 @@
               and it is secured by 256 bits SSL security encryption to ensure that your information is completely protected from fraud.
             </p>
             <p>
-              We offer <b>best-in-class investments</b>. We invest in low risk fixed income securities which include treasury bills, government bonds, and professionally managed mutual funds. S grow your money confidently
-              by investing in pre-vetted investment opportunities.
+              We offer <b>best-in-class investments</b>. We invest in risk free capital markets, mid-stream petroleum marketing, and professionally managed mutual funds. We partner in on only pre-vetted investment opportunities.
             </p>
             <h5>
-              Never out of funds when you need it the most. Saving and investing money with {{$page.props.app.name}} means your money works hard all day, everyday.
+               Investing with {{ $page.props.app.name }} means your money works hard for you all day every day.
             </h5>
           </div>
         </div>

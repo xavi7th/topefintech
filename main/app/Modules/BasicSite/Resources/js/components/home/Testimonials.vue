@@ -7,8 +7,7 @@
            Financial Education is Key to Long lasting Wealth
           </h2>
           <p class="sec_desc">
-            Learn and grow. We are here to help you when you need financial
-            support and the required training to get your financial goals on track.
+            Learn and grow... <inertia-link href="">Here</inertia-link>
           </p>
         </div>
       </div>

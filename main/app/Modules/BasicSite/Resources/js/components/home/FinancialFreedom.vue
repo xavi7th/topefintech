@@ -15,8 +15,8 @@
             <!-- <i class="flaticon-money"></i> -->
             <!-- <h1>11% <span>pa</span></h1> -->
             <!-- <div class="clearfix"></div> -->
-            <h4> Plan Money</h4>
-            <p>The future can be even brighter but a goal without a plan is just a wish. Use our tools to plan ahead for housing, education, retirement, family & a lot more.</p>
+            <h4>1. Ratify Regular Savings</h4>
+            <p>The future can be brighter if it's goal oriented. However, a goal without small daily responsibilities is just a wish. Our tools can help you save or target save towards achieving several goals like house projects, education, retirement, properties, items & lots more.</p>
             <!-- <h5>1 month installment</h5> -->
           </div>
         </div>
@@ -25,8 +25,8 @@
             <!-- <i class="flaticon-mortgage-loan"></i> -->
             <!-- <h1>37% <span>pa</span></h1> -->
             <!-- <div class="clearfix"></div> -->
-            <h4>Save Money</h4>
-            <p>You deserve good things. Grow your savings on your own terms with our completely automated process & plans.</p>
+            <h4>2. Invest Your Savings</h4>
+            <p>Everyone deserve the  good life and of course good things can only be achieved by strategies. You can leverage our secure investment vehicles where you can also regularly compound your returns.</p>
             <!-- <h5>6 - 120 months installment</h5> -->
           </div>
         </div>
@@ -35,8 +35,8 @@
             <!-- <i class="flaticon-loan-1"></i> -->
             <!-- <h1>10% <span>/mo</span></h1> -->
             <!-- <div class="clearfix"></div> -->
-            <h4>Invest Money</h4>
-            <p>We make investment simpler than it sounds. Invest in mutual funds tailored to you and your financial position, and watch the returns keep rolling in</p>
+            <h4> 3. Spend From Interests </h4>
+            <p>We teach profound personal finance education in SmartMonie. You get to follow proven practical steps that ensure true literacy. When you save money, invest your savings and aim to spend mostly from your interests. Your financial position will increase exponentially which can only ensure financial freedom.</p>
             <!-- <h5>3 - 120 months installment</h5> -->
           </div>
         </div>

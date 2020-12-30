@@ -116,7 +116,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-12">
+            <!-- <div class="col-12">
               <div class="helpingPost rounded-0 m-0 pt-4">
                 <h3 class="text-left mx-0">Our contact details are:</h3>
                 <div class="row ml-md-5">
@@ -169,7 +169,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </section>
