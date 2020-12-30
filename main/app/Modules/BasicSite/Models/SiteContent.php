@@ -36,7 +36,7 @@ class SiteContent extends Model
 
      static function getPrivacyPolicy(): self
      {
-       return self::whereType('privacy_policy')->first();
+       return self::whereType('privacy_policy')->firstOrNew();
      }
 
      static function setPrivacyPolicy(string $content):void
@@ -50,7 +50,7 @@ class SiteContent extends Model
 
      static function getTermnsOfUse(): self
      {
-       return self::whereType('terms_of_use')->first();
+       return self::whereType('terms_of_use')->firstOrNew();
      }
 
      static function setTermsOfUse(string $content):void
@@ -140,7 +140,14 @@ class SiteContent extends Model
       'upload' => 'required|file|image'
     ]);
 
-    $urls = compress_image_upload('upload', 'content-images/', 'content-images/thumb/', 1920, true, 300);
+    try {
+      $urls = compress_image_upload('upload', 'content-images/', 'content-images/thumb/', 1920, true, 300);
+    } catch (\Throwable $th) {
+
+      return response()->json([
+                "error" => [ "message" => "The image upload failed because " . $th->getMessage() ]
+      ], $th->getCode());
+    }
 
     return response()->json(['urls' => [
       'default' => $urls['thumb_url'],

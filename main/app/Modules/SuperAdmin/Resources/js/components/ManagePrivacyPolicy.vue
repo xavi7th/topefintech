@@ -56,7 +56,7 @@
         editorConfig: editorConfig(route('superadmin.manage_site_contents.image.upload'), this.csrf_token),
         editorDisabled:true,
         details: {
-          privacy_policy: this.privacy_policy || 'Privacy Policy not yet specified'
+          privacy_policy: this.privacy_policy
         },
       };
     },

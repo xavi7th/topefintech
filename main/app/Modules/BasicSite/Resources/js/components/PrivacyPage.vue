@@ -41,6 +41,12 @@
 
 <style lang="scss" scoped>
   .privacyPage {
+    min-height: 20vh;
+
+    @media (max-width: 767px) {
+      min-height: 5vh;
+    }
+
     h3 {
       color: #27b3ff;
       font-weight: 500;
