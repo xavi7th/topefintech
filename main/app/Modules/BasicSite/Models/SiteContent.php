@@ -34,9 +34,9 @@ class SiteContent extends Model
        ]);
      }
 
-     static function getPrivacyPolicy(): ?string
+     static function getPrivacyPolicy(): self
      {
-       return optional(self::whereType('privacy_policy')->first())->content;
+       return self::whereType('privacy_policy')->first();
      }
 
      static function setPrivacyPolicy(string $content):void
@@ -48,9 +48,9 @@ class SiteContent extends Model
        ]);
      }
 
-     static function getTermnsOfUse(): ?string
+     static function getTermnsOfUse(): self
      {
-       return optional(self::whereType('terms_of_use')->first())->content;
+       return self::whereType('terms_of_use')->first();
      }
 
      static function setTermsOfUse(string $content):void
@@ -98,7 +98,7 @@ class SiteContent extends Model
   public function superAdminGetTermsOfUse(Request $request)
   {
     return Inertia::render('SuperAdmin,ManageTermsOfUse', [
-      'terms_of_use' => self::getTermnsOfUse()
+      'terms_of_use' => self::getTermnsOfUse()->content
     ]);
   }
 
@@ -116,7 +116,7 @@ class SiteContent extends Model
   public function superAdminGetPrivacyPolicy(Request $request)
   {
     return Inertia::render('SuperAdmin,ManagePrivacyPolicy', [
-      'privacy_policy' => self::getPrivacyPolicy(),
+      'privacy_policy' => self::getPrivacyPolicy()->content,
       'csrf_token' => csrf_token()
     ]);
   }

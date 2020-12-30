@@ -8,27 +8,18 @@
             <div class="col-lg-12">
               <div class="bannerTitle text-left">
                 <h2>Privacy Policy</h2>
-                <small>Last updated: 7/6/2019 10:09:18 AM</small>
+                <small>Last updated: {{ privacy_policy.updated_at }}</small>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <!-- Page Banner -->
 
-      <!-- Common Section -->
       <section class="pb-5">
         <div class="container">
           <div class="row">
             <div class="col-lg-12 col-md-12 faqPdRight">
-              <div class="privacyPage pt-0">
-                <h3>Accessing Your Information</h3>
-                <p>
-                  You must notify us of any change in your Personal Information by updating your SmartMonie
-                  account profile through our Services. Any changes will affect only future uses of your Personal
-                  Information.
-                </p>
-              </div>
+              <div class="privacyPage pt-0" v-html="privacy_policy.content"></div>
             </div>
           </div>
         </div>
@@ -42,6 +33,7 @@
   import Layout from "@basicsite-components/BasicSiteAppComponent";
   export default {
     name: "PrivacyPage",
+    props:['privacy_policy'],
     components: { Layout },
     mixins: [mixins]
   };

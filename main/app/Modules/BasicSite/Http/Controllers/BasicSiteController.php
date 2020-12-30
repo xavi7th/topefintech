@@ -7,10 +7,8 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\BasicSite\Models\Message;
-use App\Modules\BasicSite\Models\Testimonial;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\BasicSite\Http\Requests\ContactFormValidation;
-use App\Modules\BasicSite\Transformers\TestimonialTransformer;
 use App\Modules\AppUser\Notifications\NewContactFormMessageNotification;
 use App\Modules\BasicSite\Models\SiteContent;
 
@@ -30,7 +28,7 @@ class BasicSiteController extends Controller
       Route::get('/', [self::class, 'index'])->name('app.home');
       Route::get('/frequently-asked-questions', [self::class, 'faqs'])->name('app.faqs');
       Route::get('/careers', [self::class, 'careers'])->name('app.career')->defaults('extras', ['nav_skip' => true]);
-      Route::get('/privacy', [self::class, 'showPrivacyPage'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
+      Route::get('/our-privacy-policy', [self::class, 'showPrivacyPage'])->name('app.privacy')->defaults('extras', ['nav_skip' => true]);
       Route::get('/terms-and-conditions', [self::class, 'showTermsPage'])->name('app.terms')->defaults('extras', ['nav_skip' => true]);
       Route::get('/contact-us', [self::class, 'showContactForm'])->name('app.contact_us');
       Route::post('/contact', [self::class, 'sendContactMessage'])->name('app.contact');
@@ -57,12 +55,16 @@ class BasicSiteController extends Controller
 
   public function showPrivacyPage()
   {
-    return Inertia::render('BasicSite,PrivacyPage');
+    return Inertia::render('BasicSite,PrivacyPage',[
+      'privacy_policy' => SiteContent::getPrivacyPolicy()
+    ]);
   }
 
   public function showTermsPage()
   {
-    return Inertia::render('BasicSite,TermsPage');
+    return Inertia::render('BasicSite,TermsPage',[
+      'terms_of_use' => SiteContent::getTermnsOfUse()
+    ]);
   }
 
   public function showContactForm()

@@ -22,6 +22,18 @@ html {
     }
 }
 
+/**
+* ! Make images that are aligned to the side in CK Editor align in the final html
+*/
+.image.image_resized.image-style-side{
+  float: right !important;
+  margin-left: 15px;
+
+  img{
+    max-width: 100% !important;
+  }
+}
+
 .header_bg_1 .welcome_text h1,
 .header_bg_2 .welcome_text h1 {
     font-size: 2.5rem;
