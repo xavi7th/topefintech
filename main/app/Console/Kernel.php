@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
       ->withoutOverlapping(10)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1process-interests.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Failed to successfully process interests for all users');
+        ActivityLog::notifySuperAdmins('Failed to successfully process interests for all users');
       });
 
     $schedule->command('savings:auto-deduct-savings')
@@ -47,42 +47,42 @@ class Kernel extends ConsoleKernel
       ->withoutOverlapping(180)
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1autosave-deductions-log.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Processing auto save deductions failed');
+        ActivityLog::notifySuperAdmins('Processing auto save deductions failed');
       });
 
     $schedule->command('savings:notify-about-to-mature-savings')
     ->daily()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1notify-about-to-mature-savings-log.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Processing about to mature savings notifications failed to complete successfully');
+        ActivityLog::notifySuperAdmins('Processing about to mature savings notifications failed to complete successfully');
       });
 
     $schedule->command('savings:process-mature-savings')
     ->daily()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1process-mature-savings-log.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Processing mature savings failed to complete successfully');
+        ActivityLog::notifySuperAdmins('Processing mature savings failed to complete successfully');
       });
 
     $schedule->command('savings:unlock-due-interests')
     ->daily()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1unlock-due-interests-log.cson')
       ->onFailure(function () {
-      ActivityLog::notifyAdmins('Unlocking due interests of smart savings failed to complete successfully');
+      ActivityLog::notifySuperAdmins('Unlocking due interests of smart savings failed to complete successfully');
     });
 
     $schedule->command('savings:compound-due-interests')
     ->daily()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1compound-due-interests-log.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
+        ActivityLog::notifySuperAdmins('Compounding due interests of target savings failed to complete successfully');
       });
 
     $schedule->command('database:backup')
     ->daily()
       ->sendOutputTo(Module::getModulePath('Admin/Console') . '/1database-backup-log.cson')
       ->onFailure(function () {
-        ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
+        ActivityLog::notifySuperAdmins('Compounding due interests of target savings failed to complete successfully');
       });
 
     // $schedule->job(new SendLoginNotification(AppUser::find(1)))->emailOutputTo('xavi7th@gmail.com')->everyFiveMinutes();
