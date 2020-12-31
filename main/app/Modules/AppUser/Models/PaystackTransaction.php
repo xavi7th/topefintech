@@ -63,6 +63,13 @@ class PaystackTransaction extends Model
    */
   static function initializeTransaction(Request $request, float $amount_in_naira, string $description, $callback_url)
   {
+    /**
+     * !Paystack transaction fails when the user has no email set
+     */
+     if (!$request->user()->email) {
+      return generate_422_error(trans('appuser::messages.savings.incomplete_kyc'));
+    }
+
     $url = config('services.paystack.initialisation_url');
     $key = config('services.paystack.secret_key');
     $trxrf = unique_random('paystack_transactions', 'transaction_reference', 'TRF-', 21);

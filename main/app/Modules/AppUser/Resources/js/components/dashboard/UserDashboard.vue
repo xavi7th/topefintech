@@ -16,7 +16,6 @@
     <template v-slot:modals>
       <modal modalId="otherAmountSavingsModal" modalTitle="Save Funds">
         <form class="#">
-          <FlashMessage />
           <div class="row vertical-gap sm-gap">
             <div class="col-12">
               <label for="save-amount">Amount to save</label>

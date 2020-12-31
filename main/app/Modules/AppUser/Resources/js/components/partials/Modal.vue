@@ -1,6 +1,6 @@
 <script>
   export default {
-    name: "ModalDialog",
+    name: "Modal",
     props: {
       modalId: String,
       modalTitle: String,
