@@ -54,17 +54,17 @@ mix
       onSuccess: false
     }
   } )
-  .extract()
+  .extract( [ 'vue', 'sweetalert2', 'axios', 'lodash', 'vue-plugin-load-script','@inertiajs/inertia','@inertiajs/inertia-vue','vue2-filters', 'jquery' ] )
   .then( () => {
     const _ = require( 'lodash' )
 
     var crypto = require( "crypto" );
     const saltCssId = crypto.randomBytes( 7 )
       .toString( 'hex' );
-    console.log(
-      '\x1b[41m%s\x1b[0m',
-      saltCssId
-    )
+    // console.log(
+    //   '\x1b[41m%s\x1b[0m',
+    //   saltCssId
+    // )
 
     let oldManifestData = JSON.parse( fs.readFileSync( './public_html/mix-manifest.json', 'utf-8' ) )
     let newManifestData = {};

@@ -5,7 +5,7 @@ namespace App\Modules\Admin\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
-use App\Modules\Admin\Notifications\GenericAdminNotification;
+use App\Modules\SuperAdmin\Notifications\GenericSuperAdminNotification;
 
 class DatabaseBackup extends Command
 {
@@ -53,6 +53,6 @@ class DatabaseBackup extends Command
     exec($command, $output, $returnVar);
 
     dump(collect($this->notification)->implode(',' . PHP_EOL));
-    SuperAdmin::find(1)->notify(new GenericAdminNotification('Processed database backup', collect($this->notification)->implode(', ' . PHP_EOL)));
+    SuperAdmin::find(1)->notify(new GenericSuperAdminNotification('Processed database backup', collect($this->notification)->implode(', ' . PHP_EOL)));
   }
 }

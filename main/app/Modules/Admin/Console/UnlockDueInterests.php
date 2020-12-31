@@ -7,7 +7,7 @@ use RachidLaasri\Travel\Travel;
 use Illuminate\Support\Facades\DB;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
-use App\Modules\Admin\Notifications\GenericAdminNotification;
+use App\Modules\SuperAdmin\Notifications\GenericSuperAdminNotification;
 
 class UnlockDueInterests extends Command
 {
@@ -62,6 +62,6 @@ class UnlockDueInterests extends Command
     }
 
     dump(collect($this->notification)->implode(',' . PHP_EOL));
-    SuperAdmin::find(1)->notify(new GenericAdminNotification('Processed Mature Withdrawable Interests', collect($this->notification)->implode(', ' . PHP_EOL)));
+    SuperAdmin::find(1)->notify(new GenericSuperAdminNotification('Processed Mature Withdrawable Interests', collect($this->notification)->implode(', ' . PHP_EOL)));
   }
 }

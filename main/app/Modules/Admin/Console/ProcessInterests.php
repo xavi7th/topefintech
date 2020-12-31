@@ -7,7 +7,7 @@ use RachidLaasri\Travel\Travel;
 use Illuminate\Support\Facades\DB;
 use App\Modules\AppUser\Models\Savings;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
-use App\Modules\Admin\Notifications\GenericAdminNotification;
+use App\Modules\SuperAdmin\Notifications\GenericSuperAdminNotification;
 
 class ProcessInterests extends Command
 {
@@ -74,6 +74,6 @@ class ProcessInterests extends Command
     // });
 
     dump(collect($this->notification)->implode(',' . PHP_EOL));
-    SuperAdmin::find(1)->notify(new GenericAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ' . PHP_EOL)));
+    SuperAdmin::find(1)->notify(new GenericSuperAdminNotification('Processed Interest Logs', collect($this->notification)->implode(', ' . PHP_EOL)));
   }
 }
