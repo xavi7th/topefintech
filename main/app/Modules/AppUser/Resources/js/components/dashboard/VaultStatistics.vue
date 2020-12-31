@@ -62,8 +62,8 @@
                   <div class="rui-widget-title h2">
                     {{ portfolio.current_balance | Naira }}
                   </div>
-                  <small class="rui-widget-subtitle text-uppercase text-danger"
-                    >MATURED: {{ portfolio.name }} Savings</small
+                  <small class="rui-widget-subtitle text-uppercase text-danger text-center"
+                    >MATURED: <br> {{ portfolio.name }} Savings</small
                   >
                   <div class="d-flex">
                     <button
@@ -109,8 +109,8 @@
                   <div class="rui-widget-title h2">
                     {{ portfolio.current_balance | Naira }}
                   </div>
-                  <small class="rui-widget-subtitle text-uppercase text-danger"
-                    >Liquidated: {{ portfolio.name }} Savings</small
+                  <small class="rui-widget-subtitle text-uppercase text-danger text-center"
+                    >Liquidated: <br> {{ portfolio.name }} Savings</small
                   >
                   <div class="d-flex">
                     <button
@@ -216,9 +216,6 @@
         details: {},
       };
     },
-    updated() {
-      // this.displayErrors(10000);
-    },
     methods: {
       makeSavings(amount = null) {
         BlockToast.fire({
@@ -248,92 +245,59 @@
                 .post(this.$route("appuser.withdraw.create", savings.id), {
                   description,
                 },{
-                  onSuccess:() =>{
-                    return true
+                  onSuccess: page =>{
+                    if (!page.props.flash.error) {
+                       if (page.props.flash.verification_needed) {
+                        swal
+                          .fire({
+                            title: "OTP Required!",
+                            html: page.props.flash.verification_needed,
+                            icon: "info",
+                          })
+                          .then(() => {
+                            swal
+                              .fire({
+                                title: "Enter Verification OTP",
+                                input: "text",
+                                inputAttributes: {
+                                  autocapitalize: "off",
+                                  autocomplete: false,
+                                  required: true,
+                                },
+                                showCancelButton: false,
+                                focusCancel: false,
+                                allowOutsideClick: false,
+                                confirmButtonText: "Verify Withdrawal",
+                                showLoaderOnConfirm: true,
+                                preConfirm: (otp) => {
+                                  return this.$inertia.post(this.$route("appuser.withdraw.verify"), {otp})
+                                },
+                                allowOutsideClick: () => !swal.isLoading(),
+                              })
+                              .then((result) => {
+                                if (result.dismiss) {
+                                  swal.fire({
+                                    title: "Cancelled",
+                                    text: "Your withdrawal request cannot be processed without supplying your OTP. If you are yet to receive your OTP, kindly contact our support team",
+                                    icon: "info",
+                                    footer: `Our email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:${page.props.app.email}">${page.props.app.email}</a>`,
+                                  });
+                                }
+                              });
+                          });
+                      }
+                    }
                   }
                 })
-                .catch((error) => {
-                  if (error.response) {
-                    swal.showValidationMessage(error.response.data.message);
-                  } else {
-                    swal.showValidationMessage(`Request failed: ${error}`);
-                  }
-                });
             },
           })
           .then((val) => {
-
             if (val.isDismissed) {
               Toast.fire({
                 title: "Canceled",
                 icon: "info",
                 position: "center",
               });
-            } else if (val.value) {
-
-              if (this.$page.props.flash.verification_needed) {
-                swal
-                  .fire({
-                    title: "OTP Required!",
-                    html: this.$page.props.flash.verification_needed,
-                    icon: "info",
-                  })
-                  .then(() => {
-                    swal
-                      .fire({
-                        title: "Enter Verification OTP",
-                        input: "text",
-                        inputAttributes: {
-                          autocapitalize: "off",
-                          autocomplete: false,
-                          required: true,
-                        },
-                        showCancelButton: false,
-                        focusCancel: false,
-                        allowOutsideClick: false,
-                        confirmButtonText: "Verify Withdrawal",
-                        showLoaderOnConfirm: true,
-                        preConfirm: (otp) => {
-                          return this.$inertia
-                            .post(this.$route("appuser.withdraw.verify"), {
-                              otp,
-                            })
-                            .then(() => {
-                              if (this.$page.props.flash.success) {
-                                return true;
-                              } else if (
-                                this.$page.props.flash.error ||
-                                _.size(this.$page.props.errors) > 0
-                              ) {
-                                throw new Error(
-                                  this.$page.props.flash.error ||
-                                    getErrorString(this.$page.props.errors)
-                                );
-                              }
-                            })
-                            .catch((error) => {
-                              swal.showValidationMessage(error);
-                            });
-                        },
-                        allowOutsideClick: () => !swal.isLoading(),
-                      })
-                      .then((result) => {
-                        if (result.value && this.$page.props.flash.verifiation_succeded) {
-                          swal.fire({
-                            title: `Success`,
-                            html: this.$page.props.flash.success,
-                            icon: "success",
-                          });
-                        } else if (result.dismiss) {
-                          swal.fire({
-                            title: "Cancelled",
-                            text: "Your withdrawal request cannot be processed without supplying your OTP. If you are yet to receive your OTP, kindly contact our support team",
-                            icon: "info",
-                          });
-                        }
-                      });
-                  });
-              }
             }
           });
       },
@@ -347,108 +311,61 @@
               return this.$inertia
                 .post(this.$route("appuser.withdraw_interests.create", savings.id), {
                   description,
-                })
-                .then((rsp) => {
-                  return true;
-                })
-                .catch((error) => {
-                  if (error.response) {
-                    swal.showValidationMessage(error.response.data.message);
-                  } else {
-                    swal.showValidationMessage(`Request failed: ${error}`);
+                },{
+                  onSuccess: page => {
+                    if (page.props.flash.verification_needed) {
+                      swal
+                        .fire({
+                          title: "OTP Required!",
+                          html: page.props.flash.verification_needed,
+                          icon: "info",
+                        })
+                        .then(() => {
+                          swal
+                            .fire({
+                              title: "Enter Verification OTP",
+                              input: "text",
+                              inputAttributes: {
+                                autocapitalize: "off",
+                                autocomplete: false,
+                                required: true,
+                              },
+                              showCancelButton: false,
+                              focusCancel: false,
+                              allowOutsideClick: false,
+                              confirmButtonText: "Verify Withdrawal",
+                              showLoaderOnConfirm: true,
+                              preConfirm: (otp) => {
+                                return this.$inertia
+                                  .post(this.$route("appuser.withdraw_interests.verify"), {
+                                    otp,
+                                  })
+                              },
+                              allowOutsideClick: () => !swal.isLoading(),
+                            })
+                            .then((result) => {
+                              if (result.dismiss) {
+                                swal.fire({
+                                  title: "Cancelled",
+                                  text: "Your withdrawal request cannot be processed without supplying your OTP. If you are yet to receive your OTP, kindly contact our support team",
+                                  icon: "info",
+                                });
+                              }
+                            });
+                        });
+                    }
                   }
-                });
+                })
             },
           })
           .then((val) => {
-            // debugger;
-
             if (val.isDismissed) {
               Toast.fire({
                 title: "Canceled",
                 icon: "info",
                 position: "center",
               });
-            } else if (val.value) {
-              if (this.$page.props.errors.length) {
-                ToastLarge.fire({
-                  title: "Oops",
-                  html: _.join(this.$page.props.errors.amount, "<br>"),
-                  position: "bottom",
-                  icon: "error",
-                  timer: 10000,
-                });
-              }
-              this.displayResponse(10000);
-
-              if (this.$page.props.flash.verification_needed) {
-                swal
-                  .fire({
-                    title: "OTP Required!",
-                    html: this.$page.props.flash.verification_needed,
-                    icon: "info",
-                  })
-                  .then(() => {
-                    swal
-                      .fire({
-                        title: "Enter Verification OTP",
-                        input: "text",
-                        inputAttributes: {
-                          autocapitalize: "off",
-                          autocomplete: false,
-                          required: true,
-                        },
-                        showCancelButton: false,
-                        focusCancel: false,
-                        allowOutsideClick: false,
-                        confirmButtonText: "Verify Withdrawal",
-                        showLoaderOnConfirm: true,
-                        preConfirm: (otp) => {
-                          return this.$inertia
-                            .post(this.$route("appuser.withdraw_interests.verify"), {
-                              otp,
-                            })
-                            .then(() => {
-                              console.log(getErrorString(this.$page.props.errors));
-                              if (this.$page.props.flash.success) {
-                                return true;
-                              } else if (
-                                this.$page.props.flash.error ||
-                                _.size(this.$page.props.errors) > 0
-                              ) {
-                                throw new Error(
-                                  this.$page.props.flash.error ||
-                                    getErrorString(this.$page.props.errors)
-                                );
-                              }
-                            })
-                            .catch((error) => {
-                              swal.showValidationMessage(error);
-                            });
-                        },
-                        allowOutsideClick: () => !swal.isLoading(),
-                      })
-                      .then((result) => {
-                        console.log(result);
-
-                        if (result.value && this.$page.props.flash.verifiation_succeded) {
-                          swal.fire({
-                            title: `Success`,
-                            html: this.$page.props.flash.success,
-                            icon: "success",
-                          });
-                        } else if (result.dismiss) {
-                          swal.fire({
-                            title: "Cancelled",
-                            text: "Your withdrawal request cannot be processed without supplying your OTP. If you are yet to receive your OTP, kindly contact our support team",
-                            icon: "info",
-                          });
-                        }
-                      });
-                  });
-              }
             }
-            this.displayErrors(10000);
           });
       },
     },
