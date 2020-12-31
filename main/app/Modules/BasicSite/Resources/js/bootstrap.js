@@ -177,7 +177,7 @@ Inertia.on('success', (e) => {
       title: "Error",
       html: e.detail.page.props.flash.error,
       icon: "error",
-      timer: 3000
+      timer: 7000
     } );
   }
   else {
