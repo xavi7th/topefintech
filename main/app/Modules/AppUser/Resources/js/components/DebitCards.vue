@@ -25,7 +25,7 @@
               @click="deleteCard(debit_card)"
             >
               <span class="icon">
-                <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                <span class="fas fa-times"></span>
               </span>
             </button>
             <div :class="`card-body card${(idx % 5) + 1}`">
