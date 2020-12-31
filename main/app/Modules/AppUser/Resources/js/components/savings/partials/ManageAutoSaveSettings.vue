@@ -179,7 +179,7 @@
                   v-if="!$page.props.auth.user.isAdmin && !$page.props.auth.user.isSuperAdmin"
                 >
                   <span class="icon">
-                    <span data-feather="x" class="rui-icon rui-icon-stroke-1_5"></span>
+                    <span class="fas fa-times"></span>
                   </span>
                 </button>
               </td>
