@@ -342,7 +342,7 @@
 
   @inertia
 
-  <script src="{{ mix('js/dashboard-app-vendor.js') }}" async defer></script>
+  <script src="{{ mix('js/dashboard-app-vendor.js') }}"  defer></script>
   <script src="{{ mix('js/manifest.js') }}" defer></script>
   <script src="{{ mix('js/vendor.js') }}" defer></script>
   <script src="{{ mix('js/dashboard-app.js') }}" defer></script>
