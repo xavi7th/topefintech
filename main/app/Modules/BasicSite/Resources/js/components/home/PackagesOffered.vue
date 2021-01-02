@@ -6,10 +6,6 @@
           <h2 class="sec_title text-capitalize">
            Three ways to grow your money
           </h2>
-          <!-- <p class="sec_desc">
-            Simply import the sample files we ship with the theme and the core structure for your site is already
-            <br />mind that even if you don’t use the demo content, you’ll be much better off than with most other
-          </p> -->
         </div>
       </div>
       <div class="service_border">
@@ -29,7 +25,7 @@
                   </div>
                   <h4>Smart Save</h4>
                   <p>Make a habit of regular savings, withdraw anytime while earning lucrative interests daily.</p>
-                  <h6>1 month installment</h6>
+                  <h6>Withdraw Anytime</h6>
                 </div>
               </div>
             </div>
@@ -49,7 +45,7 @@
                   </div>
                   <h4>Target Save</h4>
                   <p>Buy more and get paid when you save on target anytime with savings compounded frequently.</p>
-                  <h6>6 - 120 months installment</h6>
+                  <h6>Withdrawable from 6 months</h6>
                 </div>
               </div>
             </div>
@@ -69,7 +65,6 @@
                   </div>
                   <h4>Invest</h4>
                   <p>Recieve monthly payouts when you make an investment or compound your investments to experience exponential growth.</p>
-                  <h6>3 - 120 months installment</h6>
                 </div>
               </div>
             </div>

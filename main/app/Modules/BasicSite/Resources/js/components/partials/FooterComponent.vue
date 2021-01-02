@@ -37,8 +37,8 @@
             <aside class="widget links">
               <h4>We are available:</h4>
               <p>
-                Monday - Saturday:
-                <br />08:00 AM - 08:00 PM CAT
+                {{ $page.props.app.opening_days }}:
+                <br />{{ $page.props.app.opening_hours }}
               </p>
             </aside>
           </div>
