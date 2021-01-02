@@ -222,8 +222,16 @@ figure.image{
 
 .callToAction_3{
   padding: 50px 0;
-      background-size: 110%;
-    text-align: center;
+  background-size: 110%;
+  text-align: center;
+
+  @media (max-width: 767px) {
+    padding-top: 10px;
+
+    a.common_btn{
+      float: none;
+    }
+  }
 
   .sec_title{
     font-size: 2rem;

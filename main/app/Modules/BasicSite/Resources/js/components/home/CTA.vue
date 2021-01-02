@@ -7,7 +7,7 @@
             We help you reach your financial goals.
           </h2>
         </div>
-        <div class="col-lg-3 col-md-4 text-right">
+        <div class="col-lg-3 col-md-4 text-center text-md-right mt-4 mt-md-0">
           <inertia-link class="common_btn" :href="$route('app.contact_us')">Contact Now</inertia-link>
         </div>
       </div>
