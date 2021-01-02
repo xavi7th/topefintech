@@ -342,11 +342,11 @@
 
   @inertia
 
-  <link rel="stylesheet" href="{{ mix('css/user-app.css') }}">
   <script src="{{ mix('js/dashboard-app-vendor.js') }}" async defer></script>
   <script src="{{ mix('js/manifest.js') }}" defer></script>
   <script src="{{ mix('js/vendor.js') }}" defer></script>
   <script src="{{ mix('js/dashboard-app.js') }}" defer></script>
+  <link rel="stylesheet" href="{{ mix('css/user-app.css') }}">
 </body>
 
 </html>

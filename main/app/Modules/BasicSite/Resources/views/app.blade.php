@@ -7,14 +7,14 @@
   <title>{{ config('app.name') }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/img/favicon.png">
-  <link rel="preload" href="/fonts/fontawesome-webfonte0a5.woff2?v=4.3.0" as="font" crossorigin="anonymous" />
+  <!-- <link rel="preload" href="/fonts/fontawesome-webfonte0a5.woff2?v=4.3.0" as="font" crossorigin="anonymous" />
   <link rel="preload" href="/fonts/Flaticon.woff2" as="font" crossorigin="anonymous" />
   <link rel="preload" href="/fonts/icofont.woff2" as="font" crossorigin="anonymous" />
   <link rel="preload" href="/fonts/fontawesome-webfonte0a5.woff?v=4.3.0" as="font" crossorigin="anonymous" />
   <link rel="preload" href="/fonts/fontawesome-webfonte0a5.eot?v=4.3.0" as="font" crossorigin="anonymous" />
   <link rel="preload" href="/fonts/Flaticon.eot" as="font" crossorigin="anonymous" />
   <link rel="preload" href="/fonts/Flaticon.woff" as="font" crossorigin="anonymous" />
-  <link rel="preload" href="/fonts/icofont.woff" as="font" crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/icofont.woff" as="font" crossorigin="anonymous" /> -->
   <style>
     .preloader {
       background: #fff;
@@ -214,11 +214,11 @@
 
   @inertia
 
-  <link rel="stylesheet" href="{{mix('css/app.css')}}">
   <script src="{{ mix('js/site-app-vendor.js') }}" defer></script>
   <script src="{{ mix('js/manifest.js') }}" defer></script>
   <script src="{{ mix('js/vendor.js') }}" defer></script>
   <script src="{{ mix('js/site-app.js') }}" defer></script>
+  <link rel="stylesheet" href="{{mix('css/app.css')}}">
 </body>
 
 </html>
