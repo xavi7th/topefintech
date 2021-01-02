@@ -699,12 +699,15 @@ class Savings extends Model
 
   public function liquidateSmartSavings(Request $request)
   {
+
     /**
      * @var Savings $smartSavings
      */
     $smartSavings = $request->user()->smart_savings;
 
     if (!$smartSavings->is_smart_savings()) throw ValidationException::withMessages(['err' => 'You can only liquidate your smart savings'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+     if (!$smartSavings->funded_at) throw ValidationException::withMessages(['err' => 'You can only liquidate your smart savings after you have funded it'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
     if ($smartSavings->funded_at->gte(now()->subDays(config('app.smart_savings_minimum_liquidation_duration')))) throw ValidationException::withMessages(['err' => 'You can only liquidate your smart savings after ' . config('app.smart_savings_minimum_liquidation_duration') . ' days'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
