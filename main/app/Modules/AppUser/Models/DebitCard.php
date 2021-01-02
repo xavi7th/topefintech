@@ -291,7 +291,7 @@ class DebitCard extends Model
     // dd($debitCard);
 
     if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user(), $returnResponse = true))) {
-      return back()->withFlash(['error' => 'An error occured']);
+      return redirect()->route('appuser.my-cards')->withError('An error occured');
     } else {
       DB::beginTransaction();
       /** Give the user value */
@@ -304,7 +304,7 @@ class DebitCard extends Model
 
       DB::commit();
 
-      return back()->withFlash(['success' => 'Done']);
+      return redirect()->route('appuser.my-cards')->withSuccess('Done');
     }
   }
 

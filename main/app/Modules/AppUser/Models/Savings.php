@@ -628,7 +628,7 @@ class Savings extends Model
   public function verifyLockMoreFunds(Request $request, self $savings)
   {
     if (!($rsp = PaystackTransaction::verifyPaystackTransaction($request->trxref, $request->user()))) {
-      return back()->withFlash(['error' => 'An error occured']);
+      return redirect()->route('appuser.savings')->withError('An error occured');
     } else {
 
       try {
@@ -641,16 +641,14 @@ class Savings extends Model
 
         $request->user()->notify(new NewSavingsSuccess($rsp['amount']));
 
-        if ($request->isApi()) {
-          return response()->json(['rsp' => 'Created'], 201);
-        } else {
-          return back()->withFlash(['success' => 'Congrats! Funds added to savings']);
-        }
+        if ($request->isApi()) return response()->json(['rsp' => 'Created'], 201);
+        return redirect()->route('appuser.savings')->withSuccess('Congrats! Funds added to savings');
       } catch (\Throwable $th) {
         if ($th->getCode() == 422) {
           return generate_422_error($th->getMessage());
         } else {
           ErrLog::notifySuperAdmin(auth()->user(), $th, 'Add more funds to savings failed');
+          return redirect()->route('appuser.savings')->withError('Add more funds to savings failed');
         }
       };
     }
