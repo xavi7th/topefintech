@@ -128,32 +128,10 @@ import { getErrorString } from '@dashboard-assets/js/config';
             preConfirm: () => {
               return this.$inertia
                 .put(this.$route("appuser.savings.smart.liquidate"))
-                .then(() => {
-                  if (this.$page.props.flash.success) {
-                    return true;
-                  } else if (
-                    this.$page.props.flash.error ||
-                    _.size(this.$page.props.errors) > 0
-                  ) {
-                    throw new Error(
-                      this.$page.props.flash.error || getErrorString(this.$page.props.errors)
-                    );
-                  }
-                })
-                .catch((error) => {
-                  swal.showValidationMessage(error);
-                });
-              return true;
             },
           })
           .then((result) => {
-            if (result.value && this.$page.props.flash.verifiation_succeded) {
-              swal.fire({
-                title: `Success`,
-                html: this.$page.props.flash.success,
-                icon: "success",
-              });
-            } else if (result.dismiss) {
+           if (result.dismiss) {
               swal.fire({
                 title: "Cancelled",
                 text:
