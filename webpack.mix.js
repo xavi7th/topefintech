@@ -25,8 +25,8 @@ mix.babelConfig( {
 mix.webpackConfig( {
   output: {
     //   chunkFilename: '[name].js?id=[chunkhash]',
-    filename: "[name].[chunkhash].js",
-    chunkFilename: "[name].[chunkhash].js",
+    filename: mix.inProduction() ? "[name].[contenthash].js" : "[name].[hash].js",
+    chunkFilename: mix.inProduction() ? "[name].[contenthash].js" : "[name].[hash].js",
   },
   plugins: [
     new CleanWebpackPlugin( {

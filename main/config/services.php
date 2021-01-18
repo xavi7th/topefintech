@@ -30,7 +30,6 @@ return [
     'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
   ],
   'paystack' => [
-    'key' => env('AWS_ACCESS_KEY_ID'),
     'initialisation_url' => env('PAYSTACK_INITIALISATION_URL', null),
     'verification_url' => env('PAYSTACK_VERIFICATION_URL', null),
     'charge_authorization_url' => env('PAYSTACK_CHARGE_AUTHORIZATION_URL', null),
