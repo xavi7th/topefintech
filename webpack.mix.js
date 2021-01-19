@@ -1,8 +1,10 @@
+const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const mix = require( 'laravel-mix' );
-const {
-  CleanWebpackPlugin
-} = require( 'clean-webpack-plugin' );
 const path = require( 'path' );
+
+require( 'laravel-mix-purgecss' );
+require( 'laravel-mix-bundle-analyzer' );
+
 let fs = require( 'fs-extra' )
 let modules = fs.readdirSync( './main/app/Modules' )
 
@@ -54,7 +56,25 @@ mix
       onSuccess: false
     }
   } )
-  .extract( [ 'vue', 'sweetalert2', 'axios', 'lodash', 'vue-plugin-load-script','@inertiajs/inertia','@inertiajs/inertia-vue','vue2-filters', 'jquery' ] )
+  .extract( [ 'vue', 'sweetalert2', 'axios', 'lodash', 'vue-plugin-load-script', '@inertiajs/inertia', '@inertiajs/inertia-vue', 'vue2-filters', 'jquery' ] )
+    .purgeCss( {
+      enabled: true,
+      extend: {
+        content: [
+          path.join( __dirname, "main/app/Modules/**/*.php" ),
+          // path.join(__dirname, "main/app/Modules/**/*.html"),
+          path.join(__dirname, "main/app/Modules/**/*.js"),
+          path.join( __dirname, "main/app/Modules/**/*.vue" ),
+        ],
+        safelist: {
+          standard: [ /[pP]aginat(e|ion)/, /active/, /page/, /disabled/, /^dt-/, /flaticon-(back|next)/],
+          deep: [ /[dD]ata[tT]able/ ],
+          greedy: [ /^dt/, /yay/, /fancy/, /modal/, /owl/ ]
+        },
+        rejected: true,
+        variables: true
+      }
+    } )
   .then( () => {
     const _ = require( 'lodash' )
 
@@ -97,9 +117,33 @@ mix
 
 if ( !mix.inProduction() ) {
   mix.sourceMaps();
-
 }
 
 if ( mix.inProduction() ) {
+  mix.bundleAnalyzer();
   mix.version();
 }
+
+mix.browserSync( {
+  proxy: 'topefintech.test',
+  // Disable UI completely
+  // ui: false,
+  // files: [
+  //   "wp-content/themes/**/*.css",
+  //   {
+  //       match: ["wp-content/themes/**/*.php"],
+  //       fn:    function (event, file) {
+  //           /** Custom event handler **/
+  //       }
+  //   }
+  // ],
+  // ghostMode: {
+  //   clicks: true,
+  //   forms: true,
+  //   scroll: false
+  // },
+  // notify: false,
+  // reloadDelay: 2000,
+  // // Don't append timestamps to injected files
+  // timestamps: false
+} )
