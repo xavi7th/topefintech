@@ -93,9 +93,20 @@ export const editorConfig = (uploadUrl, csrfToken = null) => {
     },
   }
 }
-
-window._ = require( 'lodash' )
 window.swal = require( 'sweetalert2' )
+window._ = {
+    endsWith: require( 'lodash/endsWith' ),
+    filter: require( 'lodash/filter' ),
+    forEach: require( 'lodash/forEach' ),
+    isString: require( 'lodash/isString' ),
+    map: require( 'lodash/map' ),
+    omit: require( 'lodash/omit' ),
+    pullAt: require( 'lodash/pullAt' ),
+    reduce: require( 'lodash/reduce' ),
+    size: require( 'lodash/size' ),
+    split: require( 'lodash/split' ),
+    startsWith: require( 'lodash/startsWith' ),
+}
 
 window.Toast = swal.mixin( {
     toast: true,
