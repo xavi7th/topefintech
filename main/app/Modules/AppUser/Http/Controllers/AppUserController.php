@@ -39,7 +39,7 @@ class AppUserController extends Controller
       VerificationController::routes();
 
 
-      Route::group(['middleware' => ['throttle:20,1', 'auth', 'verified_users'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
+      Route::group(['middleware' => ['throttle:20,1', 'auth', 'verified_users', 'active_users'], 'prefix' => AppUser::DASHBOARD_ROUTE_PREFIX], function () {
 
         Route::redirect('/', '/user/dashboard', 303);
         Route::get('dashboard', [self::class, 'loadDashboard'])->name('appuser.dashboard')->defaults('extras', ['icon' => 'fas fa-desktop']);

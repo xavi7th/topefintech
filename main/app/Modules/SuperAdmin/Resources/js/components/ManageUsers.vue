@@ -107,6 +107,16 @@
                         @click="veryfyUser(user.id)"
                         v-if="!user.verified_at"
                       >Verify</button>
+                      <button
+                        class="btn btn-sm btn-warning"
+                        @click="toggleActiveState(user.id)"
+                        v-if="user.verified_at && user.is_active"
+                      >Suspend</button>
+                      <button
+                        class="btn btn-sm btn-warning"
+                        @click="toggleActiveState(user.id)"
+                        v-if="!user.is_active"
+                      >Unsuspend</button>
                       <inertia-link
                         v-if="user.verified_at"
                         :href="$route('superadmin.user.profile', user.phone)"
@@ -164,6 +174,18 @@
 
         this.$inertia
           .put(this.$route("superadmin.user.verify", id), null, {
+            preserveState: false,
+            preserveScroll: true,
+            only: ["errors", "flash", "users"]
+          })
+      },
+      toggleActiveState(id) {
+        BlockToast.fire({
+          text: "Reversing user account status ..."
+        });
+
+        this.$inertia
+          .put(this.$route("superadmin.user.toggle_active_status", id), null, {
             preserveState: false,
             preserveScroll: true,
             only: ["errors", "flash", "users"]

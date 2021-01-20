@@ -61,6 +61,7 @@ class AdminUserTransformer
       'email_verified_at' => (string)$user->email_verified_at,
       'is_bvn_verified' => (bool)$user->is_bvn_verified,
       'is_bank_verified' => (bool)$user->is_bank_verified,
+      'is_active' => (bool)$user->is_active,
       'created_at' => (string)$user->created_at,
       'verified_at' => (string)$user->verified_at,
     ];

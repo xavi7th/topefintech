@@ -9,7 +9,7 @@ use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use App\Modules\AppUser\Http\Middleware\OnlyVerifiedUsers;
-use Tymon\JWTAuth\JWTGuard;
+use App\Modules\AppUser\Http\Middleware\CheckActiveStatusOfUser;
 
 class AppUserServiceProvider extends ServiceProvider
 {
@@ -35,6 +35,7 @@ class AppUserServiceProvider extends ServiceProvider
 
 		/**** Register the modules middlewares *****/
 		app()->make('router')->aliasMiddleware('verified_users', OnlyVerifiedUsers::class);
+		app()->make('router')->aliasMiddleware('active_users', CheckActiveStatusOfUser::class);
 	}
 
 	/**

@@ -191,6 +191,22 @@ Inertia.on('success', (e) => {
       timer: 7000
     } );
   }
+  else if (e.detail.page.props.flash.warning) {
+    ToastLarge.fire( {
+      title: "Note!",
+      html: e.detail.page.props.flash.warning,
+      icon: "warning",
+      timer: 3000
+    } );
+  }
+  else if (e.detail.page.props.flash.info) {
+    ToastLarge.fire( {
+      title: "Psst!",
+      html: e.detail.page.props.flash.info,
+      icon: "info",
+      timer: 3000
+    } );
+  }
   else {
     swal.close();
   }

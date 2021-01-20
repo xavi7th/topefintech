@@ -604,6 +604,7 @@ class AppUser extends User
     Route::name('superadmin.')->group(function () {
       Route::get('users', [self::class, 'getListOfUsers'])->name('manage_users')->defaults('extras', ['icon' => 'fas fa-users']);
       Route::put('user/{user}/verify', [self::class, 'verifyUser'])->name('user.verify');
+      Route::put('user/{user}/modify-status', [self::class, 'toggleUserActiveStatus'])->name('user.toggle_active_status');
       Route::get('user/{appUser}/statement', [self::class, 'adminGetUserAccountStatement'])->name('user.statement')->defaults('extras', ['nav_skip' => true]);
       Route::get('user/{appUser:phone}/profile', [self::class, 'superAdminViewUserProfile'])->name('user.profile')->defaults('extras', ['nav_skip' => true]);
       Route::put('user/{appUser:phone}/profile', [self::class, 'adminEditUserProfile'])->name('user.profile.edit')->defaults('extras', ['nav_skip' => true]);
@@ -766,6 +767,14 @@ class AppUser extends User
 
     if ($request->isApi()) return response()->json([], 204);
     return back()->withFlash(['success' => 'User verified. They will be able to access their dashboard now']);
+  }
+
+  public function toggleUserActiveStatus(self $user)
+  {
+    $user->is_active = !$user->is_active;
+    $user->save();
+
+    return back()->withFlash(['success' => 'User account status reversed']);
   }
 
   public function deleteUser(self $user)
