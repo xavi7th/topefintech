@@ -66,7 +66,7 @@
       };
     },
     mounted() {
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
         // Doughnut
         $(".rui-chartist").each(function () {
           const $this = $(this);
@@ -126,7 +126,7 @@
               });
           });
         });
-      });
+      // });
     },
     methods: {
       makeSavings(amount) {

@@ -102,8 +102,8 @@
     data: () => {
       return {};
     },
-    created() {
-      // this.$nextTick(() => {
+    mounted() {
+
       //   $(function() {
       //     $("#datatable1").DataTable({
       //       responsive: true,
@@ -114,7 +114,7 @@
       //       }
       //     });
       //   });
-      // });
+
     }
   };
 </script>

@@ -207,9 +207,10 @@
 
   @inertia
 
-  <script src="{{ mix('js/dashboard-app-vendor.js') }}" defer></script>
-  <script src="{{ mix('js/manifest.js') }}" defer></script>
-  <script src="{{ mix('js/vendor.js') }}" defer></script>
+  <script src="{{ mix('js/dashboard-app-vendor-basic.js') }}"></script>
+  <script src="{{ mix('js/dashboard-app-vendor-others.js') }}" async defer></script>
+  <script src="{{ mix('js/manifest.js') }}" async defer></script>
+  <script src="{{ mix('js/vendor.js') }}" async defer></script>
   <script src="{{ mix('js/admin-app.js') }}" defer></script>
   <link rel="stylesheet" href="{{mix('css/user-app.css')}}">
 </body>

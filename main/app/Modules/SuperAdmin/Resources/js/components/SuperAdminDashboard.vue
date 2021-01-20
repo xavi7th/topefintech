@@ -216,7 +216,8 @@
               <span data-feather="chevron-left" class="rui-icon rui-icon-stroke-1_5"></span>
             </div>
           </div>
-          <!-- <div class="rui-gap-2"></div>
+          <div class="rui-gap-2"></div>
+          <!--
           <div class="row vertical-gap">
             <div class="col-lg-4">
               <div class="rui-widget rui-widget-actions">
@@ -705,7 +706,7 @@
     mixins: [mixins],
     components: { Layout },
     mounted() {
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
         (function() {
           // Chart
           $(".rui-chartjs").each(function() {
@@ -909,7 +910,7 @@
             });
           });
         })();
-      });
+      // });
     }
   };
 </script>

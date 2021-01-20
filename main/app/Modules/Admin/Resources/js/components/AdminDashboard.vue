@@ -228,7 +228,7 @@
     mixins: [mixins],
     components: { Layout },
     mounted() {
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
         (function() {
           // Chart
           $(".rui-chartjs").each(function() {
@@ -432,7 +432,7 @@
             });
           });
         })();
-      });
+      // });
     }
   };
 </script>

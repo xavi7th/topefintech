@@ -16,21 +16,23 @@ mix.scripts( [
     __dirname + '/Resources/js/vendor/jquery.min.js',
     __dirname + '/Resources/js/vendor/popper.min.js',
     __dirname + '/Resources/js/vendor/bootstrap.min.js',
+], 'public_html/js/dashboard-app-vendor-basic.js' );
+mix.scripts( [
     __dirname + '/Resources/js/vendor/feather.min.js',
     __dirname + '/Resources/js/vendor/jquery.overlayScrollbars.min.js',
-    __dirname + '/Resources/js/vendor/ofi.min.js',
+    // __dirname + '/Resources/js/vendor/ofi.min.js',
     __dirname + '/Resources/js/vendor/jquery.fancybox.min.js',
     // __dirname + '/Resources/js/vendor/emojione.min.js',
     // __dirname + '/Resources/js/vendor/emojionearea.min.js',
-    __dirname + '/Resources/js/vendor/moment.min.js',
+    // __dirname + '/Resources/js/vendor/moment.min.js',
     __dirname + '/Resources/js/vendor/swiper.min.js',
-    // __dirname + '/Resources/js/vendor/Chart.min.js',
+    __dirname + '/Resources/js/vendor/Chart.min.js',
     __dirname + '/Resources/js/vendor/chartist.min.js',
     __dirname + '/Resources/js/vendor/jquery.dataTables.min.js',
     __dirname + '/Resources/js/vendor/all.js',
     __dirname + '/Resources/js/vendor/v4-shims.js',
-    __dirname + '/Resources/js/vendor/jquery.datetimepicker.full.min.js',
-], 'public_html/js/dashboard-app-vendor.js' );
+    // __dirname + '/Resources/js/vendor/jquery.datetimepicker.full.min.js',
+], 'public_html/js/dashboard-app-vendor-others.js' );
 
 mix.scripts( [
     __dirname + '/Resources/js/vendor/yaybar.js',

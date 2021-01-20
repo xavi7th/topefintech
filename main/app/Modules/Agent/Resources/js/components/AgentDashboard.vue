@@ -205,7 +205,7 @@
     mixins: [mixins],
     components: { Layout },
     mounted() {
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
         (function () {
           // Doughnut
           $(".rui-chartist").each(function () {
@@ -270,7 +270,7 @@
             });
           });
         })();
-      });
+      // });
     },
   };
 </script>

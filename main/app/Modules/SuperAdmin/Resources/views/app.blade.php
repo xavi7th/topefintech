@@ -6,6 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{{ config('app.name') }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="{{ mix('js/dashboard-app-vendor-basic.js') }}"></script>
+  <script src="{{ mix('js/dashboard-app-vendor-others.js') }}" async defer></script>
   <link rel="icon" type="image/png" href="/img/favicon.png">
   <style>
     .preloader {
@@ -194,6 +196,7 @@
 </head>
 
 <body>
+
   <div class="preloader text-center">
     <img src="/img/logo.png" alt="">
     <div class="la-ball-circus la-2x">
@@ -207,9 +210,8 @@
 
   @inertia
 
-  <script src="{{ mix('js/dashboard-app-vendor.js') }}" async defer></script>
-  <script src="{{ mix('js/manifest.js') }}" defer></script>
-  <script src="{{ mix('js/vendor.js') }}" defer></script>
+  <script src="{{ mix('js/manifest.js') }}" async defer></script>
+  <script src="{{ mix('js/vendor.js') }}" async defer></script>
   <script src="{{ mix('js/superadmin-app.js') }}" defer></script>
   <link rel="stylesheet" href="{{ mix('css/user-app.css') }}">
 </body>
