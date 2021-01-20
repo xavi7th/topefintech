@@ -69,9 +69,9 @@ class LoginController extends Controller
     // Route::post('logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth');
     Route::match(['GET', 'POST'], 'logout', [self::class, 'logout'])->name('appuser.logout')->middleware('auth:web,agent')->defaults('extras', ['nav_skip' => true]);
     Route::post('verify-otp', [self::class, 'verifyUserToken'])->name('appuser.otp.verify')->defaults('extras', ['nav_skip' => true]);
-    Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('appuser.password_reset.request')->defaults('extras', ['nav_skip' => true]);
-    Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('appuser.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
-    Route::put('reset-password', [self::class, 'resetUserPassword'])->name('appuser.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
+    Route::match(['get', 'post'], 'request-password-reset', [self::class, 'showRequestPasswordForm'])->name('auth.password_reset.request')->defaults('extras', ['nav_skip' => true]);
+    Route::get('reset-password', [self::class, 'showResetPasswordForm'])->name('auth.password_reset.verify')->defaults('extras', ['nav_skip' => true]);
+    Route::put('reset-password', [self::class, 'resetUserPassword'])->name('auth.password_reset.change_password')->defaults('extras', ['nav_skip' => true]);
     Route::post('password/set', [self::class, 'newAgentSetPassword'])->name('app.agent.password.new');
   }
 
@@ -178,7 +178,7 @@ class LoginController extends Controller
       } catch (ModelNotFoundException $th) {
       }
 
-      return redirect()->route('appuser.password_reset.verify')->withFlash(['success' => 'If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password']);
+      return redirect()->route('auth.password_reset.verify')->withFlash(['success' => 'If the phone number is valid, a password reset otp will be sent to you via sms. Follow the instructions to reset your password']);
     }
   }
 
@@ -187,11 +187,11 @@ class LoginController extends Controller
     $tokenRecord = DB::table('password_resets')->where('token', $token)->first();
 
     if (!$tokenRecord) {
-      return redirect()->route('appuser.password_reset.request')->withFlash(['error' => 'Password reset token could not be verified. Invalid token!']);
+      return redirect()->route('auth.password_reset.request')->withFlash(['error' => 'Password reset token could not be verified. Invalid token!']);
     }
     if (now()->subHours(6)->gte(Carbon::parse($tokenRecord->created_at))) {
       DB::table('password_resets')->where('token', $tokenRecord->token)->delete();
-      return redirect()->route('appuser.password_reset.request')->withFlash(['error' => 'Password reset token could completed. This link has expired. Try again!']);
+      return redirect()->route('auth.password_reset.request')->withFlash(['error' => 'Password reset token could completed. This link has expired. Try again!']);
     } else {
       return Inertia::render('AppUser,auth/ResetPassword', compact('token'));
     }

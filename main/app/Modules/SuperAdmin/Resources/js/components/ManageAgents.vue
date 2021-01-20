@@ -59,12 +59,17 @@
                         </div>
                       </li>
                       <li>
+                          <button
+                          class="btn btn-danger btn-xs"
+                          v-if="agent.is_active"
+                          @click="toggleAgentAccountStatus(agent)"
+                        >Suspend Agent</button>
 
-                           <button
-                            class="btn btn-danger btn-xs"
-                            @click="suspendAgentAccount(agent)"
-                          >Suspend Agent</button>
-
+                          <button
+                          class="btn btn-warning btn-xs"
+                          v-else
+                          @click="toggleAgentAccountStatus(agent)"
+                        >Unlock Account</button>
                       </li>
                     </ul>
                   </td>
@@ -89,12 +94,12 @@
     components: { Layout },
     mixins: [mixins, errorHandlers],
     methods:{
-       suspendAgentAccount(agent) {
+       toggleAgentAccountStatus(agent) {
         BlockToast.fire({
           text: "Suspending Agent Account ...",
         });
         this.$inertia
-          .delete(this.$route("superadmin.suspend_agent", agent.id))
+          .put(this.$route("superadmin.agents.toggle_active_status", agent.id))
       },
     }
   };

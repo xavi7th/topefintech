@@ -19,7 +19,7 @@ class AgentController extends Controller
   public static function routes()
   {
     Route::group(['middleware' => 'web', 'prefix' => Agent::DASHBOARD_ROUTE_PREFIX, 'namespace' => 'App\\Modules\Agent\Http\Controllers'], function () {
-      Route::group(['middleware' => ['auth:agent', 'verified_agents']], function () {
+      Route::group(['middleware' => ['auth:agent', 'verified_agents', 'is_agent_active']], function () {
         Route::get('/', [self::class, 'loadAgentApp'])->name('agent.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
         Agent::agentRoutes();

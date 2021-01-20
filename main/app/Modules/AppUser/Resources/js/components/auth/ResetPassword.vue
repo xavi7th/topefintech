@@ -70,7 +70,7 @@
         });
 
         this.$inertia
-          .put(this.$route("appuser.password_reset.change_password"), {
+          .put(this.$route("auth.password_reset.change_password"), {
             ...this.details,
             token: this.token
           },{

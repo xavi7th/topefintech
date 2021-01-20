@@ -79,6 +79,7 @@ class AdminUserTransformer
       'city_of_operation' => (string)$user->city_of_operation,
       'avatar' => (string)$user->avatar,
       'is_verified' => (bool)$user->is_verified(),
+      'is_active' => (bool)$user->is_active,
       'isAgent' => (bool)$user->isAgent(),
     ];
   }

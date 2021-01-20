@@ -60,7 +60,7 @@
         });
 
         this.$inertia
-          .post(this.$route("appuser.password_reset.request"), {...this.details},{
+          .post(this.$route("auth.password_reset.request"), {...this.details},{
             onError:( )=> this.formSubmitted = true
           })
       }

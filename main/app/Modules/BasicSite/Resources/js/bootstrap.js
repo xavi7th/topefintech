@@ -172,7 +172,7 @@ Inertia.on('progress', (event) => {
 })
 
 Inertia.on('success', (e) => {
-  console.log(e);
+  // console.log(e);
   if (e.detail.page.props.flash.success) {
     console.log(`Successfully made a visit to ${e.detail.page.url}`)
     ToastLarge.fire( {
@@ -196,7 +196,8 @@ Inertia.on('success', (e) => {
       title: "Note!",
       html: e.detail.page.props.flash.warning,
       icon: "warning",
-      timer: 3000
+      timer: 3000,
+      footer: `Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmonie.ng">hello@smartmonie.ng</a>`,
     } );
   }
   else if (e.detail.page.props.flash.info) {
@@ -204,7 +205,8 @@ Inertia.on('success', (e) => {
       title: "Psst!",
       html: e.detail.page.props.flash.info,
       icon: "info",
-      timer: 3000
+      timer: 3000,
+      footer: `Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@smartmonie.ng">hello@smartmonie.ng</a>`,
     } );
   }
   else {

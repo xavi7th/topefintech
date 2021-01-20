@@ -68,6 +68,8 @@ use App\Modules\AppUser\Notifications\SmartSavingsInitialised;
  * @method static \Illuminate\Database\Eloquent\Builder|Agent whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Agent whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property int $is_active
+ * @method static \Illuminate\Database\Eloquent\Builder|Agent whereIsActive($value)
  */
 class Agent extends User
 {
@@ -119,9 +121,10 @@ class Agent extends User
 
   static function superAdminRoutes()
   {
-    Route::group([], function () {
-      Route::get('agents', [self::class, 'superAdminGetAgents'])->name('superadmin.view_agents')->defaults('extras', ['icon' => 'fas fa-user-tie']);
-      Route::delete('agent/{agent}/suspend', [self::class, 'suspendAgent'])->name('superadmin.suspend_agent');
+    Route::prefix('agents')->name('superadmin.agents.')->group(function () {
+      Route::get('', [self::class, 'superAdminGetAgents'])->name('view_agents')->defaults('extras', ['icon' => 'fas fa-user-tie']);
+      Route::put('{agent}/suspend', [self::class, 'toggleAgentActiveStatus'])->name('toggle_active_status');
+      Route::put('{agent}/delete', [self::class, 'deleteAgent'])->name('delete');
 
     });
   }
@@ -283,7 +286,15 @@ class Agent extends User
     }
   }
 
-  public function suspendAgent(Request $request, self $agent)
+  public function toggleAgentActiveStatus(Request $request, self $agent)
+  {
+    $agent->is_active = !$agent->is_active;
+    $agent->save();
+
+    return back()->withFlash(['success' => 'Agent Account status reversed']);
+  }
+
+  public function deleteAgent(Request $request, self $agent)
   {
     if ($agent->managed_users()->exists()) throw ValidationException::withMessages(['err' => 'This agent cannot be suspended. They have clients that they are currently managing'])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 

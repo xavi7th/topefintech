@@ -49,7 +49,7 @@
         <div class="col-sm-6">
           <div class="d-flex justify-content-end">
             <inertia-link
-              :href="$route('appuser.password_reset.request')"
+              :href="$route('auth.password_reset.request')"
               class="fs-13"
             >Forgot password?</inertia-link>
           </div>

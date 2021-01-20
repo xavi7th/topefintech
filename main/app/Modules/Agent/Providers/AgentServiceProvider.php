@@ -2,9 +2,10 @@
 
 namespace App\Modules\Agent\Providers;
 
-use App\Modules\Agent\Http\Middleware\VerifiedAgents;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use App\Modules\Agent\Http\Middleware\VerifiedAgents;
+use App\Modules\Agent\Http\Middleware\CheckAgentActiveStatus;
 
 class AgentServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,7 @@ class AgentServiceProvider extends ServiceProvider
 
     /**** Register the modules middlewares *****/
     app()->make('router')->aliasMiddleware('verified_agents', VerifiedAgents::class);
+    app()->make('router')->aliasMiddleware('is_agent_active', CheckAgentActiveStatus::class);
   }
 
   /**

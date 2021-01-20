@@ -11,9 +11,11 @@ return [
     ],
     'agent' => [
       'agent.*',
+      'auth.*'
     ],
     'appuser' => [
       'appuser.*',
+      'auth.*'
     ],
     'basic' => [
       'app.*',
