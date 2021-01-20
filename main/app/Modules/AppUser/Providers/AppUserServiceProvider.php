@@ -2,12 +2,12 @@
 
 namespace App\Modules\AppUser\Providers;
 
+use Tymon\JWTAuth\JWTGuard;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\AppUser\Models\AppUser;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-use App\Modules\AppUser\Http\Middleware\OnlyAppUsers;
 use App\Modules\AppUser\Http\Middleware\OnlyVerifiedUsers;
 use Tymon\JWTAuth\JWTGuard;
 
@@ -34,7 +34,6 @@ class AppUserServiceProvider extends ServiceProvider
 		$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
 		/**** Register the modules middlewares *****/
-		app()->make('router')->aliasMiddleware('appusers', OnlyAppUsers::class);
 		app()->make('router')->aliasMiddleware('verified_users', OnlyVerifiedUsers::class);
 	}
 
