@@ -41,7 +41,7 @@ class AdminController extends Controller
 
       LoginController::routes();
 
-      Route::group(['middleware' => ['auth:admin', 'admins']], function () {
+      Route::group(['middleware' => ['auth:admin', 'is_admin_active']], function () {
         Route::get('/', [self::class, 'loadAdminApp'])->name('admin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
         Admin::adminRoutes();

@@ -80,46 +80,8 @@ class SuperAdmin extends User
   static function superAdminRoutes()
   {
     Route::group([], function () {
-      Route::get('admins', [self::class, 'getAdmins'])->name('superadmin.view_admins')->defaults('extras', ['icon' => 'fas fa-user-tie']);
-      Route::post('admin/create', [self::class, 'createAdmin'])->name('superadmin.create_admin');
       Route::get('notifications', [self::class, 'getSuperAdminNotifications'])->name('superadmin.notifications')->defaults('extras', ['nav_skip' => true]);
     });
-  }
-
-  public function getAdmins(Request $request)
-  {
-    return Inertia::render('SuperAdmin,ManageAdmins', ['admins' => (new SuperAdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForSuperAdminViewAdmins')]);
-  }
-
-  public function createAdmin(Request $request)
-  {
-    $validator = Validator::make($request->all(), [
-      'full_name' => 'required|max:255',
-      'phone' => 'required|max:20|unique:' . Admin::class . '|unique:' . self::class . '|unique:' . AppUser::class,
-      'email' => 'required|email|unique:' . Admin::class . '|unique:' . self::class . '|unique:' . AppUser::class,
-    ]);
-
-    if ($validator->fails()) {
-      return back()->withErrors($validator);
-    }
-    try {
-      DB::beginTransaction();
-      $admin = Admin::create(Arr::collapse([
-        $validator->validated(),
-        [
-          'password' => 'pass'
-        ]
-      ]));
-
-      DB::commit();
-
-      return back()->withFlash(['success' => 'Admin account created. They will be required to set a password on their first login']);
-    } catch (\Throwable $e) {
-
-      ErrLog::notifySuperAdminAndFail($request->user(), $e, 'Error creating admin account');
-
-      return back()->withFlash(['error' => 'An error occurred. ' . $e->getMessage()]);
-    }
   }
 
   public function getSuperAdminNotifications(Request $request)

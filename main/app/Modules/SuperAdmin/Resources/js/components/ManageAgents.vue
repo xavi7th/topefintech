@@ -94,13 +94,13 @@
     components: { Layout },
     mixins: [mixins, errorHandlers],
     methods:{
-       toggleAgentAccountStatus(agent) {
-        BlockToast.fire({
-          text: "Suspending Agent Account ...",
-        });
-        this.$inertia
-          .put(this.$route("superadmin.agents.toggle_active_status", agent.id))
-      },
+      toggleAgentAccountStatus(agent) {
+      BlockToast.fire({
+        text: "Suspending Agent Account ...",
+      });
+      this.$inertia
+        .put(this.$route("superadmin.agents.toggle_active_status", agent.id))
+    },
     }
   };
 </script>

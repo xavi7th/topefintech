@@ -13,6 +13,7 @@ use App\Modules\AppUser\Models\Savings;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\Admin\Models\AdminWalletTransaction;
 use App\Modules\AppUser\Notifications\NewSavingsSuccess;
+use App\Modules\SuperAdmin\Transformers\SuperAdminUserTransformer;
 
 /**
  * App\Modules\Admin\Models\Admin
@@ -102,11 +103,49 @@ class Admin extends User
 
   static function superAdminRoutes()
   {
-    Route::name('superadmin.')->prefix('admins')->group(function () {
-      Route::post('{admin}/fund', [self::class, 'fundAdmin'])->name('fund_admin');
+    Route::name('superadmin.admins.')->prefix('admins')->group(function () {
+      Route::get('', [self::class, 'getAdmins'])->name('view_admins')->defaults('extras', ['icon' => 'fas fa-user-tie']);
+      Route::post('create', [self::class, 'createAdmin'])->name('create');
+      Route::post('{admin}/fund', [self::class, 'fundAdmin'])->name('fund');
+      Route::put('{admin}/suspend', [self::class, 'toggleAdminActiveStatus'])->name('toggle_active_status');
     });
   }
 
+  public function getAdmins(Request $request)
+  {
+    return Inertia::render('SuperAdmin,ManageAdmins', ['admins' => (new SuperAdminUserTransformer)->collectionTransformer(Admin::all(), 'transformForSuperAdminViewAdmins')]);
+  }
+
+  public function createAdmin(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'full_name' => 'required|max:255',
+      'phone' => 'required|max:20|unique:' . Admin::class . '|unique:' . self::class . '|unique:' . AppUser::class,
+      'email' => 'required|email|unique:' . Admin::class . '|unique:' . self::class . '|unique:' . AppUser::class,
+    ]);
+
+    if ($validator->fails()) {
+      return back()->withErrors($validator);
+    }
+    try {
+      DB::beginTransaction();
+      $admin = Admin::create(Arr::collapse([
+        $validator->validated(),
+        [
+          'password' => 'pass'
+        ]
+      ]));
+
+      DB::commit();
+
+      return back()->withFlash(['success' => 'Admin account created. They will be required to set a password on their first login']);
+    } catch (\Throwable $e) {
+
+      ErrLog::notifySuperAdminAndFail($request->user(), $e, 'Error creating admin account');
+
+      return back()->withFlash(['error' => 'An error occurred. ' . $e->getMessage()]);
+    }
+  }
 
   public function fundManagedUser(Request $request, AppUser $appUser)
   {
@@ -162,7 +201,6 @@ class Admin extends User
     };
   }
 
-
   public function fundAdmin(Request $request, self $admin)
   {
     $validator = Validator::make($request->all(), [
@@ -190,6 +228,14 @@ class Admin extends User
       if ($request->isApi()) return response()->json(['rsp' => 'error occurred'], 500);
       return back()->withFlash(['error' => 'An error occurred. Check the error logs']);
     }
+  }
+
+  public function toggleAdminActiveStatus(Request $request, self $admin)
+  {
+    $admin->is_active = !$admin->is_active;
+    $admin->save();
+
+    return back()->withFlash(['success' => 'Admin Account status reversed']);
   }
 
   public function getAdminNotifications(Request $request)

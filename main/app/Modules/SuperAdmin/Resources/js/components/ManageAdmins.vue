@@ -39,10 +39,21 @@
                       </li>
                     </ul>
                     <div class="col-12 text-right">
-                      <button class="btn btn-sm btn-danger">Delete</button>
+                      <!-- <button class="btn btn-sm btn-danger">Delete</button> -->
+                      <button
+                        class="btn btn-danger btn-xs"
+                        v-if="admin.is_active"
+                        @click="toggleAdminAccountStatus(admin)"
+                      >Suspend Admin</button>
+
+                        <button
+                        class="btn btn-warning btn-xs"
+                        v-else
+                        @click="toggleAdminAccountStatus(admin)"
+                      >Unlock Account</button>
 
                       <button
-                        class="btn btn-sm btn-brand"
+                        class="btn btn-xs btn-brand"
                         data-toggle="modal"
                         data-target="#fundAdminModal"
                         @click="adminToFund = admin"
@@ -157,18 +168,26 @@
         });
 
         this.$inertia
-          .post(this.$route("superadmin.create_admin"), { ...this.details },{
+          .post(this.$route("superadmin.admins.create"), { ...this.details },{
             onFinish:() => this.details={}
           })
 
       },
+      toggleAdminAccountStatus(admin) {
+        BlockToast.fire({
+          text: "Suspending Admin Account ...",
+        });
+        this.$inertia
+          .put(this.$route("superadmin.admins.toggle_active_status", admin.id))
+      },
+
        fundAdmin() {
         BlockToast.fire({
           text: "Funding admin...",
         });
 
         this.$inertia
-          .post(this.$route("superadmin.fund_admin", this.adminToFund.id), {
+          .post(this.$route("superadmin.admins.fund", this.adminToFund.id), {
             amount: this.details.amount,
           },{
             onSuccess:() => this.details.amount = null

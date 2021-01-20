@@ -90,6 +90,7 @@ class SuperAdminUserTransformer
       'email' => (string)$user->email,
       'id_card' => (string)$user->id_card,
       'is_verified' => (bool)$user->is_verified(),
+      'is_active' => (bool)$user->is_active,
       'isAdmin' => (bool)$user->isAdmin(),
     ];
   }

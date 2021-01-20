@@ -2,6 +2,8 @@
 
 namespace App\Modules\Admin\Providers;
 
+use Tymon\JWTAuth\JWTGuard;
+use Illuminate\Http\Request;
 use Illuminate\Auth\SessionGuard;
 use App\Modules\Admin\Models\Admin;
 use Illuminate\Support\Facades\Auth;
@@ -9,8 +11,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use App\Modules\Admin\Http\Middleware\OnlyAdmins;
 use App\Modules\Admin\Http\Middleware\VerifiedAdmins;
-use Tymon\JWTAuth\JWTGuard;
-use Illuminate\Http\Request;
+use App\Modules\Admin\Http\Middleware\CheckAdminActiveStatus;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,7 @@ class AdminServiceProvider extends ServiceProvider
     /**** Register the modules middlewares *****/
     app()->make('router')->aliasMiddleware('admins', OnlyAdmins::class);
     app()->make('router')->aliasMiddleware('admin_verified', VerifiedAdmins::class);
+    app()->make('router')->aliasMiddleware('is_admin_active', CheckAdminActiveStatus::class);
   }
 
   /**
