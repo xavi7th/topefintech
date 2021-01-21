@@ -1,8 +1,8 @@
 <template>
-  <layout title="My Savings Interests" :isAuth="false">
+  <layout :title="`${$page.props.user.full_name}'s Savings Interests`" :isAuth="false">
     <div class="container-fluid">
       <div class="row vertical-gap">
-       <interests-summary />
+        <interests-summary />
       </div>
       <div class="rui-gap-3"></div>
     </div>
@@ -11,14 +11,15 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@dashboard-assets/js/AppComponent";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
   import InterestsSummary from '@dashboard-components/savings/partials/InterestsSummary';
+
   export default {
-    name: "ViewInterests",
+    name: "ViewUserInterests",
     mixins: [mixins],
     components: {
       Layout,
       InterestsSummary
-    },
+    }
   };
 </script>

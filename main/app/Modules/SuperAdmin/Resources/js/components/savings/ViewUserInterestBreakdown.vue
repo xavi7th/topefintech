@@ -1,5 +1,5 @@
 <template>
-  <layout :title="`Interest Records for ${month}`" :isAuth="false">
+  <layout :title="`${user}'s Interest Records for ${month}`" :isAuth="false">
     <div class="container-fluid">
       <div class="row vertical-gap">
         <interests-break-down :interestSummary="interestSummary" :month="month"/>
@@ -11,7 +11,7 @@
 
 <script>
   import { mixins } from "@dashboard-assets/js/config";
-  import Layout from "@dashboard-assets/js/AppComponent.vue";
+  import Layout from "@superadmin-assets/js/SuperAdminAppComponent.vue";
   import InterestsBreakDown from '@dashboard-components/savings/partials/InterestsBreakDown.vue';
 
   export default {
@@ -24,7 +24,8 @@
     data: function() {
       return {
         interestSummary: this.$page.props.interests_summary,
-        month: this.$page.props.month
+        month: this.$page.props.month,
+        user:this.$page.props.user
       };
     }
   };

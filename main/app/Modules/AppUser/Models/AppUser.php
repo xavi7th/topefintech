@@ -3,6 +3,7 @@
 namespace App\Modules\AppUser\Models;
 
 use App\User;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
 use Paystack\Bank\GetBVN;
@@ -29,6 +30,7 @@ use App\Modules\AppUser\Transformers\AppUserTransformer;
 use App\Modules\Admin\Transformers\AdminTransactionTransformer;
 use App\Modules\AppUser\Http\Requests\EditUserProfileValidation;
 use App\Modules\Admin\Http\Requests\AdminEditUserProfileValidation;
+use Illuminate\Support\Collection;
 
 /**
  * App\Modules\AppUser\Models\AppUser
@@ -597,6 +599,31 @@ class AppUser extends User
   public function getIdCardThumbUrlAttribute(): string
   {
     return Str::of($this->id_card)->replace(Str::of($this->id_card)->dirname(), Str::of($this->id_card)->dirname() . '/thumbs');
+  }
+
+  public function getSavingsInterestsSummary(): Collection
+  {
+    $records = $this->savings_interests()->with('savings.portfolio')->addSelect(DB::raw('*, MONTHNAME(savings_interests.created_at) as month'))->get();
+
+    return transform(
+      $records,
+      fn ($value) => $value->groupBy('month')->transform(
+        fn ($item, $key) => $item->groupBy('savings.portfolio.name')
+        ->transform(fn ($item, $key) => $item->sum('amount'))
+      )->transform(fn ($item) => collect($item->all())->merge(['total' => $item->sum()]))
+    );
+  }
+
+  public function getSavingsInterestsForMonth(string $month): Collection
+  {
+    $records = $this->savings_interests()->with('savings.portfolio')->whereMonth('savings_interests.created_at', Carbon::parse($month)->month)->orderByDesc('id')->get();
+
+    return $records->groupBy([
+      fn ($item) => $item->created_at->toDateString(),
+    ])->transform(
+      fn ($item, $key) => $item->groupBy('savings.portfolio.name')
+      ->transform(fn ($item, $key) => $item->sum('amount'))
+    )->transform(fn ($item) => collect($item->all())->merge(['total' => $item->sum()]));
   }
 
   static function superAdminRoutes()
