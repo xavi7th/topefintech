@@ -30,13 +30,13 @@ class SuperAdminController extends Controller
       Route::group(['middleware' => ['auth:superadmin']], function () {
         Route::get('/', [self::class, 'loadSuperAdminApp'])->name('superadmin.dashboard')->defaults('extras', ['icon' => 'fa fa-tachometer-alt']);
 
-        SuperAdmin::superAdminRoutes();
         Agent::superAdminRoutes();
         AppUser::superAdminRoutes();
         Admin::superAdminRoutes();
         Savings::superAdminRoutes();
         InvestmentType::superAdminRoutes();
         SavingsInterest::superAdminRoutes();
+        SuperAdmin::superAdminRoutes();
         WithdrawalRequest::superAdminRoutes();
         SiteContent::superAdminRoutes();
         Testimonial::superAdminRoutes();

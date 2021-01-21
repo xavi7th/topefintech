@@ -9,8 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Admin\Models\Admin;
 use App\Modules\Admin\Models\ErrLog;
+use App\Modules\Admin\Models\ServiceCharge;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
+use App\Modules\AppUser\Models\Savings;
+use App\Modules\AppUser\Models\SavingsInterest;
+use App\Modules\AppUser\Models\Transaction;
 use Illuminate\Support\Facades\Validator;
 use App\Modules\SuperAdmin\Transformers\SuperAdminUserTransformer;
 
@@ -79,16 +83,48 @@ class SuperAdmin extends User
 
   static function superAdminRoutes()
   {
-    Route::group([], function () {
-      Route::get('notifications', [self::class, 'getSuperAdminNotifications'])->name('superadmin.notifications')->defaults('extras', ['nav_skip' => true]);
+    Route::name('superadmin.')->group(function () {
+      Route::get('notifications', [self::class, 'getSuperAdminNotifications'])->name('notifications')->defaults('extras', ['nav_skip' => true]);
+      Route::get('transactions/all', [self::class, 'getAllTransactions'])->name('transaction_logs')->defaults('extras', ['icon' => 'fa fa-briefcase']);
     });
   }
 
   public function getSuperAdminNotifications(Request $request)
   {
     $request->user()->unreadNotifications->markAsRead();
-
-
     return Inertia::render('SuperAdmin,SuperAdminNotifications', ['notifications' => $request->user()->notifications]);
+  }
+
+  public function getAllTransactions(Request $request)
+  {
+    // $allTransactions = cache()->remember(
+    //   'transactions',
+    //   1,
+    //   fn () => SavingsInterest::with('savings.portfolio')->latest('id')->get()->merge(ServiceCharge::latest('id')->get())->merge(Transaction::latest('id')->get())
+    //   // collect([
+    //   //   'savings_interests' => SavingsInterest::with('savings.portfolio')->latest('id')->get(),
+    //   //   'service_charges' => ServiceCharge::latest('id')->get(),
+    //   //   'transactions' => Transaction::latest('id')->get()
+    //   // ])
+    // );
+
+    $records = $s = Savings::with('savings_interests.app_user', 'service_charges.app_user', 'transactions.app_user')->get();
+
+    $allTransactions = $records->pluck('transactions')->reduce(fn ($carry, $item) => $carry->merge($item), collect([]))->transform(fn ($item) => (collect($item)->only(['amount', 'description', 'trans_type', 'created_at', 'app_user'])))
+      ->merge($records->pluck('service_charges')->reduce(fn ($carry, $item) => $carry->merge($item), collect([]))->transform(fn ($item) => (collect($item)->only(['amount', 'description', 'created_at', 'app_user'])->merge(['trans_type' => 'Service Charge']))))
+      ->merge($records->pluck('savings_interests')->reduce(fn ($carry, $item) => $carry->merge($item), collect([]))->transform(fn ($item) => (collect($item)->only(['amount', 'description', 'created_at', 'app_user'])->merge(['trans_type' => 'Interests']))))
+      ->sortByDesc('created_at')
+      ->values();
+    // ->toArray();
+
+
+    debug($allTransactions);
+
+
+    // return collect($allTransactions->savings_interests)
+    //   ->merge($allTransactions->service_charges)
+    //   ->merge($allTransactions->transactions)->sortByDesc('created_at')->values();
+
+    return Inertia::render('SuperAdmin,savings/ViewTransactionHistory', compact('allTransactions'));
   }
 }

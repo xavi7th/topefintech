@@ -22,7 +22,7 @@ class SavingsInterest extends Model
     'amount' => 'double',
   ];
 
-  protected $appends = ['description'];
+  // protected $appends = ['description'];
 
   public function savings()
   {
@@ -34,10 +34,10 @@ class SavingsInterest extends Model
     return $this->hasOneThrough(AppUser::class, Savings::class, 'id', 'id', 'savings_id', 'app_user_id');
   }
 
-  public function getDescriptionAttribute(): string
-  {
-    return str_ordinal($this->created_at->quarter) . ' quarter´s interest on ' . $this->savings->portfolio->name . ' savings';
-  }
+  // public function getDescriptionAttribute(): string
+  // {
+  //   return str_ordinal($this->created_at->quarter) . ' quarter´s interest on ' . $this->savings->portfolio->name . ' savings';
+  // }
 
   static function superAdminRoutes()
   {
