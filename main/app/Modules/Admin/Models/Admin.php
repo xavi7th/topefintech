@@ -61,6 +61,8 @@ use App\Modules\SuperAdmin\Transformers\SuperAdminUserTransformer;
  * @method static \Illuminate\Database\Eloquent\Builder|Admin whereUserPassport($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Admin whereVerifiedAt($value)
  * @mixin \Eloquent
+ * @property int $is_active
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin whereIsActive($value)
  */
 class Admin extends User
 {

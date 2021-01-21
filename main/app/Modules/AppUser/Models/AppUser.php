@@ -801,14 +801,14 @@ class AppUser extends User
         $appUser->id_card = $appUser->store_id_card();
       }
 
-      foreach (collect($request->validated())->except(['id_card', 'phone']) as $key => $value) {
+      foreach (collect($request->validated())->except(['id_card']) as $key => $value) {
         $appUser->$key = $value;
       }
 
       $appUser->save();
 
       if ($request->isApi()) return response()->json([], 204);
-      return back()->withFlash(['success' => 'Profile details updated']);
+      return redirect()->route('superadmin.user.profile', $appUser->phone)->withFlash(['success' => 'Profile details updated']);
     } catch (\Throwable $th) {
       ErrLog::notifySuperAdmin(auth()->user(), $th, 'Account details NOT updated');
       if ($request->isApi()) return response()->json(['err' => 'Account details NOT updated'], 500);

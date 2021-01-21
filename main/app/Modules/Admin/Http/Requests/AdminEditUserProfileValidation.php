@@ -20,7 +20,7 @@ class AdminEditUserProfileValidation extends FormRequest
     return [
       'email' => 'nullable|email|unique:app_users,email,' . $this->appUser->id,
       'full_name' => 'required|string|max:50',
-      // 'phone' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|max:20|unique:app_users,phone,' . $this->user()->id,
+      'phone' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|regex:/^[\+]?[0-9\Q()\E\s-]+$/i|max:20|unique:app_users,phone,' . $this->appUser->id,
       'address' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'city' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',
       'country' => 'required_without_all:password,acc_bank,acc_num,acc_type|nullable|string',

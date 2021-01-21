@@ -157,7 +157,6 @@
                       <label for="phone">Phone Number</label>
                       <input
                         class="form-control"
-                        readonly
                         v-model="details.phone"
                         id="phone"
                         placeholder="Your Phone"
