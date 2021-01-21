@@ -5,7 +5,6 @@ namespace App\Modules\AppUser\Models;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Modules\AppUser\Models\AppUser;
 use App\Modules\AppUser\Models\Savings;

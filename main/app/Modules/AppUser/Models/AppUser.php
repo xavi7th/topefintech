@@ -626,6 +626,24 @@ class AppUser extends User
     )->transform(fn ($item) => collect($item->all())->merge(['total' => $item->sum()]));
   }
 
+  public function getAccountStatement()
+  {
+    $userStatement = cache()->remember(
+      'users',
+      config('cache.account_statement_cache_duration'),
+      fn () =>
+      $this->load([
+        'savings_interests.savings.portfolio',
+        'service_charges',
+        'transactions'
+      ])
+    );
+
+    return collect($userStatement->savings_interests)
+      ->merge($userStatement->service_charges)
+      ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
+  }
+
   static function superAdminRoutes()
   {
     Route::name('superadmin.')->group(function () {
@@ -760,21 +778,9 @@ class AppUser extends User
 
   public function getUserAccountStatement(Request $request)
   {
-    $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($request) {
-      return $request->user()->load(['savings_interests.savings.portfolio',
-        'service_charges',
-        'transactions'
-      ]);
-    });
+    $account_statement = $request->user()->getAccountStatement();
 
-    $account_statement = collect($userStatement->savings_interests)
-      ->merge($userStatement->service_charges)
-      ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
-
-    if ($request->isApi()) {
-      return $account_statement;
-    }
-
+    if ($request->isApi()) return $account_statement;
     return Inertia::render('AppUser,UserTransactionHistory', compact('account_statement'));
   }
 
@@ -845,22 +851,11 @@ class AppUser extends User
 
   public function adminGetUserAccountStatement(Request $request, AppUser $appUser)
   {
-    $userStatement = cache()->remember('users', config('cache.account_statement_cache_duration'), function () use ($appUser) {
-      return $appUser->load(['savings_interests.savings.portfolio',
-        'service_charges',
-        'transactions'
-      ]);
-    });
+    $account_statement = $appUser->getAccountStatement();
 
-    $account_statement = collect($userStatement->savings_interests)
-      ->merge($userStatement->service_charges)
-      ->merge($userStatement->transactions)->sortByDesc('created_at')->values();
-
-    if ($request->isApi()) {
-      return $account_statement;
-    }
-
-    return Inertia::render('AppUser,savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
+    if ($request->isApi())  $account_statement;
+    if ($request->user()->isSuperAdmin()) return Inertia::render('SuperAdmin,savings/SuperAdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
+    if ($request->user()->isAdmin()) return Inertia::render('Admin,savings/AdminViewUserTransactionHistory', compact('account_statement', 'appUser'));
   }
 
   public function getUserTransactions(AppUser $user)
