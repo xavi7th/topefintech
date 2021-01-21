@@ -12,7 +12,7 @@
 <script>
   import { mixins } from "@dashboard-assets/js/config";
   import Layout from "@superadmin-assets/js/SuperAdminAppComponent";
-  import InterestsSummary from '@dashboard-components/savings/partials/InterestsSummary';
+  import InterestsSummary from '@dashboard-components/savings/partials/InterestsSummary.vue';
 
   export default {
     name: "ViewUserInterests",

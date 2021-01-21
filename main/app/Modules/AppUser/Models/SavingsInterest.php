@@ -79,8 +79,13 @@ class SavingsInterest extends Model
   {
     $interests_summary = $appUser->getSavingsInterestsSummary();
 
+
     if ($request->isApi()) return response()->json($interests_summary, 200);
-    return Inertia::render('SuperAdmin,savings/ViewUserInterests', [
+    if ($request->user()->isSuperAdmin()) return Inertia::render('SuperAdmin,savings/ViewUserInterests', [
+      'interests_summary' => $interests_summary,
+      'user' => $appUser
+    ]);
+    if ($request->user()->isAdmin()) return Inertia::render('Admin,savings/ViewUserInterests', [
       'interests_summary' => $interests_summary,
       'user' => $appUser
     ]);
@@ -89,7 +94,12 @@ class SavingsInterest extends Model
 
   public function adminGetSavingsInterestsForMonth(Request $request, AppUser $appUser, $month)
   {
-    return Inertia::render('SuperAdmin,savings/ViewUserInterestBreakdown', [
+    if ($request->user()->isSuperAdmin())   return Inertia::render('SuperAdmin,savings/ViewUserInterestBreakdown', [
+      'interests_summary' => $appUser->getSavingsInterestsForMonth($month),
+      'month' => $month,
+      'user' => $appUser->full_name
+    ]);
+    if ($request->user()->isAdmin())   return Inertia::render('Admin,savings/ViewUserInterestBreakdown', [
       'interests_summary' => $appUser->getSavingsInterestsForMonth($month),
       'month' => $month,
       'user' => $appUser->full_name

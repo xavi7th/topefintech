@@ -25,7 +25,7 @@
           </a>
         </div>
         <inertia-link
-          :href="$isCurrentUrl('appuser.*') ? $route('appuser.interest.details', month) : $route('superadmin.user.interest.details', [user, month])"
+          :href="$isCurrentUrl('appuser.*') ? $route('appuser.interest.details', month) : $isCurrentUrl('admin.*') ? $route('admin.user.interest.details', [user.id, month]) : $route('superadmin.user.interest.details', [user, month])"
           class="btn btn-info mt-10 mr-0 ml-auto d-block w-30"
         >Details</inertia-link>
       </div>
