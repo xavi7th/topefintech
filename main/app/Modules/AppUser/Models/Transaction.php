@@ -28,6 +28,12 @@ class Transaction extends Model
     return $this->belongsTo(Savings::class);
   }
 
+  public function app_user()
+  {
+    return $this->hasOneThrough(AppUser::class, Savings::class, 'id', 'id', 'savings_id', 'app_user_id');
+    // return $this->hasOneThrough(Parent::class, Middle::class, 'id', 'id', 'middle_id', 'parent_id');
+  }
+
   static function appUserRoutes()
   {
     Route::group(['namespace' => '\App\Modules\AppUser\Models', 'prefix' => 'transactions'], function () {

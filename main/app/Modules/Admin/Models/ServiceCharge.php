@@ -47,6 +47,6 @@ class ServiceCharge extends Model
 
   public function app_user()
   {
-    return $this->hasOneThrough(AppUser::class, Savings::class);
+    return $this->hasOneThrough(AppUser::class, Savings::class, 'id', 'id', 'savings_id', 'app_user_id');
   }
 }

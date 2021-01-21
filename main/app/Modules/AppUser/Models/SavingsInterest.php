@@ -29,6 +29,11 @@ class SavingsInterest extends Model
     return $this->belongsTo(Savings::class);
   }
 
+  public function app_user()
+  {
+    return $this->hasOneThrough(AppUser::class, Savings::class, 'id', 'id', 'savings_id', 'app_user_id');
+  }
+
   public function getDescriptionAttribute(): string
   {
     return str_ordinal($this->created_at->quarter) . ' quarter´s interest on ' . $this->savings->portfolio->name . ' savings';
