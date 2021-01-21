@@ -14001,6 +14001,24 @@
         class Str {
          
     }
+            /**
+     * 
+     *
+     */ 
+        class Collection {
+                    /**
+         * 
+         *
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @param string $description
+         * @static 
+         */ 
+        public static function ray($description = '')
+        {
+                        return \Illuminate\Support\Collection::ray($description);
+        }
+         
+    }
      
 }
 
@@ -16152,6 +16170,28 @@
         public static function emailVerification()
         {
                         return \Illuminate\Routing\Router::emailVerification();
+        }
+         
+    }
+     
+}
+
+    namespace Illuminate\Testing { 
+            /**
+     * 
+     *
+     * @mixin \Illuminate\Http\Response
+     */ 
+        class TestResponse {
+                    /**
+         * 
+         *
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @static 
+         */ 
+        public static function ray()
+        {
+                        return \Illuminate\Testing\TestResponse::ray();
         }
          
     }
