@@ -90,12 +90,12 @@ class Kernel extends ConsoleKernel
     /**
      * !See the explanation in ./explanation.cson
      */
-    if (app()->environment('local')) {
-      // $schedule->command('queue:work --once --queue=high,low,default')->sendOutputTo(Module::getModulePath('Admin/Console') . '/queue-jobs.cson');
-    } else {
-      $schedule->command('queue:restart')->hourly();
-      $schedule->command('queue:work --sleep=3 --timeout=900 --queue=high,default,low')->runInBackground()->withoutOVerlapping()->everyMinute();
-    }
+    // if (app()->environment('local')) {
+    //   // $schedule->command('queue:work --once --queue=high,low,default')->sendOutputTo(Module::getModulePath('Admin/Console') . '/queue-jobs.cson');
+    // } else {
+    //   $schedule->command('queue:restart')->hourly();
+    //   $schedule->command('queue:work --sleep=3 --timeout=900 --queue=high,default,low')->runInBackground()->withoutOVerlapping()->everyMinute();
+    // }
   }
 
   /**
